@@ -230,6 +230,21 @@ def telegram(text):
         return False
 
 
+def thin(points, now, keep_hours=3, key=lambda p: p[0]):
+    """10분마다 쌓이는 기록 줄이기: 최근 3시간은 전부, 그보다 오래된 건 1시간에 1개만"""
+    out, last = [], None
+    for p in points:
+        t = datetime.fromisoformat(key(p))
+        if now - t <= timedelta(hours=keep_hours):
+            out.append(p)
+            continue
+        hour = t.strftime("%Y%m%d%H")
+        if hour != last:
+            out.append(p)
+            last = hour
+    return out
+
+
 def views_near(points, when, tolerance):
     """시각 when 이전의 가장 가까운 기록 (시각, 조회수). tolerance보다 멀면 None"""
     best = None
@@ -300,20 +315,20 @@ def collect():
                 kind = "쇼츠" if rec["short"] else "본편"
                 vhist.setdefault(vid, {})[today] = rec["views"]
                 pts = vhour.setdefault(vid, [])
-                prev = pts[-1] if pts else None
                 pts.append([now.isoformat(timespec="minutes"), rec["views"]])
                 if is_new and not first_run:
                     alert("upload", name, f"새 {kind}{'가' if kind == '쇼츠' else '이'} 올라왔어요", rec["title"], url)
-                # 급등: 직전 기록 대비 시간당 조회수가 평소의 3배 이상
-                if prev:
-                    gap_h = (now - datetime.fromisoformat(prev[0])).total_seconds() / 3600
-                    if 0.4 <= gap_h <= 3:
-                        per_h = (rec["views"] - prev[1]) / gap_h
+                # 급등: 약 1시간 전 기록 대비 시간당 조회수가 평소(그 전 24시간)의 3배 이상 (10분마다 수집)
+                ref = views_near(pts[:-1], now - timedelta(hours=1), timedelta(minutes=40))
+                if ref:
+                    gap_h = (now - ref[0]).total_seconds() / 3600
+                    if 0.5 <= gap_h <= 2:
+                        per_h = (rec["views"] - ref[1]) / gap_h
                         base = views_near(pts[:-1], now - timedelta(hours=25), timedelta(hours=3))
                         base_h = None
                         if base:
-                            span = (datetime.fromisoformat(prev[0]) - base[0]).total_seconds() / 3600
-                            base_h = (prev[1] - base[1]) / span if span > 1 else None
+                            span = (ref[0] - base[0]).total_seconds() / 3600
+                            base_h = (ref[1] - base[1]) / span if span > 1 else None
                         recent = [a for a in alerts["items"] if a["type"] == "surge" and a["url"] == url
                                   and now - datetime.fromisoformat(a["t"]) < timedelta(hours=12)]
                         if per_h >= SURGE_MIN_PER_HOUR and (base_h is None or per_h >= SURGE_RATIO * max(base_h, 5)) and not recent:
@@ -353,7 +368,8 @@ def collect():
     if not snap:
         sys.exit("수집된 채널이 없습니다")
 
-    hist["hourly"] = [h for h in hist["hourly"] if h["t"] >= (now - timedelta(days=14)).isoformat()] + [{"t": now.isoformat(), "ch": snap}]
+    hist["hourly"] = thin([h for h in hist["hourly"] if h["t"] >= (now - timedelta(days=14)).isoformat()] + [{"t": now.isoformat(), "ch": snap}],
+                          now, key=lambda h: h["t"])
     hist["daily"][today] = snap
     money_today = {}
     for c in info:
@@ -376,7 +392,7 @@ def collect():
         if vid not in videos:
             vhist.pop(vid)
     hour_cut = (now - timedelta(days=8)).isoformat()
-    vhour = {vid: [p for p in pts if p[0] >= hour_cut] for vid, pts in vhour.items() if vid in videos}
+    vhour = {vid: thin([p for p in pts if p[0] >= hour_cut], now) for vid, pts in vhour.items() if vid in videos}
     early = {vid: e for vid, e in early.items() if vid in videos and e}
     money_hist = {d: v for d, v in money_hist.items() if d >= (now - timedelta(days=120)).strftime("%Y-%m-%d")}
 

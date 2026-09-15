@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="refresh" content="1800">
+<meta http-equiv="refresh" content="600">
 <meta name="theme-color" content="#111114">
 <title>채널 대시보드</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -512,7 +512,7 @@ function route() {
   pages[cur][1]();
   window.scrollTo(0, 0);
 }
-if (D) $("#upd").innerHTML = `업데이트 ${D.updated.slice(5).replace("-", "/")}<br><span style="font-size:11px">매시간 자동</span>`;
+if (D) $("#upd").innerHTML = `업데이트 ${D.updated.slice(5).replace("-", "/")}<br><span style="font-size:11px">10분마다 자동</span>`;
 window.addEventListener("hashchange", route);
 if (window.Chart || document.readyState === "complete") route(); else window.addEventListener("load", route);
 </script>
