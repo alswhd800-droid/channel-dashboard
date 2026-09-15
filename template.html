@@ -74,6 +74,12 @@ h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
 .empty{color:var(--sub);font-size:13.5px;padding:18px 0;text-align:center}
 .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
 .filters .line{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.hl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.hlh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px;font-size:14.5px}
+.hlh .muted{font-size:11.5px;text-align:right}
+.rank{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--soft)}
+.rank.r0{background:#f2b705;color:#111}.rank.r1{background:#c9ccd3;color:#111}.rank.r2{background:#d08b52;color:#111}
+@media (max-width:760px){.hl{grid-template-columns:minmax(0,1fr)}}
 .money{margin-bottom:12px}
 .money .mh{display:flex;align-items:center;gap:10px}
 .money .mh .n{font-weight:800;font-size:16px}
@@ -260,11 +266,32 @@ function pageVideos() {
       <span class="seg" id="vsort">${[["gain", "오늘 상승"], ["new", "최신"], ["views", "누적"]].map(([k, l]) => `<button data-k="${k}" class="${state.vsort === k ? "on" : ""}">${l}</button>`).join("")}</span>
     </div>
   </div>
+  <div class="hl" id="hl"></div>
+  <div class="sec" style="margin-top:18px">전체 목록</div>
   <div class="card list" id="vlist"></div>`;
+}
+function highlights(base) {
+  const recent = base.filter(v => v.age <= 30);
+  const byWeek = recent.some(v => v.gain7 > 0);
+  const hot = recent.filter(v => byWeek ? v.gain7 > 0 : v.views > 0)
+    .sort((a, b) => byWeek ? b.gain7 - a.gain7 : b.per_day - a.per_day).slice(0, 3);
+  const top = [...base].sort((a, b) => b.views - a.views).filter(v => v.views > 0).slice(0, 3);
+  const row = (v, k, right) => `<a class="item" href="${esc(v.url)}" target="_blank" rel="noopener">
+    <span class="rank r${k}">${k + 1}</span>
+    ${v.thumb ? `<img class="thumb" src="${esc(v.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="thumb"></span>'}
+    <div style="min-width:0"><div class="t">${esc(v.title)}</div>
+      <div class="m"><span class="tag ${v.short ? "s" : "l"}">${v.short ? "쇼츠" : "본편"}</span><span class="dot" style="background:${color(v.ch)}"></span> ${esc(v.ch)}</div></div>
+    <div class="g">${right(v)}</div></a>`;
+  const box = (title, sub, arr, right) => `<div class="card"><div class="hlh"><b>${title}</b><span class="muted">${sub}</span></div>
+    <div class="list" style="padding:0">${arr.length ? arr.map((v, k) => row(v, k, right)).join("") : '<div class="empty">아직 없어요</div>'}</div></div>`;
+  return box("🚀 최근 급등", byWeek ? "최근 7일 조회수 증가" : "최근 30일 업로드 · 하루 평균 조회수", hot,
+      v => byWeek ? `<b class="up">▲${man(v.gain7)}</b><span class="muted">7일</span>` : `<b class="up">${man(v.per_day)}</b><span class="muted">회/일</span>`)
+    + box("🏆 조회수 TOP", "누적 조회수", top, v => `<b>${man(v.views)}</b><span class="muted">회</span>`);
 }
 function afterVideos() {
   const draw = () => {
     let arr = D.videos.filter(v => (state.vch === "all" || v.ch === state.vch) && (state.vtype === "all" || (state.vtype === "short") === v.short));
+    $("#hl").innerHTML = highlights(arr);
     if (state.vsort === "gain") arr.sort((a, b) => (b.gain ?? -1) - (a.gain ?? -1) || b.views - a.views);
     if (state.vsort === "new") arr.sort((a, b) => b.published.localeCompare(a.published));
     if (state.vsort === "views") arr.sort((a, b) => b.views - a.views);

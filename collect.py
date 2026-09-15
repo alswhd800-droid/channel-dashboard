@@ -278,8 +278,13 @@ def build(now, info, videos, vhist, hist):
     for vid, v in videos.items():
         h = vhist.get(vid, {})
         before = max([d for d in h if d < today], default=None)
+        week = [d for d in h if (now - timedelta(days=7)).strftime("%Y-%m-%d") <= d < today]
+        age = max(1.0, (now - datetime.fromisoformat(v["published"].replace("Z", "+00:00"))).total_seconds() / 86400)
         vids.append({"id": vid, "ch": v["ch"], "title": v["title"], "short": bool(v["short"]), "views": v["views"],
-                     "gain": (v["views"] - h[before]) if before else None, "published": v["published"][:10],
+                     "gain": (v["views"] - h[before]) if before else None,
+                     "gain7": (v["views"] - h[min(week)]) if week else None,     # 최근 7일(기록이 쌓인 만큼) 증가량
+                     "per_day": round(v["views"] / age, 1), "age": round(age, 1),  # 올린 뒤 하루 평균 조회수(기록 없을 때 급등 판단용)
+                     "published": v["published"][:10],
                      "dur": v["dur"], "thumb": v["thumb"], "likes": v["likes"], "comments": v["comments"],
                      "url": f"https://www.youtube.com/{'shorts/' if v['short'] else 'watch?v='}{vid}"})
 
