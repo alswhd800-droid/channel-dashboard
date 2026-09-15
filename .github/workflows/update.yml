@@ -2,12 +2,13 @@ name: 채널 통계 수집
 
 on:
   schedule:
-    - cron: "3-59/10 * * * *"   # 10분마다 (3분, 13분, 23분 …)
-  workflow_dispatch:             # 깃허브에서 [Run workflow]로 바로 실행
+    - cron: "3-59/10 * * * *"   # 10분마다 (깃허브 예약은 자주 밀리거나 빠져서, 아래 '이어 달리기'가 실제 주기를 맡음)
+  workflow_dispatch:             # 깃허브에서 [Run workflow]로 바로 실행 · 이어 달리기
 
 permissions:
   contents: write
   pages: write
+  actions: write
 
 concurrency:
   group: collect
@@ -16,7 +17,10 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
+      - name: 시작 시각 기록
+        run: echo "START=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -50,3 +54,17 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" --silent || echo "페이지 빌드 요청 실패(다음 실행 때 다시 시도)"
+      - name: 이어 달리기 (시작 10분 뒤 다음 실행을 스스로 부름, 이미 대기 중인 실행이 있으면 생략)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rest=$(( 600 - ($(date +%s) - START) ))
+          if [ "$rest" -gt 0 ]; then sleep "$rest"; fi
+          waiting=$(gh run list -R "$GITHUB_REPOSITORY" --workflow update.yml --limit 20 --json status \
+            --jq '[.[] | select(.status=="queued" or .status=="pending" or .status=="waiting" or .status=="requested")] | length')
+          if [ "${waiting:-0}" -eq 0 ]; then
+            gh workflow run update.yml -R "$GITHUB_REPOSITORY" --ref main && echo "다음 실행 예약됨"
+          else
+            echo "이미 대기 중인 실행이 있어 생략"
+          fi
