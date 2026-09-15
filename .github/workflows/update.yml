@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: collect
@@ -45,3 +46,7 @@ jobs:
           git add -A
           git commit -q -m "통계 업데이트 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M')"
           git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+      - name: 페이지 다시 올리기 요청 (봇 푸시는 자동으로 안 올라가서 직접 요청)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" --silent || echo "페이지 빌드 요청 실패(다음 실행 때 다시 시도)"
