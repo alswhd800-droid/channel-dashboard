@@ -8,9 +8,9 @@
 <title>채널 대시보드</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-:root{--bg:#f5f4f1;--card:#fff;--ink:#16161a;--sub:#6d6d75;--line:#e7e5e0;--soft:#efeee9;--up:#e0392b;--down:#2b6de0;--shorts:#ff3d55;--long:#3a3a42;--ok:#1f9d6b;--accent:#16161a;--accent-ink:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114}}
-:root[data-theme="dark"]{--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114}
+:root{--bg:#f5f4f1;--card:#fff;--ink:#16161a;--sub:#6d6d75;--line:#e7e5e0;--soft:#efeee9;--up:#e0392b;--down:#2b6de0;--shorts:#ff3d55;--long:#3a3a42;--ok:#1f9d6b;--accent:#16161a;--accent-ink:#fff;--tip:#fff7d6;--tip-ink:#5b4a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114;--tip:#2a2615;--tip-ink:#f3dd8a}}
+:root[data-theme="dark"]{--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114;--tip:#2a2615;--tip-ink:#f3dd8a}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
@@ -18,27 +18,28 @@ a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit}
 .wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:0 40px}
 .top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.top .in{max-width:1080px;margin:0 auto;padding-inline:16px;display:flex;align-items:center;gap:16px;height:58px}
+.top .in{max-width:1080px;margin:0 auto;padding-inline:16px;display:flex;align-items:center;gap:14px;height:58px}
 .brand{font-weight:800;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
 .upd{color:var(--sub);font-size:12px;margin-left:auto;text-align:right;white-space:nowrap}
-nav.tabs{display:flex;gap:4px}
-nav.tabs a{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;color:var(--sub);font-weight:600;font-size:14px}
+nav.tabs{display:flex;gap:2px}
+nav.tabs a{display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:10px;color:var(--sub);font-weight:600;font-size:14px;white-space:nowrap}
 nav.tabs a.on{background:var(--accent);color:var(--accent-ink)}
-nav.tabs .ic{font-size:15px}
-h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
+h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 .sec{font-size:15px;font-weight:700;margin:22px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sec a.more{font-size:13px;font-weight:500;color:var(--sub)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 .stat .k{color:var(--sub);font-size:12.5px}
 .stat .v{font-size:25px;font-weight:800;letter-spacing:-.02em;margin-top:2px}
 .stat .s{font-size:12.5px;color:var(--sub);margin-top:2px}
-.up{color:var(--up)}.down{color:var(--down)}.muted{color:var(--sub)}
+.up{color:var(--up)}.down{color:var(--down)}.muted{color:var(--sub)}.good{color:var(--ok)}
 .rows{padding:4px 14px}
 .crow{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr)) 18px;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
 .crow:first-child{border-top:0}
 .crow.head{color:var(--sub);font-size:12px;padding:10px 0 6px}
 .who{display:flex;align-items:center;gap:10px;min-width:0}
-.who img,.av{width:34px;height:34px;border-radius:50%;background:var(--soft);flex:none;object-fit:cover}
+.who img,.av{width:34px;height:34px;border-radius:50%;background:var(--soft);flex:none;object-fit:cover;display:inline-block}
 .who .n{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .who .h{color:var(--sub);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .num b{font-weight:700}.num .d{display:block;font-size:12px}
@@ -54,9 +55,8 @@ h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
 .chart{position:relative;height:260px}
 .split{height:8px;border-radius:4px;overflow:hidden;display:flex;background:var(--soft);margin-top:10px}
 .split i{display:block;height:100%}
-.legend{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:4px}
 .chhead{display:flex;align-items:center;gap:12px;margin:18px 0 12px}
-.chhead img,.chhead .av{width:52px;height:52px}
+.chhead img,.chhead .av{width:52px;height:52px;border-radius:50%;object-fit:cover}
 .chhead .n{font-size:21px;font-weight:800;letter-spacing:-.02em}
 .chhead .h{color:var(--sub);font-size:13px}
 .chhead .yt{margin-left:auto;font-size:13px;border:1px solid var(--line);border-radius:10px;padding:7px 11px;background:var(--card);white-space:nowrap}
@@ -64,7 +64,6 @@ h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
 .item{display:flex;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
 .item:first-child{border-top:0}
 .thumb{width:92px;height:52px;border-radius:8px;background:var(--soft);flex:none;object-fit:cover}
-.thumb.s{width:40px;height:62px}
 .item .t{font-size:14px;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .item .m{font-size:12px;color:var(--sub);margin-top:3px}
 .item .g{margin-left:auto;text-align:right;flex:none;padding-left:6px;font-size:13px}
@@ -79,7 +78,6 @@ h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
 .hlh .muted{font-size:11.5px;text-align:right}
 .rank{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--soft)}
 .rank.r0{background:#f2b705;color:#111}.rank.r1{background:#c9ccd3;color:#111}.rank.r2{background:#d08b52;color:#111}
-@media (max-width:760px){.hl{grid-template-columns:minmax(0,1fr)}}
 .money{margin-bottom:12px}
 .money .mh{display:flex;align-items:center;gap:10px}
 .money .mh .n{font-weight:800;font-size:16px}
@@ -100,8 +98,31 @@ h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
 .or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
 .alt{opacity:.55}
 .note{color:var(--sub);font-size:12.5px;line-height:1.55;margin:4px 2px 12px}
+.tip{background:var(--tip);color:var(--tip-ink);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.55;margin:0 0 12px}
+.tip b{font-weight:800}
+.alert{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.alert:first-child{border-top:0}
+.alert .ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;background:var(--soft)}
+.alert .at{font-size:14px;font-weight:700}
+.alert .ad{font-size:12.5px;color:var(--sub);margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.alert .aw{margin-left:auto;flex:none;font-size:11.5px;color:var(--sub);white-space:nowrap;padding-left:6px}
+.cp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.cp div{background:var(--soft);border-radius:10px;padding:7px 8px;font-size:12px}
+.cp b{display:block;font-size:14px;margin-top:1px}
+.cp .r{font-size:11.5px;font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{color:var(--sub);font-weight:500;font-size:12px;text-align:right;padding:8px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:10px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto}
+.hbar{display:grid;grid-template-columns:86px minmax(0,1fr) 70px;gap:10px;align-items:center;font-size:13px;margin:8px 0}
+.hbar .bar{height:14px;background:var(--soft);border-radius:7px;overflow:hidden}
+.hbar .bar i{display:block;height:100%;background:var(--accent);border-radius:7px}
+.hbar .bar i.best{background:var(--up)}
+.hbar span:last-child{text-align:right;color:var(--sub)}
 .bottom{display:none}
-@media (max-width:760px){
+@media (max-width:860px){
   .top nav.tabs{display:none}
   .top .in{height:52px}
   .bottom{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
@@ -111,6 +132,7 @@ h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
   .bottom a.on .ic{filter:none;opacity:1}
   .wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
   .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2,.hl{grid-template-columns:minmax(0,1fr)}
   .stat .v{font-size:21px}
   .crow{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) 14px}
   .crow .hide-m{display:none}
@@ -128,9 +150,10 @@ h2.pt{font-size:20px;margin:22px 0 12px;letter-spacing:-.02em}
 <main class="wrap" id="app"></main>
 <nav class="bottom" id="bottom"></nav>
 <script>
-const D = {"updated": "2026-09-15 13:57", "prev_day": null, "channels": [{"name": "이유상자", "handle": "@이유상자", "id": "UCH4OlU5YwOdC_5fF2MZ0dgQ", "title": "이유상자", "thumb": "https://yt3.ggpht.com/ObMmf9r8zHjHa0f3UYv3cMRjKSbT2JGxx6_gAlP8N4l_DLXqSJHqyRk95Zjemo_3VGkmQJsPGPk=s88-c-k-c0x00ffffff-no-rj", "subs": 2, "hidden": false, "views": 887, "videos": 2, "shorts_views": 865, "long_views": 8, "shorts_count": 1, "long_count": 1, "url": "https://www.youtube.com/channel/UCH4OlU5YwOdC_5fF2MZ0dgQ", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 2, "goal": 500, "pct": 0.4, "left": 498, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 2, "goal": 3, "pct": 66.66666666666666, "left": 1, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 3000, "pct": 0.006666666666666667, "left": 2999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 865, "goal": 3000000, "pct": 0.028833333333333332, "left": 2999135, "eta": null, "speed": null}], "overall": 0.028833333333333332, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 2, "goal": 1000, "pct": 0.2, "left": 998, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 4000, "pct": 0.005, "left": 3999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 865, "goal": 10000000, "pct": 0.00865, "left": 9999135, "eta": null, "speed": null}], "overall": 0.00865, "done": false, "best_path": "shorts90"}], "retention": 0.35}}, {"name": "돈구", "handle": "@돈구TV", "id": "UCTW1Dy2mEpRWAdZ12qVVL8A", "title": "돈구", "thumb": "https://yt3.ggpht.com/A6KuC_MWPrHSW7V3NEn8Tjs0Gxkbqi52YuiEsSuulu24bPeRBZIjqSH4rUsO3ie6QHfreT2EWQ=s88-c-k-c0x00ffffff-no-rj", "subs": 1, "hidden": false, "views": 10, "videos": 4, "shorts_views": 195, "long_views": 13, "shorts_count": 2, "long_count": 2, "url": "https://www.youtube.com/channel/UCTW1Dy2mEpRWAdZ12qVVL8A", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 500, "pct": 0.2, "left": 499, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 4, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 3000, "pct": 0.006666666666666667, "left": 2999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 195, "goal": 3000000, "pct": 0.0065, "left": 2999805, "eta": null, "speed": null}], "overall": 0.006666666666666667, "done": false, "best_path": "watch"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 1000, "pct": 0.1, "left": 999, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 4000, "pct": 0.005, "left": 3999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 195, "goal": 10000000, "pct": 0.00195, "left": 9999805, "eta": null, "speed": null}], "overall": 0.005, "done": false, "best_path": "watch"}], "retention": 0.35}}, {"name": "거인의무덤", "handle": "@거인의무덤", "id": "UCiQOGLTz89s8ZhWGxMp1JfA", "title": "거인의무덤", "thumb": "https://yt3.ggpht.com/extWTESDi9Cd7OznwqaNHYcMxlVQLGi_Ij1jT5KxGvaNz5hKv2UhI9f4u7_gUAyDs2dn0Y1-=s88-c-k-c0x00ffffff-no-rj", "subs": 1, "hidden": false, "views": 966, "videos": 3, "shorts_views": 901, "long_views": 7, "shorts_count": 2, "long_count": 1, "url": "https://www.youtube.com/channel/UCiQOGLTz89s8ZhWGxMp1JfA", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 500, "pct": 0.2, "left": 499, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 3, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.3, "goal": 3000, "pct": 0.009999999999999998, "left": 2999.7, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 901, "goal": 3000000, "pct": 0.030033333333333332, "left": 2999099, "eta": null, "speed": null}], "overall": 0.030033333333333332, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 1000, "pct": 0.1, "left": 999, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.3, "goal": 4000, "pct": 0.0075, "left": 3999.7, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 901, "goal": 10000000, "pct": 0.009009999999999999, "left": 9999099, "eta": null, "speed": null}], "overall": 0.009009999999999999, "done": false, "best_path": "shorts90"}], "retention": 0.35}}, {"name": "시술백과", "handle": "@시술백과", "id": "UCCbtZv--gwZNVVGovQl2KBg", "title": "시술백과", "thumb": "https://yt3.ggpht.com/wXI8iFWRGyClN1HTVWT1M36_8e_q4_xbUdt4XMOeY0VuqtYnmwtpV7FQr1-XhPI75VuTAX64YlM=s88-c-k-c0x00ffffff-no-rj", "subs": 0, "hidden": false, "views": 13, "videos": 8, "shorts_views": 1850, "long_views": 18, "shorts_count": 5, "long_count": 3, "url": "https://www.youtube.com/channel/UCCbtZv--gwZNVVGovQl2KBg", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 0, "goal": 500, "pct": 0.0, "left": 500, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 8, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.7, "goal": 3000, "pct": 0.023333333333333334, "left": 2999.3, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 1850, "goal": 3000000, "pct": 0.06166666666666666, "left": 2998150, "eta": null, "speed": null}], "overall": 0.0, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 0, "goal": 1000, "pct": 0.0, "left": 1000, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.7, "goal": 4000, "pct": 0.017499999999999998, "left": 3999.3, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 1850, "goal": 10000000, "pct": 0.0185, "left": 9998150, "eta": null, "speed": null}], "overall": 0.0, "done": false, "best_path": "shorts90"}], "retention": 0.35}}, {"name": "낮달DAYMOON", "handle": "@낮달DAYMOON", "id": "UCAy5fJTHLrG8WatQqUcJS0g", "title": "낮달 (DAYMOON)", "thumb": "https://yt3.ggpht.com/Xet4XKAwtKJqOm_lbSSr2DgsPI9j6rq3k8d-IYPlk5oeGhrPCpY2TN8J9uzrijfSYpbyV2cSjA=s88-c-k-c0x00ffffff-no-rj", "subs": 5, "hidden": false, "views": 2400, "videos": 5, "shorts_views": 2354, "long_views": 92, "shorts_count": 2, "long_count": 3, "url": "https://www.youtube.com/channel/UCAy5fJTHLrG8WatQqUcJS0g", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 5, "goal": 500, "pct": 1.0, "left": 495, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 5, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 1.8, "goal": 3000, "pct": 0.060000000000000005, "left": 2998.2, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 2354, "goal": 3000000, "pct": 0.07846666666666667, "left": 2997646, "eta": null, "speed": null}], "overall": 0.07846666666666667, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 5, "goal": 1000, "pct": 0.5, "left": 995, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 1.8, "goal": 4000, "pct": 0.045, "left": 3998.2, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 2354, "goal": 10000000, "pct": 0.023540000000000002, "left": 9997646, "eta": null, "speed": null}], "overall": 0.045, "done": false, "best_path": "watch"}], "retention": 0.35}}], "totals": {"subs": 9, "views": 4276, "shorts_views": 6165, "long_views": 138, "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null}, "series": {"dates": [], "by_channel": {"이유상자": {"views": [], "shorts": [], "long": [], "subs": []}, "돈구": {"views": [], "shorts": [], "long": [], "subs": []}, "거인의무덤": {"views": [], "shorts": [], "long": [], "subs": []}, "시술백과": {"views": [], "shorts": [], "long": [], "subs": []}, "낮달DAYMOON": {"views": [], "shorts": [], "long": [], "subs": []}}}, "videos": [{"id": "ybt8lt1b9KM", "ch": "이유상자", "title": "무료배송 받으려다 오히려 돈을 더 쓰는 이유", "short": true, "views": 865, "gain": null, "gain7": null, "per_day": 855.2, "age": 1.0, "published": "2026-09-14", "dur": 44, "thumb": "https://i.ytimg.com/vi/ybt8lt1b9KM/mqdefault.jpg", "likes": 1, "comments": 0, "url": "https://www.youtube.com/shorts/ybt8lt1b9KM"}, {"id": "BeikqKpZUZU", "ch": "이유상자", "title": "무료배송 받으려다 오히려 돈을 더 쓰는 이유", "short": false, "views": 8, "gain": null, "gain7": null, "per_day": 7.1, "age": 1.1, "published": "2026-09-14", "dur": 262, "thumb": "https://i.ytimg.com/vi/BeikqKpZUZU/mqdefault.jpg", "likes": 1, "comments": 0, "url": "https://www.youtube.com/watch?v=BeikqKpZUZU"}, {"id": "4PKek0G196s", "ch": "돈구", "title": "추석 선물세트, 낱개보다 최대 2배 비싸다 #shorts", "short": true, "views": 5, "gain": null, "gain7": null, "per_day": 5.0, "age": 1.0, "published": "2026-09-15", "dur": 25, "thumb": "https://i.ytimg.com/vi/4PKek0G196s/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/shorts/4PKek0G196s"}, {"id": "jzGY6yB2JdA", "ch": "돈구", "title": "확인 안 한 로또, 작년에만 581억 원이 버려졌습니다 (8월부터 바뀐 것)", "short": false, "views": 1, "gain": null, "gain7": null, "per_day": 1.0, "age": 1.0, "published": "2026-09-15", "dur": 107, "thumb": "https://i.ytimg.com/vi/jzGY6yB2JdA/mqdefault.jpg", "likes": 1, "comments": 0, "url": "https://www.youtube.com/watch?v=jzGY6yB2JdA"}, {"id": "o0M9aDgwuhQ", "ch": "돈구", "title": "선물세트 40% 할인의 비밀, 정가부터 올렸다면? #shorts", "short": true, "views": 190, "gain": null, "gain7": null, "per_day": 190.0, "age": 1.0, "published": "2026-09-15", "dur": 34, "thumb": "https://i.ytimg.com/vi/o0M9aDgwuhQ/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/shorts/o0M9aDgwuhQ"}, {"id": "eSrEdHcW0T4", "ch": "돈구", "title": "추석 선물세트, 세트로 사면 손해인 이유 (낱개보다 최대 103.7% 비쌌다)", "short": false, "views": 12, "gain": null, "gain7": null, "per_day": 11.1, "age": 1.1, "published": "2026-09-14", "dur": 124, "thumb": "https://i.ytimg.com/vi/eSrEdHcW0T4/mqdefault.jpg", "likes": 1, "comments": 0, "url": "https://www.youtube.com/watch?v=eSrEdHcW0T4"}, {"id": "wevsb-5h0oQ", "ch": "거인의무덤", "title": "손님이 늦을수록 돈을 번 회사, 블록버스터", "short": true, "views": 28, "gain": null, "gain7": null, "per_day": 28.0, "age": 1.0, "published": "2026-09-15", "dur": 47, "thumb": "https://i.ytimg.com/vi/wevsb-5h0oQ/mqdefault.jpg", "likes": 2, "comments": 0, "url": "https://www.youtube.com/shorts/wevsb-5h0oQ"}, {"id": "EI2VjyinG54", "ch": "거인의무덤", "title": "넷플릭스를 5,000만 달러에 살 수 있었던 회사의 최후", "short": true, "views": 873, "gain": null, "gain7": null, "per_day": 857.8, "age": 1.0, "published": "2026-09-14", "dur": 46, "thumb": "https://i.ytimg.com/vi/EI2VjyinG54/mqdefault.jpg", "likes": 5, "comments": 0, "url": "https://www.youtube.com/shorts/EI2VjyinG54"}, {"id": "tIjdSqsmqwg", "ch": "거인의무덤", "title": "넷플릭스를 5,000만 달러에 살 수 있었던 회사, 지금은 매장 1곳 남았습니다", "short": false, "views": 7, "gain": null, "gain7": null, "per_day": 6.5, "age": 1.1, "published": "2026-09-14", "dur": 399, "thumb": "https://i.ytimg.com/vi/tIjdSqsmqwg/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/watch?v=tIjdSqsmqwg"}, {"id": "S5TTjyfm-ek", "ch": "시술백과", "title": "레이저 고주파 초음파, 피부 몇 층까지? #피부과 #Shorts", "short": true, "views": 132, "gain": null, "gain7": null, "per_day": 132.0, "age": 1.0, "published": "2026-09-15", "dur": 28, "thumb": "https://i.ytimg.com/vi/S5TTjyfm-ek/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/shorts/S5TTjyfm-ek"}, {"id": "fwjhq9bJG18", "ch": "시술백과", "title": "피부 레이저·고주파·초음파 시술, 피부 몇 층까지 닿을까? 원리와 차이, 부작용과 관리까지 그림으로 정리", "short": false, "views": 0, "gain": null, "gain7": null, "per_day": 0.0, "age": 1.0, "published": "2026-09-15", "dur": 332, "thumb": "https://i.ytimg.com/vi/fwjhq9bJG18/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/watch?v=fwjhq9bJG18"}, {"id": "vEIN2F50ly4", "ch": "시술백과", "title": "시력 교정 수술 전에 꼭 알아 둘 것 #라식 #라섹 #Shorts", "short": true, "views": 169, "gain": null, "gain7": null, "per_day": 169.0, "age": 1.0, "published": "2026-09-15", "dur": 37, "thumb": "https://i.ytimg.com/vi/vEIN2F50ly4/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/shorts/vEIN2F50ly4"}, {"id": "4SHma_XLEqs", "ch": "시술백과", "title": "라식·라섹·스마일라식 차이 #라식 #라섹 #Shorts", "short": true, "views": 209, "gain": null, "gain7": null, "per_day": 209.0, "age": 1.0, "published": "2026-09-14", "dur": 32, "thumb": "https://i.ytimg.com/vi/4SHma_XLEqs/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/shorts/4SHma_XLEqs"}, {"id": "A1IVbRMtGEk", "ch": "시술백과", "title": "라식·라섹·스마일라식, 무엇이 다를까? 각막에서 일어나는 일부터 회복·부작용까지 그림으로 정리", "short": false, "views": 5, "gain": null, "gain7": null, "per_day": 5.0, "age": 1.0, "published": "2026-09-14", "dur": 397, "thumb": "https://i.ytimg.com/vi/A1IVbRMtGEk/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/watch?v=A1IVbRMtGEk"}, {"id": "jqvVvo094aQ", "ch": "시술백과", "title": "임플란트 오래 쓰려면? 주위염과 관리법 #임플란트 #Shorts", "short": true, "views": 1130, "gain": null, "gain7": null, "per_day": 1130.0, "age": 1.0, "published": "2026-09-14", "dur": 37, "thumb": "https://i.ytimg.com/vi/jqvVvo094aQ/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/shorts/jqvVvo094aQ"}, {"id": "l0ztMD8p03g", "ch": "시술백과", "title": "임플란트, 이렇게 심습니다 #임플란트 #Shorts", "short": true, "views": 210, "gain": null, "gain7": null, "per_day": 210.0, "age": 1.0, "published": "2026-09-14", "dur": 31, "thumb": "https://i.ytimg.com/vi/l0ztMD8p03g/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/shorts/l0ztMD8p03g"}, {"id": "Tc0XFOMNlOg", "ch": "시술백과", "title": "임플란트는 어떻게 심을까? 과정부터 뼈이식·부작용·관리까지 그림으로 정리", "short": false, "views": 13, "gain": null, "gain7": null, "per_day": 13.0, "age": 1.0, "published": "2026-09-14", "dur": 388, "thumb": "https://i.ytimg.com/vi/Tc0XFOMNlOg/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/watch?v=Tc0XFOMNlOg"}, {"id": "3j_ACR8gmck", "ch": "낮달DAYMOON", "title": "[Playlist] 괜히 마음이 흐려지는 밤 ☔ | 낮달 DAYMOON - 내 마음의 예보는 소나기 | 감성 락 플레이리스트", "short": false, "views": 2, "gain": null, "gain7": null, "per_day": 2.0, "age": 1.0, "published": "2026-09-15", "dur": 195, "thumb": "https://i.ytimg.com/vi/3j_ACR8gmck/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/watch?v=3j_ACR8gmck"}, {"id": "plTW-jpsrgA", "ch": "낮달DAYMOON", "title": "낮달 (DAYMOON) - 울어도 돼, 우린 여름이니까 (Official Audio)", "short": false, "views": 42, "gain": null, "gain7": null, "per_day": 26.2, "age": 1.6, "published": "2026-09-13", "dur": 217, "thumb": "https://i.ytimg.com/vi/plTW-jpsrgA/mqdefault.jpg", "likes": 2, "comments": 0, "url": "https://www.youtube.com/watch?v=plTW-jpsrgA"}, {"id": "WgqooAzmskw", "ch": "낮달DAYMOON", "title": "울어도 돼, 우린 여름이니까 🌙 | 낮달 DAYMOON #Shorts", "short": true, "views": 1129, "gain": null, "gain7": null, "per_day": 702.7, "age": 1.6, "published": "2026-09-13", "dur": 38, "thumb": "https://i.ytimg.com/vi/WgqooAzmskw/mqdefault.jpg", "likes": 3, "comments": 0, "url": "https://www.youtube.com/shorts/WgqooAzmskw"}, {"id": "CO5KJxkJW2w", "ch": "낮달DAYMOON", "title": "내 마음의 예보는 언제나 소나기 ☔ 낮달 DAYMOON #Shorts", "short": true, "views": 1225, "gain": null, "gain7": null, "per_day": 566.0, "age": 2.2, "published": "2026-09-13", "dur": 25, "thumb": "https://i.ytimg.com/vi/CO5KJxkJW2w/mqdefault.jpg", "likes": 4, "comments": 0, "url": "https://www.youtube.com/shorts/CO5KJxkJW2w"}, {"id": "jVlTlAJMfW0", "ch": "낮달DAYMOON", "title": "낮달 (DAYMOON) - 내 마음의 예보는 소나기 (Official Lyric Video)", "short": false, "views": 48, "gain": null, "gain7": null, "per_day": 22.1, "age": 2.2, "published": "2026-09-13", "dur": 195, "thumb": "https://i.ytimg.com/vi/jVlTlAJMfW0/mqdefault.jpg", "likes": 0, "comments": 0, "url": "https://www.youtube.com/watch?v=jVlTlAJMfW0"}]};
+const D = {"updated": "2026-09-15 14:20", "prev_day": null, "channels": [{"name": "이유상자", "handle": "@이유상자", "id": "UCH4OlU5YwOdC_5fF2MZ0dgQ", "title": "이유상자", "thumb": "https://yt3.ggpht.com/ObMmf9r8zHjHa0f3UYv3cMRjKSbT2JGxx6_gAlP8N4l_DLXqSJHqyRk95Zjemo_3VGkmQJsPGPk=s88-c-k-c0x00ffffff-no-rj", "subs": 2, "hidden": false, "views": 887, "videos": 2, "shorts_views": 865, "long_views": 8, "shorts_count": 1, "long_count": 1, "url": "https://www.youtube.com/channel/UCH4OlU5YwOdC_5fF2MZ0dgQ", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "likes": 2, "comments": 0, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 2, "goal": 500, "pct": 0.4, "left": 498, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 2, "goal": 3, "pct": 66.66666666666666, "left": 1, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 3000, "pct": 0.006666666666666667, "left": 2999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 865, "goal": 3000000, "pct": 0.028833333333333332, "left": 2999135, "eta": null, "speed": null}], "overall": 0.028833333333333332, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 2, "goal": 1000, "pct": 0.2, "left": 998, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 4000, "pct": 0.005, "left": 3999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 865, "goal": 10000000, "pct": 0.00865, "left": 9999135, "eta": null, "speed": null}], "overall": 0.00865, "done": false, "best_path": "shorts90"}], "retention": 0.35}}, {"name": "돈구", "handle": "@돈구TV", "id": "UCTW1Dy2mEpRWAdZ12qVVL8A", "title": "돈구", "thumb": "https://yt3.ggpht.com/A6KuC_MWPrHSW7V3NEn8Tjs0Gxkbqi52YuiEsSuulu24bPeRBZIjqSH4rUsO3ie6QHfreT2EWQ=s88-c-k-c0x00ffffff-no-rj", "subs": 1, "hidden": false, "views": 10, "videos": 4, "shorts_views": 208, "long_views": 13, "shorts_count": 2, "long_count": 2, "url": "https://www.youtube.com/channel/UCTW1Dy2mEpRWAdZ12qVVL8A", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "likes": 2, "comments": 0, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 500, "pct": 0.2, "left": 499, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 4, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 3000, "pct": 0.006666666666666667, "left": 2999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 208, "goal": 3000000, "pct": 0.006933333333333333, "left": 2999792, "eta": null, "speed": null}], "overall": 0.006933333333333333, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 1000, "pct": 0.1, "left": 999, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.2, "goal": 4000, "pct": 0.005, "left": 3999.8, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 208, "goal": 10000000, "pct": 0.0020800000000000003, "left": 9999792, "eta": null, "speed": null}], "overall": 0.005, "done": false, "best_path": "watch"}], "retention": 0.35}}, {"name": "거인의무덤", "handle": "@거인의무덤", "id": "UCiQOGLTz89s8ZhWGxMp1JfA", "title": "거인의무덤", "thumb": "https://yt3.ggpht.com/extWTESDi9Cd7OznwqaNHYcMxlVQLGi_Ij1jT5KxGvaNz5hKv2UhI9f4u7_gUAyDs2dn0Y1-=s88-c-k-c0x00ffffff-no-rj", "subs": 1, "hidden": false, "views": 966, "videos": 3, "shorts_views": 914, "long_views": 8, "shorts_count": 2, "long_count": 1, "url": "https://www.youtube.com/channel/UCiQOGLTz89s8ZhWGxMp1JfA", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "likes": 7, "comments": 0, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 500, "pct": 0.2, "left": 499, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 3, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.3, "goal": 3000, "pct": 0.009999999999999998, "left": 2999.7, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 914, "goal": 3000000, "pct": 0.03046666666666667, "left": 2999086, "eta": null, "speed": null}], "overall": 0.03046666666666667, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 1, "goal": 1000, "pct": 0.1, "left": 999, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.3, "goal": 4000, "pct": 0.0075, "left": 3999.7, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 914, "goal": 10000000, "pct": 0.00914, "left": 9999086, "eta": null, "speed": null}], "overall": 0.00914, "done": false, "best_path": "shorts90"}], "retention": 0.35}}, {"name": "시술백과", "handle": "@시술백과", "id": "UCCbtZv--gwZNVVGovQl2KBg", "title": "시술백과", "thumb": "https://yt3.ggpht.com/wXI8iFWRGyClN1HTVWT1M36_8e_q4_xbUdt4XMOeY0VuqtYnmwtpV7FQr1-XhPI75VuTAX64YlM=s88-c-k-c0x00ffffff-no-rj", "subs": 0, "hidden": false, "views": 13, "videos": 8, "shorts_views": 1827, "long_views": 21, "shorts_count": 5, "long_count": 3, "url": "https://www.youtube.com/channel/UCCbtZv--gwZNVVGovQl2KBg", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "likes": 0, "comments": 0, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 0, "goal": 500, "pct": 0.0, "left": 500, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 8, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.8, "goal": 3000, "pct": 0.02666666666666667, "left": 2999.2, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 1827, "goal": 3000000, "pct": 0.060899999999999996, "left": 2998173, "eta": null, "speed": null}], "overall": 0.0, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 0, "goal": 1000, "pct": 0.0, "left": 1000, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 0.8, "goal": 4000, "pct": 0.02, "left": 3999.2, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 1827, "goal": 10000000, "pct": 0.018269999999999998, "left": 9998173, "eta": null, "speed": null}], "overall": 0.0, "done": false, "best_path": "watch"}], "retention": 0.35}}, {"name": "낮달DAYMOON", "handle": "@낮달DAYMOON", "id": "UCAy5fJTHLrG8WatQqUcJS0g", "title": "낮달 (DAYMOON)", "thumb": "https://yt3.ggpht.com/Xet4XKAwtKJqOm_lbSSr2DgsPI9j6rq3k8d-IYPlk5oeGhrPCpY2TN8J9uzrijfSYpbyV2cSjA=s88-c-k-c0x00ffffff-no-rj", "subs": 5, "hidden": false, "views": 2400, "videos": 5, "shorts_views": 2354, "long_views": 92, "shorts_count": 2, "long_count": 3, "url": "https://www.youtube.com/channel/UCAy5fJTHLrG8WatQqUcJS0g", "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null, "likes": 9, "comments": 0, "money": {"tiers": [{"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 5, "goal": 500, "pct": 1.0, "left": 495, "eta": null, "speed": null}, {"key": "uploads90", "label": "최근 90일 공개 업로드", "unit": "개", "cur": 5, "goal": 3, "pct": 100.0, "left": 0, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 1.8, "goal": 3000, "pct": 0.060000000000000005, "left": 2998.2, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 2354, "goal": 3000000, "pct": 0.07846666666666667, "left": 2997646, "eta": null, "speed": null}], "overall": 0.07846666666666667, "done": false, "best_path": "shorts90"}, {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유", "items": [{"key": "subs", "label": "구독자", "unit": "명", "cur": 5, "goal": 1000, "pct": 0.5, "left": 995, "eta": null, "speed": null}, {"key": "watch", "label": "최근 12개월 본편 시청 시간(추정)", "unit": "시간", "cur": 1.8, "goal": 4000, "pct": 0.045, "left": 3998.2, "eta": null, "speed": null}, {"key": "shorts90", "label": "최근 90일 쇼츠 조회수", "unit": "회", "cur": 2354, "goal": 10000000, "pct": 0.023540000000000002, "left": 9997646, "eta": null, "speed": null}], "overall": 0.045, "done": false, "best_path": "watch"}], "retention": 0.35}}], "totals": {"subs": 9, "views": 4276, "shorts_views": 6168, "long_views": 142, "d_subs": null, "d_views": null, "d_shorts": null, "d_long": null}, "series": {"dates": [], "by_channel": {"이유상자": {"views": [], "shorts": [], "long": [], "subs": []}, "돈구": {"views": [], "shorts": [], "long": [], "subs": []}, "거인의무덤": {"views": [], "shorts": [], "long": [], "subs": []}, "시술백과": {"views": [], "shorts": [], "long": [], "subs": []}, "낮달DAYMOON": {"views": [], "shorts": [], "long": [], "subs": []}}}, "videos": [{"id": "ybt8lt1b9KM", "ch": "이유상자", "title": "무료배송 받으려다 오히려 돈을 더 쓰는 이유", "short": true, "views": 865, "gain": null, "gain7": null, "per_day": 842.0, "age": 1.03, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 13, "dur": 44, "thumb": "https://i.ytimg.com/vi/ybt8lt1b9KM/mqdefault.jpg", "likes": 1, "comments": 0, "like_rate": 0.12, "comment_rate": 0.0, "early": {"24": {"views": 865, "ratio": null, "median": null}}, "tracked": true, "url": "https://www.youtube.com/shorts/ybt8lt1b9KM"}, {"id": "BeikqKpZUZU", "ch": "이유상자", "title": "무료배송 받으려다 오히려 돈을 더 쓰는 이유", "short": false, "views": 8, "gain": null, "gain7": null, "per_day": 7.0, "age": 1.14, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 11, "dur": 262, "thumb": "https://i.ytimg.com/vi/BeikqKpZUZU/mqdefault.jpg", "likes": 1, "comments": 0, "like_rate": 12.5, "comment_rate": 0.0, "early": {"24": {"views": 8, "ratio": null, "median": null}}, "tracked": true, "url": "https://www.youtube.com/watch?v=BeikqKpZUZU"}, {"id": "4PKek0G196s", "ch": "돈구", "title": "추석 선물세트, 낱개보다 최대 2배 비싸다 #shorts", "short": true, "views": 12, "gain": null, "gain7": null, "per_day": 12.0, "age": 0.03, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 13, "dur": 25, "thumb": "https://i.ytimg.com/vi/4PKek0G196s/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/4PKek0G196s"}, {"id": "jzGY6yB2JdA", "ch": "돈구", "title": "확인 안 한 로또, 작년에만 581억 원이 버려졌습니다 (8월부터 바뀐 것)", "short": false, "views": 1, "gain": null, "gain7": null, "per_day": 1.0, "age": 0.1, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 12, "dur": 107, "thumb": "https://i.ytimg.com/vi/jzGY6yB2JdA/mqdefault.jpg", "likes": 1, "comments": 0, "like_rate": 100.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/watch?v=jzGY6yB2JdA"}, {"id": "o0M9aDgwuhQ", "ch": "돈구", "title": "선물세트 40% 할인의 비밀, 정가부터 올렸다면? #shorts", "short": true, "views": 196, "gain": null, "gain7": null, "per_day": 196.0, "age": 0.13, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 11, "dur": 34, "thumb": "https://i.ytimg.com/vi/o0M9aDgwuhQ/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/o0M9aDgwuhQ"}, {"id": "eSrEdHcW0T4", "ch": "돈구", "title": "추석 선물세트, 세트로 사면 손해인 이유 (낱개보다 최대 103.7% 비쌌다)", "short": false, "views": 12, "gain": null, "gain7": null, "per_day": 11.0, "age": 1.1, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 12, "dur": 124, "thumb": "https://i.ytimg.com/vi/eSrEdHcW0T4/mqdefault.jpg", "likes": 1, "comments": 0, "like_rate": 8.33, "comment_rate": 0.0, "early": {"24": {"views": 12, "ratio": null, "median": null}}, "tracked": true, "url": "https://www.youtube.com/watch?v=eSrEdHcW0T4"}, {"id": "wevsb-5h0oQ", "ch": "거인의무덤", "title": "손님이 늦을수록 돈을 번 회사, 블록버스터", "short": true, "views": 20, "gain": null, "gain7": null, "per_day": 20.0, "age": 0.16, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 10, "dur": 47, "thumb": "https://i.ytimg.com/vi/wevsb-5h0oQ/mqdefault.jpg", "likes": 2, "comments": 0, "like_rate": 10.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/wevsb-5h0oQ"}, {"id": "EI2VjyinG54", "ch": "거인의무덤", "title": "넷플릭스를 5,000만 달러에 살 수 있었던 회사의 최후", "short": true, "views": 894, "gain": null, "gain7": null, "per_day": 864.9, "age": 1.03, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 13, "dur": 46, "thumb": "https://i.ytimg.com/vi/EI2VjyinG54/mqdefault.jpg", "likes": 5, "comments": 0, "like_rate": 0.56, "comment_rate": 0.0, "early": {"24": {"views": 894, "ratio": null, "median": null}}, "tracked": true, "url": "https://www.youtube.com/shorts/EI2VjyinG54"}, {"id": "tIjdSqsmqwg", "ch": "거인의무덤", "title": "넷플릭스를 5,000만 달러에 살 수 있었던 회사, 지금은 매장 1곳 남았습니다", "short": false, "views": 8, "gain": null, "gain7": null, "per_day": 7.3, "age": 1.1, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 12, "dur": 399, "thumb": "https://i.ytimg.com/vi/tIjdSqsmqwg/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {"24": {"views": 8, "ratio": null, "median": null}}, "tracked": true, "url": "https://www.youtube.com/watch?v=tIjdSqsmqwg"}, {"id": "S5TTjyfm-ek", "ch": "시술백과", "title": "레이저 고주파 초음파, 피부 몇 층까지? #피부과 #Shorts", "short": true, "views": 86, "gain": null, "gain7": null, "per_day": 86.0, "age": 0.05, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 13, "dur": 28, "thumb": "https://i.ytimg.com/vi/S5TTjyfm-ek/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/S5TTjyfm-ek"}, {"id": "fwjhq9bJG18", "ch": "시술백과", "title": "피부 레이저·고주파·초음파 시술, 피부 몇 층까지 닿을까? 원리와 차이, 부작용과 관리까지 그림으로 정리", "short": false, "views": 0, "gain": null, "gain7": null, "per_day": 0.0, "age": 0.09, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 12, "dur": 332, "thumb": "https://i.ytimg.com/vi/fwjhq9bJG18/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": null, "comment_rate": null, "early": {}, "tracked": true, "url": "https://www.youtube.com/watch?v=fwjhq9bJG18"}, {"id": "vEIN2F50ly4", "ch": "시술백과", "title": "시력 교정 수술 전에 꼭 알아 둘 것 #라식 #라섹 #Shorts", "short": true, "views": 191, "gain": null, "gain7": null, "per_day": 191.0, "age": 0.22, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 9, "dur": 37, "thumb": "https://i.ytimg.com/vi/vEIN2F50ly4/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/vEIN2F50ly4"}, {"id": "4SHma_XLEqs", "ch": "시술백과", "title": "라식·라섹·스마일라식 차이 #라식 #라섹 #Shorts", "short": true, "views": 209, "gain": null, "gain7": null, "per_day": 209.0, "age": 0.58, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 0, "dur": 32, "thumb": "https://i.ytimg.com/vi/4SHma_XLEqs/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/4SHma_XLEqs"}, {"id": "A1IVbRMtGEk", "ch": "시술백과", "title": "라식·라섹·스마일라식, 무엇이 다를까? 각막에서 일어나는 일부터 회복·부작용까지 그림으로 정리", "short": false, "views": 5, "gain": null, "gain7": null, "per_day": 5.0, "age": 0.87, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 17, "dur": 397, "thumb": "https://i.ytimg.com/vi/A1IVbRMtGEk/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/watch?v=A1IVbRMtGEk"}, {"id": "jqvVvo094aQ", "ch": "시술백과", "title": "임플란트 오래 쓰려면? 주위염과 관리법 #임플란트 #Shorts", "short": true, "views": 1130, "gain": null, "gain7": null, "per_day": 1130.0, "age": 0.88, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 17, "dur": 37, "thumb": "https://i.ytimg.com/vi/jqvVvo094aQ/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/jqvVvo094aQ"}, {"id": "l0ztMD8p03g", "ch": "시술백과", "title": "임플란트, 이렇게 심습니다 #임플란트 #Shorts", "short": true, "views": 211, "gain": null, "gain7": null, "per_day": 211.0, "age": 0.91, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 16, "dur": 31, "thumb": "https://i.ytimg.com/vi/l0ztMD8p03g/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/l0ztMD8p03g"}, {"id": "Tc0XFOMNlOg", "ch": "시술백과", "title": "임플란트는 어떻게 심을까? 과정부터 뼈이식·부작용·관리까지 그림으로 정리", "short": false, "views": 16, "gain": null, "gain7": null, "per_day": 16.0, "age": 0.98, "published": "2026-09-14", "pub_wd": 0, "pub_hour": 14, "dur": 388, "thumb": "https://i.ytimg.com/vi/Tc0XFOMNlOg/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/watch?v=Tc0XFOMNlOg"}, {"id": "3j_ACR8gmck", "ch": "낮달DAYMOON", "title": "[Playlist] 괜히 마음이 흐려지는 밤 ☔ | 낮달 DAYMOON - 내 마음의 예보는 소나기 | 감성 락 플레이리스트", "short": false, "views": 2, "gain": null, "gain7": null, "per_day": 2.0, "age": 0.03, "published": "2026-09-15", "pub_wd": 1, "pub_hour": 13, "dur": 195, "thumb": "https://i.ytimg.com/vi/3j_ACR8gmck/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/watch?v=3j_ACR8gmck"}, {"id": "plTW-jpsrgA", "ch": "낮달DAYMOON", "title": "낮달 (DAYMOON) - 울어도 돼, 우린 여름이니까 (Official Audio)", "short": false, "views": 42, "gain": null, "gain7": null, "per_day": 26.0, "age": 1.62, "published": "2026-09-13", "pub_wd": 6, "pub_hour": 23, "dur": 217, "thumb": "https://i.ytimg.com/vi/plTW-jpsrgA/mqdefault.jpg", "likes": 2, "comments": 0, "like_rate": 4.76, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/watch?v=plTW-jpsrgA"}, {"id": "WgqooAzmskw", "ch": "낮달DAYMOON", "title": "울어도 돼, 우린 여름이니까 🌙 | 낮달 DAYMOON #Shorts", "short": true, "views": 1129, "gain": null, "gain7": null, "per_day": 695.7, "age": 1.62, "published": "2026-09-13", "pub_wd": 6, "pub_hour": 23, "dur": 38, "thumb": "https://i.ytimg.com/vi/WgqooAzmskw/mqdefault.jpg", "likes": 3, "comments": 0, "like_rate": 0.27, "comment_rate": 0.0, "early": {}, "tracked": true, "url": "https://www.youtube.com/shorts/WgqooAzmskw"}, {"id": "CO5KJxkJW2w", "ch": "낮달DAYMOON", "title": "내 마음의 예보는 언제나 소나기 ☔ 낮달 DAYMOON #Shorts", "short": true, "views": 1225, "gain": null, "gain7": null, "per_day": 561.8, "age": 2.18, "published": "2026-09-13", "pub_wd": 6, "pub_hour": 10, "dur": 25, "thumb": "https://i.ytimg.com/vi/CO5KJxkJW2w/mqdefault.jpg", "likes": 4, "comments": 0, "like_rate": 0.33, "comment_rate": 0.0, "early": {"48": {"views": 1225, "ratio": null, "median": null}}, "tracked": true, "url": "https://www.youtube.com/shorts/CO5KJxkJW2w"}, {"id": "jVlTlAJMfW0", "ch": "낮달DAYMOON", "title": "낮달 (DAYMOON) - 내 마음의 예보는 소나기 (Official Lyric Video)", "short": false, "views": 48, "gain": null, "gain7": null, "per_day": 21.9, "age": 2.19, "published": "2026-09-13", "pub_wd": 6, "pub_hour": 9, "dur": 195, "thumb": "https://i.ytimg.com/vi/jVlTlAJMfW0/mqdefault.jpg", "likes": 0, "comments": 0, "like_rate": 0.0, "comment_rate": 0.0, "early": {"48": {"views": 48, "ratio": null, "median": null}}, "tracked": true, "url": "https://www.youtube.com/watch?v=jVlTlAJMfW0"}], "alerts": [], "weekly": {"days": 0, "from": "2026-09-15", "to": "2026-09-15", "channels": [{"name": "이유상자", "thumb": "https://yt3.ggpht.com/ObMmf9r8zHjHa0f3UYv3cMRjKSbT2JGxx6_gAlP8N4l_DLXqSJHqyRk95Zjemo_3VGkmQJsPGPk=s88-c-k-c0x00ffffff-no-rj", "d_views": 0, "d_subs": 0, "d_shorts": 0, "d_long": 0, "subs_per_1k": null, "uploads": 0, "best": null, "ads_now": 0.00865, "ads_before": 0.01}, {"name": "돈구", "thumb": "https://yt3.ggpht.com/A6KuC_MWPrHSW7V3NEn8Tjs0Gxkbqi52YuiEsSuulu24bPeRBZIjqSH4rUsO3ie6QHfreT2EWQ=s88-c-k-c0x00ffffff-no-rj", "d_views": 0, "d_subs": 0, "d_shorts": 0, "d_long": 0, "subs_per_1k": null, "uploads": 0, "best": null, "ads_now": 0.005, "ads_before": 0.01}, {"name": "거인의무덤", "thumb": "https://yt3.ggpht.com/extWTESDi9Cd7OznwqaNHYcMxlVQLGi_Ij1jT5KxGvaNz5hKv2UhI9f4u7_gUAyDs2dn0Y1-=s88-c-k-c0x00ffffff-no-rj", "d_views": 0, "d_subs": 0, "d_shorts": 0, "d_long": 0, "subs_per_1k": null, "uploads": 0, "best": null, "ads_now": 0.00914, "ads_before": 0.01}, {"name": "시술백과", "thumb": "https://yt3.ggpht.com/wXI8iFWRGyClN1HTVWT1M36_8e_q4_xbUdt4XMOeY0VuqtYnmwtpV7FQr1-XhPI75VuTAX64YlM=s88-c-k-c0x00ffffff-no-rj", "d_views": 0, "d_subs": 0, "d_shorts": 0, "d_long": 0, "subs_per_1k": null, "uploads": 0, "best": null, "ads_now": 0.0, "ads_before": 0.0}, {"name": "낮달DAYMOON", "thumb": "https://yt3.ggpht.com/Xet4XKAwtKJqOm_lbSSr2DgsPI9j6rq3k8d-IYPlk5oeGhrPCpY2TN8J9uzrijfSYpbyV2cSjA=s88-c-k-c0x00ffffff-no-rj", "d_views": 0, "d_subs": 0, "d_shorts": 0, "d_long": 0, "subs_per_1k": null, "uploads": 0, "best": null, "ads_now": 0.045, "ads_before": 0.04}], "total": {"d_views": 0, "d_subs": 0, "d_shorts": 0, "d_long": 0}}, "timing": {"weekday": [{"label": "월", "n": 5, "avg": 357.4}, {"label": "화", "n": 0, "avg": null}, {"label": "수", "n": 0, "avg": null}, {"label": "목", "n": 0, "avg": null}, {"label": "금", "n": 0, "avg": null}, {"label": "토", "n": 0, "avg": null}, {"label": "일", "n": 4, "avg": 326.4}], "slot": [{"label": "새벽 0~6시", "n": 0, "avg": null}, {"label": "오전 6~12시", "n": 3, "avg": 196.9}, {"label": "오후 12~18시", "n": 4, "avg": 444.8}, {"label": "저녁 18~24시", "n": 2, "avg": 360.9}], "n": 9}, "bench": {"at": "2026-09-15T14:20+09:00", "channels": [{"name": "사물궁이", "for": "이유상자", "handle": "@사물궁이", "url": "https://www.youtube.com/channel/UC7F6UDq3gykPZHWRhrj_BDw", "thumb": "https://yt3.ggpht.com/c7ipv3Vv-wOa8s_GEnuJKe6jWeFVi3BGJpofYie1iEBgpkooQ2gXhj00LYEnPhD3ecFpKJDM1g=s88-c-k-c0x00ffffff-no-rj", "subs": 1560000, "videos": 634}, {"name": "지식한입", "for": "이유상자", "handle": "@지식한입", "url": "https://www.youtube.com/channel/UCi9Sl8GnFdYoqEVXnojBPJw", "thumb": "https://yt3.ggpht.com/ytc/AIdro_kG93kRXs14VI26OERRcQJa2WAy08BJ957pIPgqGoxQsmY=s88-c-k-c0x00ffffff-no-rj", "subs": 1470000, "videos": 269}, {"name": "스토리", "for": "이유상자", "handle": "@스토리", "url": "https://www.youtube.com/channel/UCm2PiWccs-otbzhjiNXHu5g", "thumb": "https://yt3.ggpht.com/ArBE4TRbn2hcjtgT8OCJpEPFG6mMOb7dI_SlP7UYBfjol6LdM3o3_nx2tB6DtiviRTgrQBL9FQ=s88-c-k-c0x00ffffff-no-rj", "subs": 1930000, "videos": 99}, {"name": "호갱구조대", "for": "돈구", "handle": "@hogang119", "url": "https://www.youtube.com/channel/UCbVcA0cFsYE8sTHQdl8b9Ww", "thumb": "https://yt3.ggpht.com/xFpLFceWb7A4lWhJBEKF20KDsHkwozhy9dvJr1JjvHI9_RuRByi6Tpveg_hZ8USdxqfOCzHy_A8=s88-c-k-c0x00ffffff-no-rj", "subs": 1220000, "videos": 230}, {"name": "1분만", "for": "돈구", "handle": "@just1min", "url": "https://www.youtube.com/channel/UCM31rBPQdifQKUmBKtwVqBg", "thumb": "https://yt3.ggpht.com/FZYzoJZLJnxjLZs1MJd9uToaafk4WUJSmrKwU-rV4nzsGbhHYvtvTEFNbSLG80wS8gz6LJ7CJA=s88-c-k-c0x00ffffff-no-rj", "subs": 1150000, "videos": 4258}, {"name": "14F 일사에프", "for": "돈구", "handle": "@14fmbc", "url": "https://www.youtube.com/channel/UCLKuglhGlMmDteQKoniENIQ", "thumb": "https://yt3.ggpht.com/v_nxcQoJZh_AofyziHgvoC10BNOmdRWhEmiSWCvPZtXtcdPg5NK9kOxno4Q_kIaaWIH-k8LCXA=s88-c-k-c0x00ffffff-no-rj", "subs": 2390000, "videos": 6434}], "videos": [{"id": "-A4EWhe1eNk", "ch": "14F 일사에프", "title": "유럽인 냉장고에 무조건 있다는 유제품 브랜드 알라🥄ㅣ돈슐랭 / 14F", "short": false, "views": 225929, "per_day": 225929.0, "age": 0.8, "thumb": "https://i.ytimg.com/vi/-A4EWhe1eNk/mqdefault.jpg", "published": "2026-09-14", "url": "https://www.youtube.com/watch?v=-A4EWhe1eNk"}, {"id": "c-_O_A0lCYA", "ch": "지식한입", "title": "제조 강국 독일 마저 중국에 무너진다?", "short": false, "views": 596821, "per_day": 190133.0, "age": 3.1, "thumb": "https://i.ytimg.com/vi/c-_O_A0lCYA/mqdefault.jpg", "published": "2026-09-12", "url": "https://www.youtube.com/watch?v=c-_O_A0lCYA"}, {"id": "LClS57LfXq8", "ch": "1분만", "title": "해병대 전우회 컨테이너의 비밀", "short": false, "views": 693886, "per_day": 182335.2, "age": 3.8, "thumb": "https://i.ytimg.com/vi/LClS57LfXq8/mqdefault.jpg", "published": "2026-09-11", "url": "https://www.youtube.com/watch?v=LClS57LfXq8"}, {"id": "hha_Zzjrf8A", "ch": "1분만", "title": "국중박 굿즈 근황", "short": true, "views": 1129023, "per_day": 163891.1, "age": 6.9, "thumb": "https://i.ytimg.com/vi/hha_Zzjrf8A/mqdefault.jpg", "published": "2026-09-08", "url": "https://www.youtube.com/shorts/hha_Zzjrf8A"}, {"id": "9xcrzK5BIy8", "ch": "1분만", "title": "유튜브 조회수 뻥튀기?", "short": true, "views": 367014, "per_day": 98596.3, "age": 3.7, "thumb": "https://i.ytimg.com/vi/9xcrzK5BIy8/mqdefault.jpg", "published": "2026-09-11", "url": "https://www.youtube.com/shorts/9xcrzK5BIy8"}, {"id": "BpcNLVlLGnc", "ch": "14F 일사에프", "title": "티빙 개인정보 유출 총정리ㅣ테슬라 로보택시 출시 등 4가지 🥬경제 이슈🥬", "short": false, "views": 197944, "per_day": 96301.1, "age": 2.1, "thumb": "https://i.ytimg.com/vi/BpcNLVlLGnc/mqdefault.jpg", "published": "2026-09-13", "url": "https://www.youtube.com/watch?v=BpcNLVlLGnc"}, {"id": "VXlN9GHVMAE", "ch": "1분만", "title": "라식 라섹 차이가 뭐임?", "short": true, "views": 462287, "per_day": 94563.9, "age": 4.9, "thumb": "https://i.ytimg.com/vi/VXlN9GHVMAE/mqdefault.jpg", "published": "2026-09-10", "url": "https://www.youtube.com/shorts/VXlN9GHVMAE"}, {"id": "V_M9xDIMN-Q", "ch": "1분만", "title": "손이 쭈글해지는 진짜 이유", "short": false, "views": 156836, "per_day": 86867.7, "age": 1.8, "thumb": "https://i.ytimg.com/vi/V_M9xDIMN-Q/mqdefault.jpg", "published": "2026-09-13", "url": "https://www.youtube.com/watch?v=V_M9xDIMN-Q"}, {"id": "qpbhC1kwV8Q", "ch": "14F 일사에프", "title": "나만의 옥을 찾아서… ‘옥반지’ 유행 / 14F", "short": false, "views": 333539, "per_day": 86683.1, "age": 3.8, "thumb": "https://i.ytimg.com/vi/qpbhC1kwV8Q/mqdefault.jpg", "published": "2026-09-11", "url": "https://www.youtube.com/watch?v=qpbhC1kwV8Q"}, {"id": "Mvm5wweMnjg", "ch": "14F 일사에프", "title": "데뷔와 동시에 화제성 1위… 효리수 ‘Skibidi’ 차트 1위 기록 / 14F", "short": false, "views": 655325, "per_day": 84199.0, "age": 7.8, "thumb": "https://i.ytimg.com/vi/Mvm5wweMnjg/mqdefault.jpg", "published": "2026-09-07", "url": "https://www.youtube.com/watch?v=Mvm5wweMnjg"}, {"id": "oIoZuGVMbrk", "ch": "1분만", "title": "소심한 사람 특! 이런 적 없었어?", "short": true, "views": 389320, "per_day": 82445.3, "age": 4.7, "thumb": "https://i.ytimg.com/vi/oIoZuGVMbrk/mqdefault.jpg", "published": "2026-09-10", "url": "https://www.youtube.com/shorts/oIoZuGVMbrk"}, {"id": "zl4NaKkkOFE", "ch": "지식한입", "title": "같이 나락 갔다 혼자 탈출한 아디다스 근황", "short": false, "views": 777520, "per_day": 76685.9, "age": 10.1, "thumb": "https://i.ytimg.com/vi/zl4NaKkkOFE/mqdefault.jpg", "published": "2026-09-05", "url": "https://www.youtube.com/watch?v=zl4NaKkkOFE"}, {"id": "SSCUcyA6SKE", "ch": "1분만", "title": "요즘은 세대차이 노래가 이거라고?", "short": true, "views": 882222, "per_day": 74206.3, "age": 11.9, "thumb": "https://i.ytimg.com/vi/SSCUcyA6SKE/mqdefault.jpg", "published": "2026-09-03", "url": "https://www.youtube.com/shorts/SSCUcyA6SKE"}, {"id": "RrWwrZPTSIQ", "ch": "1분만", "title": "은행에 있는 접시 왜 씀?", "short": true, "views": 925649, "per_day": 72758.5, "age": 12.7, "thumb": "https://i.ytimg.com/vi/RrWwrZPTSIQ/mqdefault.jpg", "published": "2026-09-02", "url": "https://www.youtube.com/shorts/RrWwrZPTSIQ"}, {"id": "IOqcuHuavrs", "ch": "14F 일사에프", "title": "“현금 어디서 뽑아요?”... 편의점 ATM 마저도 감소 / 14F", "short": false, "views": 71609, "per_day": 71609.0, "age": 0.9, "thumb": "https://i.ytimg.com/vi/IOqcuHuavrs/mqdefault.jpg", "published": "2026-09-14", "url": "https://www.youtube.com/watch?v=IOqcuHuavrs"}, {"id": "3EslXfkP8nA", "ch": "1분만", "title": "그런데 넌 냄새나", "short": true, "views": 185917, "per_day": 68298.2, "age": 2.7, "thumb": "https://i.ytimg.com/vi/3EslXfkP8nA/mqdefault.jpg", "published": "2026-09-12", "url": "https://www.youtube.com/shorts/3EslXfkP8nA"}, {"id": "1Rb5qYVGRNQ", "ch": "14F 일사에프", "title": "리센느 원이의 ‘언밸런스 암스’... 이선민과 7개월 만에 지킨 약속 / 14F", "short": false, "views": 731649, "per_day": 67652.7, "age": 10.8, "thumb": "https://i.ytimg.com/vi/1Rb5qYVGRNQ/mqdefault.jpg", "published": "2026-09-04", "url": "https://www.youtube.com/watch?v=1Rb5qYVGRNQ"}, {"id": "X6CoduUj64o", "ch": "14F 일사에프", "title": "세계의 화물이 한국으로? 세계 2위 환적항된 부산항 / 14F", "short": false, "views": 725408, "per_day": 66746.1, "age": 10.9, "thumb": "https://i.ytimg.com/vi/X6CoduUj64o/mqdefault.jpg", "published": "2026-09-04", "url": "https://www.youtube.com/watch?v=X6CoduUj64o"}, {"id": "KrJY2NN4B1s", "ch": "14F 일사에프", "title": "이제 미국만 믿을 수 없다 서둘러 청년들 군대로 부르는 유럽... 징병제 돌아오나 / 14F", "short": false, "views": 371310, "per_day": 63728.2, "age": 5.8, "thumb": "https://i.ytimg.com/vi/KrJY2NN4B1s/mqdefault.jpg", "published": "2026-09-09", "url": "https://www.youtube.com/watch?v=KrJY2NN4B1s"}, {"id": "gLguyhGBbsQ", "ch": "1분만", "title": "이거 영화라고 합니다", "short": false, "views": 358155, "per_day": 61693.0, "age": 5.8, "thumb": "https://i.ytimg.com/vi/gLguyhGBbsQ/mqdefault.jpg", "published": "2026-09-09", "url": "https://www.youtube.com/watch?v=gLguyhGBbsQ"}, {"id": "tZVizHjC7x0", "ch": "1분만", "title": "있을 법도 한데", "short": true, "views": 57953, "per_day": 57953.0, "age": 0.9, "thumb": "https://i.ytimg.com/vi/tZVizHjC7x0/mqdefault.jpg", "published": "2026-09-14", "url": "https://www.youtube.com/shorts/tZVizHjC7x0"}, {"id": "Yj768q_nl5k", "ch": "1분만", "title": "건포도 식빵 누가 만들었냐", "short": true, "views": 331164, "per_day": 57875.2, "age": 5.7, "thumb": "https://i.ytimg.com/vi/Yj768q_nl5k/mqdefault.jpg", "published": "2026-09-09", "url": "https://www.youtube.com/shorts/Yj768q_nl5k"}, {"id": "w5ywRJ-7y8w", "ch": "1분만", "title": "갑자기 법원에 오라고?", "short": true, "views": 213580, "per_day": 54919.6, "age": 3.9, "thumb": "https://i.ytimg.com/vi/w5ywRJ-7y8w/mqdefault.jpg", "published": "2026-09-11", "url": "https://www.youtube.com/shorts/w5ywRJ-7y8w"}, {"id": "pCsfr6K1sr0", "ch": "1분만", "title": "익스플로러 망한 이유", "short": true, "views": 426546, "per_day": 47985.7, "age": 8.9, "thumb": "https://i.ytimg.com/vi/pCsfr6K1sr0/mqdefault.jpg", "published": "2026-09-06", "url": "https://www.youtube.com/shorts/pCsfr6K1sr0"}, {"id": "Sf7nG6FBrfk", "ch": "1분만", "title": "달이 언젠간 없어질 거라고?", "short": true, "views": 414830, "per_day": 47560.4, "age": 8.7, "thumb": "https://i.ytimg.com/vi/Sf7nG6FBrfk/mqdefault.jpg", "published": "2026-09-06", "url": "https://www.youtube.com/shorts/Sf7nG6FBrfk"}, {"id": "RdknkxcZmBs", "ch": "1분만", "title": "요즘 주휴수당 못 받는 이유", "short": true, "views": 47141, "per_day": 47141.0, "age": 0.8, "thumb": "https://i.ytimg.com/vi/RdknkxcZmBs/mqdefault.jpg", "published": "2026-09-14", "url": "https://www.youtube.com/shorts/RdknkxcZmBs"}, {"id": "cKG0BXXiaSM", "ch": "1분만", "title": "이거 당하신 분 있나요?", "short": false, "views": 386410, "per_day": 43883.1, "age": 8.8, "thumb": "https://i.ytimg.com/vi/cKG0BXXiaSM/mqdefault.jpg", "published": "2026-09-06", "url": "https://www.youtube.com/watch?v=cKG0BXXiaSM"}, {"id": "lNAeiv7f4Vg", "ch": "14F 일사에프", "title": "스타벅스 첫 적자ㅣ쿠팡VS네이버 배송 경쟁ㅣ넥스트 위고비 탈모치료? 등 4가지 🥬경제 이슈🥬", "short": false, "views": 380101, "per_day": 41975.4, "age": 9.1, "thumb": "https://i.ytimg.com/vi/lNAeiv7f4Vg/mqdefault.jpg", "published": "2026-09-06", "url": "https://www.youtube.com/watch?v=lNAeiv7f4Vg"}, {"id": "X3cmzHBN_kI", "ch": "14F 일사에프", "title": "고대 이집트와 크메르 제국의 놀라운 평행이론 (장준영X곽민수) ㅣ10분 토론 / 14F", "short": false, "views": 287260, "per_day": 41824.8, "age": 6.9, "thumb": "https://i.ytimg.com/vi/X3cmzHBN_kI/mqdefault.jpg", "published": "2026-09-08", "url": "https://www.youtube.com/watch?v=X3cmzHBN_kI"}, {"id": "oJNGE9fR0ho", "ch": "1분만", "title": "고슴도치 낳을 때 안 아픈가?", "short": true, "views": 269113, "per_day": 40033.0, "age": 6.7, "thumb": "https://i.ytimg.com/vi/oJNGE9fR0ho/mqdefault.jpg", "published": "2026-09-08", "url": "https://www.youtube.com/shorts/oJNGE9fR0ho"}, {"id": "bhPhd5WJon0", "ch": "1분만", "title": "학교 중앙계단 통제하던 이유", "short": true, "views": 422426, "per_day": 38793.9, "age": 10.9, "thumb": "https://i.ytimg.com/vi/bhPhd5WJon0/mqdefault.jpg", "published": "2026-09-04", "url": "https://www.youtube.com/shorts/bhPhd5WJon0"}, {"id": "geZlm6FXqiU", "ch": "1분만", "title": "줄줄 새는 거 아니었어?", "short": true, "views": 370995, "per_day": 38159.9, "age": 9.7, "thumb": "https://i.ytimg.com/vi/geZlm6FXqiU/mqdefault.jpg", "published": "2026-09-05", "url": "https://www.youtube.com/shorts/geZlm6FXqiU"}, {"id": "kjPbLgLAD4E", "ch": "1분만", "title": "오목 필승 방법", "short": true, "views": 464953, "per_day": 36073.8, "age": 12.9, "thumb": "https://i.ytimg.com/vi/kjPbLgLAD4E/mqdefault.jpg", "published": "2026-09-02", "url": "https://www.youtube.com/shorts/kjPbLgLAD4E"}, {"id": "UhEyw0HM-4Y", "ch": "14F 일사에프", "title": "[기프티콘 이벤트] 드립의 성지가 된 하겐다즈 케이크 후기🥄ㅣ돈슐랭 / 14F", "short": false, "views": 274548, "per_day": 34986.4, "age": 7.8, "thumb": "https://i.ytimg.com/vi/UhEyw0HM-4Y/mqdefault.jpg", "published": "2026-09-07", "url": "https://www.youtube.com/watch?v=UhEyw0HM-4Y"}, {"id": "WoPyWqhnSIM", "ch": "1분만", "title": "안 죽겠다고 혼자 별짓 다함", "short": false, "views": 332187, "per_day": 33877.7, "age": 9.8, "thumb": "https://i.ytimg.com/vi/WoPyWqhnSIM/mqdefault.jpg", "published": "2026-09-05", "url": "https://www.youtube.com/watch?v=WoPyWqhnSIM"}, {"id": "QD_PHaHJHJY", "ch": "1분만", "title": "막힌 코 어떻게 뚫어?", "short": true, "views": 195495, "per_day": 33196.4, "age": 5.9, "thumb": "https://i.ytimg.com/vi/QD_PHaHJHJY/mqdefault.jpg", "published": "2026-09-09", "url": "https://www.youtube.com/shorts/QD_PHaHJHJY"}, {"id": "IaVARmuDPfM", "ch": "1분만", "title": "거북이 등껍질의 진실", "short": true, "views": 54727, "per_day": 28974.6, "age": 1.9, "thumb": "https://i.ytimg.com/vi/IaVARmuDPfM/mqdefault.jpg", "published": "2026-09-13", "url": "https://www.youtube.com/shorts/IaVARmuDPfM"}, {"id": "IPJeBBCnwis", "ch": "사물궁이", "title": "잠을 덜 자면 몸에서는 무슨 일이 벌어질까?", "short": false, "views": 296319, "per_day": 27370.2, "age": 10.8, "thumb": "https://i.ytimg.com/vi/IPJeBBCnwis/mqdefault.jpg", "published": "2026-09-04", "url": "https://www.youtube.com/watch?v=IPJeBBCnwis"}, {"id": "1vFGplnc4IQ", "ch": "14F 일사에프", "title": "나오기만 하면 유행 ‘한정선’을 집 앞에서?... GS25 ‘한정선 요거트 찹쌀떡’  / 14F", "short": false, "views": 185415, "per_day": 27255.7, "age": 6.8, "thumb": "https://i.ytimg.com/vi/1vFGplnc4IQ/mqdefault.jpg", "published": "2026-09-08", "url": "https://www.youtube.com/watch?v=1vFGplnc4IQ"}, {"id": "LgYcZvUJCSs", "ch": "14F 일사에프", "title": "곳곳에서 폐업하는 버스터미널… 증가하는 기차표 경쟁률 / 14F", "short": false, "views": 374131, "per_day": 27156.1, "age": 13.8, "thumb": "https://i.ytimg.com/vi/LgYcZvUJCSs/mqdefault.jpg", "published": "2026-09-01", "url": "https://www.youtube.com/watch?v=LgYcZvUJCSs"}]}, "telegram": false, "settings": {"surge_min": 50, "surge_ratio": 3, "retention": 0.35}};
 const PALETTE = ["#f2b705", "#e0392b", "#2b6de0", "#1f9d6b", "#8e44ad", "#ff7a00", "#00a3a3"];
-const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익창출"]];
+const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["insight", "💡", "인사이트"]];
+const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -145,30 +168,47 @@ const man = n => {
 const dl = n => n === null || n === undefined ? '<span class="muted">내일부터</span>'
   : `<span class="${n > 0 ? "up" : n < 0 ? "down" : "muted"}">${n > 0 ? "▲" : n < 0 ? "▼" : "±"}${man(Math.abs(n))}</span>`;
 const plus = n => n === null || n === undefined ? "-" : (n > 0 ? "+" : "") + man(n);
-const color = name => PALETTE[D.channels.findIndex(c => c.name === name) % PALETTE.length];
-const avatar = (c, cls = "") => c.thumb ? `<img class="${cls}" src="${esc(c.thumb)}" alt="" referrerpolicy="no-referrer">` : `<span class="av ${cls}"></span>`;
+const pct = x => Math.floor(x * 10) / 10 + "%";
+const color = name => PALETTE[Math.max(0, D.channels.findIndex(c => c.name === name)) % PALETTE.length];
+const avatar = c => c.thumb ? `<img src="${esc(c.thumb)}" alt="" referrerpolicy="no-referrer">` : `<span class="av"></span>`;
+const ago = iso => {
+  const m = Math.round((new Date(D.updated.replace(" ", "T") + ":00+09:00") - new Date(iso)) / 60000);
+  if (m < 60) return m <= 1 ? "방금" : `${m}분 전`;
+  if (m < 60 * 24) return `${Math.round(m / 60)}시간 전`;
+  return `${Math.round(m / 1440)}일 전`;
+};
+const tip = html => `<div class="tip">💡 ${html}</div>`;
 let charts = [];
-const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain" };
+const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
 const remember = () => { try { localStorage.setItem("dash", JSON.stringify(state)); } catch (e) {} };
 
 function chart(el, cfg) {
-  if (!window.Chart) return;
+  if (!window.Chart || !el) return;
   Chart.defaults.color = css("--sub"); Chart.defaults.borderColor = css("--line");
   Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
   charts.push(new Chart(el, cfg));
 }
 const tickY = { ticks: { callback: v => man(v) }, grid: { color: css("--line") } };
-const tip = { callbacks: { label: x => `${x.dataset.label} ${man(x.raw)}` } };
+const tipCb = { callbacks: { label: x => `${x.dataset.label} ${man(x.raw)}` } };
 const labels = () => D.series.dates.map(d => d.slice(5).replace("-", "/"));
 const noSeries = () => D.series.dates.length ? "" : '<div class="empty">그래프는 이틀째부터 그려져요 (하루 증가량 = 오늘 − 어제)</div>';
+const thumbImg = v => v.thumb ? `<img class="thumb" src="${esc(v.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="thumb"></span>';
+const typeTag = v => `<span class="tag ${v.short ? "s" : "l"}">${v.short ? "쇼츠" : "본편"}</span>`;
 
-function videoItem(v, right) {
-  return `<a class="item" href="${esc(v.url)}" target="_blank" rel="noopener">
-    ${v.thumb ? `<img class="thumb" src="${esc(v.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="thumb"></span>'}
+function videoItem(v, right, lead = "") {
+  const dotc = D.channels.some(c => c.name === v.ch) ? `<span class="dot" style="background:${color(v.ch)}"></span> ` : "";
+  return `<a class="item" href="${esc(v.url)}" target="_blank" rel="noopener">${lead}${thumbImg(v)}
     <div style="min-width:0"><div class="t">${esc(v.title)}</div>
-      <div class="m"><span class="tag ${v.short ? "s" : "l"}">${v.short ? "쇼츠" : "본편"}</span><span class="dot" style="background:${color(v.ch)}"></span> ${esc(v.ch)} · ${v.published}</div></div>
+      <div class="m">${typeTag(v)}${dotc}${esc(v.ch)}${v.published ? " · " + v.published : ""}</div></div>
     <div class="g">${right(v)}</div></a>`;
+}
+const ALERT_ICON = { surge: "🚀", upload: "🆕", early: "📈", goal: "🎉", money: "💰", weekly: "🗓️" };
+function alertRow(a) {
+  const inner = `<span class="ic">${ALERT_ICON[a.type] || "🔔"}</span>
+    <div style="min-width:0"><div class="at">${esc(a.title)}</div><div class="ad">${esc(a.ch)}${a.detail ? " · " + esc(a.detail) : ""}</div></div>
+    <span class="aw">${ago(a.t)}</span>`;
+  return a.url ? `<a class="alert" href="${esc(a.url)}" ${a.url.startsWith("http") && !a.url.includes("channel-dashboard") ? 'target="_blank" rel="noopener"' : ""}>${inner}</a>` : `<div class="alert">${inner}</div>`;
 }
 
 /* ───────── 요약 ───────── */
@@ -176,6 +216,7 @@ function pageSummary() {
   const T = D.totals;
   const stat = (k, d, s) => `<div class="card stat"><div class="k">${k}</div><div class="v">${plus(d)}</div><div class="s">${s}</div></div>`;
   const hot = D.videos.filter(v => v.gain).sort((a, b) => b.gain - a.gain).slice(0, 5);
+  const al = D.alerts.slice(0, 3);
   return `<h2 class="pt">오늘 한눈에</h2>
   <div class="grid4">
     ${stat("오늘 조회수", T.d_views, `누적 ${man(T.views)}`)}
@@ -183,6 +224,8 @@ function pageSummary() {
     ${stat("오늘 본편 조회수", T.d_long, `본편 누적 ${man(T.long_views)}`)}
     ${stat("오늘 구독자", T.d_subs, `전체 ${man(T.subs)}명`)}
   </div>
+  <div class="sec"><span>🔔 최근 알림</span><a class="more" href="#insight/alerts">전체 보기 ›</a></div>
+  <div class="card list">${al.length ? al.map(alertRow).join("") : '<div class="empty">아직 알림이 없어요. 급등·목표 달성·새 영상 성적이 생기면 여기에 떠요</div>'}</div>
   <div class="sec">채널별</div>
   <div class="card rows">
     <div class="crow head"><span>채널</span><span>구독자</span><span>총 조회수</span><span class="hide-m">쇼츠 / 본편</span><span></span></div>
@@ -196,15 +239,14 @@ function pageSummary() {
   <div class="sec"><span>일별 조회수 증가</span>
     <span class="seg" id="kind">${[["views", "전체"], ["shorts", "쇼츠"], ["long", "본편"]].map(([k, l]) => `<button data-k="${k}" class="${state.kind === k ? "on" : ""}">${l}</button>`).join("")}</span></div>
   <div class="card">${noSeries() || '<div class="chart"><canvas id="c1"></canvas></div>'}</div>
-  <div class="sec"><span>🔥 오늘 조회수 오른 영상</span><a class="muted" href="#videos" style="font-size:13px;font-weight:500">전체 보기 ›</a></div>
+  <div class="sec"><span>🔥 오늘 조회수 오른 영상</span><a class="more" href="#videos">전체 보기 ›</a></div>
   <div class="card list">${hot.length ? hot.map(v => videoItem(v, v => `<b class="up">▲${man(v.gain)}</b><span class="muted">${man(v.views)}</span>`)).join("") : '<div class="empty">내일부터 표시돼요 (어제와 비교)</div>'}</div>`;
 }
 function afterSummary() {
   const draw = () => {
     charts.forEach(c => c.destroy()); charts = [];
-    const el = $("#c1"); if (!el) return;
-    chart(el, { type: "bar", data: { labels: labels(), datasets: D.channels.map(c => ({ label: c.name, data: D.series.by_channel[c.name][state.kind], backgroundColor: color(c.name), borderRadius: 3, stack: "s" })) },
-      options: { maintainAspectRatio: false, interaction: { mode: "index" }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ...tickY } }, plugins: { tooltip: tip, legend: { labels: { boxWidth: 10, boxHeight: 10 } } } } });
+    chart($("#c1"), { type: "bar", data: { labels: labels(), datasets: D.channels.map(c => ({ label: c.name, data: D.series.by_channel[c.name][state.kind], backgroundColor: color(c.name), borderRadius: 3, stack: "s" })) },
+      options: { maintainAspectRatio: false, interaction: { mode: "index" }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ...tickY } }, plugins: { tooltip: tipCb, legend: { labels: { boxWidth: 10, boxHeight: 10 } } } } });
   };
   document.querySelectorAll("#kind button").forEach(b => b.onclick = () => {
     state.kind = b.dataset.k; remember();
@@ -233,7 +275,7 @@ function pageChannel(name) {
     <div class="split"><i style="width:${c.shorts_views / sum * 100}%;background:var(--shorts)"></i><i style="width:${c.long_views / sum * 100}%;background:var(--long)"></i></div>
   </div>
   <a class="card" href="#money/${encodeURIComponent(c.name)}" style="display:block;margin-top:10px">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>💰 광고 수익 조건까지</span><b>${ad.done ? "달성 🎉" : Math.floor(ad.overall * 10) / 10 + "%"}</b></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>💰 광고 수익 조건까지</span><b>${ad.done ? "달성 🎉" : pct(ad.overall)}</b></div>
     <div class="pbar"><i class="${ad.done ? "done" : ""}" style="width:${Math.max(ad.overall, 1)}%"></i></div>
     <div class="muted" style="font-size:12px">구독자 ${man(c.subs)}/1,000 · 쇼츠 90일 ${man(ad.items.find(i => i.key === "shorts90").cur)}/1,000만 · 시청 시간(추정) ${man(ad.items.find(i => i.key === "watch").cur)}/4,000 ›</div>
   </a>
@@ -247,12 +289,12 @@ function pageChannel(name) {
 function afterChannel(name) {
   const c = D.channels.find(x => x.name === name) || D.channels[0];
   const S = D.series.by_channel[c.name];
-  const base = { maintainAspectRatio: false, interaction: { mode: "index" }, plugins: { tooltip: tip, legend: { labels: { boxWidth: 10, boxHeight: 10 } } } };
-  if ($("#c2")) chart($("#c2"), { type: "bar", data: { labels: labels(), datasets: [
+  const base = { maintainAspectRatio: false, interaction: { mode: "index" }, plugins: { tooltip: tipCb, legend: { labels: { boxWidth: 10, boxHeight: 10 } } } };
+  chart($("#c2"), { type: "bar", data: { labels: labels(), datasets: [
       { label: "쇼츠", data: S.shorts, backgroundColor: css("--shorts"), borderRadius: 3, stack: "s" },
       { label: "본편", data: S.long, backgroundColor: css("--long"), borderRadius: 3, stack: "s" }] },
     options: { ...base, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ...tickY } } } });
-  if ($("#c3")) chart($("#c3"), { type: "line", data: { labels: labels(), datasets: [{ label: "구독자", data: S.subs, borderColor: color(c.name), backgroundColor: color(c.name), tension: .3, pointRadius: 2, spanGaps: true }] },
+  chart($("#c3"), { type: "line", data: { labels: labels(), datasets: [{ label: "구독자", data: S.subs, borderColor: color(c.name), backgroundColor: color(c.name), tension: .3, pointRadius: 2, spanGaps: true }] },
     options: { ...base, plugins: { ...base.plugins, legend: { display: false } }, scales: { x: { grid: { display: false } }, y: tickY } } });
 }
 
@@ -273,17 +315,10 @@ function pageVideos() {
 function highlights(base) {
   const recent = base.filter(v => v.age <= 30);
   const byWeek = recent.some(v => v.gain7 > 0);
-  const hot = recent.filter(v => byWeek ? v.gain7 > 0 : v.views > 0)
-    .sort((a, b) => byWeek ? b.gain7 - a.gain7 : b.per_day - a.per_day).slice(0, 3);
+  const hot = recent.filter(v => byWeek ? v.gain7 > 0 : v.views > 0).sort((a, b) => byWeek ? b.gain7 - a.gain7 : b.per_day - a.per_day).slice(0, 3);
   const top = [...base].sort((a, b) => b.views - a.views).filter(v => v.views > 0).slice(0, 3);
-  const row = (v, k, right) => `<a class="item" href="${esc(v.url)}" target="_blank" rel="noopener">
-    <span class="rank r${k}">${k + 1}</span>
-    ${v.thumb ? `<img class="thumb" src="${esc(v.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="thumb"></span>'}
-    <div style="min-width:0"><div class="t">${esc(v.title)}</div>
-      <div class="m"><span class="tag ${v.short ? "s" : "l"}">${v.short ? "쇼츠" : "본편"}</span><span class="dot" style="background:${color(v.ch)}"></span> ${esc(v.ch)}</div></div>
-    <div class="g">${right(v)}</div></a>`;
   const box = (title, sub, arr, right) => `<div class="card"><div class="hlh"><b>${title}</b><span class="muted">${sub}</span></div>
-    <div class="list" style="padding:0">${arr.length ? arr.map((v, k) => row(v, k, right)).join("") : '<div class="empty">아직 없어요</div>'}</div></div>`;
+    <div class="list" style="padding:0">${arr.length ? arr.map((v, k) => videoItem({ ...v, published: "" }, right, `<span class="rank r${k}">${k + 1}</span>`)).join("") : '<div class="empty">아직 없어요</div>'}</div></div>`;
   return box("🚀 최근 급등", byWeek ? "최근 7일 조회수 증가" : "최근 30일 업로드 · 하루 평균 조회수", hot,
       v => byWeek ? `<b class="up">▲${man(v.gain7)}</b><span class="muted">7일</span>` : `<b class="up">${man(v.per_day)}</b><span class="muted">회/일</span>`)
     + box("🏆 조회수 TOP", "누적 조회수", top, v => `<b>${man(v.views)}</b><span class="muted">회</span>`);
@@ -306,64 +341,175 @@ function afterVideos() {
   bind("vch", "vch"); bind("vtype", "vtype"); bind("vsort", "vsort"); draw();
 }
 
-/* ───────── 수익창출 ───────── */
+/* ───────── 수익 ───────── */
 function pageMoney(name) {
   const sel = name && D.channels.find(c => c.name === name);
-  const pct = x => Math.floor(x * 10) / 10 + "%";
   const chips = `<div class="chips" style="margin-top:16px">${[["", "전체"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) =>
     `<a class="chip ${(sel ? sel.name : "") === k ? "on" : ""}" href="#money${k ? "/" + encodeURIComponent(k) : ""}">${k ? `<span class="dot" style="background:${color(k)}"></span>` : ""}${esc(l)}</a>`).join("")}</div>`;
   if (!sel) {
     return `${chips}<h2 class="pt">수익창출까지</h2>
-    <div class="note">채널을 누르면 조건별로 자세히 볼 수 있어요. 진행률 = 가장 부족한 조건 기준(시청 시간과 쇼츠 조회수는 둘 중 높은 쪽).</div>
+    ${tip("유튜브에서 돈을 벌려면 <b>구독자</b>와 <b>시청 시간(또는 쇼츠 조회수)</b> 조건을 채워야 해요. 채널을 누르면 무엇이 얼마나 남았는지 자세히 보여줘요.")}
     <div class="card rows">${D.channels.map(c => {
       const fan = c.money.tiers.find(t => t.key === "fan"), ad = c.money.tiers.find(t => t.key === "ads");
-      const bar = (t, label) => `<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span class="muted">${label}</span><b class="${t.done ? "up" : ""}">${t.done ? "달성" : pct(t.overall)}</b></div>
+      const bar = (t, label) => `<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span class="muted">${label}</span><b class="${t.done ? "good" : ""}">${t.done ? "달성" : pct(t.overall)}</b></div>
         <div class="pbar"><i class="${t.done ? "done" : ""}" style="width:${Math.max(t.overall, 1)}%"></i></div></div>`;
       return `<a class="crow" style="grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) 14px" href="#money/${encodeURIComponent(c.name)}">
         <div class="who">${avatar(c)}<div style="min-width:0"><div class="n">${esc(c.name)}</div><div class="h">구독자 ${man(c.subs)}명</div></div></div>
         <div>${bar(fan, "1단계 팬 후원")}${bar(ad, "2단계 광고 수익")}</div><span class="chev">›</span></a>`;
     }).join("")}</div>`;
   }
-  return chips + pageMoneyDetail(sel);
-}
-function pageMoneyDetail(one) {
+  const c = sel;
   const req = (i, alt) => {
     const done = i.left === 0;
     const eta = done ? "달성" : i.eta ? `지금 속도면 약 ${man(i.eta)}일` : (i.speed === null ? "속도는 며칠 쌓이면 계산돼요" : "최근 증가 없음");
     return `<div class="req ${alt ? "alt" : ""}"><div class="rl"><span>${i.label}</span><span><b>${man(i.cur)}</b> / ${man(i.goal)}${i.unit}</span></div>
       <div class="pbar"><i class="${done ? "done" : ""}" style="width:${Math.max(i.pct, i.cur > 0 ? 1 : 0)}%"></i></div>
-      <div class="rs">${done ? "✅ 달성" : `${Math.floor(i.pct * 10) / 10}% · ${man(i.left)}${i.unit} 남음 · ${eta}`}</div></div>`;
+      <div class="rs">${done ? "✅ 달성" : `${pct(i.pct)} · ${man(i.left)}${i.unit} 남음 · ${eta}`}</div></div>`;
   };
-  return `<h2 class="pt">수익창출까지</h2>
-  <div class="note">유튜브 파트너 프로그램 기준으로 채널별 진행률을 보여줘요. <b>구독자</b>와 <b>시청 시간 또는 쇼츠 조회수 중 하나</b>를 채우면 신청할 수 있어요.
-    시청 시간은 공개 데이터로 알 수 없어서 <b>본편 조회수 × 영상 길이 × ${Math.round(D.channels[0]?.money.retention * 100)}%</b>로 추정해요. 정확한 숫자는 YouTube 스튜디오 → 수익 창출 탭에서 확인하세요.</div>
-  ${[one].map(c => {
-    const ad = c.money.tiers.find(t => t.key === "ads");
-    return `<div class="card money">
-      <div class="mh">${avatar(c)}<div><div class="n">${esc(c.name)}</div><div class="muted" style="font-size:12px">${esc(c.handle)}</div></div>
-        <span class="badge ${ad.done ? "ok" : ""}">${ad.done ? "광고 수익 조건 달성" : `광고 수익까지 ${Math.floor(ad.overall * 10) / 10}%`}</span></div>
-      ${c.money.tiers.map(t => {
-        const by = Object.fromEntries(t.items.map(i => [i.key, i]));
-        return `<div class="tier"><div class="tn"><span>${t.name}</span><span class="${t.done ? "up" : "muted"}">${t.done ? "달성" : Math.floor(t.overall * 10) / 10 + "%"}</span></div>
-          <div class="td">${t.desc}</div>
-          ${req(by.subs)}${by.uploads90 ? req(by.uploads90) : ""}
-          ${req(by.watch, t.best_path !== "watch")}<div class="or">또는</div>${req(by.shorts90, t.best_path !== "shorts90")}</div>`;
-      }).join("")}
-    </div>`;
-  }).join("")}`;
+  const ad = c.money.tiers.find(t => t.key === "ads");
+  return `${chips}<h2 class="pt">수익창출까지</h2>
+  ${tip(`<b>구독자</b>는 꼭 채워야 하고, <b>시청 시간</b>과 <b>쇼츠 조회수</b>는 <b>둘 중 하나만</b> 채우면 돼요(흐리게 보이는 쪽이 덜 가까운 길). 시청 시간은 공개 데이터로 알 수 없어서 본편 조회수 × 영상 길이 × ${Math.round(c.money.retention * 100)}%로 추정했어요. 정확한 값은 YouTube 스튜디오 → 수익 창출 탭에서 볼 수 있어요.`)}
+  <div class="card money">
+    <div class="mh">${avatar(c)}<div><div class="n">${esc(c.name)}</div><div class="muted" style="font-size:12px">${esc(c.handle)}</div></div>
+      <span class="badge ${ad.done ? "ok" : ""}">${ad.done ? "광고 수익 조건 달성" : `광고 수익까지 ${pct(ad.overall)}`}</span></div>
+    ${c.money.tiers.map(t => {
+      const by = Object.fromEntries(t.items.map(i => [i.key, i]));
+      return `<div class="tier"><div class="tn"><span>${t.name}</span><span class="${t.done ? "good" : "muted"}">${t.done ? "달성" : pct(t.overall)}</span></div>
+        <div class="td">${t.desc}</div>
+        ${req(by.subs)}${by.uploads90 ? req(by.uploads90) : ""}
+        ${req(by.watch, t.best_path !== "watch")}<div class="or">또는</div>${req(by.shorts90, t.best_path !== "shorts90")}</div>`;
+    }).join("")}
+  </div>`;
+}
+
+/* ───────── 인사이트 ───────── */
+function pageInsight(sub) {
+  const cur = INSIGHTS.some(x => x[0] === sub) ? sub : "alerts";
+  const chips = `<div class="chips" style="margin-top:16px">${INSIGHTS.map(([k, ic, l]) => `<a class="chip ${k === cur ? "on" : ""}" href="#insight/${k}">${ic} ${l}</a>`).join("")}</div>`;
+  return chips + { alerts: insAlerts, early: insEarly, weekly: insWeekly, engage: insEngage, timing: insTiming, bench: insBench }[cur]();
+}
+function channelFilter(key) {
+  return `<div class="chips" id="flt" style="margin-bottom:12px">${[["all", "전체 채널"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) =>
+    `<button class="chip ${state[key] === k ? "on" : ""}" data-k="${esc(k)}">${k === "all" ? "" : `<span class="dot" style="background:${color(k)}"></span>`}${esc(l)}</button>`).join("")}</div>`;
+}
+function insAlerts() {
+  return `<h2 class="pt">🔔 알림</h2>
+  ${tip(`채널에 좋은 일이 생기면 자동으로 기록돼요. <b>🚀 급등</b>(1시간 조회수가 평소의 ${D.settings.surge_ratio}배 이상, ${D.settings.surge_min}회 이상) · <b>🆕 새 영상</b> · <b>📈 24시간 성적</b> · <b>🎉 구독자·조회수 목표 돌파</b> · <b>💰 수익 조건 진행</b> · <b>🗓️ 주간 리포트</b>(월요일 오전).`)}
+  <div class="card" style="margin-bottom:12px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:22px">📱</span>
+    <div style="flex:1;min-width:0"><b>폰으로 바로 받기</b><div class="muted" style="font-size:12.5px">${D.telegram ? "텔레그램으로 알림이 전송되고 있어요 ✅" : "텔레그램을 연결하면 알림이 폰으로 바로 와요 (설정은 클로드에게 '텔레그램 연결해줘')"}</div></div>
+  </div>
+  <div class="card list">${D.alerts.length ? D.alerts.map(alertRow).join("") : '<div class="empty">아직 알림이 없어요.<br>오늘부터 기록이 쌓이면 급등·목표 달성·새 영상 성적이 여기에 떠요</div>'}</div>`;
+}
+function insEarly() {
+  const list = D.videos.filter(v => (state.ech === "all" || v.ch === state.ech) && (Object.keys(v.early).length || v.age <= 3)).sort((a, b) => a.age - b.age);
+  const cell = (v, h) => {
+    const e = v.early[h];
+    if (!e) return `<div><span class="muted">${h}시간</span><b class="muted">${v.age * 24 < h ? "대기 중" : "기록 전"}</b></div>`;
+    const r = e.ratio;
+    return `<div><span class="muted">${h}시간</span><b>${man(e.views)}회</b><span class="r ${r === null ? "muted" : r >= 1 ? "up" : "down"}">${r === null ? "비교 대기" : `평소의 ${r}배`}</span></div>`;
+  };
+  return `<h2 class="pt">📈 새 영상 성적</h2>
+  ${tip("새 영상을 올리고 <b>6시간 · 24시간 · 48시간</b>에 조회수를 기록해서, 같은 채널의 다른 영상(쇼츠는 쇼츠끼리, 본편은 본편끼리)과 비교해요. <b>1배보다 크면 평소보다 잘 되는 중</b>이에요. 대시보드를 만든 뒤에 올린 영상부터 기록돼요.")}
+  ${channelFilter("ech")}
+  <div class="card list">${list.length ? list.map(v => `<a class="item" href="${esc(v.url)}" target="_blank" rel="noopener" style="display:block">
+      <div style="display:flex;gap:12px;align-items:center">${thumbImg(v)}<div style="min-width:0"><div class="t">${esc(v.title)}</div>
+        <div class="m">${typeTag(v)}<span class="dot" style="background:${color(v.ch)}"></span> ${esc(v.ch)} · 올린 지 ${v.age < 1 ? Math.round(v.age * 24) + "시간" : Math.floor(v.age) + "일"} · 지금 ${man(v.views)}회</div></div></div>
+      <div class="cp">${[6, 24, 48].map(h => cell(v, String(h))).join("")}</div></a>`).join("")
+    : '<div class="empty">아직 기록된 새 영상이 없어요.<br>새 영상을 올리면 6시간 뒤부터 성적이 쌓여요</div>'}</div>`;
+}
+function insWeekly() {
+  const W = D.weekly;
+  if (!W.days) return `<h2 class="pt">🗓️ 주간 리포트</h2>${tip("최근 7일 동안 채널이 얼마나 컸는지 정리해요. 매주 월요일 오전에 알림으로도 보내드려요.")}<div class="card"><div class="empty">기록이 하루치뿐이라 내일부터 계산돼요</div></div>`;
+  return `<h2 class="pt">🗓️ 주간 리포트</h2>
+  ${tip(`최근 ${W.days}일(${W.from.slice(5).replace("-", "/")} → ${W.to.slice(5).replace("-", "/")}) 동안 채널이 얼마나 컸는지 정리했어요. 7일치가 안 되면 쌓인 만큼만 계산해요.`)}
+  <div class="grid4">
+    <div class="card stat"><div class="k">조회수 증가</div><div class="v">${plus(W.total.d_views)}</div><div class="s">최근 ${W.days}일</div></div>
+    <div class="card stat"><div class="k">구독자 증가</div><div class="v">${plus(W.total.d_subs)}</div><div class="s">최근 ${W.days}일</div></div>
+    <div class="card stat"><div class="k">쇼츠 조회수</div><div class="v">${plus(W.total.d_shorts)}</div><div class="s">최근 ${W.days}일</div></div>
+    <div class="card stat"><div class="k">본편 조회수</div><div class="v">${plus(W.total.d_long)}</div><div class="s">최근 ${W.days}일</div></div>
+  </div>
+  <div class="sec">채널별</div>
+  ${W.channels.map(c => `<div class="card" style="margin-bottom:10px">
+    <div class="who" style="margin-bottom:8px">${avatar(c)}<div class="n">${esc(c.name)}</div><span class="muted" style="margin-left:auto;font-size:12.5px">새 영상 ${c.uploads}개</span></div>
+    <div class="cp">
+      <div><span class="muted">조회수</span><b>${plus(c.d_views)}</b><span class="r muted">쇼츠 ${plus(c.d_shorts)} · 본편 ${plus(c.d_long)}</span></div>
+      <div><span class="muted">구독자</span><b>${plus(c.d_subs)}</b><span class="r muted">${c.subs_per_1k === null ? "-" : `1,000회당 ${c.subs_per_1k}명`}</span></div>
+      <div><span class="muted">광고 수익 조건</span><b>${pct(c.ads_now)}</b><span class="r ${c.ads_before !== null && c.ads_now > c.ads_before ? "up" : "muted"}">${c.ads_before === null ? "비교 대기" : `${plus(Math.round((c.ads_now - c.ads_before) * 10) / 10)}%p`}</span></div>
+    </div>
+    ${c.best ? `<div style="margin-top:8px">${videoItem({ ...c.best, ch: c.name, published: "" }, v => `<b class="up">▲${man(v.gain)}</b><span class="muted">이번 주 1위</span>`)}</div>` : ""}
+  </div>`).join("")}`;
+}
+function insEngage() {
+  const rows = D.channels.map(c => {
+    const views = c.shorts_views + c.long_views;
+    const w = D.weekly.channels.find(x => x.name === c.name);
+    return { c, like: views ? c.likes / views * 100 : null, comment: views ? c.comments / views * 100 : null, spk: w ? w.subs_per_1k : null };
+  });
+  const fans = D.videos.filter(v => v.views >= 30 && v.like_rate !== null).sort((a, b) => b.like_rate - a.like_rate).slice(0, 8);
+  return `<h2 class="pt">❤️ 반응률</h2>
+  ${tip("조회수만 보면 놓치는 것 — <b>본 사람 중 몇 %가 좋아요·댓글을 눌렀는지</b>, <b>1,000회 볼 때 구독자가 몇 명 늘었는지</b>예요. 반응률이 높은 영상은 팬을 만드는 영상이라 비슷한 주제를 더 만들면 좋아요. (보통 좋아요율 2~5%면 괜찮은 편)")}
+  <div class="card scroll"><table class="tbl">
+    <tr><th>채널</th><th>좋아요율</th><th>댓글율</th><th>1,000회당 구독</th></tr>
+    ${rows.map(r => `<tr><td><span class="dot" style="background:${color(r.c.name)}"></span> ${esc(r.c.name)}</td>
+      <td><b>${r.like === null ? "-" : r.like.toFixed(1) + "%"}</b></td><td>${r.comment === null ? "-" : r.comment.toFixed(2) + "%"}</td>
+      <td>${r.spk === null ? '<span class="muted">내일부터</span>' : r.spk + "명"}</td></tr>`).join("")}
+  </table></div>
+  <div class="sec">💖 팬을 만드는 영상 <span class="muted" style="font-size:12.5px;font-weight:500">좋아요율 순 · 조회수 30회 이상</span></div>
+  <div class="card list">${fans.length ? fans.map(v => videoItem(v, v => `<b class="up">${v.like_rate.toFixed(1)}%</b><span class="muted">👍 ${man(v.likes)} · 💬 ${man(v.comments)}</span>`)).join("") : '<div class="empty">아직 없어요</div>'}</div>`;
+}
+function insTiming() {
+  const T = D.timing;
+  const bars = arr => {
+    const max = Math.max(...arr.map(x => x.avg || 0), 1);
+    const best = arr.filter(x => x.avg).sort((a, b) => b.avg - a.avg)[0];
+    return arr.map(x => `<div class="hbar"><span>${x.label}</span><div class="bar"><i class="${best && x === best ? "best" : ""}" style="width:${(x.avg || 0) / max * 100}%"></i></div>
+      <span>${x.avg === null ? "영상 없음" : man(Math.round(x.avg)) + "회 · " + x.n + "개"}</span></div>`).join("");
+  };
+  const best = [...T.slot, ...T.weekday].filter(x => x.avg && x.n >= 2).sort((a, b) => b.avg - a.avg)[0];
+  return `<h2 class="pt">⏰ 업로드 시간</h2>
+  ${tip(`어느 요일·시간대에 올린 영상이 잘 됐는지 비교해요. 막대 숫자는 그 시간에 올린 영상들의 <b>평균 하루 조회수</b>(24시간 기록이 3개 이상 쌓이면 24시간 조회수)예요. 지금은 영상 ${T.n}개 기준이라 <b>참고용</b>이고, 영상이 20개 넘게 쌓이면 믿을 만해져요.`)}
+  ${best ? `<div class="card" style="margin-bottom:10px">지금까지는 <b class="up">${best.label}</b>에 올린 영상이 가장 잘 됐어요 <span class="muted">(영상 ${best.n}개 평균)</span></div>` : ""}
+  <div class="grid2">
+    <div class="card"><div class="hlh"><b>시간대별</b><span class="muted">한국 시간</span></div>${bars(T.slot)}</div>
+    <div class="card"><div class="hlh"><b>요일별</b><span class="muted">한국 시간</span></div>${bars(T.weekday)}</div>
+  </div>`;
+}
+function insBench() {
+  const B = D.bench;
+  const fors = ["all", ...new Set(B.channels.map(c => c.for).filter(Boolean))];
+  const names = new Set(B.channels.filter(c => state.bfor === "all" || c.for === state.bfor).map(c => c.name));
+  const vids = B.videos.filter(v => names.has(v.ch)).slice(0, 20);
+  return `<h2 class="pt">🔭 벤치마크</h2>
+  ${tip("비슷한 주제의 <b>인기 채널</b>에서 최근 14일 안에 올라온 영상 중 <b>하루 조회수가 높은 순</b>이에요. 요즘 어떤 주제·제목이 먹히는지 아이디어를 얻는 용도예요. 6시간마다 새로 확인해요.")}
+  <div class="chips" id="bfor" style="margin-bottom:12px">${fors.map(k => `<button class="chip ${state.bfor === k ? "on" : ""}" data-k="${esc(k)}">${k === "all" ? "전체" : esc(k) + " 참고"}</button>`).join("")}</div>
+  <div class="card scroll" style="margin-bottom:10px"><table class="tbl">
+    <tr><th>참고 채널</th><th>구독자</th><th>우리 채널</th></tr>
+    ${B.channels.filter(c => names.has(c.name)).map(c => `<tr><td><a href="${esc(c.url)}" target="_blank" rel="noopener"><b>${esc(c.name)}</b> <span class="muted">↗</span></a></td><td>${man(c.subs)}</td><td class="muted">${esc(c.for)}</td></tr>`).join("")}
+  </table></div>
+  <div class="sec">🔥 요즘 뜨는 영상</div>
+  <div class="card list">${vids.length ? vids.map(v => videoItem(v, v => `<b class="up">${man(v.per_day)}</b><span class="muted">회/일</span>`)).join("") : '<div class="empty">다음 수집 때 채워져요</div>'}</div>
+  <div class="note">참고 채널을 바꾸거나 추가하고 싶으면 클로드에게 채널 주소를 알려주세요.${B.at ? ` · 마지막 확인 ${ago(B.at)}` : ""}</div>`;
+}
+function afterInsight(sub) {
+  const rerender = () => { $("#app").innerHTML = pageInsight(sub); afterInsight(sub); };
+  document.querySelectorAll("#flt [data-k]").forEach(b => b.onclick = () => { state.ech = b.dataset.k; remember(); rerender(); });
+  document.querySelectorAll("#bfor [data-k]").forEach(b => b.onclick = () => { state.bfor = b.dataset.k; remember(); rerender(); });
 }
 
 /* ───────── 라우팅 ───────── */
 function route() {
   if (!D) { $("#app").innerHTML = '<div class="empty">아직 수집 전이에요</div>'; return; }
   const [page, arg] = (location.hash.slice(1) || "summary").split("/");
-  const name = arg ? decodeURIComponent(arg) : (D.channels[0] || {}).name;
+  const a = arg ? decodeURIComponent(arg) : null;
   const cur = MENU.some(m => m[0] === page) ? page : "summary";
   const nav = MENU.map(([k, ic, l]) => `<a href="#${k}" class="${k === cur ? "on" : ""}"><span class="ic">${ic}</span>${l}</a>`).join("");
   $("#tabs").innerHTML = nav; $("#bottom").innerHTML = nav;
   charts.forEach(c => c.destroy()); charts = [];
-  $("#app").innerHTML = { summary: pageSummary, channel: () => pageChannel(name), videos: pageVideos, money: () => pageMoney(arg ? decodeURIComponent(arg) : null) }[cur]();
-  ({ summary: afterSummary, channel: () => afterChannel(name), videos: afterVideos, money: () => {} })[cur]();
+  const pages = { summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
+    money: [() => pageMoney(a), () => {}], insight: [() => pageInsight(a), () => afterInsight(a)] };
+  $("#app").innerHTML = pages[cur][0]();
+  pages[cur][1]();
   window.scrollTo(0, 0);
 }
 if (D) $("#upd").innerHTML = `업데이트 ${D.updated.slice(5).replace("-", "/")}<br><span style="font-size:11px">매시간 자동</span>`;
