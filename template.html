@@ -226,7 +226,7 @@ function pageChannel(name) {
     <div style="display:flex;justify-content:space-between;font-size:13px"><span>조회수 비중</span><span class="muted">쇼츠 ${Math.round(c.shorts_views / sum * 100)}% · 본편 ${Math.round(c.long_views / sum * 100)}%</span></div>
     <div class="split"><i style="width:${c.shorts_views / sum * 100}%;background:var(--shorts)"></i><i style="width:${c.long_views / sum * 100}%;background:var(--long)"></i></div>
   </div>
-  <a class="card" href="#money" style="display:block;margin-top:10px">
+  <a class="card" href="#money/${encodeURIComponent(c.name)}" style="display:block;margin-top:10px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>💰 광고 수익 조건까지</span><b>${ad.done ? "달성 🎉" : Math.floor(ad.overall * 10) / 10 + "%"}</b></div>
     <div class="pbar"><i class="${ad.done ? "done" : ""}" style="width:${Math.max(ad.overall, 1)}%"></i></div>
     <div class="muted" style="font-size:12px">구독자 ${man(c.subs)}/1,000 · 쇼츠 90일 ${man(ad.items.find(i => i.key === "shorts90").cur)}/1,000만 · 시청 시간(추정) ${man(ad.items.find(i => i.key === "watch").cur)}/4,000 ›</div>
@@ -280,7 +280,26 @@ function afterVideos() {
 }
 
 /* ───────── 수익창출 ───────── */
-function pageMoney() {
+function pageMoney(name) {
+  const sel = name && D.channels.find(c => c.name === name);
+  const pct = x => Math.floor(x * 10) / 10 + "%";
+  const chips = `<div class="chips" style="margin-top:16px">${[["", "전체"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) =>
+    `<a class="chip ${(sel ? sel.name : "") === k ? "on" : ""}" href="#money${k ? "/" + encodeURIComponent(k) : ""}">${k ? `<span class="dot" style="background:${color(k)}"></span>` : ""}${esc(l)}</a>`).join("")}</div>`;
+  if (!sel) {
+    return `${chips}<h2 class="pt">수익창출까지</h2>
+    <div class="note">채널을 누르면 조건별로 자세히 볼 수 있어요. 진행률 = 가장 부족한 조건 기준(시청 시간과 쇼츠 조회수는 둘 중 높은 쪽).</div>
+    <div class="card rows">${D.channels.map(c => {
+      const fan = c.money.tiers.find(t => t.key === "fan"), ad = c.money.tiers.find(t => t.key === "ads");
+      const bar = (t, label) => `<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span class="muted">${label}</span><b class="${t.done ? "up" : ""}">${t.done ? "달성" : pct(t.overall)}</b></div>
+        <div class="pbar"><i class="${t.done ? "done" : ""}" style="width:${Math.max(t.overall, 1)}%"></i></div></div>`;
+      return `<a class="crow" style="grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) 14px" href="#money/${encodeURIComponent(c.name)}">
+        <div class="who">${avatar(c)}<div style="min-width:0"><div class="n">${esc(c.name)}</div><div class="h">구독자 ${man(c.subs)}명</div></div></div>
+        <div>${bar(fan, "1단계 팬 후원")}${bar(ad, "2단계 광고 수익")}</div><span class="chev">›</span></a>`;
+    }).join("")}</div>`;
+  }
+  return chips + pageMoneyDetail(sel);
+}
+function pageMoneyDetail(one) {
   const req = (i, alt) => {
     const done = i.left === 0;
     const eta = done ? "달성" : i.eta ? `지금 속도면 약 ${man(i.eta)}일` : (i.speed === null ? "속도는 며칠 쌓이면 계산돼요" : "최근 증가 없음");
@@ -291,7 +310,7 @@ function pageMoney() {
   return `<h2 class="pt">수익창출까지</h2>
   <div class="note">유튜브 파트너 프로그램 기준으로 채널별 진행률을 보여줘요. <b>구독자</b>와 <b>시청 시간 또는 쇼츠 조회수 중 하나</b>를 채우면 신청할 수 있어요.
     시청 시간은 공개 데이터로 알 수 없어서 <b>본편 조회수 × 영상 길이 × ${Math.round(D.channels[0]?.money.retention * 100)}%</b>로 추정해요. 정확한 숫자는 YouTube 스튜디오 → 수익 창출 탭에서 확인하세요.</div>
-  ${D.channels.map(c => {
+  ${[one].map(c => {
     const ad = c.money.tiers.find(t => t.key === "ads");
     return `<div class="card money">
       <div class="mh">${avatar(c)}<div><div class="n">${esc(c.name)}</div><div class="muted" style="font-size:12px">${esc(c.handle)}</div></div>
@@ -316,7 +335,7 @@ function route() {
   const nav = MENU.map(([k, ic, l]) => `<a href="#${k}" class="${k === cur ? "on" : ""}"><span class="ic">${ic}</span>${l}</a>`).join("");
   $("#tabs").innerHTML = nav; $("#bottom").innerHTML = nav;
   charts.forEach(c => c.destroy()); charts = [];
-  $("#app").innerHTML = { summary: pageSummary, channel: () => pageChannel(name), videos: pageVideos, money: pageMoney }[cur]();
+  $("#app").innerHTML = { summary: pageSummary, channel: () => pageChannel(name), videos: pageVideos, money: () => pageMoney(arg ? decodeURIComponent(arg) : null) }[cur]();
   ({ summary: afterSummary, channel: () => afterChannel(name), videos: afterVideos, money: () => {} })[cur]();
   window.scrollTo(0, 0);
 }
