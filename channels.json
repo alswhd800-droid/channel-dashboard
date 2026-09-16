@@ -4,5 +4,7 @@
   {"name": "거인의무덤", "handles": ["@거인의무덤"]},
   {"name": "시술백과", "handles": ["@시술백과"]},
   {"name": "낮달DAYMOON", "handles": ["@낮달DAYMOON"]},
-  {"name": "숨은구조", "handles": ["@숨은구조"]}
+  {"name": "숨은구조", "handles": ["@숨은구조"]},
+  {"name": "오름", "handles": ["@oreum_korea"]},
+  {"name": "거대한 비밀", "handles": ["@거대한비밀", "@거대한 비밀"]}
 ]
