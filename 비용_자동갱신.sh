@@ -1,5 +1,5 @@
 #!/bin/bash
-# 30분마다 자동 실행(LaunchAgent): 제작비를 다시 계산하고, 달라졌을 때만 대시보드에 올린다.
+# 영상 1편 제작이 끝날 때 자동 실행(공통/영상폴더_정리.py의 cost_sync): 제작비를 다시 계산하고, 달라졌을 때만 대시보드에 올린다.
 # 직접 실행해도 됨. 기록은 같은 폴더의 비용_자동갱신.log
 set -u
 export PATH="/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
