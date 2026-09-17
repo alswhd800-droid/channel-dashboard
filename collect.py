@@ -466,6 +466,28 @@ def collect_bench(now, state):
 
 # ---------------------------------------------------------------- 대시보드 데이터
 
+def load_costs(chans):
+    """맥에서 만든 costs.json(영상 1편당 제작비). 없으면 None — 대시보드는 안내만 띄운다.
+    유튜브 채널 조회수와 이름으로 짝지어 '조회수 1,000회당 제작비'까지 계산한다."""
+    p = ROOT / "costs.json"
+    if not p.exists():
+        return None
+    try:
+        c = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    import unicodedata
+    nfc = lambda x: unicodedata.normalize("NFC", x)
+    views = {nfc(x["name"]): (x["shorts_views"] + x["long_views"]) for x in chans}
+    for ch in c.get("채널", []):
+        ch["name"] = nfc(ch["name"])
+        v = views.get(ch["name"])
+        ch["조회수"] = v
+        ch["천회당krw"] = round(ch["합계krw"] / v * 1000) if v else None
+    c["집계일"] = c.get("생성")
+    return c
+
+
 def build(ctx):
     now, info, videos, vhist, hist = ctx["now"], ctx["info"], ctx["videos"], ctx["vhist"], ctx["hist"]
     early, money_hist, alerts, bench = ctx["early"], ctx["money_hist"], ctx["alerts"], ctx["bench"]
@@ -584,6 +606,7 @@ def build(ctx):
             "series": {"dates": series_days[1:], "by_channel": by_ch}, "videos": vids,
             "alerts": alerts["items"][:120], "weekly": weekly, "timing": timing,
             "bench": {"at": bench.get("at"), "channels": bench.get("channels", []), "videos": bvids[:40]},
+            "costs": load_costs(chans),
             "telegram": bool(env_value("TELEGRAM_BOT_TOKEN") and env_value("TELEGRAM_CHAT_ID")) or bool(os.environ.get("TELEGRAM_ON")),
             "settings": {"surge_min": SURGE_MIN_PER_HOUR, "surge_ratio": SURGE_RATIO, "retention": RETENTION}}
 

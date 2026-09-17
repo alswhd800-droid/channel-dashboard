@@ -152,7 +152,7 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 <script>
 const D = /*__DATA__*/null;
 const PALETTE = ["#f2b705", "#e0392b", "#2b6de0", "#1f9d6b", "#8e44ad", "#ff7a00", "#00a3a3"];
-const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["insight", "💡", "인사이트"]];
+const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["cost", "💵", "제작비"], ["insight", "💡", "인사이트"]];
 const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -382,6 +382,58 @@ function pageMoney(name) {
   </div>`;
 }
 
+/* ───────── 제작비 ───────── */
+const won = n => n === null || n === undefined ? "-" : man(n) + "원";
+function pageCost(name) {
+  const C = D.costs;
+  if (!C) return `<h2 class="pt">💵 제작비</h2>${tip("아직 제작비 자료가 없어요. 맥에서 <b>채널대시보드/비용_업데이트.command</b>를 한 번 실행하면 여기에 편당 비용이 채워집니다.")}`;
+  const sel = name && C.채널.find(c => c.name === name);
+  const chips = `<div class="chips" style="margin-top:16px">${[["", "전체"]].concat(C.채널.map(c => [c.name, c.name])).map(([k, l]) =>
+    `<a class="chip ${(sel ? sel.name : "") === k ? "on" : ""}" href="#cost${k ? "/" + encodeURIComponent(k) : ""}">${k && D.channels.some(x => x.name === k) ? `<span class="dot" style="background:${color(k)}"></span>` : ""}${esc(l)}</a>`).join("")}</div>`;
+  const note = `단가는 맥의 <b>공통/요금표.json</b>에 적힌 값으로 계산해요(그림 1장, 음성 1글자). 환율 1달러 = ${man(C.환율.USD_KRW)}원. 음성을 다시 만든 몫과 요금을 모르는 도구는 빠져 있어 <b>실제보다 적게</b> 나올 수 있어요. 집계 ${C.집계일}.`;
+  if (!sel) {
+    const avg = C.편수 ? C.합계krw / C.편수 : 0;
+    const paid = C.채널.filter(c => c.천회당krw !== null && c.천회당krw !== undefined);
+    return `${chips}<h2 class="pt">💵 제작비</h2>${tip(note)}
+    <div class="grid4">
+      <div class="card stat"><div class="k">지금까지 쓴 돈</div><div class="v">${won(C.합계krw)}</div><div class="s">영상 ${C.편수}편</div></div>
+      <div class="card stat"><div class="k">1편 평균</div><div class="v">${won(Math.round(avg))}</div><div class="s">채널 ${C.채널.length}개</div></div>
+      <div class="card stat"><div class="k">그림</div><div class="v">${man(C.채널.reduce((s, c) => s + c.그림 + c.사진 + c.기타이미지, 0))}장</div><div class="s">장면·썸네일 포함</div></div>
+      <div class="card stat"><div class="k">음성</div><div class="v">${man(C.채널.reduce((s, c) => s + c.글자, 0))}자</div><div class="s">일레븐랩스 기준</div></div>
+    </div>
+    <div class="sec">채널별</div>
+    <div class="card rows">
+      <div class="crow head"><span>채널</span><span>총 제작비</span><span>1편 평균</span><span class="hide-m">1,000회당</span><span></span></div>
+      ${C.채널.map(c => `<a class="crow" href="#cost/${encodeURIComponent(c.name)}">
+        <div class="who">${(D.channels.find(x => x.name === c.name) ? avatar(D.channels.find(x => x.name === c.name)) : '<span class="av"></span>')}
+          <div style="min-width:0"><div class="n">${esc(c.name)}</div><div class="h">${c.편수}편${c.요금모름 ? " · 일부 요금 모름" : ""}</div></div></div>
+        <div class="num"><b>${won(c.합계krw)}</b></div>
+        <div class="num"><b>${won(Math.round(c.합계krw / c.편수))}</b></div>
+        <div class="num hide-m"><b>${c.천회당krw === null || c.천회당krw === undefined ? "-" : won(c.천회당krw)}</b><span class="d muted">조회 ${man(c.조회수)}</span></div>
+        <span class="chev">›</span></a>`).join("")}
+    </div>
+    ${paid.length ? `<div class="note">1,000회당 제작비 = 그 채널에 들어간 돈 ÷ 지금까지의 조회수. 유튜브 광고 수익이 보통 1,000회에 1,000~3,000원쯤이라, 이 숫자가 그보다 낮아지면 본전을 넘습니다.</div>` : ""}`;
+  }
+  const c = sel;
+  const eps = [...c.편].sort((a, b) => (b.완성일 || "").localeCompare(a.완성일 || ""));
+  return `${chips}<h2 class="pt">💵 ${esc(c.name)} 제작비</h2>${tip(note)}
+  <div class="grid4">
+    <div class="card stat"><div class="k">총 제작비</div><div class="v">${won(c.합계krw)}</div><div class="s">${c.편수}편</div></div>
+    <div class="card stat"><div class="k">1편 평균</div><div class="v">${won(Math.round(c.합계krw / c.편수))}</div><div class="s">${c.tts === "elevenlabs" ? "일레븐랩스" : esc(c.tts)}</div></div>
+    <div class="card stat"><div class="k">1,000회당</div><div class="v">${c.천회당krw === null || c.천회당krw === undefined ? "-" : won(c.천회당krw)}</div><div class="s">조회 ${man(c.조회수)}</div></div>
+    <div class="card stat"><div class="k">쓴 재료</div><div class="v">${man(c.그림 + c.사진 + c.기타이미지)}장</div><div class="s">음성 ${man(c.글자)}자${c.받은영상 ? ` · 영상 ${c.받은영상}개` : ""}</div></div>
+  </div>
+  <div class="sec">편별</div>
+  <div class="card scroll"><table class="tbl">
+    <tr><th>편</th><th>완성일</th><th>그림</th><th>음성</th><th>제작비</th></tr>
+    ${eps.map(e => `<tr><td><b>${esc(e.편)}</b><div class="muted" style="font-size:11.5px;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.제목)}</div></td>
+      <td>${e.완성일 || '<span class="muted">미완성</span>'}</td>
+      <td>${man(e.그림.장면 + e.그림.썸네일 + e.그림.사진 + e.그림.기타)}장<div class="muted" style="font-size:11.5px">${won(Math.round(e.usd.그림 * C.환율.USD_KRW))}</div></td>
+      <td>${man(e.글자)}자<div class="muted" style="font-size:11.5px">${won(Math.round(e.usd.음성 * C.환율.USD_KRW))}</div></td>
+      <td><b>${won(Math.round(e.합계usd * C.환율.USD_KRW))}</b>${e.요금모름 ? '<div class="muted" style="font-size:11.5px">일부 요금 모름</div>' : ""}</td></tr>`).join("")}
+  </table></div>`;
+}
+
 /* ───────── 인사이트 ───────── */
 function pageInsight(sub) {
   const cur = INSIGHTS.some(x => x[0] === sub) ? sub : "alerts";
@@ -507,7 +559,7 @@ function route() {
   $("#tabs").innerHTML = nav; $("#bottom").innerHTML = nav;
   charts.forEach(c => c.destroy()); charts = [];
   const pages = { summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
-    money: [() => pageMoney(a), () => {}], insight: [() => pageInsight(a), () => afterInsight(a)] };
+    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], insight: [() => pageInsight(a), () => afterInsight(a)] };
   $("#app").innerHTML = pages[cur][0]();
   pages[cur][1]();
   window.scrollTo(0, 0);
