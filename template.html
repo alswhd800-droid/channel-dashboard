@@ -406,7 +406,7 @@ function pageCost(name) {
       <div class="crow head"><span>채널</span><span>총 제작비</span><span>1편 평균</span><span class="hide-m">1,000회당</span><span></span></div>
       ${C.채널.map(c => `<a class="crow" href="#cost/${encodeURIComponent(c.name)}">
         <div class="who">${(D.channels.find(x => x.name === c.name) ? avatar(D.channels.find(x => x.name === c.name)) : '<span class="av"></span>')}
-          <div style="min-width:0"><div class="n">${esc(c.name)}</div><div class="h">${c.편수}편${c.요금모름 ? " · 일부 요금 모름" : ""}</div></div></div>
+          <div style="min-width:0"><div class="n">${esc(c.name)}</div><div class="h">${c.편수}편${c.크레딧 ? ` · 크레딧 ${man(c.크레딧)}개` : ""}${c.요금모름 ? " · 일부 요금 모름" : ""}</div></div></div>
         <div class="num"><b>${won(c.합계krw)}</b></div>
         <div class="num"><b>${won(Math.round(c.합계krw / c.편수))}</b></div>
         <div class="num hide-m"><b>${c.천회당krw === null || c.천회당krw === undefined ? "-" : won(c.천회당krw)}</b><span class="d muted">조회 ${man(c.조회수)}</span></div>
@@ -421,7 +421,7 @@ function pageCost(name) {
     <div class="card stat"><div class="k">총 제작비</div><div class="v">${won(c.합계krw)}</div><div class="s">${c.편수}편</div></div>
     <div class="card stat"><div class="k">1편 평균</div><div class="v">${won(Math.round(c.합계krw / c.편수))}</div><div class="s">${c.tts === "elevenlabs" ? "일레븐랩스" : esc(c.tts)}</div></div>
     <div class="card stat"><div class="k">1,000회당</div><div class="v">${c.천회당krw === null || c.천회당krw === undefined ? "-" : won(c.천회당krw)}</div><div class="s">조회 ${man(c.조회수)}</div></div>
-    <div class="card stat"><div class="k">쓴 재료</div><div class="v">${man(c.그림 + c.사진 + c.기타이미지)}장</div><div class="s">음성 ${man(c.글자)}자${c.받은영상 ? ` · 영상 ${c.받은영상}개` : ""}</div></div>
+    <div class="card stat"><div class="k">쓴 재료</div><div class="v">${man(c.그림 + c.사진 + c.기타이미지)}장</div><div class="s">음성 ${man(c.글자)}자${c.받은영상 ? ` · 영상 ${c.받은영상}개(크레딧 ${man(c.크레딧)})` : ""}</div></div>
   </div>
   <div class="sec">편별</div>
   <div class="card scroll"><table class="tbl">
@@ -430,7 +430,7 @@ function pageCost(name) {
       <td>${e.완성일 || '<span class="muted">미완성</span>'}</td>
       <td>${man(e.그림.장면 + e.그림.썸네일 + e.그림.사진 + e.그림.기타)}장<div class="muted" style="font-size:11.5px">${won(Math.round(e.usd.그림 * C.환율.USD_KRW))}</div></td>
       <td>${man(e.글자)}자<div class="muted" style="font-size:11.5px">${won(Math.round(e.usd.음성 * C.환율.USD_KRW))}</div></td>
-      <td><b>${won(Math.round(e.합계usd * C.환율.USD_KRW))}</b>${e.요금모름 ? '<div class="muted" style="font-size:11.5px">일부 요금 모름</div>' : ""}</td></tr>`).join("")}
+      <td><b>${won(Math.round(e.합계usd * C.환율.USD_KRW))}</b>${e.비고 && e.비고.length ? `<div class="muted" style="font-size:11.5px">${esc(e.비고.join(" · "))}</div>` : ""}</td></tr>`).join("")}
   </table></div>`;
 }
 
