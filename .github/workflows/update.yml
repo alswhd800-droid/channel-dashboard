@@ -37,6 +37,19 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python collect.py
+      - name: 떡상 후보 발굴 (하루 3번만 — API 할당량이 하루 10,000유닛이라 수집과 나눠 쓴다)
+        if: always()
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          H=$(date -u +%H); M=$(date -u +%M)
+          # UTC 21·05·12시 = 한국 06·14·21시, 각 시각의 첫 10분에만
+          if [ "$M" -lt 10 ] && { [ "$H" = "21" ] || [ "$H" = "05" ] || [ "$H" = "12" ]; }; then
+            python 발굴.py --budget 1000 || echo "발굴 실패(다음 차례에 다시 시도)"
+            python collect.py --build          # 발굴 결과를 대시보드에 반영
+          else
+            echo "이번 차례는 건너뜀 (발굴은 한국시간 06·14·21시)"
+          fi
       - name: 대시보드 올리기 (기록이 쌓여 저장소가 커지지 않게 gh-pages는 항상 커밋 1개로 덮어씀)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

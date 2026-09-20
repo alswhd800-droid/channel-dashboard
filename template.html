@@ -139,6 +139,15 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
   .chart{height:220px}
   .thumb{width:76px;height:43px}
 }
+
+.hunt .rank{width:22px;text-align:right;color:var(--sub);font-variant-numeric:tabular-nums;font-weight:700;flex:none}
+.hunt .hg{text-align:right}
+.hunt .mult{font-weight:800;color:#e0392b;font-size:15px;line-height:1.2}
+.hunt .sub2{color:var(--sub);font-size:11px;margin-top:2px;white-space:nowrap}
+.segs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.huntmeta{color:var(--sub);font-size:11px;margin:2px 0 8px}
+.when{font-weight:400;color:var(--sub);font-size:12px;margin-left:6px}
+@media(max-width:520px){.hunt .sub2{font-size:10px}.hunt .rank{width:16px}}
 </style>
 </head>
 <body>
@@ -152,7 +161,7 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 <script>
 const D = /*__DATA__*/null;
 const PALETTE = ["#f2b705", "#e0392b", "#2b6de0", "#1f9d6b", "#8e44ad", "#ff7a00", "#00a3a3"];
-const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["cost", "💵", "제작비"], ["insight", "💡", "인사이트"]];
+const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["cost", "💵", "제작비"], ["hunt", "🔥", "발굴"], ["insight", "💡", "인사이트"]];
 const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -179,7 +188,7 @@ const ago = iso => {
 };
 const tip = html => `<div class="tip">💡 ${html}</div>`;
 let charts = [];
-const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all" };
+const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
 const remember = () => { try { localStorage.setItem("dash", JSON.stringify(state)); } catch (e) {} };
 
@@ -434,6 +443,75 @@ function pageCost(name) {
   </table></div>`;
 }
 
+/* ───────── 발굴 ───────── */
+const HSORT = [["score", "종합"], ["mult", "배수"], ["vph", "속도"], ["views", "조회수"]];
+function huntRow(r, i) {
+  const subs = r.subs === null ? "비공개" : man(r.subs);
+  const age = r.age_h < 48 ? `${Math.round(r.age_h)}시간` : `${Math.round(r.age_h / 24)}일`;
+  return `<a class="item hunt" href="${esc(r.url)}" target="_blank" rel="noopener">
+    <span class="rank">${i + 1}</span>
+    ${r.thumb ? `<img class="thumb" src="${esc(r.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="thumb"></span>'}
+    <div style="min-width:0">
+      <div class="t">${esc(r.title)}</div>
+      <div class="m">${esc(r.ch)} · 구독 ${subs} · 평소 ${man(r.base)}회 · ${age} 전</div>
+    </div>
+    <div class="g hg">
+      <div class="mult">${man(r.mult)}배</div>
+      <div class="sub2">${man(r.vph)}/시간 · ${man(r.views)}회</div>
+    </div></a>`;
+}
+const CSORT = [["score", "종합"], ["per_day", "하루증가"], ["pct_day", "증가율"], ["subs", "구독자"]];
+function chanRow(r, i) {
+  const b = r.base || {};
+  const usual = [b.s ? `쇼츠 ${man(b.s)}` : null, b.l ? `본편 ${man(b.l)}` : null].filter(Boolean).join(" · ");
+  return `<a class="item hunt" href="${esc(r.url)}" target="_blank" rel="noopener">
+    <span class="rank">${i + 1}</span>
+    <div style="min-width:0">
+      <div class="t">${esc(r.title)}</div>
+      <div class="m">구독 ${man(r.subs)} · 영상 ${man(r.video_count)}개${r.started ? " · " + r.started + " 개설" : ""}${usual ? " · 평소 " + usual : ""}</div>
+    </div>
+    <div class="g hg">
+      <div class="mult">+${man(r.per_day)}/일</div>
+      <div class="sub2">${r.pct_day}%/일 · ${r.days}일간 +${man(r.gain)}</div>
+    </div></a>`;
+}
+function pageHunt() {
+  const o = D.outliers;
+  if (!o) return `<section class="card"><h2>🔥 발굴</h2>
+    <div class="empty">아직 수집 전이에요. 맥에서 <code>python3 발굴.py</code>를 한 번 돌리면 여기에 후보가 쌓여요.</div></section>`;
+  const seg = (key, opts, cur) => `<div class="seg">` + opts.map(([v, l]) =>
+    `<button data-${key}="${v}" class="${cur === v ? "on" : ""}">${l}</button>`).join("") + `</div>`;
+  const isCh = state.htype === "chan";
+  const list = (isCh ? o.channels : state.htype === "short" ? o.shorts : o.long) || [];
+  const sortKey = isCh ? (CSORT.some(x => x[0] === state.csort) ? state.csort : "score") : state.hsort;
+  const sorted = [...list].sort((a, b) => (b[sortKey] || 0) - (a[sortKey] || 0));
+  const head = isCh
+    ? tip("<b>구독자가 갑자기 빠르게 느는 국내 일반인 채널</b>이에요. 지금 먹히는 소재를 가장 빨리 알려주는 신호입니다. 방송사·기업·언론 채널은 빼고, 영상 3천 개 넘는 클립 채널도 제외했어요. <b>이력이 쌓여야 계산되니 하루 이틀 지나야 채워집니다.</b>")
+    : tip("<b>구독자 수가 아니라 '그 채널 평소보다 몇 배'</b>를 봅니다. 구독 3천 채널의 30만이 구독 100만 채널의 100만보다 훨씬 중요한 신호예요. 배수 기준은 그 채널 최근 영상의 <b>중간값</b>, 속도는 올라온 뒤 시간당 조회수입니다.");
+  const empty = isCh
+    ? '<div class="empty">아직 이력이 부족해요. 구독자 변화는 두 번째 수집부터 계산됩니다 (한국시간 06·14·21시).</div>'
+    : '<div class="empty">조건에 맞는 후보가 없어요. 다음 수집 때 다시 확인해 주세요.</div>';
+  const cut = o.cut ? ` · 제외 외국 ${o.cut["외국"] || 0}·회사 ${o.cut["회사"] || 0}` : "";
+  return `<section class="card"><h2>🔥 ${isCh ? "뜨는 채널" : "지금 터지는 중"} <span class="when">${esc(o.at)} 기준</span></h2>
+    ${head}
+    <div class="segs">${seg("htype", [["short", "쇼츠"], ["long", "본편"], ["chan", "채널"]], state.htype)}
+      ${seg(isCh ? "csort" : "hsort", isCh ? CSORT : HSORT, sortKey)}</div>
+    <div class="huntmeta">쇼츠 ${(o.shorts || []).length} · 본편 ${(o.long || []).length} · 채널 ${(o.channels || []).length} · 채널풀 ${man(o.pool)}곳${cut}</div>
+    <div class="list">${sorted.length ? sorted.map(isCh ? chanRow : huntRow).join("") : empty}</div>
+  </section>`;
+}
+function afterHunt() {
+  document.querySelectorAll("[data-htype]").forEach(b => b.onclick = () => {
+    state.htype = b.dataset.htype; remember(); $("#app").innerHTML = pageHunt(); afterHunt();
+  });
+  document.querySelectorAll("[data-hsort]").forEach(b => b.onclick = () => {
+    state.hsort = b.dataset.hsort; remember(); $("#app").innerHTML = pageHunt(); afterHunt();
+  });
+  document.querySelectorAll("[data-csort]").forEach(b => b.onclick = () => {
+    state.csort = b.dataset.csort; remember(); $("#app").innerHTML = pageHunt(); afterHunt();
+  });
+}
+
 /* ───────── 인사이트 ───────── */
 function pageInsight(sub) {
   const cur = INSIGHTS.some(x => x[0] === sub) ? sub : "alerts";
@@ -559,7 +637,7 @@ function route() {
   $("#tabs").innerHTML = nav; $("#bottom").innerHTML = nav;
   charts.forEach(c => c.destroy()); charts = [];
   const pages = { summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
-    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], insight: [() => pageInsight(a), () => afterInsight(a)] };
+    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], insight: [() => pageInsight(a), () => afterInsight(a)] };
   $("#app").innerHTML = pages[cur][0]();
   pages[cur][1]();
   window.scrollTo(0, 0);

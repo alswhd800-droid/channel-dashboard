@@ -488,6 +488,17 @@ def load_costs(chans):
     return c
 
 
+def load_outliers():
+    """발굴.py가 만든 outliers.json(떡상 후보). 없으면 None — 대시보드는 안내만 띄운다."""
+    p = DATA / "outliers.json"
+    if not p.exists():
+        return None
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
 def build(ctx):
     now, info, videos, vhist, hist = ctx["now"], ctx["info"], ctx["videos"], ctx["vhist"], ctx["hist"]
     early, money_hist, alerts, bench = ctx["early"], ctx["money_hist"], ctx["alerts"], ctx["bench"]
@@ -606,7 +617,7 @@ def build(ctx):
             "series": {"dates": series_days[1:], "by_channel": by_ch}, "videos": vids,
             "alerts": alerts["items"][:120], "weekly": weekly, "timing": timing,
             "bench": {"at": bench.get("at"), "channels": bench.get("channels", []), "videos": bvids[:40]},
-            "costs": load_costs(chans),
+            "costs": load_costs(chans), "outliers": load_outliers(),
             "telegram": bool(env_value("TELEGRAM_BOT_TOKEN") and env_value("TELEGRAM_CHAT_ID")) or bool(os.environ.get("TELEGRAM_ON")),
             "settings": {"surge_min": SURGE_MIN_PER_HOUR, "surge_ratio": SURGE_RATIO, "retention": RETENTION}}
 
