@@ -266,6 +266,25 @@ def median_early(early, videos, ch, short, hour, exclude):
     return statistics.median(vals) if vals else None
 
 
+def rename_channels(channels, hist, money_hist, videos, alerts):
+    """channels.json의 old_names(예전 표시 이름) 기록을 새 이름으로 옮긴다 — 채널 이름을 바꿔도 그래프·주간 기록이 이어진다"""
+    for entry in channels:
+        new = entry["name"]
+        for old in entry.get("old_names", []):
+            for snap in list(hist["daily"].values()) + [h["ch"] for h in hist["hourly"]]:
+                if old in snap and new not in snap:
+                    snap[new] = snap.pop(old)
+            for day in money_hist.values():
+                if old in day and new not in day:
+                    day[new] = day.pop(old)
+            for v in videos.values():
+                if v.get("ch") == old:
+                    v["ch"] = new
+            for a in alerts["items"]:
+                if a.get("ch") == old:
+                    a["ch"] = new
+
+
 # ---------------------------------------------------------------- 수집
 
 def collect():
@@ -281,6 +300,7 @@ def collect():
     alerts = load("alerts.json", None)
     first_run = alerts is None
     alerts = alerts or {"items": [], "seen": []}
+    rename_channels(channels, hist, money_hist, videos, alerts)
     seen = set(alerts["seen"])
     state = load("state.json", {})
     new_alerts = []
