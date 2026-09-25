@@ -9,7 +9,7 @@
     텔레그램 알림(선택): TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
 - 쇼츠 구분: 3분 이하 영상만 youtube.com/shorts/ID 주소가 열리는지로 판별(결과 캐시)
-- 수익 창출 진행률: 공개 API로 알 수 없는 시청 시간은 '본편 조회수 × 영상 길이 × 평균 시청 비율'로 추정
+- 광고 수익 조건 진행률(팬 후원 단계는 안 봄): 공개 API로 알 수 없는 시청 시간은 '본편 조회수 × 영상 길이 × 평균 시청 비율'로 추정
 - 알림: 급등(1시간 조회수가 평소의 3배 이상·50회 이상), 새 영상, 24시간 성적, 구독자·조회수 목표, 수익 조건
 - 새 영상 성적: 올린 뒤 6·24·48시간 조회수를 같은 채널·같은 종류(쇼츠/본편) 영상의 중간값과 비교
 - 벤치마크: benchmarks.json 채널의 최근 영상을 6시간마다 확인
@@ -40,13 +40,11 @@ SUBS_GOALS = (10, 50, 100, 300, 500, 1000, 5000, 10000, 50000, 100000)
 VIDEO_GOALS = (1000, 10000, 100000, 1000000)
 CHANNEL_GOALS = (10000, 100000, 1000000, 10000000)
 
-# 유튜브 파트너 프로그램 기준(2026-09 기준 공개 안내)
-TIERS = [
-    {"key": "fan", "name": "1단계 · 팬 후원 기능", "desc": "멤버십·슈퍼 땡스 등(국가별 적용은 스튜디오에서 확인)",
-     "subs": 500, "uploads90": 3, "watch": 3000, "shorts90": 3_000_000},
-    {"key": "ads", "name": "2단계 · 광고 수익", "desc": "롱폼·쇼츠 광고 수익 공유",
-     "subs": 1000, "uploads90": 0, "watch": 4000, "shorts90": 10_000_000},
-]
+# 유튜브 파트너 프로그램 광고 수익 조건(유튜브 고객센터 72851, 2026-09 확인)
+#   구독자 1,000명 + (최근 12개월 공개 본편 시청 시간 4,000시간 또는 최근 90일 공개 쇼츠 조회수 1,000만 회)
+# 2027-02-01부터 새로 신청하는 채널은 시청 시간 8,000시간 또는 쇼츠 2,000만 회(유튜브 블로그 2026-08-10)
+ADS = {"subs": 1000, "watch": 4000, "shorts90": 10_000_000}
+ADS_NEW = {"date": "2027-02-01", "watch": 8000, "shorts90": 20_000_000}
 
 
 def env_value(name):
@@ -182,37 +180,44 @@ def rate(hist, name, key, days=7):
 
 
 def monetization(now, name, snap, mine, hist):
+    """광고 수익 조건 하나만: 구독자(필수) + 본편 시청 시간 또는 쇼츠 조회수(둘 중 하나)"""
     in_days = lambda v, n: parse_time(v["published"]) >= now - timedelta(days=n)
     public = [v for v in mine if v.get("public", True)]
     shorts90 = sum(v["views"] for v in public if v["short"] and in_days(v, 90))
-    uploads90 = sum(1 for v in public if in_days(v, 90))
     longs = [v for v in public if not v["short"] and in_days(v, 365)]
     watch = sum(v["views"] * v["dur"] * RETENTION for v in longs) / 3600
     avg_long = (sum(v["dur"] for v in longs) / len(longs)) if longs else 0
     lr = rate(hist, name, "long_views")
-    cur = {"subs": snap["subs"], "uploads90": uploads90, "watch": round(watch, 1), "shorts90": shorts90}
+    cur = {"subs": snap["subs"], "watch": round(watch, 1), "shorts90": shorts90}
     speed = {"subs": rate(hist, name, "subs"), "shorts90": rate(hist, name, "shorts_views"),
-             "watch": (lr * avg_long * RETENTION / 3600) if lr is not None else None, "uploads90": None}
-    tiers = []
-    for t in TIERS:
-        items = []
-        for key, label, unit in (("subs", "구독자", "명"), ("uploads90", "최근 90일 공개 업로드", "개"),
-                                 ("watch", "최근 12개월 본편 시청 시간(추정)", "시간"), ("shorts90", "최근 90일 쇼츠 조회수", "회")):
-            goal = t[key]
-            if not goal:
-                continue
-            left = max(0, goal - cur[key])
-            sp = speed[key]
-            eta = None if left == 0 else (round(left / sp) if sp and sp > 0 else None)
-            items.append({"key": key, "label": label, "unit": unit, "cur": cur[key], "goal": goal,
-                          "pct": min(100.0, cur[key] / goal * 100), "left": left, "eta": eta, "speed": sp})
-        by = {i["key"]: i for i in items}
-        path = max(by["watch"]["pct"], by["shorts90"]["pct"])  # 시청 시간 또는 쇼츠 조회수 중 하나만 채우면 됨
-        need = [by["subs"]["pct"], path] + ([by["uploads90"]["pct"]] if "uploads90" in by else [])
-        tiers.append({"key": t["key"], "name": t["name"], "desc": t["desc"], "items": items,
-                      "overall": min(need), "done": min(need) >= 100,
-                      "best_path": "watch" if by["watch"]["pct"] >= by["shorts90"]["pct"] else "shorts90"})
-    return {"tiers": tiers, "retention": RETENTION}
+             "watch": (lr * avg_long * RETENTION / 3600) if lr is not None else None}
+    window = {"subs": None, "watch": 365, "shorts90": 90}   # 기간 안에 채워야 하는 조건(오래된 것은 빠져나감)
+    deadline = datetime.fromisoformat(ADS_NEW["date"]).replace(tzinfo=KST)
+    days_left = max(0, (deadline - now).days)
+    items = []
+    for key, label, unit in (("subs", "구독자", "명"), ("watch", "본편 시청 시간 · 최근 12개월(추정)", "시간"),
+                             ("shorts90", "쇼츠 조회수 · 최근 90일", "회")):
+        goal, sp = ADS[key], speed[key]
+        left = max(0, goal - cur[key])
+        eta = None if left == 0 else (round(left / sp) if sp and sp > 0 else None)
+        stuck = bool(window[key] and left and sp and sp > 0 and sp * window[key] < goal)  # 지금 속도로는 기간 안에 못 채움
+        if key == "shorts90":
+            need = goal / 90 if days_left >= 90 else (left / days_left if days_left else None)
+        else:
+            need = left / days_left if days_left else None
+        items.append({"key": key, "label": label, "unit": unit, "cur": cur[key], "goal": goal,
+                      "pct": min(100.0, cur[key] / goal * 100), "left": left, "eta": eta, "speed": sp,
+                      "stuck": stuck, "need_per_day": None if left == 0 or need is None else round(need, 1)})
+    by = {i["key"]: i for i in items}
+    path = max(by["watch"]["pct"], by["shorts90"]["pct"])  # 시청 시간 또는 쇼츠 조회수 중 하나만 채우면 됨
+    overall = min(by["subs"]["pct"], path)
+    # 남은 시청 시간을 본편 조회수로 환산(영상 평균 길이 × 평균 시청 비율)
+    views_left = round(by["watch"]["left"] * 3600 / (avg_long * RETENTION)) if avg_long else None
+    ads = {"key": "ads", "name": "광고 수익", "items": items, "overall": overall, "done": overall >= 100,
+           "best_path": "watch" if by["watch"]["pct"] >= by["shorts90"]["pct"] else "shorts90",
+           "block": "subs" if by["subs"]["pct"] <= path else ("watch" if by["watch"]["pct"] >= by["shorts90"]["pct"] else "shorts90"),
+           "avg_long": round(avg_long), "views_left": views_left}
+    return {"tiers": [ads], "retention": RETENTION, "days_left": days_left, "new_rules": ADS_NEW}
 
 
 # ---------------------------------------------------------------- 알림
@@ -381,7 +386,7 @@ def collect():
                     alert("money", c["name"], f"광고 수익 조건 {p}% 달성", "수익창출 탭에서 남은 조건을 확인하세요", DASHBOARD_URL + "#money/" + urllib.parse.quote(c["name"]),
                           key=f"money:{c['name']}:ads:{p}")
             if t["done"]:
-                alert("money", c["name"], f"{t['name']} 조건 달성! 🎉", "YouTube 스튜디오 → 수익 창출에서 신청할 수 있어요",
+                alert("money", c["name"], "광고 수익 조건 달성! 🎉", "YouTube 스튜디오 → 수익 창출에서 신청하세요(2단계 인증·애드센스 필요)",
                       DASHBOARD_URL + "#money/" + urllib.parse.quote(c["name"]), key=f"money:{c['name']}:{t['key']}:done")
     money_hist[today] = money_today
 

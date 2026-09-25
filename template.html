@@ -98,6 +98,18 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 .or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
 .alt{opacity:.55}
 .note{color:var(--sub);font-size:12.5px;line-height:1.55;margin:4px 2px 12px}
+.guide .gh{font-weight:800;font-size:15.5px;margin-bottom:6px}
+.gs{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:14px;line-height:1.5}
+.gs .num{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--accent);color:var(--accent-ink);margin-top:1px}
+.gs .muted{font-size:12.5px}
+.gp{margin-top:4px}
+.gx{font-size:12.5px;line-height:1.55;color:var(--sub);padding:8px 0 0;border-top:1px solid var(--line);margin-top:8px}
+.gx b{color:var(--ink)}
+.warn{background:var(--tip);color:var(--tip-ink);border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.5;margin-top:8px}
+.step{font-size:12px;font-weight:800;color:var(--sub);margin:14px 0 -4px}
+.req .rv{font-size:12px;color:var(--ink);margin-top:2px}
+.pace{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:4px 10px;font-size:12.5px;margin-top:6px}
+.pace b{white-space:nowrap}
 .tip{background:var(--tip);color:var(--tip-ink);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.55;margin:0 0 12px}
 .tip b{font-weight:800}
 .alert{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
@@ -351,44 +363,76 @@ function afterVideos() {
 }
 
 /* ───────── 수익 ───────── */
+const span = d => d === null || d === undefined ? "-" : d <= 60 ? `약 ${man(d)}일` : d <= 365 ? `약 ${Math.round(d / 30)}개월` : `약 ${(d / 365).toFixed(1)}년`;
+const moneyGuide = () => {
+  const m = D.channels.length ? D.channels[0].money : null;
+  return `<div class="card guide" style="margin-bottom:12px">
+    <div class="gh">💰 광고 수익 받는 법 — 이것만 채우면 돼요</div>
+    <div class="gs"><span class="num">1</span><div><b>구독자 1,000명</b> <span class="muted">· 꼭 필요</span></div></div>
+    <div class="gs"><span class="num">2</span><div><b>그리고 둘 중 하나만</b>
+      <div class="gp">🎬 본편 시청 시간 <b>4,000시간</b> <span class="muted">· 최근 12개월</span></div>
+      <div class="gp">📱 쇼츠 조회수 <b>1,000만 회</b> <span class="muted">· 최근 90일</span></div></div></div>
+    <div class="gs"><span class="num">3</span><div><b>신청</b> <span class="muted">· YouTube 스튜디오 → 수익 창출. 구글 계정 2단계 인증 · 애드센스 연결 · 커뮤니티 경고 없음. 심사는 보통 1개월</span></div></div>
+    <div class="warn">⏰ <b>2027년 2월 1일부터</b> 새로 신청하는 채널은 <b>본편 8,000시간 또는 쇼츠 2,000만 회</b>로 두 배가 돼요. 그 전에 채우고 신청하는 게 목표${m ? ` <b>(D-${m.days_left})</b>` : ""}. 같은 날부터 쇼츠 광고 수익은 가입 뒤에도 90일 1,000만 회를 넘는 동안만 나와요.</div>
+    <div class="gx"><b>조회수로 보면</b> 본편 10분짜리를 평균 35% 본다고 치면 4,000시간 ≈ <b>본편 조회수 약 7만 회</b>. 쇼츠 길은 1,000만 회(90일)라, 작은 채널은 <b>본편 길이 훨씬 가까워요</b>.</div>
+    <div class="gx"><b>안 세는 것</b> 쇼츠를 본 시간(4,000시간에 안 들어감) · 비공개·일부공개·삭제한 영상 · 광고로 산 조회. 영상을 지우거나 비공개로 돌리면 그만큼 깎여요.</div>
+    <div class="gx"><b>심사에서 떨어지는 것</b> 틀이 거의 같고 설명이 적은 양산형 · AI로 찍어낸 느낌 · 남의 영상 재사용 · AI 인물이 건강·돈·법을 설명. 영상 하나가 아니라 채널 전체를 봐요.</div>
+  </div>`;
+};
 function pageMoney(name) {
   const sel = name && D.channels.find(c => c.name === name);
   const chips = `<div class="chips" style="margin-top:16px">${[["", "전체"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) =>
     `<a class="chip ${(sel ? sel.name : "") === k ? "on" : ""}" href="#money${k ? "/" + encodeURIComponent(k) : ""}">${k ? `<span class="dot" style="background:${color(k)}"></span>` : ""}${esc(l)}</a>`).join("")}</div>`;
+  const adOf = c => c.money.tiers.find(t => t.key === "ads");
+  const blockText = ad => {
+    const by = Object.fromEntries(ad.items.map(i => [i.key, i]));
+    if (ad.done) return "조건 달성 · 신청하세요";
+    const b = by[ad.block];
+    return b.key === "subs" ? `막힌 곳: 구독자 ${man(b.left)}명 남음`
+      : b.key === "watch" ? `막힌 곳: 본편 시청 ${man(Math.ceil(b.left))}시간 남음` : `막힌 곳: 쇼츠 ${man(b.left)}회 남음`;
+  };
   if (!sel) {
-    return `${chips}<h2 class="pt">수익창출까지</h2>
-    ${tip("유튜브에서 돈을 벌려면 <b>구독자</b>와 <b>시청 시간(또는 쇼츠 조회수)</b> 조건을 채워야 해요. 채널을 누르면 무엇이 얼마나 남았는지 자세히 보여줘요.")}
+    return `${chips}<h2 class="pt">광고 수익까지</h2>
+    ${moneyGuide()}
     <div class="card rows">${D.channels.map(c => {
-      const fan = c.money.tiers.find(t => t.key === "fan"), ad = c.money.tiers.find(t => t.key === "ads");
-      const bar = (t, label) => `<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span class="muted">${label}</span><b class="${t.done ? "good" : ""}">${t.done ? "달성" : pct(t.overall)}</b></div>
-        <div class="pbar"><i class="${t.done ? "done" : ""}" style="width:${Math.max(t.overall, 1)}%"></i></div></div>`;
+      const ad = adOf(c);
       return `<a class="crow" style="grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) 14px" href="#money/${encodeURIComponent(c.name)}">
         <div class="who">${avatar(c)}<div style="min-width:0"><div class="n">${esc(c.name)}</div><div class="h">구독자 ${man(c.subs)}명</div></div></div>
-        <div>${bar(fan, "1단계 팬 후원")}${bar(ad, "2단계 광고 수익")}</div><span class="chev">›</span></a>`;
+        <div><div style="display:flex;justify-content:space-between;font-size:12.5px"><span class="muted">광고 수익</span><b class="${ad.done ? "good" : ""}">${ad.done ? "달성" : pct(ad.overall)}</b></div>
+          <div class="pbar"><i class="${ad.done ? "done" : ""}" style="width:${Math.max(ad.overall, 1)}%"></i></div>
+          <div class="muted" style="font-size:11.5px">${blockText(ad)}</div></div><span class="chev">›</span></a>`;
     }).join("")}</div>`;
   }
-  const c = sel;
-  const req = (i, alt) => {
+  const c = sel, ad = adOf(c), by = Object.fromEntries(ad.items.map(i => [i.key, i]));
+  const per = { subs: "명", watch: "시간", shorts90: "회" };
+  const req = (i, alt, extra = "") => {
     const done = i.left === 0;
-    const eta = done ? "달성" : i.eta ? `지금 속도면 약 ${man(i.eta)}일` : (i.speed === null ? "속도는 며칠 쌓이면 계산돼요" : "최근 증가 없음");
+    const win = i.key === "watch" ? "12개월" : "90일";
+    const eta = done ? "" : i.stuck ? `지금 속도(하루 +${man(i.speed)}${per[i.key]})로는 ${win} 안에 못 채워요`
+      : i.eta ? `지금 하루 +${man(i.speed)}${per[i.key]} → ${span(i.eta)}` : (i.speed === null ? "속도는 며칠 쌓이면 계산돼요" : "최근 증가 없음");
     return `<div class="req ${alt ? "alt" : ""}"><div class="rl"><span>${i.label}</span><span><b>${man(i.cur)}</b> / ${man(i.goal)}${i.unit}</span></div>
       <div class="pbar"><i class="${done ? "done" : ""}" style="width:${Math.max(i.pct, i.cur > 0 ? 1 : 0)}%"></i></div>
-      <div class="rs">${done ? "✅ 달성" : `${pct(i.pct)} · ${man(i.left)}${i.unit} 남음 · ${eta}`}</div></div>`;
+      <div class="rs">${done ? "✅ 달성" : `${pct(i.pct)} · ${man(i.left)}${i.unit} 남음 · ${eta}`}</div>${extra}</div>`;
   };
-  const ad = c.money.tiers.find(t => t.key === "ads");
-  return `${chips}<h2 class="pt">수익창출까지</h2>
-  ${tip(`<b>구독자</b>는 꼭 채워야 하고, <b>시청 시간</b>과 <b>쇼츠 조회수</b>는 <b>둘 중 하나만</b> 채우면 돼요(흐리게 보이는 쪽이 덜 가까운 길). 시청 시간은 공개 데이터로 알 수 없어서 본편 조회수 × 영상 길이 × ${Math.round(c.money.retention * 100)}%로 추정했어요. 정확한 값은 YouTube 스튜디오 → 수익 창출 탭에서 볼 수 있어요.`)}
+  const viewsLine = ad.views_left && by.watch.left ? `<div class="rv">👉 본편 조회수로 약 <b>${man(ad.views_left)}회</b> 더 (본편 평균 ${Math.round(ad.avg_long / 60)}분 × ${Math.round(c.money.retention * 100)}% 시청 기준)</div>` : "";
+  const shortsLine = by.shorts90.left ? `<div class="rv">👉 90일 동안 하루 평균 <b>${man(Math.ceil(by.shorts90.goal / 90))}회</b>씩 나와야 해요</div>` : "";
+  const cell = (i, unit) => i.left === 0 ? `<b class="good">달성</b>` : `<b>+${man(i.need_per_day)}${unit}</b>`;
+  const now = i => i.speed === null ? `<span class="muted">-</span>` : `<span class="muted">+${man(i.key === "shorts90" ? Math.round(Math.max(0, i.speed)) : Math.max(0, i.speed))}</span>`;
+  return `${chips}<h2 class="pt">광고 수익까지</h2>
   <div class="card money">
     <div class="mh">${avatar(c)}<div><div class="n">${esc(c.name)}</div><div class="muted" style="font-size:12px">${esc(c.handle)}</div></div>
-      <span class="badge ${ad.done ? "ok" : ""}">${ad.done ? "광고 수익 조건 달성" : `광고 수익까지 ${pct(ad.overall)}`}</span></div>
-    ${c.money.tiers.map(t => {
-      const by = Object.fromEntries(t.items.map(i => [i.key, i]));
-      return `<div class="tier"><div class="tn"><span>${t.name}</span><span class="${t.done ? "good" : "muted"}">${t.done ? "달성" : pct(t.overall)}</span></div>
-        <div class="td">${t.desc}</div>
-        ${req(by.subs)}${by.uploads90 ? req(by.uploads90) : ""}
-        ${req(by.watch, t.best_path !== "watch")}<div class="or">또는</div>${req(by.shorts90, t.best_path !== "shorts90")}</div>`;
-    }).join("")}
-  </div>`;
+      <span class="badge ${ad.done ? "ok" : ""}">${ad.done ? "조건 달성 · 신청하세요" : `광고 수익까지 ${pct(ad.overall)}`}</span></div>
+    <div class="step">① 꼭 필요</div>${req(by.subs)}
+    <div class="step">② 둘 중 하나만 (흐린 쪽이 더 먼 길)</div>
+    ${req(by.watch, ad.best_path !== "watch", viewsLine)}<div class="or">또는</div>${req(by.shorts90, ad.best_path !== "shorts90", shortsLine)}
+    ${ad.done ? "" : `<div class="warn">⏰ 2027년 2월 1일 전에 채우려면 <b>하루에</b> (D-${c.money.days_left})
+      <div class="pace"><span></span><span class="muted">필요</span><span class="muted">지금</span>
+        <span>구독자</span>${cell(by.subs, "명")}${now(by.subs)}
+        <span>본편 시청</span>${cell(by.watch, "시간")}${now(by.watch)}
+        <span>또는 쇼츠</span>${cell(by.shorts90, "회")}${now(by.shorts90)}</div></div>`}
+  </div>
+  <div class="note">본편 시청 시간은 공개 데이터로 알 수 없어서 본편 조회수 × 영상 길이 × ${Math.round(c.money.retention * 100)}%로 추정했어요. 정확한 값은 YouTube 스튜디오 → 수익 창출 탭에 있어요.</div>
+  ${moneyGuide()}`;
 }
 
 /* ───────── 제작비 ───────── */
