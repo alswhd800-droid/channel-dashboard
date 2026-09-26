@@ -82,12 +82,26 @@ def ours_brief(ch):
 
 
 def done_topics(c):
-    names = []
+    """이미 만든 편 — ① 편 폴더 이름(데스크톱에서 돌 때만 보임) ② 우리 채널에 올라간 영상 제목 ③ topics/done.json(폴더를 못 볼 때 쓰는 사본).
+    예약 실행(launchd)은 맥 보안상 데스크톱을 못 읽어서 ~/.sojae 사본 저장소에서 돈다 → ①이 비면 ③을 쓴다."""
+    names, seen_dirs = [], False
     for d in c["episodes"]:
         p = (ROOT / d).resolve()
-        if p.is_dir():
-            names += [re.sub(r"^\d+[-_ ]*", "", x.name).replace("_", " ") for x in sorted(p.iterdir()) if x.is_dir() and re.match(r"^\d", x.name)]
-    return sorted(set(names))
+        try:
+            if p.is_dir():
+                names += [re.sub(r"^\d+[-_ ]*", "", x.name).replace("_", " ") for x in sorted(p.iterdir()) if x.is_dir() and re.match(r"^\d", x.name)]
+                seen_dirs = True
+        except PermissionError:
+            pass
+    dp = OUT / "done.json"
+    done = json.loads(dp.read_text(encoding="utf-8")) if dp.exists() else {}
+    if seen_dirs:
+        done[c["name"]] = sorted(set(names)); dp.write_text(json.dumps(done, ensure_ascii=False, indent=1), encoding="utf-8")
+    else:
+        names = done.get(c["name"], [])
+    v = gh_json("videos.json") or {}
+    titles = [r.get("title") for r in v.values() if r.get("ch") == c["name"] and r.get("title")]
+    return {"편_폴더": sorted(set(names)), "올린_영상_제목": titles[:80]}
 
 
 def news(keywords, per=6, days=45):
@@ -213,7 +227,7 @@ def main():
         allowed = {r["url"] for k in ("쇼츠", "본편", "뜨는채널") for r in ob.get(k, []) if r.get("url")}
         allowed |= {r["url"] for k in ("잘된_영상", "안된_영상") for r in data["ours"][k]} | {r["url"] for r in data["news"]}
         prompt = build_prompt(c, data)
-        log(c["name"], f"재료: 발굴 쇼츠 {len(ob['쇼츠'])}·본편 {len(ob['본편'])}, 우리 {data['ours']['편수']}편, 만든 편 {len(data['done'])}, 뉴스 {len(data['news'])}, 프롬프트 {len(prompt):,}자")
+        log(c["name"], f"재료: 발굴 쇼츠 {len(ob['쇼츠'])}·본편 {len(ob['본편'])}, 우리 {data['ours']['편수']}편, 만든 편 {len(data['done']['편_폴더'])}, 뉴스 {len(data['news'])}, 프롬프트 {len(prompt):,}자")
         if dry:
             (OUT / f"_prompt_{c['name']}.txt").write_text(prompt, encoding="utf-8"); continue
         try:
