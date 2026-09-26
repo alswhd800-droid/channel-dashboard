@@ -6,32 +6,37 @@
 <meta http-equiv="refresh" content="600">
 <meta name="theme-color" content="#111114">
 <title>채널 대시보드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-:root{--bg:#f5f4f1;--card:#fff;--ink:#16161a;--sub:#6d6d75;--line:#e7e5e0;--soft:#efeee9;--up:#e0392b;--down:#2b6de0;--shorts:#ff3d55;--long:#3a3a42;--ok:#1f9d6b;--accent:#16161a;--accent-ink:#fff;--tip:#fff7d6;--tip-ink:#5b4a00}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114;--tip:#2a2615;--tip-ink:#f3dd8a}}
-:root[data-theme="dark"]{--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114;--tip:#2a2615;--tip-ink:#f3dd8a}
+:root{--bg:#f5f4f1;--card:#fff;--ink:#16161a;--sub:#6d6d75;--line:#e7e5e0;--soft:#efeee9;--up:#e0392b;--down:#2b6de0;--shorts:#ff3d55;--long:#3a3a42;--ok:#1f9d6b;--accent:#16161a;--accent-ink:#fff;--tip:#f0f2f6;--tip-ink:#4b5160;--warnbg:#fff7d6;--warnink:#5b4a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114;--tip:#1d2027;--tip-ink:#aeb4c0;--warnbg:#2a2615;--warnink:#f3dd8a}}
+:root[data-theme="dark"]{--bg:#0f0f12;--card:#19191e;--ink:#f1f1f4;--sub:#9b9ba4;--line:#2a2a31;--soft:#222228;--long:#c7c7cf;--accent:#f1f1f4;--accent-ink:#111114;--tip:#1d2027;--tip-ink:#aeb4c0;--warnbg:#2a2615;--warnink:#f3dd8a}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit}
 .wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:0 40px}
 .top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .top .in{max-width:1080px;margin:0 auto;padding-inline:16px;display:flex;align-items:center;gap:14px;height:58px}
-.brand{font-weight:800;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
+.logo{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,#ff3d55,#ff8a3d);box-shadow:inset 0 0 0 5px color-mix(in srgb,#fff 18%,transparent)}
 .upd{color:var(--sub);font-size:12px;margin-left:auto;text-align:right;white-space:nowrap}
 nav.tabs{display:flex;gap:2px}
-nav.tabs a{display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:10px;color:var(--sub);font-weight:600;font-size:14px;white-space:nowrap}
-nav.tabs a.on{background:var(--accent);color:var(--accent-ink)}
-h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
-.sec{font-size:15px;font-weight:700;margin:22px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+nav.tabs a{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;color:var(--sub);font-weight:600;font-size:14.5px;white-space:nowrap;transition:background .15s,color .15s}
+nav.tabs a:hover{color:var(--ink);background:var(--soft)}
+nav.tabs a .ic{display:none}
+nav.tabs a.on{background:var(--ink);color:var(--bg)}
+h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
+.pd{color:var(--sub);font-size:13.5px;margin:0 0 14px}
+.sec{font-size:16px;font-weight:800;letter-spacing:-.02em;margin:28px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .sec a.more{font-size:13px;font-weight:500;color:var(--sub)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
-.stat .k{color:var(--sub);font-size:12.5px}
-.stat .v{font-size:25px;font-weight:800;letter-spacing:-.02em;margin-top:2px}
+.stat .k{color:var(--sub);font-size:13px;font-weight:600}
+.stat .v{font-size:28px;font-weight:800;letter-spacing:-.03em;margin-top:4px}
 .stat .s{font-size:12.5px;color:var(--sub);margin-top:2px}
 .up{color:var(--up)}.down{color:var(--down)}.muted{color:var(--sub)}.good{color:var(--ok)}
 .rows{padding:4px 14px}
@@ -105,13 +110,13 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 .gp{margin-top:4px}
 .gx{font-size:12.5px;line-height:1.55;color:var(--sub);padding:8px 0 0;border-top:1px solid var(--line);margin-top:8px}
 .gx b{color:var(--ink)}
-.warn{background:var(--tip);color:var(--tip-ink);border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.5;margin-top:8px}
+.warn{background:var(--warnbg);color:var(--warnink);border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.5;margin-top:8px}
 .step{font-size:12px;font-weight:800;color:var(--sub);margin:14px 0 -4px}
 .req .rv{font-size:12px;color:var(--ink);margin-top:2px}
 .pace{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:4px 10px;font-size:12.5px;margin-top:6px}
 .pace b{white-space:nowrap}
-.tip{background:var(--tip);color:var(--tip-ink);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.55;margin:0 0 12px}
-.tip b{font-weight:800}
+.tip{background:var(--tip);color:var(--tip-ink);border-radius:12px;padding:10px 12px 10px 14px;font-size:13px;line-height:1.6;margin:0 0 14px;border-left:3px solid var(--line)}
+.tip b{font-weight:700;color:var(--ink)}
 .alert{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
 .alert:first-child{border-top:0}
 .alert .ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;background:var(--soft)}
@@ -174,6 +179,15 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 .topic details summary{cursor:pointer;font-weight:600}
 .topic details li{margin:3px 0 0 16px}
 .topic .fu{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:#e0392b}
+.ch2{display:flex;align-items:center;gap:8px;font-size:17px;letter-spacing:-.02em;margin:0 0 12px}
+.ch2 .when{font-size:12px;font-weight:500;color:var(--sub)}
+.tmini{padding:12px 0}
+.tmini>div{flex:1}
+.tmini .chev{margin-left:auto;padding-left:8px}
+.tsc{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:15px;background:var(--soft)}
+.tsc.hi{background:#e0392b;color:#fff}
+.tmini .m{display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.more{font-size:13px;font-weight:500;color:var(--sub)}
 .huntmeta{color:var(--sub);font-size:11px;margin:2px 0 8px}
 .when{font-weight:400;color:var(--sub);font-size:12px;margin-left:6px}
 @media(max-width:520px){.hunt .sub2{font-size:10px}.hunt .rank{width:16px}}
@@ -181,7 +195,7 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand">📊 채널 대시보드</div>
+  <a class="brand" href="#summary"><span class="logo"></span>채널 대시보드</a>
   <nav class="tabs" id="tabs"></nav>
   <div class="upd" id="upd"></div>
 </div></header>
@@ -190,7 +204,7 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 <script>
 const D = /*__DATA__*/null;
 const PALETTE = ["#f2b705", "#e0392b", "#2b6de0", "#1f9d6b", "#8e44ad", "#ff7a00", "#00a3a3"];
-const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["cost", "💵", "제작비"], ["hunt", "🔥", "발굴"], ["topics", "🎯", "소재"], ["insight", "💡", "인사이트"]];
+const MENU = [["summary", "🏠", "요약"], ["topics", "🎯", "소재 추천", "소재"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["hunt", "🔥", "발굴"], ["insight", "💡", "인사이트"], ["money", "💰", "수익"], ["cost", "🧾", "제작비"]];
 const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -215,7 +229,7 @@ const ago = iso => {
   if (m < 60 * 24) return `${Math.round(m / 60)}시간 전`;
   return `${Math.round(m / 1440)}일 전`;
 };
-const tip = html => `<div class="tip">💡 ${html}</div>`;
+const tip = html => `<div class="tip">${html}</div>`;
 let charts = [];
 const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", tch: "" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
@@ -249,35 +263,51 @@ function alertRow(a) {
   return a.url ? `<a class="alert" href="${esc(a.url)}" ${a.url.startsWith("http") && !a.url.includes("channel-dashboard") ? 'target="_blank" rel="noopener"' : ""}>${inner}</a>` : `<div class="alert">${inner}</div>`;
 }
 
+/* ───────── 추천 소재 미니 목록(요약·채널 화면) ───────── */
+function topicsMini(only) {
+  const T = D.topics && D.topics.channels;
+  if (!T) return "";
+  const names = Object.keys(T).filter(n => !only || n === only);
+  if (!names.length) return "";
+  const row = (n, t) => `<a class="item tmini" href="#topics/${encodeURIComponent(n)}">
+      <span class="tsc ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}</span>
+      <div style="min-width:0"><div class="t">${esc(t["소재"])}</div><div class="m">${only ? "" : `<span class="dot" style="background:${color(n)}"></span> ${esc(n)} · `}${esc(t["제목"] || "")}</div></div>
+      <span class="chev">›</span></a>`;
+  const per = only ? 3 : 2;
+  return `<div class="sec"><span>${only ? "이 채널 추천 소재" : "오늘의 추천 소재"}</span><a class="more" href="#topics${only ? "/" + encodeURIComponent(only) : ""}">${only ? "전체 보기" : "채널별로 보기"} ›</a></div>
+    <div class="card list">${names.map(n => (T[n].topics || []).slice(0, per).map(t => row(n, t)).join("")).join("")}</div>`;
+}
+
 /* ───────── 요약 ───────── */
 function pageSummary() {
   const T = D.totals;
   const stat = (k, d, s) => `<div class="card stat"><div class="k">${k}</div><div class="v">${plus(d)}</div><div class="s">${s}</div></div>`;
   const hot = D.videos.filter(v => v.gain).sort((a, b) => b.gain - a.gain).slice(0, 5);
   const al = D.alerts.slice(0, 3);
-  return `<h2 class="pt">오늘 한눈에</h2>
+  return `<h2 class="pt">오늘 한눈에</h2><p class="pd">모든 채널을 합친 오늘 성적이에요 · ${esc(D.updated.slice(5).replace("-", "/"))} 기준, 10분마다 새로 고침</p>
   <div class="grid4">
     ${stat("오늘 조회수", T.d_views, `누적 ${man(T.views)}`)}
     ${stat("오늘 쇼츠 조회수", T.d_shorts, `쇼츠 누적 ${man(T.shorts_views)}`)}
     ${stat("오늘 본편 조회수", T.d_long, `본편 누적 ${man(T.long_views)}`)}
     ${stat("오늘 구독자", T.d_subs, `전체 ${man(T.subs)}명`)}
   </div>
-  <div class="sec"><span>🔔 최근 알림</span><a class="more" href="#insight/alerts">전체 보기 ›</a></div>
+  ${topicsMini()}
+  <div class="sec"><span>최근 알림</span><a class="more" href="#insight/alerts">전체 보기 ›</a></div>
   <div class="card list">${al.length ? al.map(alertRow).join("") : '<div class="empty">아직 알림이 없어요. 급등·목표 달성·새 영상 성적이 생기면 여기에 떠요</div>'}</div>
-  <div class="sec">채널별</div>
+  <div class="sec"><span>채널별 현황</span><span class="more">빨간 숫자 = 오늘 늘어난 만큼</span></div>
   <div class="card rows">
-    <div class="crow head"><span>채널</span><span>구독자</span><span>총 조회수</span><span class="hide-m">쇼츠 / 본편</span><span></span></div>
+    <div class="crow head"><span>채널</span><span>구독자</span><span>총 조회수</span><span class="hide-m">쇼츠 조회 · 본편 조회</span><span></span></div>
     ${D.channels.map(c => `<a class="crow" href="#channel/${encodeURIComponent(c.name)}">
       <div class="who">${avatar(c)}<div style="min-width:0"><div class="n">${esc(c.name)}</div><div class="h">${esc(c.handle)}</div></div></div>
       <div class="num"><b>${c.hidden ? "비공개" : man(c.subs)}</b><span class="d">${dl(c.d_subs)}</span></div>
       <div class="num"><b>${man(c.views)}</b><span class="d">${dl(c.d_views)}</span></div>
-      <div class="num hide-m"><b>${man(c.shorts_views)}</b> / ${man(c.long_views)}<span class="d muted">${c.shorts_count} · ${c.long_count}개</span></div>
+      <div class="num hide-m"><b>${man(c.shorts_views)}</b> · ${man(c.long_views)}<span class="d muted">쇼츠 ${c.shorts_count}편 · 본편 ${c.long_count}편</span></div>
       <span class="chev">›</span></a>`).join("")}
   </div>
-  <div class="sec"><span>일별 조회수 증가</span>
+  <div class="sec"><span>날짜별 조회수 증가</span>
     <span class="seg" id="kind">${[["views", "전체"], ["shorts", "쇼츠"], ["long", "본편"]].map(([k, l]) => `<button data-k="${k}" class="${state.kind === k ? "on" : ""}">${l}</button>`).join("")}</span></div>
   <div class="card">${noSeries() || '<div class="chart"><canvas id="c1"></canvas></div>'}</div>
-  <div class="sec"><span>🔥 오늘 조회수 오른 영상</span><a class="more" href="#videos">전체 보기 ›</a></div>
+  <div class="sec"><span>오늘 많이 오른 영상</span><a class="more" href="#videos">전체 보기 ›</a></div>
   <div class="card list">${hot.length ? hot.map(v => videoItem(v, v => `<b class="up">▲${man(v.gain)}</b><span class="muted">${man(v.views)}</span>`)).join("") : '<div class="empty">내일부터 표시돼요 (어제와 비교)</div>'}</div>`;
 }
 function afterSummary() {
@@ -313,11 +343,12 @@ function pageChannel(name) {
     <div class="split"><i style="width:${c.shorts_views / sum * 100}%;background:var(--shorts)"></i><i style="width:${c.long_views / sum * 100}%;background:var(--long)"></i></div>
   </div>
   <a class="card" href="#money/${encodeURIComponent(c.name)}" style="display:block;margin-top:10px">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>💰 광고 수익 조건까지</span><b>${ad.done ? "달성 🎉" : pct(ad.overall)}</b></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>광고 수익 조건까지</span><b>${ad.done ? "달성 🎉" : pct(ad.overall)}</b></div>
     <div class="pbar"><i class="${ad.done ? "done" : ""}" style="width:${Math.max(ad.overall, 1)}%"></i></div>
     <div class="muted" style="font-size:12px">구독자 ${man(c.subs)}/1,000 · 쇼츠 90일 ${man(ad.items.find(i => i.key === "shorts90").cur)}/1,000만 · 시청 시간(추정) ${man(ad.items.find(i => i.key === "watch").cur)}/4,000 ›</div>
   </a>
-  <div class="sec">일별 조회수 (쇼츠 · 본편)</div>
+  ${topicsMini(c.name)}
+  <div class="sec">날짜별 조회수 (쇼츠 · 본편)</div>
   <div class="card">${noSeries() || '<div class="chart"><canvas id="c2"></canvas></div>'}</div>
   <div class="sec">구독자 추이</div>
   <div class="card">${noSeries() || '<div class="chart"><canvas id="c3"></canvas></div>'}</div>
@@ -594,16 +625,18 @@ function topicCard(t, i) {
       ${t["위험"] ? `<p style="margin:6px 0 0">위험: ${esc(t["위험"])}</p>` : ""}</details>
   </div>`;
 }
-function pageTopics() {
+function pageTopics(want) {
   const T = D.topics;
   if (!T || !T.channels || !Object.keys(T.channels).length) return `<section class="card"><h2>🎯 소재 추천</h2>
     <div class="empty">아직 추천 전이에요. 맥에서 매일 오전 7시·오후 3시에 자동으로 채워져요.</div></section>`;
   const names = Object.keys(T.channels);
+  if (want && names.includes(want)) state.tch = want;
   const cur = names.includes(state.tch) ? state.tch : names[0];
   const c = T.channels[cur];
-  const chips = `<div class="chips" style="margin-bottom:12px">${names.map(n => `<button class="chip ${n === cur ? "on" : ""}" data-tch="${esc(n)}"><span class="dot" style="background:${color(n)}"></span>${esc(n)}</button>`).join("")}</div>`;
-  return chips + `<section class="card"><h2>🎯 ${esc(cur)} 소재 추천 <span class="when">${esc(c.at)} 기준</span></h2>
-    ${tip(`발굴 탭의 <b>지금 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 45일 뉴스</b>를 AI가 채널 떡상 공식으로 채점했어요. 총점 가중치는 ${Object.keys(TLABEL).map(k => TLABEL[k] + "×" + ((c.calib || {}).weights || {korea: 3, paradox: 2, proof: 2, visual: 1})[k]).join("·")}. <b>숫자는 만들기 전에 꼭 확인</b>하세요(펼치기).`)}
+  const chips = `<h2 class="pt">소재 추천</h2><p class="pd">채널 버튼을 누르면 그 채널에 맞는 소재 ${(c.topics || []).length}개가 나와요 · 매일 오전 7시·오후 3시에 새로 골라요</p>
+    <div class="chips" style="margin-bottom:12px">${names.map(n => `<button class="chip ${n === cur ? "on" : ""}" data-tch="${esc(n)}"><span class="dot" style="background:${color(n)}"></span>${esc(n)}</button>`).join("")}</div>`;
+  return chips + `<section class="card"><h2 class="ch2"><span class="dot" style="background:${color(cur)}"></span>${esc(cur)} <span class="when">${esc(c.at)} 기준</span></h2>
+    ${tip(`발굴 탭의 <b>지금 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 45일 뉴스</b>를 AI가 채널 떡상 공식으로 채점했어요. 총점 가중치는 ${Object.keys(TLABEL).map(k => TLABEL[k] + " ×" + (+(((c.calib || {}).weights || {korea: 3, paradox: 2, proof: 2, visual: 1})[k])).toFixed(1).replace(".0", "")).join(" · ")} (우리 영상 성적으로 자동 보정). <b>숫자는 만들기 전에 꼭 확인</b>하세요(펼치기).`)}
     ${c.stale ? `<div class="empty" style="margin-bottom:8px">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
     ${(c.topics || []).map(topicCard).join("") || '<div class="empty">추천이 비어 있어요</div>'}
     <div class="huntmeta" style="margin-top:10px">발굴 기준 ${esc(c.outliers_at || "-")} · 뉴스 ${c.news_n || 0}건 · 모델 ${esc(c.model || "")}</div>
@@ -614,11 +647,11 @@ function calibCard(cal) {
   const rows = Object.keys(TLABEL).map(k => {
     const b = (cal.base || {})[k], w = (cal.weights || {})[k], r = (cal.corr || {})[k];
     const arrow = w > b ? '<span class="up">▲</span>' : w < b ? '<span class="down">▼</span>' : "";
-    return `<div class="crow" style="grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr))"><span>${TLABEL[k]}</span><span>×${b}</span><span>×${w} ${arrow}</span><span class="muted">${r === undefined ? "고정" : (r >= 0 ? "+" : "") + r.toFixed(2)}</span></div>`;
+    return `<div class="crow" style="grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr))"><span>${TLABEL[k]}</span><span>×${b}</span><span>×${(+w).toFixed(1).replace(".0", "")} ${arrow}</span><span class="muted">${r === undefined ? "고정" : (r >= 0 ? "+" : "") + r.toFixed(2)}</span></div>`;
   }).join("");
   const hits = (cal.hits || []).map(x => `<a class="item" href="${esc(x.url)}" target="_blank" rel="noopener"><div style="min-width:0"><div class="t">${esc(x.영상)}</div>
       <div class="m">추천 ${esc(x.추천시각)} · ${x.추천점수}점 · ${esc(x.소재)}</div></div><div class="g hg"><div class="mult">${x["3일조회"] === null || x["3일조회"] === undefined ? "3일 전" : man(x["3일조회"])}</div><div class="sub2">지금 ${man(x.지금조회)}</div></div></a>`).join("");
-  return `<section class="card" style="margin-top:12px"><h2>📐 점수 기준 자동 보정 <span class="when">${esc(cal.updated || "")}</span></h2>
+  return `<section class="card" style="margin-top:12px"><h2 class="ch2">점수 기준 자동 보정 <span class="when">${esc(cal.updated || "")}</span></h2>
     ${tip(`우리 채널에 올린 영상 <b>${cal.n}편</b>을 같은 기준으로 (조회수는 가리고) 채점한 뒤, 올린 지 3일째 조회수와 얼마나 맞는지 쟀어요. 채널이 커지는 추세는 빼고 비교합니다. 상관이 +면 그 기준이 실제로 잘 맞는 것 → 가중치를 조금 올리고, −면 조금 내려요. 자료가 쌓일수록 더 많이 반영돼요(지금 반영 ${Math.round((cal.alpha || 0) * 100)}%).`)}
     <div class="card rows" style="padding:0 14px"><div class="crow head" style="grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr))"><span>기준</span><span>원래</span><span>지금</span><span>조회수와 상관</span></div>${rows}</div>
     <div class="sec" style="margin-top:14px">추천 → 실제 조회수</div>
@@ -752,11 +785,11 @@ function route() {
   const [page, arg] = (location.hash.slice(1) || "summary").split("/");
   const a = arg ? decodeURIComponent(arg) : null;
   const cur = MENU.some(m => m[0] === page) ? page : "summary";
-  const nav = MENU.map(([k, ic, l]) => `<a href="#${k}" class="${k === cur ? "on" : ""}"><span class="ic">${ic}</span>${l}</a>`).join("");
-  $("#tabs").innerHTML = nav; $("#bottom").innerHTML = nav;
+  const nav = short => MENU.map(([k, ic, l, s]) => `<a href="#${k}" class="${k === cur ? "on" : ""}"><span class="ic">${ic}</span>${short && s ? s : l}</a>`).join("");
+  $("#tabs").innerHTML = nav(false); $("#bottom").innerHTML = nav(true);
   charts.forEach(c => c.destroy()); charts = [];
   const pages = { summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
-    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)] };
+    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(a), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)] };
   $("#app").innerHTML = pages[cur][0]();
   pages[cur][1]();
   window.scrollTo(0, 0);
