@@ -7,3 +7,6 @@ docs/
 site/
 비용_자동갱신.log
 비용_자동갱신.out.log
+소재추천.log
+topics/_prompt_*.txt
+소재추천.out.log

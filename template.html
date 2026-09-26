@@ -157,6 +157,23 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 .hunt .mult{font-weight:800;color:#e0392b;font-size:15px;line-height:1.2}
 .hunt .sub2{color:var(--sub);font-size:11px;margin-top:2px;white-space:nowrap}
 .segs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.topic{border-top:1px solid var(--line);padding:14px 0}.topic:first-of-type{border-top:0}
+.topic .hd{display:flex;gap:10px;align-items:flex-start}
+.topic .sc{flex:none;min-width:46px;text-align:center;border-radius:12px;padding:6px 4px;font-weight:800;font-size:18px;line-height:1.1;background:var(--soft)}
+.topic .sc small{display:block;font-size:10px;font-weight:600;color:var(--sub)}
+.topic .sc.hi{background:#e0392b;color:#fff}.topic .sc.hi small{color:#ffe3df}
+.topic .nm{font-weight:800;font-size:15.5px;line-height:1.35}
+.topic .ti{margin-top:3px;font-size:13.5px;color:var(--ink)}
+.topic .fs{margin-top:4px;font-size:12.5px;color:var(--sub)}
+.topic .why{margin:9px 0 0;font-size:13px;line-height:1.6}
+.topic .bars{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:11.5px;color:var(--sub)}
+.topic .bars b{color:var(--ink)}
+.topic .ev{margin-top:8px;display:grid;gap:4px}
+.topic .ev a{font-size:12px;color:var(--sub);text-decoration:underline;text-underline-offset:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topic details{margin-top:8px;font-size:12.5px;color:var(--sub)}
+.topic details summary{cursor:pointer;font-weight:600}
+.topic details li{margin:3px 0 0 16px}
+.topic .fu{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:#e0392b}
 .huntmeta{color:var(--sub);font-size:11px;margin:2px 0 8px}
 .when{font-weight:400;color:var(--sub);font-size:12px;margin-left:6px}
 @media(max-width:520px){.hunt .sub2{font-size:10px}.hunt .rank{width:16px}}
@@ -173,7 +190,7 @@ h2.pt{font-size:20px;margin:20px 0 12px;letter-spacing:-.02em}
 <script>
 const D = /*__DATA__*/null;
 const PALETTE = ["#f2b705", "#e0392b", "#2b6de0", "#1f9d6b", "#8e44ad", "#ff7a00", "#00a3a3"];
-const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["cost", "💵", "제작비"], ["hunt", "🔥", "발굴"], ["insight", "💡", "인사이트"]];
+const MENU = [["summary", "📊", "요약"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["money", "💰", "수익"], ["cost", "💵", "제작비"], ["hunt", "🔥", "발굴"], ["topics", "🎯", "소재"], ["insight", "💡", "인사이트"]];
 const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -200,7 +217,7 @@ const ago = iso => {
 };
 const tip = html => `<div class="tip">💡 ${html}</div>`;
 let charts = [];
-const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score" };
+const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", tch: "" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
 const remember = () => { try { localStorage.setItem("dash", JSON.stringify(state)); } catch (e) {} };
 
@@ -556,6 +573,48 @@ function afterHunt() {
   });
 }
 
+/* ───────── 소재 추천 (소재추천.py, 맥에서 하루 2번) ───────── */
+const TLABEL = { korea: "한국 인지도", paradox: "역설", proof: "근거", visual: "화면" };
+function topicCard(t, i) {
+  const s = t["점수"] || {};
+  const bars = Object.keys(TLABEL).filter(k => k in s).map(k => `<span>${TLABEL[k]} <b>${s[k]}</b>/5</span>`).join("");
+  const ev = (t["근거"] || []).map(e => `<a href="${esc(e.url)}" target="_blank" rel="noopener">↗ ${esc(e["메모"] || e.url)}</a>`).join("");
+  const facts = (t["확인할_사실"] || []).map(x => `<li>${esc(x)}</li>`).join("");
+  return `<div class="topic">
+    <div class="hd"><div class="sc ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}<small>점</small></div>
+      <div style="min-width:0"><div class="nm">${i + 1}. ${esc(t["소재"])}${t["후속"] ? '<span class="fu">대박 편 후속</span>' : ""}</div>
+        <div class="ti">제목: ${esc(t["제목"])}</div>
+        ${t["첫문장"] ? `<div class="fs">첫 문장: ${esc(t["첫문장"])}</div>` : ""}</div></div>
+    <p class="why">${esc(t["왜_터질까"])}</p>
+    <div class="bars">${bars}</div>
+    ${ev ? `<div class="ev">${ev}</div>` : ""}
+    <details><summary>만들기 전 확인할 것${t["보여줄_장면"] ? " · 보여줄 장면" : ""}</summary>
+      ${t["보여줄_장면"] ? `<p style="margin:6px 0 0">장면: ${esc(t["보여줄_장면"])}</p>` : ""}
+      ${facts ? `<ul style="margin:6px 0 0;padding:0">${facts}</ul>` : ""}
+      ${t["위험"] ? `<p style="margin:6px 0 0">위험: ${esc(t["위험"])}</p>` : ""}</details>
+  </div>`;
+}
+function pageTopics() {
+  const T = D.topics;
+  if (!T || !T.channels || !Object.keys(T.channels).length) return `<section class="card"><h2>🎯 소재 추천</h2>
+    <div class="empty">아직 추천 전이에요. 맥에서 매일 오전 7시·오후 3시에 자동으로 채워져요.</div></section>`;
+  const names = Object.keys(T.channels);
+  const cur = names.includes(state.tch) ? state.tch : names[0];
+  const c = T.channels[cur];
+  const chips = `<div class="chips" style="margin-bottom:12px">${names.map(n => `<button class="chip ${n === cur ? "on" : ""}" data-tch="${esc(n)}"><span class="dot" style="background:${color(n)}"></span>${esc(n)}</button>`).join("")}</div>`;
+  return chips + `<section class="card"><h2>🎯 ${esc(cur)} 소재 추천 <span class="when">${esc(c.at)} 기준</span></h2>
+    ${tip("발굴 탭의 <b>지금 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 45일 뉴스</b>를 AI가 채널 떡상 공식으로 채점했어요. 총점은 한국 인지도×3·역설×2·근거×2·화면×1. <b>숫자는 만들기 전에 꼭 확인</b>하세요(펼치기).")}
+    ${c.stale ? `<div class="empty" style="margin-bottom:8px">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
+    ${(c.topics || []).map(topicCard).join("") || '<div class="empty">추천이 비어 있어요</div>'}
+    <div class="huntmeta" style="margin-top:10px">발굴 기준 ${esc(c.outliers_at || "-")} · 뉴스 ${c.news_n || 0}건 · 모델 ${esc(c.model || "")}</div>
+  </section>`;
+}
+function afterTopics() {
+  document.querySelectorAll("[data-tch]").forEach(b => b.onclick = () => {
+    state.tch = b.dataset.tch; remember(); $("#app").innerHTML = pageTopics(); afterTopics();
+  });
+}
+
 /* ───────── 인사이트 ───────── */
 function pageInsight(sub) {
   const cur = INSIGHTS.some(x => x[0] === sub) ? sub : "alerts";
@@ -681,7 +740,7 @@ function route() {
   $("#tabs").innerHTML = nav; $("#bottom").innerHTML = nav;
   charts.forEach(c => c.destroy()); charts = [];
   const pages = { summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
-    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], insight: [() => pageInsight(a), () => afterInsight(a)] };
+    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)] };
   $("#app").innerHTML = pages[cur][0]();
   pages[cur][1]();
   window.scrollTo(0, 0);
