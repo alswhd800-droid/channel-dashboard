@@ -241,7 +241,7 @@ function videoItem(v, right, lead = "") {
       <div class="m">${typeTag(v)}${dotc}${esc(v.ch)}${v.published ? " · " + v.published : ""}</div></div>
     <div class="g">${right(v)}</div></a>`;
 }
-const ALERT_ICON = { surge: "🚀", upload: "🆕", early: "📈", goal: "🎉", money: "💰", weekly: "🗓️" };
+const ALERT_ICON = { surge: "🚀", upload: "🆕", early: "📈", goal: "🎉", money: "💰", weekly: "🗓️", topic: "🎯" };
 function alertRow(a) {
   const inner = `<span class="ic">${ALERT_ICON[a.type] || "🔔"}</span>
     <div style="min-width:0"><div class="at">${esc(a.title)}</div><div class="ad">${esc(a.ch)}${a.detail ? " · " + esc(a.detail) : ""}</div></div>
@@ -603,10 +603,26 @@ function pageTopics() {
   const c = T.channels[cur];
   const chips = `<div class="chips" style="margin-bottom:12px">${names.map(n => `<button class="chip ${n === cur ? "on" : ""}" data-tch="${esc(n)}"><span class="dot" style="background:${color(n)}"></span>${esc(n)}</button>`).join("")}</div>`;
   return chips + `<section class="card"><h2>🎯 ${esc(cur)} 소재 추천 <span class="when">${esc(c.at)} 기준</span></h2>
-    ${tip("발굴 탭의 <b>지금 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 45일 뉴스</b>를 AI가 채널 떡상 공식으로 채점했어요. 총점은 한국 인지도×3·역설×2·근거×2·화면×1. <b>숫자는 만들기 전에 꼭 확인</b>하세요(펼치기).")}
+    ${tip(`발굴 탭의 <b>지금 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 45일 뉴스</b>를 AI가 채널 떡상 공식으로 채점했어요. 총점 가중치는 ${Object.keys(TLABEL).map(k => TLABEL[k] + "×" + ((c.calib || {}).weights || {korea: 3, paradox: 2, proof: 2, visual: 1})[k]).join("·")}. <b>숫자는 만들기 전에 꼭 확인</b>하세요(펼치기).`)}
     ${c.stale ? `<div class="empty" style="margin-bottom:8px">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
     ${(c.topics || []).map(topicCard).join("") || '<div class="empty">추천이 비어 있어요</div>'}
     <div class="huntmeta" style="margin-top:10px">발굴 기준 ${esc(c.outliers_at || "-")} · 뉴스 ${c.news_n || 0}건 · 모델 ${esc(c.model || "")}</div>
+  </section>` + calibCard(c.calib);
+}
+function calibCard(cal) {
+  if (!cal) return "";
+  const rows = Object.keys(TLABEL).map(k => {
+    const b = (cal.base || {})[k], w = (cal.weights || {})[k], r = (cal.corr || {})[k];
+    const arrow = w > b ? '<span class="up">▲</span>' : w < b ? '<span class="down">▼</span>' : "";
+    return `<div class="crow" style="grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr))"><span>${TLABEL[k]}</span><span>×${b}</span><span>×${w} ${arrow}</span><span class="muted">${r === undefined ? "고정" : (r >= 0 ? "+" : "") + r.toFixed(2)}</span></div>`;
+  }).join("");
+  const hits = (cal.hits || []).map(x => `<a class="item" href="${esc(x.url)}" target="_blank" rel="noopener"><div style="min-width:0"><div class="t">${esc(x.영상)}</div>
+      <div class="m">추천 ${esc(x.추천시각)} · ${x.추천점수}점 · ${esc(x.소재)}</div></div><div class="g hg"><div class="mult">${x["3일조회"] === null || x["3일조회"] === undefined ? "3일 전" : man(x["3일조회"])}</div><div class="sub2">지금 ${man(x.지금조회)}</div></div></a>`).join("");
+  return `<section class="card" style="margin-top:12px"><h2>📐 점수 기준 자동 보정 <span class="when">${esc(cal.updated || "")}</span></h2>
+    ${tip(`우리 채널에 올린 영상 <b>${cal.n}편</b>을 같은 기준으로 (조회수는 가리고) 채점한 뒤, 올린 지 3일째 조회수와 얼마나 맞는지 쟀어요. 채널이 커지는 추세는 빼고 비교합니다. 상관이 +면 그 기준이 실제로 잘 맞는 것 → 가중치를 조금 올리고, −면 조금 내려요. 자료가 쌓일수록 더 많이 반영돼요(지금 반영 ${Math.round((cal.alpha || 0) * 100)}%).`)}
+    <div class="card rows" style="padding:0 14px"><div class="crow head" style="grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr))"><span>기준</span><span>원래</span><span>지금</span><span>조회수와 상관</span></div>${rows}</div>
+    <div class="sec" style="margin-top:14px">추천 → 실제 조회수</div>
+    <div class="list">${hits || '<div class="empty">추천 소재로 만든 영상이 아직 없어요. 올리면 3일 뒤 여기서 추천 점수와 실제 조회수를 비교해요.</div>'}</div>
   </section>`;
 }
 function afterTopics() {

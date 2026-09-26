@@ -1,0 +1,48 @@
+{
+ "거대한비밀": {
+  "weights": {
+   "korea": 2.77,
+   "paradox": 1.58,
+   "proof": 2,
+   "visual": 0.79
+  },
+  "base": {
+   "korea": 3,
+   "paradox": 2,
+   "proof": 2,
+   "visual": 1
+  },
+  "n": 19,
+  "corr": {
+   "korea": -0.16,
+   "paradox": -0.43,
+   "visual": -0.44
+  },
+  "alpha": 0.49,
+  "hits": [],
+  "updated": "2026-09-26 11:54"
+ },
+ "거인의무덤": {
+  "weights": {
+   "korea": 3.17,
+   "paradox": 1.71,
+   "proof": 2,
+   "visual": 0.97
+  },
+  "base": {
+   "korea": 3,
+   "paradox": 2,
+   "proof": 2,
+   "visual": 1
+  },
+  "n": 15,
+  "corr": {
+   "korea": 0.13,
+   "paradox": -0.34,
+   "visual": -0.07
+  },
+  "alpha": 0.43,
+  "hits": [],
+  "updated": "2026-09-26 11:54"
+ }
+}

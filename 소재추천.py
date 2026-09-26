@@ -17,9 +17,11 @@
   python3 소재추천.py                 # 두 채널 모두
   python3 소재추천.py --channel 거대한비밀
   python3 소재추천.py --dry           # 재료만 모아 프롬프트 크기 확인(AI 안 부름)
+  python3 소재추천.py --score-only    # 우리 영상 채점·정확도 보정만
 """
 import html
 import json
+import math
 import re
 import subprocess
 import sys
@@ -34,6 +36,7 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "topics"
 KST = timezone(timedelta(hours=9))
 CFG = json.loads((ROOT / "소재추천_기준.json").read_text(encoding="utf-8"))
+VIDEOS, VIEWS = None, None   # gh-pages 의 우리 영상 목록·일별 조회수(main 에서 한 번 읽음)
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"}
 
 
@@ -140,12 +143,123 @@ def history(ch, runs=6):
     return sorted({t["소재"] for r in rows for t in r.get("topics", [])})
 
 
+# ---------------------------------------------------------------- 추천 정확도 보정(2026-09-26 사용자 요청)
+# 우리 채널에 올린 영상을 같은 기준(조회수는 안 보여 주고 제목만)으로 AI가 채점 → 올린 뒤 3일 조회수와 비교해
+# 어떤 기준이 실제 조회수와 잘 맞는지 재고, 가중치를 조금씩 옮긴다. 근거(proof)는 '그때 유행'이라 나중에 못 재서 고정.
+FIT_KEYS = ("korea", "paradox", "visual")
+
+
+def views_3d(vid, published):
+    """올린 뒤 3일째 조회수(대시보드 일별 기록). 기록 시작(09-15) 전에 올린 영상·3일 안 된 영상은 None."""
+    vv = (VIEWS or {}).get(vid) or {}
+    try:
+        pub = datetime.fromisoformat(published.replace("Z", "+00:00")).astimezone(KST)
+    except Exception:
+        return None
+    if datetime.now(KST) - pub < timedelta(days=3.5) or not vv:
+        return None
+    day = (pub + timedelta(days=3)).strftime("%Y-%m-%d")
+    if min(vv) > pub.strftime("%Y-%m-%d"):
+        return None
+    later = sorted(d for d in vv if d >= day)
+    return vv[later[0]] if later else None
+
+
+def score_published(c, scored):
+    """아직 채점 안 한 우리 영상을 제목만 보고 채점(채널당 한 번에 최대 40편). 조회수는 절대 보여 주지 않는다."""
+    v = VIDEOS or {}
+    todo = [(vid, r["title"]) for vid, r in v.items() if r.get("ch") == c["name"] and r.get("title") and vid not in scored][:40]
+    if not todo:
+        return 0
+    sc = {k: c["scores"][k] for k in FIT_KEYS}
+    prompt = (f"유튜브 채널 「{c['name']}」에 올린 영상 제목들이다. 조회수는 모른다고 치고, 제목과 소재만 보고 아래 기준으로 0~5 정수 채점하라.\n"
+              + "\n".join(f"- {k}: {t}" for k, t in sc.items())
+              + "\n[채널 공식]\n" + "\n".join(f"- {x}" for x in c["formula"][:3])
+              + "\n도구를 쓰지 말고 JSON 하나만: {\"scores\": [{\"id\": \"영상 id\", \"korea\": 0, \"paradox\": 0, \"visual\": 0}]}\n"
+              + json.dumps([{"id": vid, "제목": t} for vid, t in todo], ensure_ascii=False))
+    got, _ = ask_claude(prompt, CFG.get("model", "sonnet"))
+    n = 0
+    for r in got.get("scores", []):
+        if r.get("id") in v:
+            scored[r["id"]] = {"ch": c["name"], "title": v[r["id"]]["title"], "at": datetime.now(KST).strftime("%Y-%m-%d"),
+                               "scores": {k: max(0, min(5, int(r.get(k, 0) or 0))) for k in FIT_KEYS}}
+            n += 1
+    return n
+
+
+def _corr(a, b):
+    n = len(a)
+    if n < 3: return 0.0
+    ma, mb = sum(a) / n, sum(b) / n
+    va, vb = sum((x - ma) ** 2 for x in a), sum((y - mb) ** 2 for y in b)
+    if va == 0 or vb == 0: return 0.0
+    return sum((x - ma) * (y - mb) for x, y in zip(a, b)) / (va * vb) ** 0.5
+
+
+def _toks(s):
+    stop = {"어떻게", "이유", "했을까", "까지", "그리고", "지금", "우리", "shorts", "하는", "있는", "없는", "무엇", "누가", "정말"}
+    return {w for w in re.findall(r"[가-힣A-Za-z0-9]{2,}", s or "") if w not in stop}
+
+
+def calibrate(c, scored):
+    """실제 3일 조회수와 가장 잘 맞는 기준 쪽으로 가중치를 옮긴다. 데이터가 적을수록 원래 기준을 더 믿는다."""
+    base = dict(c["weights"]); v = VIDEOS or {}
+    rows = []
+    for vid, s in scored.items():
+        if s.get("ch") != c["name"] or vid not in v: continue
+        y = views_3d(vid, v[vid].get("published", ""))
+        if y is None: continue
+        try:
+            t = datetime.fromisoformat(v[vid]["published"].replace("Z", "+00:00")).timestamp() / 86400
+        except Exception:
+            continue
+        rows.append((s["scores"], math.log10(y + 1), vid, t))
+    # 채널이 크는 추세(초기 영상은 뭘 해도 적게 나옴)를 빼고 비교: 조회수(log)를 올린 날짜로 직선 맞춘 뒤 남는 차이만 본다
+    if len(rows) >= 3:
+        ts, ys = [r[3] for r in rows], [r[1] for r in rows]
+        mt, my = sum(ts) / len(ts), sum(ys) / len(ys)
+        vt = sum((x - mt) ** 2 for x in ts)
+        slope = sum((x - mt) * (y - my) for x, y in zip(ts, ys)) / vt if vt else 0.0
+        rows = [(r[0], r[1] - (my + slope * (r[3] - mt)), r[2], r[3]) for r in rows]
+    corr = {k: round(_corr([r[0][k] for r in rows], [r[1] for r in rows]), 2) for k in FIT_KEYS}
+    # 부드럽게: 가중치 × (1 + α·상관). 상관이 약하면 거의 안 움직이고, 자료가 쌓일수록(α↑) 더 믿는다.
+    # 사용자 기준(한국 인지도×3 등)을 소수 영상으로 뒤집지 않게 α 는 최대 0.6, 결과는 0.5~4.5 로 묶는다.
+    w = dict(base); alpha = 0.0
+    if len(rows) >= 6:
+        alpha = min(0.6, len(rows) / (len(rows) + 20))
+        for k in FIT_KEYS:
+            w[k] = round(min(4.5, max(0.5, base[k] * (1 + alpha * corr[k]))), 2)
+    # 추천 → 실제: 추천했던 소재와 제목이 겹치는, 추천 뒤에 올린 영상
+    hits, hp = [], OUT / "history.jsonl"
+    recs = [json.loads(l) for l in hp.read_text(encoding="utf-8").splitlines() if l.strip()] if hp.exists() else []
+    for vid, r in v.items():
+        if r.get("ch") != c["name"]: continue
+        vt = _toks(r.get("title"))
+        best = None
+        for run in recs:
+            if run.get("channel") != c["name"] or (r.get("published") or "") < run["at"].replace(" ", "T"): continue
+            for t in run.get("topics", []):
+                tt = _toks((t.get("소재") or "") + " " + (t.get("제목") or ""))
+                shared = vt & tt
+                if len(shared) >= 2 and len(shared) / max(1, min(len(vt), len(tt))) >= 0.34 and (not best or len(shared) > best[0]):
+                    best = (len(shared), run["at"], t)
+        if best:
+            hits.append({"추천시각": best[1], "소재": best[2].get("소재"), "추천점수": best[2].get("총점"), "영상": r.get("title"),
+                         "url": f"https://www.youtube.com/shorts/{vid}" if r.get("short") else f"https://www.youtube.com/watch?v={vid}",
+                         "3일조회": views_3d(vid, r.get("published", "")), "지금조회": r.get("views")})
+    return {"weights": w, "base": base, "n": len(rows), "corr": corr, "alpha": round(alpha, 2), "hits": hits,
+            "updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M")}
+
+
 def build_prompt(c, data):
     sc = c["scores"]; n = CFG["per_channel"]
     schema = {"topics": [{"소재": "한 줄 이름", "제목": "유튜브 제목 초안(#shorts 빼고)", "첫문장": "영상 첫 문장",
                           "왜_터질까": "2~3문장, 아래 근거를 짚어서", "근거": [{"url": "재료에 있는 주소만", "메모": "무엇이 근거인가"}],
                           "점수": {k: "0~5 정수" for k in sc}, "보여줄_장면": "화면으로 무엇을 보여주나",
                           "확인할_사실": ["제작 전 꼭 확인할 숫자·사실"], "위험": "틀리거나 반려될 위험", "후속": "우리 대박 편의 후속이면 그 편 이름, 아니면 빈 문자열"}]}
+    cal = data.get("calib") or {}
+    n_cal = cal.get("n", 0)
+    cal_line = ", ".join(f"{k} {v:+.2f}" for k, v in (cal.get("corr") or {}).items()) if n_cal >= 6 else "아직 자료 부족(6편 미만) — 기준표 그대로"
     return f"""너는 유튜브 채널 「{c['name']}」의 소재 기획자다. 아래 재료만 보고, 지금 만들면 조회수가 가장 크게 터질 소재 {n}개를 골라라.
 
 [채널 형식]
@@ -156,6 +270,9 @@ def build_prompt(c, data):
 
 [점수 기준 — 각 0~5 정수]
 """ + "\n".join(f"- {k}: {v}" for k, v in sc.items()) + f"""
+
+[우리 채널 실측 — 올린 영상 {n_cal}편의 3일 조회수와 기준의 상관(1에 가까울수록 조회수와 잘 맞음)]
+{cal_line}
 
 [규칙]
 - 근거 url 은 아래 재료(발굴 영상·뉴스·우리 영상)에 실제로 있는 주소만 쓴다. 지어내지 않는다. 근거가 약하면 proof 점수를 낮게 준다.
@@ -199,13 +316,15 @@ def ask_claude(prompt, model):
     return json.loads(m.group(1)), env.get("total_cost_usd")
 
 
-def clean(c, got, allowed):
-    w = c["weights"]; top = 5 * sum(w.values())
+def clean(c, got, allowed, weights=None):
+    w = weights or c["weights"]; top = 5 * sum(w.values())
     out = []
     for t in got.get("topics", []):
         s = {k: max(0, min(5, int(round(float((t.get("점수") or {}).get(k, 0) or 0))))) for k in w}
         t["점수"] = s
-        t["총점"] = round(sum(s[k] * w[k] for k in w) / top * 100)
+        s = {**s, **{k: max(0, min(5, int(round(float((t.get("점수") or {}).get(k, 0) or 0))))) for k in c["weights"] if k not in s}}
+        t["점수"] = s
+        t["총점"] = round(sum(s.get(k, 0) * w[k] for k in w) / top * 100)
         t["근거"] = [e for e in (t.get("근거") or []) if isinstance(e, dict) and e.get("url") in allowed]   # 지어낸 주소는 버린다
         out.append(t)
     out.sort(key=lambda t: -t["총점"])
@@ -219,11 +338,26 @@ def main():
     OUT.mkdir(exist_ok=True)
     latest_p = OUT / "latest.json"
     latest = json.loads(latest_p.read_text(encoding="utf-8")) if latest_p.exists() else {"channels": {}}
+    global VIDEOS, VIEWS
+    VIDEOS, VIEWS = gh_json("videos.json") or {}, gh_json("video_views.json") or {}
     ob = outliers_brief()
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
+    sp = OUT / "scored.json"; scored = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
+    cp = OUT / "calibration.json"; calib_all = json.loads(cp.read_text(encoding="utf-8")) if cp.exists() else {}
     for c in CFG["channels"]:
         if only and c["name"] != only: continue
-        data = {"outliers": ob, "ours": ours_brief(c["name"]), "done": done_topics(c), "recent": history(c["name"]), "news": news(c["news"])}
+        if not dry:
+            try:
+                k = score_published(c, scored)
+                if k: sp.write_text(json.dumps(scored, ensure_ascii=False, indent=1), encoding="utf-8"); log(c["name"], "우리 영상 채점", k, "편")
+            except Exception as e:
+                log(c["name"], "우리 영상 채점 실패(보정은 지난 값):", str(e)[:200])
+        cal = calibrate(c, scored); calib_all[c["name"]] = cal
+        log(c["name"], f"보정: {cal['n']}편, 상관 {cal['corr']}, 가중치 {cal['weights']}, 추천→실제 {len(cal['hits'])}편")
+        if "--score-only" in sys.argv:   # 우리 영상 채점·보정만(추천은 안 함)
+            if c["name"] in latest["channels"]: latest["channels"][c["name"]]["calib"] = {k: cal[k] for k in ("weights", "base", "n", "corr", "alpha", "hits", "updated")}
+            continue
+        data = {"outliers": ob, "ours": ours_brief(c["name"]), "done": done_topics(c), "recent": history(c["name"]), "news": news(c["news"]), "calib": cal}
         allowed = {r["url"] for k in ("쇼츠", "본편", "뜨는채널") for r in ob.get(k, []) if r.get("url")}
         allowed |= {r["url"] for k in ("잘된_영상", "안된_영상") for r in data["ours"][k]} | {r["url"] for r in data["news"]}
         prompt = build_prompt(c, data)
@@ -232,8 +366,9 @@ def main():
             (OUT / f"_prompt_{c['name']}.txt").write_text(prompt, encoding="utf-8"); continue
         try:
             got, cost = ask_claude(prompt, CFG.get("model", "sonnet"))
-            topics = clean(c, got, allowed)
-            latest["channels"][c["name"]] = {"at": now, "model": CFG.get("model"), "outliers_at": ob.get("기준시각"), "news_n": len(data["news"]), "topics": topics}
+            topics = clean(c, got, allowed, cal["weights"])
+            latest["channels"][c["name"]] = {"at": now, "model": CFG.get("model"), "outliers_at": ob.get("기준시각"), "news_n": len(data["news"]), "topics": topics,
+                                             "calib": {k: cal[k] for k in ("weights", "base", "n", "corr", "alpha", "hits", "updated")}}
             with (OUT / "history.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": now, "channel": c["name"], "topics": [{"소재": t.get("소재"), "제목": t.get("제목"), "총점": t["총점"]} for t in topics]}, ensure_ascii=False) + "\n")
             log(c["name"], "추천", len(topics), "개", f"(${cost:.2f})" if cost else "", "·", " / ".join(f"{t.get('소재')} {t['총점']}" for t in topics))
@@ -242,6 +377,7 @@ def main():
             if c["name"] in latest["channels"]:
                 latest["channels"][c["name"]]["stale"] = f"{now} 갱신 실패"
     if not dry:
+        cp.write_text(json.dumps(calib_all, ensure_ascii=False, indent=1), encoding="utf-8")
         latest["at"] = now
         latest_p.write_text(json.dumps(latest, ensure_ascii=False, indent=1), encoding="utf-8")
 

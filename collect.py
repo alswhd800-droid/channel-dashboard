@@ -31,6 +31,7 @@ DATA, DOCS = ROOT / "data", ROOT / "docs"
 KST = timezone(timedelta(hours=9))
 API = "https://www.googleapis.com/youtube/v3/"
 DASHBOARD_URL = "https://alswhd800-droid.github.io/channel-dashboard/"
+TOPIC_ALERT_MIN = 80   # 🎯 소재 추천 알림 기준 점수
 RETENTION = 0.35              # 본편 평균 시청 비율 가정(시청 시간 추정용)
 EARLY_HOURS = (6, 24, 48)     # 새 영상 성적 확인 시점
 SURGE_MIN_PER_HOUR = 50       # 급등: 1시간 조회수 최소
@@ -436,6 +437,17 @@ def collect():
         new_alerts[-1]["tg"] = "\n".join(lines)
         state["weekly_sent"] = today
         data = build(ctx)
+
+    # 🎯 AI 소재 추천(맥 소재추천.py, 하루 2번): 새로 올라온 80점 이상 소재는 알림 + 텔레그램(2026-09-26 사용자 요청)
+    for ch, cv in ((load_topics() or {}).get("channels") or {}).items():
+        for t in cv.get("topics", []):
+            if (t.get("총점") or 0) < TOPIC_ALERT_MIN:
+                continue
+            before = len(new_alerts)
+            alert("topic", ch, f"소재 추천 {t['총점']}점: {t.get('소재')}", t.get("제목") or "", DASHBOARD_URL + "#topics",
+                  key=f"topic|{ch}|{t.get('소재')}|{cv.get('at')}")
+            if len(new_alerts) > before:
+                new_alerts[-1]["tg"] = f"🎯 [{ch}] 소재 추천 {t['총점']}점\n{t.get('제목')}\n{(t.get('왜_터질까') or '')[:160]}"
 
     alerts["items"] = [a for a in alerts["items"] if a["t"] >= (now - timedelta(days=60)).isoformat()][:300]
     alerts["seen"] = sorted(seen)
