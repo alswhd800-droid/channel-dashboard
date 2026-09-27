@@ -965,10 +965,12 @@ def meeting(D, now):
         tr = (D.get("topics") or {}).get("trends") or []
         if tr:
             say("trend", "지금 검색 급상승: " + " · ".join(f"{t.get('검색어')}({t.get('검색량')})" for t in tr[:5]) + ". 채널 공식에 맞는 말만 추천에 넣었어요.", "info", "#topics", 2)
-        bv = ((D.get("bench") or {}).get("videos") or [None])[0]
+        B = D.get("bench") or {}
+        bfor = {c.get("name"): c.get("for") for c in (B.get("channels") or [])}
+        bv = next((v for v in (B.get("videos") or []) if bfor.get(v.get("ch")) in names), None)   # 지금 있는 채널의 참고 채널만(옛 이유상자 참고 채널은 뺀다)
         if bv:
             ti = short(bv["title"])
-            say("trend", f"참고 채널 중엔 **{bv['ch']}**의 '{ti}'{jo(ti, '이/가')} 하루 {fmt(bv['per_day'])}회로 가장 빨라요.", "info", bv.get("url"), 3)
+            say("trend", f"**{bfor[bv['ch']]}** 참고 채널 중엔 **{bv['ch']}**의 '{ti}'{jo(ti, '이/가')} 하루 {fmt(bv['per_day'])}회로 가장 빨라요.", "info", bv.get("url"), 3)
 
     def planner():
         items = P.get("items") or []
