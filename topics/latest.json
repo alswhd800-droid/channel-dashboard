@@ -1,567 +1,557 @@
 {
  "channels": {
   "거대한비밀": {
-   "at": "2026-09-27 11:36",
-   "model": "Kiro 직접 선정(claude 한도)",
-   "outliers_at": "2026-09-27 06:04",
+   "at": "2026-09-27 15:00",
+   "model": "sonnet",
+   "outliers_at": "2026-09-27 14:05",
    "news_n": 93,
    "trend_n": 10,
-   "fresh_n": 17,
-   "prompt_chars": 17836,
-   "tokens": null,
+   "fresh_n": 19,
+   "prompt_chars": 16176,
+   "tokens": {
+    "in": 16808,
+    "out": 5557,
+    "think": 0,
+    "usd": 0.122798
+   },
+   "labels": null,
+   "genre_n": null,
+   "genre_hot": null,
    "topics": [
     {
-     "소재": "한옥 기둥은 땅에 박혀 있지 않다 (덤벙주초·그렝이)",
+     "소재": "휴전선 드론 킬존",
      "후속": "",
-     "대상": "한옥",
-     "점수": {
-      "korea": 5,
-      "paradox": 5,
-      "proof": 3,
-      "visual": 5
-     },
-     "제목": "못 하나 안 박은 한옥, 기둥을 돌 위에 올려만 놨는데 왜 안 넘어질까",
-     "왜_터질까": "오늘 '한옥'이 급상승 검색어에 올라 관심이 살아 있고, 누구나 아는 한옥에 '기둥이 땅에 안 박혀 있다'는 물리 역설이 붙습니다. 우리 대박 편(크레인·땅굴·해체)과 같은 '왜 안 무너졌을까' 질문형입니다.",
-     "근거": [
-      {
-       "url": "https://news.kbs.co.kr/news/view.do?ncd=8671916",
-       "메모": "09-27 급상승 검색어 '한옥' 관련 기사(도심 속 한옥)"
-      },
-      {
-       "url": "https://www.domin.co.kr/news/articleView.html?idxno=1570044&sc_section_code=S1N8",
-       "메모": "09-27 '한옥' 급상승 관련 기사"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/kWuKK2iQrP8",
-       "메모": "우리 '왜 안 무너졌을까' 질문형 편 17.8만"
-      }
-     ],
-     "첫문장": "한옥 기둥은 땅에 박혀 있지 않습니다, 울퉁불퉁한 돌 위에 그냥 올려져 있습니다.",
-     "보여줄_장면": "기둥 밑동을 돌 모양대로 깎아 맞추는 그렝이질과, 흔들릴 때 기둥이 돌 위에서 살짝 움직이며 힘을 흘리는 모습을 투시 단면으로.",
-     "확인할_사실": [
-      "덤벙주초·그렝이공법의 정확한 원리",
-      "못 없이 짜 맞추는 결구 방식(장부·촉)",
-      "지진 때 효과를 보여 준 실제 사례·실험"
-     ],
-     "위험": "내진 효과를 과장하면 틀린다 — 실험·문헌에 있는 만큼만 말한다.",
-     "총점": 89,
-     "최신": "2026-09-27"
-    },
-    {
-     "소재": "DMZ 지뢰 탐지 — 금속탐지기에 안 잡히는 지뢰",
-     "후속": "북한 목함지뢰가 보름 새 12개, 왜 큰비만 오면 강화도 바닷가에 올까",
-     "대상": "DMZ",
+     "대상": "휴전선 DMZ",
      "점수": {
       "korea": 5,
       "paradox": 4,
-      "proof": 4,
+      "proof": 3,
       "visual": 4
      },
-     "제목": "DMZ 수색 중 또 지뢰 폭발, 금속탐지기에 안 잡히는 지뢰는 어떻게 찾을까",
-     "왜_터질까": "9월 22~23일 DMZ 수색 중 지뢰 폭발로 간부 3명이 다쳐 관심이 높고, 우리 목함지뢰 편의 다른 각도 후속입니다. 사람이 목숨 걸고 땅을 찔러 찾는 장면이 공식의 '현장 위험' 요소입니다.",
+     "제목": "휴전선 드론 킬존, 북한은 국경선 위에 무엇을 만들고 있을까",
+     "왜_터질까": "09-18 기사와 09-22~23 지뢰 폭발 기사가 최근 14일 새 근거다. DMZ는 반복 대상이라 이 1개만 남긴다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBrZEx4VGlKa01MV2JBb2tDTjNiTG1uSThOdEc0VHYtSzFtekE0Q28tbGlod0pVR0hmNlRPenRRbkY3ZEZ2bGFkcmNMMkRrcjNVYkdwSWtMZVJqMVY4b0dxNmFrQVZzcHZh?oc=5",
-       "메모": "09-23 '북한군 매설 지뢰 의심지대 확인하다 사고'"
+       "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE05V2Y0N0pjSFo2cXg2eDZrVHZUWk5PYVAtb3ZiT01zRzFlV3VsR0Q3RWZjbVRYdnhyZ1VfdWJfNGZOaU9oSzc0Q3FVWjljOVpldnFwQ3NkdXAwTWZBREJFUWtBWGYwRVUxQzduQ1ZvUzJPNmt4OXB5STNPc9IBgAFBVV95cUxQUEVpaVBGeU1pd3U5bzRzV1V3ZW1vWVNjZUJmNERPTlBnM21BdTRJTWx2TTdwV2ZIZDVfa09fbDJUak1rbW5VaTItYUxFVXRSNy1oeGVJSUExZ0ZZMi1JX01SV0NMdUpZS2p2a2MxeWx3RlRST2R1aVAwSU9xOU05NA?oc=5",
+       "메모": "북한 드론 킬존 기사(09-18)"
       },
       {
-       "url": "https://www.msn.com/ko-kr/news/other/dmz-%EC%9E%91%EC%A0%84-%EC%A4%91-%EC%A7%80%EB%A2%B0-%EC%B6%94%EC%A0%95-%ED%8F%AD%EB%B0%9C-%EC%A0%84%EB%AC%B8%EA%B0%80-%E5%8C%97-%EB%8C%80%EC%9D%B8%EC%A7%80%EB%A2%B0-%EA%B0%80%EB%8A%A5%EC%84%B1-%EB%A7%A4%EC%9A%B0-%EB%86%92%EC%95%84/ar-AA2cHC0m",
-       "메모": "09-22 전문가 '北 대인지뢰 가능성 매우 높아'"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9CeGJIbWpHb0FOYUoyVVlFbDM4NTNtYXhjZ21zVnZqcDJfejIxVE9TZU5YNmE1Q2JDZ2tGbjFPRFEzQmpnd25IZF8tVEIydGpCVGJrUmJ0TUNlN1h6VkNUUmVHYXdJS1HSAWpBVV95cUxNMkd1RTYwYXlyc2JTRUZ5Y2hTM1FWbEJqRklXTDRINjVZSHBjcml3b1NENFJlMjZHNHZuMHVQLXNrOW5DcDVSQXpIYVAyekFLb1NsUGhES214NUp1OVgtcU9TMUZoOXVyVy1n?oc=5",
-       "메모": "09-23 군 간부 3명 부상"
+       "url": "https://www.msn.com/ko-kr/news/politics/dmz-%ED%8F%AD%EB%B0%9C%EC%82%AC%EA%B3%A0-%ED%95%A9%EC%B0%B8-%EB%B6%81%ED%95%9C%EA%B5%B0-%EB%A7%A4%EC%84%A4%ED%95%9C-%EC%A7%80%EB%A2%B0-%EC%9D%98%EC%8B%AC-%EC%A7%80%EB%8C%80-%ED%99%95%EC%9D%B8%ED%95%98%EB%8B%A4-%EB%B0%9C%EC%83%9D/ar-AA2cJpmo",
+       "메모": "DMZ 폭발 합참 발표(09-23)"
       }
      ],
-     "첫문장": "나무 상자로 만든 지뢰는 금속탐지기가 그냥 지나칩니다.",
-     "보여줄_장면": "땅속 단면에 나무 지뢰·금속 지뢰를 놓고 탐지기 신호 차이, 탐침봉을 비스듬히 찌르는 각도를 빨간 선으로.",
-     "확인할_사실": [
-      "이번 사고 지뢰 종류(확정 여부)",
-      "비금속 지뢰 찾는 방법(탐침·지표투과레이더 등)",
-      "DMZ 매설 지뢰 추정 수와 출처"
-     ],
-     "위험": "사고 책임·정치 공방으로 흐르면 안 된다 — 찾는 방법만, 부상자 신상은 뺀다.",
-     "총점": 88,
+     "총점": 82,
      "최신": "2026-09-23"
     },
     {
-     "소재": "태풍 때 광안대교를 막는 이유",
+     "소재": "통영 해저터널, 동양 최초 터널은 물속에서 어떻게 지었을까",
      "후속": "",
-     "대상": "광안대교",
-     "점수": {
-      "korea": 5,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 5
-     },
-     "제목": "태풍 오면 광안대교를 막는 이유, 바다 위 다리는 바람에 얼마나 흔들릴까",
-     "왜_터질까": "제26호 태풍 '수리개'가 오늘 급상승 검색어 1위(2만+)라 태풍 관심이 최고조이고, 누구나 아는 광안대교에 '다리는 흔들리게 만든다'는 역설이 붙습니다.",
-     "근거": [
-      {
-       "url": "https://www.kwnews.co.kr/article/20260926500012",
-       "메모": "09-27 태풍 '수리개' 북상 급상승(2만+)"
-      },
-      {
-       "url": "https://v.daum.net/v/20260926101953256",
-       "메모": "09-27 연휴 셋째 날 태풍 소식"
-      }
-     ],
-     "첫문장": "광안대교는 바람이 불면 흔들리도록 만들어졌습니다.",
-     "보여줄_장면": "현수교 케이블과 상판이 강풍에 출렁이는 모습, 상판 단면의 바람길과 통제 풍속 눈금을 함께.",
-     "확인할_사실": [
-      "광안대교 통행 통제 기준 풍속",
-      "설계 풍속·허용 흔들림 폭",
-      "실제 태풍 통제 사례(날짜)"
-     ],
-     "위험": "수리개가 일본 쪽으로 가면 한국 시의성이 약해진다 — 태풍 일반 원리로 말한다.",
-     "총점": 84,
-     "최신": "2026-09-27"
-    },
-    {
-     "소재": "평양 지하철은 왜 그렇게 깊을까",
-     "후속": "",
-     "대상": "평양 지하철",
-     "점수": {
-      "korea": 5,
-      "paradox": 5,
-      "proof": 2,
-      "visual": 5
-     },
-     "제목": "평양 지하철은 왜 이렇게 깊이 팠을까, 역 자체가 방공호였다",
-     "왜_터질까": "북한 지하 소재는 우리 채널 2위(제3땅굴 21만)와 같은 계열이고 군사 기밀 채널이 하루 1,600명씩 크는 등 수요가 보입니다. 누구나 아는 평양에 '지하철이 곧 방공호'라는 역설이 있습니다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/shorts/iQaxX-0dnx0",
-       "메모": "우리 제3땅굴 편 21만(북한 지하 소재 실적)"
-      },
-      {
-       "url": "https://www.youtube.com/channel/UCHcSf-BZ-RSMZ9ydqrWhzGg",
-       "메모": "군사 기밀 채널 하루 +1,620명"
-      }
-     ],
-     "첫문장": "평양 지하철을 타려면 에스컬레이터를 한참 동안 내려가야 합니다.",
-     "보여줄_장면": "지표에서 승강장까지 깊이를 단면으로 내리고 서울 지하철 깊이와 나란히 비교, 두꺼운 방폭문 위치 표시.",
-     "확인할_사실": [
-      "승강장 깊이(자료마다 다름)",
-      "방공호 겸용이라는 근거 문헌",
-      "서울 가장 깊은 역과 비교 수치"
-     ],
-     "위험": "북한 자료는 검증이 어렵다 — 깊이·용도는 출처별 범위로 말한다.",
-     "총점": 83
-    },
-    {
-     "소재": "거가대교 바다 밑 터널은 굴을 파지 않았다 (침매)",
-     "후속": "",
-     "대상": "거가대교 해저터널",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 3,
-      "visual": 5
-     },
-     "제목": "거가대교 바다 밑 터널은 땅을 파지 않았다, 콘크리트 상자를 어떻게 가라앉혀 이었을까",
-     "왜_터질까": "9월 23일 국토부가 거제~마산 해저터널을 2028년에 착공한다고 밝혀 해저터널 관심이 새로 생겼고, 이미 있는 거가대교 터널에 '굴을 안 파고 상자를 가라앉혔다'는 역설이 있습니다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE1TTWlndm0wVjdnSFgzUXdlV1RTT2pUNDEzYUlKTnNqMElBb1dBSm84d0FJR0ZaYVpVRnAzRENlSDBpRUs2Vk5hRWN2QmRPOTB0N053MzdaMjYyZmxFRzFvakpR0gFmQVVfeXFMUFhLSmlqdlpLSnREaEpwLTZiTGhjb3lfMGRid3QxVXUxelBzV09XNlNSV3A0QmhRMlZkMzQwOUtUb1duNk1RS0pHMHRfZlB4QmRQWkJCTlJDMW1Kb2k5WVY0azU3eURn?oc=5",
-       "메모": "09-23 국토부 '거제~마산 해저터널 2028년 착공'"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFA4dmI2M2dVS25wV0ZNYzJwWDZ2ZnM4ZENKU0psR3h6S3BZc0hXNVBOWnVXQkpYZnFkWURNeWNKbkZiZDFIMHBGNjlzVVcyOFpPZVhGbE13elpPTUk0Z2w3cEdR0gFmQVVfeXFMTmdiM1dlX0lYQ1R1VVVPX3FsNWFIOGJZaEN3NDhZaHFGN0pQZXRkODF0VkVma3BTVkZaQ2l4d0V6LVVOM3hSTFFPa08tbkZlYVlsVWFaX2NtN2pzcVhoRWl4aC1KZVJ3?oc=5",
-       "메모": "09-23 거제~마산 해저터널 환경영향평가 설명회"
-      }
-     ],
-     "첫문장": "거가대교의 바다 밑 구간은 굴을 판 게 아니라, 거대한 콘크리트 상자를 가라앉혀 만든 겁니다.",
-     "보여줄_장면": "물에 띄워 끌고 온 상자에 물을 채워 가라앉히고, 바닥에 맞춰 붙인 뒤 이음새 물을 빼 수압으로 밀착시키는 과정.",
-     "확인할_사실": [
-      "침매함 개수·길이·최대 수심",
-      "이음새를 수압으로 붙이는 원리(고무 패킹)",
-      "거제~마산 새 터널의 공법"
-     ],
-     "위험": "새 터널 공법이 다르면 연결이 약해진다 — 거가대교 기준으로 말한다.",
-     "총점": 81,
-     "최신": "2026-09-23"
-    },
-    {
-     "소재": "서울 한복판 지하, 40년 잠겨 있던 공간",
-     "후속": "",
-     "대상": "서울 지하 비밀공간",
+     "대상": "통영 해저터널",
      "점수": {
       "korea": 4,
       "paradox": 4,
-      "proof": 4,
+      "proof": 3,
       "visual": 4
      },
-     "제목": "서울 한복판 지하, 40년 동안 잠겨 있던 공간은 왜 만들어졌을까",
-     "왜_터질까": "9월 25일 40년 만에 개방돼 전시장이 됐다는 기사가 새로 나왔고, '매일 지나가는 발밑에 아무도 몰랐던 공간'은 비밀 공식에 맞습니다. 지난번 추천 때보다 개방이라는 새 근거가 생겼습니다.",
+     "제목": "통영 해저터널 483m, 바다 밑을 막고 어떻게 판 걸까",
+     "왜_터질까": "09-15·09-16 기사가 근거이고 동양 최초라는 타이틀이 있다. 최근 추천에 같은 소재가 있어 시공법(물막이) 각도로 차별화해야 한다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE42d1pUNHZOLTRPSkpYbFFSd1c5YTgya1dHeURHVU03S1pyaGdJNEF6VFFNb0pNbV92YzltbURvSk1PZ2l2OUI4QjlMUUQ5RXgyMUtoYlJKZ2IzMlRfaXhvcGEtNl8xS1AyeXFIUUNR?oc=5",
-       "메모": "09-25 40년 만에 개방된 서울 지하 공간"
+       "url": "https://www.msn.com/ko-kr/news/news/%EB%AA%85%EC%84%B1%EC%97%90-%EB%B9%84%ED%95%B4-%EB%B3%BC-%ED%92%88-%EC%97%86%EB%8A%94-%ED%86%B5%EC%98%81-%ED%95%B4%EC%A0%80%ED%84%B0%EB%84%90-%EB%82%B4%EB%85%84%EC%97%90-%ED%99%95-%EB%B0%94%EB%80%90%EB%8B%A4/ar-AA2cff0l",
+       "메모": "통영 해저터널 내년에 바뀐다(09-15)"
       },
       {
-       "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBrYS0wem9OUHY4a3ByVndwWkJxNzNXUTFjRkJGWk5OcHBpTjB0VURwTHNQeXA5YkJPT3RJUkRYWnNYS2JoZF9Ob1JOT18zcWEwLXNUR0hQb0pkSC1oT2dSZVZWNldVNWlEcVE?oc=5",
-       "메모": "09-14 서울시청 지하 미스터리"
-      }
-     ],
-     "첫문장": "매일 수만 명이 지나가는 서울 한복판 발밑에, 40년 동안 문이 잠긴 공간이 있었습니다.",
-     "보여줄_장면": "지상 광장·도로를 투명하게 걷어 내고 그 밑 공간의 크기·출입구·환기구를 투시로.",
-     "확인할_사실": [
-      "정확한 위치와 규모",
-      "지은 해와 원래 용도",
-      "개방 경위와 날짜"
-     ],
-     "위험": "원래 용도가 확인 안 되면 '비밀' 과장이 된다 — 공식 자료로만 말한다.",
-     "총점": 80,
-     "최신": "2026-09-25"
-    },
-    {
-     "소재": "강화도 앞 한강 하구 — 배가 못 들어가는 물길",
-     "후속": "북한 목함지뢰가 보름 새 12개, 왜 큰비만 오면 강화도 바닷가에 올까",
-     "대상": "한강하구 중립수역",
-     "점수": {
-      "korea": 4,
-      "paradox": 4,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "강화도 앞 한강 하구, 왜 남북 어느 배도 못 들어가는 물길이 됐을까",
-     "왜_터질까": "'뉴스에 안 나오는 강화도 상황' 영상이 평소의 11.8배(56만)로 뜨고 있어 강화도 접경 관심이 높고, 우리 목함지뢰(강화도) 편과 이어집니다. 강은 흐르는데 배가 못 다니는 역설이 분명합니다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/watch?v=gRvmvNraazA",
-       "메모": "강화도 상황 영상 평소의 11.8배·56만"
+       "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE56N2s2d05HT2t4SFFmTGJLeE8ydmJmV0hZLWJvWlU0NjJuc3BTenliODJTbVJJSll1VDE0MlZuWGxXLU42azY2T29aNWF5UjlheVdyMkQ5TXdhZGFWa0dKbHJpVEpWdk01RHc?oc=5",
+       "메모": "국가유산청 현상변경 승인(09-16)"
       },
       {
-       "url": "https://www.youtube.com/shorts/iQaxX-0dnx0",
-       "메모": "우리 휴전선 땅굴 편 21만(접경 소재 실적)"
+       "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5Oa2dIeHhBemlKb3ZLbG5YZGY1cTBBbjFOOEVxS3pJb0dQSjRuTk9rT1JnQ1Q5UHByN2pJMlRZN0ZaRVN5akg4NjJvTEVRRDg?oc=5",
+       "메모": "안전성 우려(09-22)"
       }
      ],
-     "첫문장": "서울에서 한 시간 거리에, 강은 흐르는데 배 한 척 들어가지 못하는 물길이 있습니다.",
-     "보여줄_장면": "한강·임진강·예성강이 만나는 하구 지도에 중립수역 경계와 양쪽 초소, 썰물 때 드러나는 뻘을 3D로.",
+     "첫문장": "바다 밑에 터널이 있는데 이 터널은 1930년대에 만들어졌습니다.",
+     "보여줄_장면": "바닷물을 막은 뒤 바닥을 파내는 단면 과정을 3D로 보여준다.",
      "확인할_사실": [
-      "중립수역 범위와 근거(정전협정 조항)",
-      "민간 선박이 들어간 사례",
-      "조수 간만 차"
+      "터널 길이",
+      "착공·준공 연도",
+      "시공 방식"
      ],
-     "위험": "안보 논쟁으로 흐르지 않게 지형·규칙만 다룬다.",
-     "총점": 80
+     "위험": "최근 추천과 겹치고 길이 숫자가 확인되지 않았다.",
+     "총점": 74,
+     "최신": "2026-09-22"
     },
     {
-     "소재": "동해 부유식 해상풍력 — 바닥에 안 박은 풍력발전기",
+     "소재": "한국이 35일 늦게 시작하고도 일본보다 먼저 완공한 초고층",
      "후속": "",
-     "대상": "부유식 해상풍력",
-     "점수": {
-      "korea": 3,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 5
-     },
-     "제목": "수심 150m 동해 위 풍력발전기, 바닥에 안 박았는데 왜 안 넘어질까",
-     "왜_터질까": "9월 21일 22MW급 초대형 부유식 해상풍력이 국제 인증을 받았다는 기사가 한꺼번에 여러 건 나왔고, '물에 떠 있는데 안 넘어진다'는 물리 역설이 분명합니다.",
-     "근거": [
-      {
-       "url": "https://www.dailycnc.com/news/articleView.html?idxno=244842",
-       "메모": "09-21 '수심 150m 동해에도 끄떡없다'"
-      },
-      {
-       "url": "https://www.msn.com/ko-kr/news/other/%EB%8C%80%EC%9A%B0%EA%B1%B4%EC%84%A4-22-%EC%B4%88%EB%8C%80%ED%98%95-%EB%B6%80%EC%9C%A0%EC%8B%9D-%ED%95%B4%EC%83%81%ED%92%8D%EB%A0%A5-%EB%B6%80%EC%9C%A0%EC%B2%B4-aip-%EB%8F%99%EC%8B%9C-%ED%9A%8D%EB%93%9D/ar-AA2cD0EZ",
-       "메모": "09-21 22MW 초대형 부유체 국제 인증"
-      }
-     ],
-     "첫문장": "이 풍력발전기는 바다 밑바닥에 박혀 있지 않습니다, 물 위에 떠 있습니다.",
-     "보여줄_장면": "물속 부유체의 무게중심·부력 중심을 화살표로, 계류줄이 파도에 당겨지는 모습과 날개 높이를 단면으로.",
-     "확인할_사실": [
-      "22MW 발전기 높이·날개 길이",
-      "부유체 형식과 계류 방식",
-      "실제 설치 위치·시기"
-     ],
-     "위험": "아직 인증 단계라 '설치됐다'고 하면 틀린다. 회사 이름은 빼고 기술만.",
-     "총점": 79,
-     "최신": "2026-09-21"
-    },
-    {
-     "소재": "쌍둥이 빌딩 한쪽은 한국, 한쪽은 일본",
-     "후속": "",
-     "대상": "페트로나스 트윈타워",
+     "대상": "초고층 빌딩 공기 단축",
      "점수": {
       "korea": 4,
       "paradox": 4,
       "proof": 3,
-      "visual": 5
+      "visual": 4
      },
-     "제목": "쌍둥이 빌딩 한쪽은 한국이, 한쪽은 일본이 지었다, 35일 늦게 시작한 한국은 어떻게 먼저 올라갔을까",
-     "왜_터질까": "9월 14일 '35일 늦게 시작하고도 일본보다 먼저 완공한 초고층' 기사가 나왔고 한일 대결 구도라 클릭 이유가 분명합니다(건물 이름은 원문 확인).",
+     "제목": "초고층 빌딩, 35일 늦게 시작하고도 일본보다 먼저 끝낸 방법은",
+     "왜_터질까": "09-14 기사가 근거이고 한일 비교는 역설과 궁금증을 만든다. 어떤 빌딩인지 확인이 먼저다.",
      "근거": [
       {
        "url": "https://www.msn.com/ko-kr/news/other/%ED%95%9C%EA%B5%AD%EC%9D%B4-35%EC%9D%BC-%EB%8A%A6%EA%B2%8C-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B3%A0%EB%8F%84-%EC%9D%BC%EB%B3%B8%EB%B3%B4%EB%8B%A4-%EB%A8%BC%EC%A0%80-%EC%99%84%EA%B3%B5%ED%95%9C-%EC%B4%88%EA%B3%A0%EC%B8%B5-%EB%B9%8C%EB%94%A9/ar-AA2c8Vep",
-       "메모": "09-14 한국이 35일 늦게 시작하고도 일본보다 먼저 완공한 초고층 빌딩"
-      }
-     ],
-     "총점": 77,
-     "최신": "2026-09-14"
-    },
-    {
-     "소재": "태풍 때 부산항 크레인을 묶는 이유",
-     "후속": "",
-     "대상": "부산항 컨테이너 크레인",
-     "점수": {
-      "korea": 4,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 5
-     },
-     "제목": "태풍 오면 부산항 거대 크레인을 쇠사슬로 묶는 이유, 쇳덩이도 바람에 굴러간다",
-     "왜_터질까": "태풍 '수리개'가 오늘 급상승 1위라 태풍 관심이 크고, 수백 톤 크레인이 바람에 밀려 넘어진 적이 있다는 역설이 있습니다(사례 확인).",
-     "근거": [
-      {
-       "url": "https://www.kwnews.co.kr/article/20260926500012",
-       "메모": "09-27 태풍 '수리개' 급상승(2만+)"
-      }
-     ],
-     "총점": 77,
-     "최신": "2026-09-27"
-    },
-    {
-     "소재": "롯데월드타워 외벽 달토끼",
-     "후속": "",
-     "대상": "롯데월드타워",
-     "점수": {
-      "korea": 5,
-      "paradox": 3,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "롯데월드타워 외벽에 뜬 달토끼, 유리창 4만2천 장에 어떻게 그림을 띄웠을까",
-     "왜_터질까": "9월 17일 추석 '달토끼' 외벽 연출 기사가 새로 나왔지만, 롯데타워는 최근 추천에 네 번 나와 이번엔 이 한 각도만 냅니다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9veHZ1aUZvR0tLcnBzckFPWjVaQXphS2IxVTJEdVZYc2xoN3k2SmdqbWNMeGRJXzNhbXFkNDBYR2llTmxycE9RdlRxclQxVHRtNzNTSQ?oc=5",
-       "메모": "09-17 추석 연휴 롯데월드타워 외벽에 '달토끼'"
+       "메모": "한국이 35일 늦게 시작하고 일본보다 먼저 완공한 초고층(09-14)"
       },
       {
-       "url": "https://www.youtube.com/shorts/lhxa52to_o8",
-       "메모": "우리 롯데타워 크레인 편 28.9만"
+       "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9FLVgxSFNzNEtlOG5pN0VSU0EzX3BTTHB4VXd2dlM2bXZUNVQ5eWotdEltbjJaaDdRbTR2NXlRTFpMRXhPTk1YTWtPX2g3ZlMySUJrU3hHRWtZSTNjdUx2YXNibXPSAWhBVV95cUxQNGJzNkpqMVdsc0NsalNHVllBSU5VUzdodDFVcWJPbmN4RVNkaXoyZjQ2QjBCZXRvV1ZjdC1kb09HV28tc0tkN3V1ci02M1NlUnZQbDZneHY2dE1CUmJTclQzQlB5RG5MSQ?oc=5",
+       "메모": "초고층 랜드마크(09-21)"
       }
      ],
-     "총점": 77,
-     "최신": "2026-09-17"
-    },
-    {
-     "소재": "석굴암 돌방은 왜 물기가 없었나",
-     "후속": "",
-     "대상": "석굴암",
-     "점수": {
-      "korea": 5,
-      "paradox": 5,
-      "proof": 1,
-      "visual": 5
-     },
-     "제목": "석굴암 돌방은 천 년 넘게 물기가 없었는데, 시멘트를 바르자 왜 물이 맺혔을까",
-     "왜_터질까": "누구나 아는 석굴암에 '고치려다 망쳤다'는 역설이 있고 건축 구조 채널이 하루 1.8만 명씩 크는 등 수요는 보이지만 최신 근거는 약합니다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/channel/UCeEM8XgdgUyaWE1Z6_5sHbQ",
-       "메모": "신비한 건축사전 구독 78.8만·하루 +1.8만(건축 구조 수요)"
-      }
+     "첫문장": "35일 늦게 시작한 빌딩이 먼저 끝났습니다.",
+     "보여줄_장면": "층별 공정을 나란히 놓고 코어 선행 시공과 골조 사이클을 투시한다.",
+     "확인할_사실": [
+      "대상 빌딩 이름",
+      "35일 차이",
+      "완공 시점"
      ],
-     "총점": 77
+     "위험": "기사 본문을 못 봐서 대상이 특정되지 않았다.",
+     "총점": 74,
+     "최신": "2026-09-21"
     },
     {
-     "소재": "LNG선 영하 162도 화물창",
-     "후속": "",
-     "대상": "LNG 운반선",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 2,
-      "visual": 5
-     },
-     "제목": "영하 162도 가스를 싣는 LNG선, 쇠로 만든 배는 왜 얼어 깨지지 않을까",
-     "왜_터질까": "호르무즈 사태로 초대형 가스선 발주가 잇따른다는 기사(9/26·27)로 시의성이 있지만, 우리 배 소재 편은 3~4천에 그쳐 근거는 약합니다.",
-     "근거": [
-      {
-       "url": "https://www.msn.com/ko-kr/news/other/%ED%98%B8%EB%A5%B4%EB%AC%B4%EC%A6%88-%EB%B4%89%EC%87%84%EC%97%90-%EA%B0%80%EC%8A%A4%EC%84%A0-%EC%9A%B4%EC%9E%84-%ED%95%9C%EA%B5%AD-%EC%A1%B0%EC%84%A0-%EC%88%98%EC%A3%BC-%EC%A0%84%EB%A7%9D%EC%9D%80-%EB%A7%91%EC%9D%8C/ar-AA2cYXse",
-       "메모": "09-26 초대형 가스운반선 발주 잇따라"
-      },
-      {
-       "url": "https://www.msn.com/ko-kr/%EA%B8%B0%EC%88%A0/%EC%9D%BC%EB%B0%98/%EB%8C%80%ED%98%95-lng%EC%84%A0-%EA%B1%B4%EC%A1%B0-%E4%B8%AD-%EC%A1%B0%EC%84%A0%EC%86%8C-6%EA%B3%B3%EC%9C%BC%EB%A1%9C-%EB%8A%94%EB%8B%A4-%E9%9F%93-%EC%A1%B0%EC%84%A0-3%EC%82%AC-%EC%B0%A8%EC%84%B8%EB%8C%80-%EA%B8%B0%EC%88%A0%EB%A7%8C%EC%9D%B4-%EC%82%B4-%EA%B8%B8-%EB%B9%84%EC%A6%88360/ar-AA2d22Oq",
-       "메모": "09-27 LNG선 조선 경쟁"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/cugSFyEVTeE",
-       "메모": "우리 배 소재 편 4천(약한 실적)"
-      }
-     ],
-     "총점": 75,
-     "최신": "2026-09-27"
-    },
-    {
-     "소재": "대형 선박 92%는 해외에서 고친다",
-     "후속": "",
-     "대상": "선박 수리 도크",
-     "점수": {
-      "korea": 4,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 3
-     },
-     "제목": "배는 세계에서 가장 잘 만드는데, 한국 대형 선박 92%는 왜 해외에서 고칠까",
-     "왜_터질까": "9월 23일 기사에 '대형 선박 92% 해외 수리'가 나와 '1등인데 못 고친다'는 모순이 있지만, 답이 경제 해설로 흐를 위험이 있습니다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9PR05qYXhVSkRBY2FsMXlLdkVKcmJXR3Y5TndMWVN6bVloVk00bE4yMDJ4ckdkazdnaVdzd1JLRVlUSC1SbG9OVlRCV1ZDcFpMT0NuVDhhWU1FcVhzR2pRQlkxLUFBcEtZdnItYVBCeGzSAXRBVV95cUxPLTJ3dDBieTh2UUVpaFVoVFJsMnZtYWMwRXk3OWV1QXNMQnoySEVCVWJMV0xXYWJ2SHBMS2ZjcE1jVnVwV3AxQVhRaEpzV3hvSm5nQUJxV1RNSTBOaHhZa1U5RFB4R0U3SE1DSUE3Zzh2dC1LZw?oc=5",
-       "메모": "09-23 선박 건조는 세계 최고인데 대형 선박 92% 해외 수리"
-      }
-     ],
-     "총점": 72,
-     "최신": "2026-09-23"
-    },
-    {
-     "소재": "울릉공항 — 산을 깎아 바다를 메운 활주로",
+     "소재": "울릉공항 공정 81.7%",
      "후속": "",
      "대상": "울릉공항",
      "점수": {
       "korea": 4,
       "paradox": 4,
-      "proof": 2,
-      "visual": 5
+      "proof": 3,
+      "visual": 4
      },
-     "제목": "울릉도 뱃길 9시간이 1시간으로, 산을 깎아 바다를 메운 활주로는 왜 안 가라앉을까",
-     "왜_터질까": "9월 19~20일 공정률 81.7%·'9시간이 1시간으로' 기사가 새로 나왔지만, 비슷한 가덕도 매립 활주로 편이 1천 회대라 근거는 약합니다.",
+     "제목": "울릉공항 공정 81.7%, 바다를 메운 활주로는 왜 안 가라앉을까",
+     "왜_터질까": "09-19·09-20 기사가 근거이나 이미 2번 추천된 대상이라 새 근거가 있을 때만 쓴다.",
      "근거": [
       {
        "url": "https://www.kbmaeil.com/article/20260919500064",
-       "메모": "09-19 울릉공항 공정률 81.7%"
+       "메모": "공정률 81.7% 돌파(09-19)"
       },
       {
        "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5Ba0VITWpZamVGZTlJYTR0MGlraHY3cFdFRWducEZQbU85N3NDWTlGVl9hWXd0R1VLcGR1V1Yzb0VzSGNkTUhEbktqSkprajRYWFdhRnI0SnpWVWxIT2hUWm14SXdaWnNZ?oc=5",
-       "메모": "09-20 '8부 능선'·9시간이 1시간으로"
+       "메모": "8부 능선(09-20)"
       }
      ],
-     "총점": 71,
+     "총점": 74,
      "최신": "2026-09-20"
     },
     {
-     "소재": "원전 격납건물 — 비행기가 부딪혀도",
+     "소재": "서울 지하철 역 이름 판매, 강남역이 최고가인 이유",
      "후속": "",
-     "대상": "원전 격납건물",
+     "대상": "서울지하철 강남역",
+     "점수": {
+      "korea": 5,
+      "paradox": 2,
+      "proof": 3,
+      "visual": 2
+     },
+     "제목": "서울지하철 강남역 이름값 최고가, 역 이름은 어떻게 값이 매겨질까",
+     "왜_터질까": "누구나 매일 타는 역이라 인지도가 최대이고 09-27 기사가 새 근거다. 다만 돈 얘기라 정쟁으로 흐르지 않게 구조 쪽으로 각도를 잡아야 한다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE56X0NnWlhuY3FvaHYtRFNkLTFyZ3hRQTNBcVl6Y1U2T21UdFhlSVlzUV9OMmFyMHFhZGxnM3h2RzdvU2VuUXJuQy1FdXBRNXlhV0E?oc=5",
+       "메모": "서울지하철 역이름 판매 누적수입 280억, 최고가 강남역(09-27)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1FQTdKYXJlWUp1WGtCdFBhRnRWenV1cDg2T1hmck81WVlVeFl1QU5pdWdWOGdsclNCWEFqN2hLRzRKSU1BaXNaWnRBZVN1bnJvaWtfVlM3eUk?oc=5",
+       "메모": "지하철역 공간 활용 기사(09-21)"
+      }
+     ],
+     "첫문장": "강남역이라는 이름 하나에도 값이 붙어 있습니다.",
+     "보여줄_장면": "3D 강남역 단면에서 승강장·환승통로·출구를 투시하고 역명 표기 위치를 빨간 화살표로 짚는다.",
+     "확인할_사실": [
+      "역명 판매 누적수입 280억 원",
+      "강남역 최고가 금액",
+      "역명 병기 기준"
+     ],
+     "위험": "돈·세금 프레임으로 읽히면 정쟁 댓글만 늘고 조회수는 남지 않는다.",
+     "총점": 69,
+     "최신": "2026-09-27"
+    },
+    {
+     "소재": "서울시청 지하, 40년 잠겨 있던 공간의 정체",
+     "후속": "",
+     "대상": "서울 도심 지하 공간",
      "점수": {
       "korea": 4,
       "paradox": 4,
       "proof": 2,
-      "visual": 5
+      "visual": 4
      },
-     "제목": "원전 격납건물 콘크리트 벽, 비행기가 부딪혀도 왜 안 뚫릴까",
-     "왜_터질까": "신규 원전 공론화 착수(9/22)로 원전이 다시 뉴스에 올랐고 벽 하나로 비행기를 막는 역설이 있습니다 — 정책 얘기는 빼고 구조만 다룹니다.",
+     "제목": "서울 한복판 지하 40년, 문이 잠겨 있던 공간에는 무엇이 있었을까",
+     "왜_터질까": "09-25 개방 기사가 새 근거이고 잠긴 공간은 궁금증을 만드는 역설이다. 이미 최근 추천에 비슷한 소재가 있어 새 각도(구조와 용도)가 필요하다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5ael9TVmlweDdOYlR5SWRGZmJGNjdncDhHRVQ0UlgzOVVXc0JLNENNZE8waUFqRkkwcjgxY0VhRFI5Q2hVU1YxMHVLNFlWRl83NjZJdXZ4ZGJCbGVQVmxDSS1Id240UFQ5U1FYLQ?oc=5",
-       "메모": "09-22 신규 원전 공론화 착수"
+       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE42d1pUNHZOLTRPSkpYbFFSd1c5YTgya1dHeURHVU03S1pyaGdJNEF6VFFNb0pNbV92YzltbURvSk1PZ2l2OUI4QjlMUUQ5RXgyMUtoYlJKZ2IzMlRfaXhvcGEtNl8xS1AyeXFIUUNR?oc=5",
+       "메모": "40년 만에 개방된 서울 지하 공간(09-25)"
       },
       {
-       "url": "https://www.msn.com/ko-kr/money/topstories/%EB%8C%80%EB%AF%B8%ED%88%AC%EC%9E%90-%EC%B2%AD%EA%B5%AC%EC%84%9C-2000%EC%96%B5%E5%BC%97-%EC%95%84%EB%9E%98-%EA%B9%94%EB%A6%B0-%EC%A7%84%EC%A7%9C-%EC%9D%B4%EB%93%9D-%EC%9B%90%EC%A0%84-%EA%B0%80%EC%8A%A4%EB%B0%9C%EC%A0%84-%EC%A7%84%EC%B6%9C%EA%B8%B8/ar-AA2cVsHD",
-       "메모": "09-25 원전 공급망 진출"
+       "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBrYS0wem9OUHY4a3ByVndwWkJxNzNXUTFjRkJGWk5OcHBpTjB0VURwTHNQeXA5YkJPT3RJUkRYWnNYS2JoZF9Ob1JOT18zcWEwLXNUR0hQb0pkSC1oT2dSZVZWNldVNWlEcVE?oc=5",
+       "메모": "서울시청 지하 미스터리(09-14)"
       }
      ],
-     "총점": 71,
+     "첫문장": "서울 한복판 땅속에 40년 동안 잠겨 있던 공간이 있었습니다.",
+     "보여줄_장면": "지상 건물을 투명하게 처리하고 지하 공간의 층과 통로를 투시한다.",
+     "확인할_사실": [
+      "개방 전 용도",
+      "지하 공간 위치와 깊이",
+      "잠겨 있던 기간 40년"
+     ],
+     "위험": "최근 추천에 같은 소재가 있어 새 근거가 약하면 반복으로 반려될 수 있다.",
+     "총점": 69,
      "최신": "2026-09-25"
     },
     {
-     "소재": "투탕카멘 무덤 벽 뒤 비밀의 방",
-     "후속": "",
-     "대상": "투탕카멘 무덤",
+     "소재": "서울 도심 건물 해체, 방학역 39층 단지 자리의 철거",
+     "후속": "빌딩 1층부터 해체",
+     "대상": "방학역 건물 해체",
      "점수": {
       "korea": 3,
       "paradox": 4,
       "proof": 3,
       "visual": 5
      },
-     "제목": "3300년 투탕카멘 무덤 벽 뒤에 방이 있다, 벽을 안 부수고 어떻게 알았을까",
-     "왜_터질까": "9월 24·26일 '벽 뒤 비밀의 방' 기사가 나와 벽을 부수지 않고 안을 보는 방법이 질문이 되지만, 해외 소재라 뒤로 둡니다.",
+     "제목": "방학역 도심 건물 해체, 붙어 있는 건물은 어떻게 안 다칠까",
+     "왜_터질까": "09-23·09-25 기사로 해체가 시작됐고 도쿄 해체편(13.9만)의 후속 각도다. 옆 건물 위험 장면이 댓글 반응이 크다는 공식에 맞는다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAzc3lSSXNfN1QzYnB3eVhxQ2NMWDFUeWRXUVlhN2tQRGc5MHFYaEV6UXRiY09FWmoxbXV1UTBxVDBZV3BWUUN3R0hEZHVlVnBabmtHdUZBemNUUmQwNmk4V9IBeEFVX3lxTE1EemoyX1l5VW9VUjNRZmlNaUdnUS1HczctUU0tWS1ET0J5b3hYMUNaRWt2TnZldlBKVGw0U0JxSTZQTVJmdVgtMng0bjBZY0VGNzdsWmlNUXdfU19KR2tFZW1ZbkEzMGc1LTRIQ0lZQVBsVlU1ZEdLMA?oc=5",
-       "메모": "09-26 투탕카멘 벽 뒤에 방이 있다?"
+       "url": "https://news.bbsi.co.kr/news/articleView.html?idxno=4108474",
+       "메모": "방학역 해체공사 착공(09-23)"
       },
       {
-       "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOOG5CTVFtQmFQTU9sTVNIZEl3MGVHai1ULWZKaHlQSzBZV3AyY2Ryb0N2c3EtS2RDdHFTQ2xnc01pa0RxNU56THJjUkFLT2RCaTctNk52aFk0bml6eHA1UEJOOS1BM3NEWWRKNDN3QVpKTXpkelUzcnJla09EbmYwSWxZUQ?oc=5",
-       "메모": "09-24 네페르티티 무덤일 수도"
+       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9CdW1LTzJFaDRCelljaXVFcmhST0xkbVZIaEUyOXpaTnRlR1FmLVRLN25hQVpfMnl2Z0RqdjI1SDVkMXBaTnpRWlFVS040TDNWd2dvT1N5dHg4LWt0VnVSZ0xObDl1aEtZRDV3OHhR?oc=5",
+       "메모": "첫 철거 단계 진입(09-25)"
+      },
+      {
+       "url": "https://www.youtube.com/shorts/kWuKK2iQrP8",
+       "메모": "도도쿄 해체 18만 조회"
       }
      ],
+     "첫문장": "지금 방학역 앞에서는 건물이 조용히 사라지고 있습니다.",
+     "보여줄_장면": "해체 중 건물과 옆 건물 사이 방진막·분진 차단을 투시로 보여준다.",
+     "확인할_사실": [
+      "해체 대상 건물 층수",
+      "해체 공법",
+      "착공일"
+     ],
+     "위험": "최근 추천에 서울 도심 해체가 이미 있어 반복으로 볼 수 있다.",
      "총점": 69,
-     "최신": "2026-09-26"
+     "최신": "2026-09-25"
     },
     {
-     "소재": "동양 최초 통영 해저터널",
+     "소재": "부산 낙동강 대저·엄궁·장낙대교, 하구에 다리를 놓는 법",
      "후속": "",
-     "대상": "통영 해저터널",
+     "대상": "낙동강 하구 교량",
      "점수": {
       "korea": 3,
       "paradox": 4,
       "proof": 3,
       "visual": 4
      },
-     "제목": "동양 최초 통영 해저터널, 바닷물을 막고 바닥을 팠다는데 왜 아직 안 샐까",
-     "왜_터질까": "옆 공사로 해저터널 안전 우려(9/22)와 테마파크 승인(9/16) 기사가 새로 나왔고, 백 년 가까운 바다 밑 터널이 버티는 이유가 질문이 됩니다.",
+     "제목": "낙동강 하구 다리 3개, 새들이 쉬는 갯벌 위에 어떻게 세울까",
+     "왜_터질까": "09-23 기사로 지금 화제이고 하구 교량은 시공 방식이 역설적이다. 갈등 프레임은 피하고 공법만 보여줘야 한다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5Oa2dIeHhBemlKb3ZLbG5YZGY1cTBBbjFOOEVxS3pJb0dQSjRuTk9rT1JnQ1Q5UHByN2pJMlRZN0ZaRVN5akg4NjJvTEVRRDg?oc=5",
-       "메모": "09-22 통영 공사, 해저터널 안전성 우려"
+       "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBsUlgxRWxrX2FlWWI1dE03aGhiajBzTnZyYlFJMWVBU2Nhb0puQUMtVVFLeHVYTUIyOFFkR2dOR1VvbEU1SVMzSk92MU5DWmVSMzlqLVBUR09ybkRSa3dvRGgtcUtLLWF4?oc=5",
+       "메모": "낙동강 3대 교량 갈등(09-23)"
       },
       {
-       "url": "https://www.msn.com/ko-kr/news/news/%EB%AA%85%EC%84%B1%EC%97%90-%EB%B9%84%ED%95%B4-%EB%B3%BC-%ED%92%88-%EC%97%86%EB%8A%94-%ED%86%B5%EC%98%81-%ED%95%B4%EC%A0%80%ED%84%B0%EB%84%90-%EB%82%B4%EB%85%84%EC%97%90-%ED%99%95-%EB%B0%94%EB%80%90%EB%8B%A4/ar-AA2cff0l",
-       "메모": "09-15 동양 최초 해저터널 내년에 바뀐다"
+       "url": "https://www.yna.co.kr/view/AKR20260923076700051",
+       "메모": "부산시 소송 취하 부동의(09-23)"
+      },
+      {
+       "url": "https://www.msn.com/ko-kr/news/other/%EB%82%99%EB%8F%99%EA%B0%95-%EC%8B%9C%EB%AF%BC%EB%8B%A8%EC%B2%B4-%EB%B6%80%EC%82%B0%EC%8B%9C-%EB%82%99%EB%8F%99%EA%B0%95-%EA%B5%90%EB%9F%89-%EC%86%8C%EC%B7%A8%ED%95%98-%EB%B6%80%EB%8F%99%EC%9D%98-%EC%9D%B4%EC%9C%A0-%EB%B0%9D%ED%98%80%EC%95%BC/ar-AA2cMVzE",
+       "메모": "대저·엄궁·장낙대교 공사 중단 요구(09-23)"
       }
      ],
+     "첫문장": "낙동강 하구에는 다리 세 개가 한꺼번에 놓이고 있습니다.",
+     "보여줄_장면": "하구 지반 단면에 말뚝을 박고 교각이 올라가는 과정을 3D로 보여준다.",
+     "확인할_사실": [
+      "세 교량의 길이",
+      "하구 지반 깊이",
+      "공법"
+     ],
+     "위험": "환경 갈등 이슈라 정쟁 프레임으로 번질 수 있다.",
      "총점": 67,
-     "최신": "2026-09-22"
+     "최신": "2026-09-23"
     },
     {
-     "소재": "알프스 기차가 빙빙 도는 다리",
+     "소재": "거제~마산 해저터널, 바다 밑 어디에 어떻게 깔릴까",
      "후속": "",
-     "대상": "베르니나 익스프레스",
+     "대상": "거제~마산 해저터널",
      "점수": {
-      "korea": 2,
-      "paradox": 5,
+      "korea": 3,
+      "paradox": 4,
       "proof": 3,
-      "visual": 5
+      "visual": 4
      },
-     "제목": "알프스 144km에 터널 55개·다리 196개, 기차가 제자리를 빙빙 도는 다리의 비밀",
-     "왜_터질까": "9월 25일 기사로 소개된 알프스 철도로, 기차가 원을 그리며 고도를 올리는 장면이 3D로 강하지만 한국 인지도가 낮습니다.",
+     "제목": "거제~마산 해저터널, 바다 밑 지반에 어떻게 통로를 낼까",
+     "왜_터질까": "09-23 착공 발표 기사가 근거이고 해저터널은 거가대교 침매와 비교할 수 있다. 앞서 거가대교 소재가 추천되어 각도가 겹칠 수 있다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1rak5VV21rTTlib0N0WVFrMm40bTNpdk1RSDhOdG5KMHc2SjFsaU1VZjhxQkpyUzVDYUdSTnBqd0ZrTGE1eFFwb2VrRUtfcExFQ2t4MC0tNU44NGpRdW4zVXRyQXUwT0M1Yko3dFFR?oc=5",
-       "메모": "09-25 베르니나 익스프레스 144km·터널 55개·다리 196개"
+       "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE1TTWlndm0wVjdnSFgzUXdlV1RTT2pUNDEzYUlKTnNqMElBb1dBSm84d0FJR0ZaYVpVRnAzRENlSDBpRUs2Vk5hRWN2QmRPOTB0N053MzdaMjYyZmxFRzFvakpR0gFmQVVfeXFMUFhLSmlqdlpLSnREaEpwLTZiTGhjb3lfMGRid3QxVXUxelBzV09XNlNSV3A0QmhRMlZkMzQwOUtUb1duNk1RS0pHMHRfZlB4QmRQWkJCTlJDMW1Kb2k5WVY0azU3eURn?oc=5",
+       "메모": "2028년 착공 발표(09-23)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFA4dmI2M2dVS25wV0ZNYzJwWDZ2ZnM4ZENKU0psR3h6S3BZc0hXNVBOWnVXQkpYZnFkWURNeWNKbkZiZDFIMHBGNjlzVVcyOFpPZVhGbE13elpPTUk0Z2w3cEdR0gFmQVVfeXFMTmdiM1dlX0lYQ1R1VVVPX3FsNWFIOGJZaEN3NDhZaHFGN0pQZXRkODF0VkVma3BTVkZaQ2l4d0V6LVVOM3hSTFFPa08tbkZlYVlsVWFaX2NtN2pzcVhoRWl4aC1KZVJ3?oc=5",
+       "메모": "전략환경영향평가 초안 설명회(09-23)"
       }
      ],
-     "총점": 66,
-     "최신": "2026-09-25"
+     "첫문장": "경남 바다 밑으로 새 터널이 들어갑니다.",
+     "보여줄_장면": "바다 단면에서 침매와 굴착 두 공법의 통로를 나란히 투시한다.",
+     "확인할_사실": [
+      "터널 길이",
+      "착공 2028년",
+      "공법 확정 여부"
+     ],
+     "위험": "공법이 아직 확정되지 않았을 수 있다.",
+     "총점": 67,
+     "최신": "2026-09-23"
     },
     {
-     "소재": "철거 99% 한남3구역",
+     "소재": "두만강 북러 자동차다리",
      "후속": "",
-     "대상": "한남3구역",
+     "대상": "두만강 자동차다리",
+     "점수": {
+      "korea": 3,
+      "paradox": 4,
+      "proof": 3,
+      "visual": 4
+     },
+     "제목": "북한과 러시아를 잇는 두만강 자동차다리, 국경 강 위에 어떻게 놓았을까",
+     "왜_터질까": "09-07 기사가 근거이고 북한 소재라 군사·공포 갈래에 맞다. 다만 최근 14일 밖이라 신선도가 약하다.",
+     "근거": [
+      {
+       "url": "https://www.koreatimes.net/ArticleViewer/Article/179268",
+       "메모": "두만강 자동차다리 개통(09-07)"
+      }
+     ],
+     "총점": 67
+    },
+    {
+     "소재": "부산항 개항 150주년",
+     "후속": "",
+     "대상": "부산항",
+     "점수": {
+      "korea": 4,
+      "paradox": 3,
+      "proof": 2,
+      "visual": 4
+     },
+     "제목": "부산항 150년, 컨테이너 크레인은 어떻게 거대한 배를 하루 만에 비울까",
+     "왜_터질까": "09-15 기사가 근거이고 크레인 작업은 고공 장면이 좋다. 다만 태풍 크레인 소재가 최근 추천에 있다.",
+     "근거": [
+      {
+       "url": "https://www.newstown.co.kr/news/articleView.html?idxno=715922",
+       "메모": "부산항 개항 150주년(09-15)"
+      }
+     ],
+     "총점": 64,
+     "최신": "2026-09-15"
+    },
+    {
+     "소재": "이란 사태로 초대형 가스선 발주",
+     "후속": "",
+     "대상": "LNG·가스운반선",
      "점수": {
       "korea": 3,
       "paradox": 3,
       "proof": 3,
       "visual": 4
      },
-     "제목": "철거 99% 한남3구역, 가파른 산비탈 동네 수천 채는 어떻게 부쉈을까",
-     "왜_터질까": "9월 17일 '철거 99%·연내 착공' 기사가 있고 우리 해체 편(17.8만)이 잘 됐지만, 재개발 정책 얘기로 흐를 위험이 있습니다.",
+     "제목": "초대형 가스운반선, 영하 162도 화물은 어떻게 안 새는 걸까",
+     "왜_터질까": "09-26 기사가 근거이나 LNG선은 최근 추천에 있어 새 각도가 필요하다.",
      "근거": [
       {
-       "url": "https://www.sedaily.com/article/20091849",
-       "메모": "09-17 철거 99% 한남3구역 연내 착공"
+       "url": "https://www.msn.com/ko-kr/news/other/%ED%98%B8%EB%A5%B4%EB%AC%B4%EC%A6%88-%EB%B4%89%EC%87%84%EC%97%90-%EA%B0%80%EC%8A%A4%EC%84%A0-%EC%9A%B4%EC%9E%84-%ED%95%9C%EA%B5%AD-%EC%A1%B0%EC%84%A0-%EC%88%98%EC%A3%BC-%EC%A0%84%EB%A7%9D%EC%9D%80-%EB%A7%91%EC%9D%8C/ar-AA2cYXse",
+       "메모": "가스선 운임 상승, 수주 기대(09-26)"
       },
       {
-       "url": "https://www.youtube.com/shorts/kWuKK2iQrP8",
-       "메모": "우리 빌딩 해체 편 17.8만"
+       "url": "http://newstomato.com/ReadNews.aspx?no=1314756",
+       "메모": "VLGC 발주 지속(09-26)"
       }
      ],
      "총점": 62,
-     "최신": "2026-09-17"
+     "최신": "2026-09-26"
+    },
+    {
+     "소재": "투탕카멘 무덤 벽 뒤의 방",
+     "후속": "",
+     "대상": "투탕카멘 무덤",
+     "점수": {
+      "korea": 2,
+      "paradox": 5,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "투탕카멘 무덤 벽 뒤 방, 3300년 동안 왜 아무도 못 열었을까",
+     "왜_터질까": "09-24·09-26 기사가 근거이나 해외 소재이고 최근 추천에 이미 있다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAzc3lSSXNfN1QzYnB3eVhxQ2NMWDFUeWRXUVlhN2tQRGc5MHFYaEV6UXRiY09FWmoxbXV1UTBxVDBZV3BWUUN3R0hEZHVlVnBabmtHdUZBemNUUmQwNmk4V9IBeEFVX3lxTE1EemoyX1l5VW9VUjNRZmlNaUdnUS1HczctUU0tWS1ET0J5b3hYMUNaRWt2TnZldlBKVGw0U0JxSTZQTVJmdVgtMng0bjBZY0VGNzdsWmlNUXdfU19KR2tFZW1ZbkEzMGc1LTRIQ0lZQVBsVlU1ZEdLMA?oc=5",
+       "메모": "벽 뒤 방 기사(09-26)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOOG5CTVFtQmFQTU9sTVNIZEl3MGVHai1ULWZKaHlQSzBZV3AyY2Ryb0N2c3EtS2RDdHFTQ2xnc01pa0RxNU56THJjUkFLT2RCaTctNk52aFk0bml6eHA1UEJOOS1BM3NEWWRKNDN3QVpKTXpkelUzcnJla09EbmYwSWxZUQ?oc=5",
+       "메모": "네페르티티 무덤 가능성(09-24)"
+      }
+     ],
+     "총점": 61,
+     "최신": "2026-09-26"
+    },
+    {
+     "소재": "대형 선박 92%가 해외에서 수리",
+     "후속": "",
+     "대상": "조선소 선박 수리",
+     "점수": {
+      "korea": 3,
+      "paradox": 3,
+      "proof": 2,
+      "visual": 4
+     },
+     "제목": "대형 선박 92% 해외 수리, 배는 한국이 만드는데 왜 못 고칠까",
+     "왜_터질까": "09-23 기사가 근거이나 최근 추천에 있어 반복이다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9PR05qYXhVSkRBY2FsMXlLdkVKcmJXR3Y5TndMWVN6bVloVk00bE4yMDJ4ckdkazdnaVdzd1JLRVlUSC1SbG9OVlRCV1ZDcFpMT0NuVDhhWU1FcVhzR2pRQlkxLUFBcEtZdnItYVBCeGzSAXRBVV95cUxPLTJ3dDBieTh2UUVpaFVoVFJsMnZtYWMwRXk3OWV1QXNMQnoySEVCVWJMV0xXYWJ2SHBMS2ZjcE1jVnVwV3AxQVhRaEpzV3hvSm5nQUJxV1RNSTBOaHhZa1U5RFB4R0U3SE1DSUE3Zzh2dC1LZw?oc=5",
+       "메모": "대형 선박 92% 해외 수리(09-23)"
+      }
+     ],
+     "총점": 57,
+     "최신": "2026-09-23"
+    },
+    {
+     "소재": "동해 부유식 해상풍력 22MW",
+     "후속": "",
+     "대상": "부유식 해상풍력",
+     "점수": {
+      "korea": 2,
+      "paradox": 4,
+      "proof": 2,
+      "visual": 5
+     },
+     "제목": "동해 수심 150m 풍력발전기, 바닥에 안 박았는데 왜 안 넘어질까",
+     "왜_터질까": "09-21 기사가 근거이나 최근 추천에 있고 회사 이름이 기사에 있어 제목에서 빼야 한다.",
+     "근거": [
+      {
+       "url": "https://www.dailycnc.com/news/articleView.html?idxno=244842",
+       "메모": "수심 150m 부유식 기술 입증(09-21)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9TT2dGcWJyWnhSMlRheEJvb09la2ZQaXFIRTJFem5IMV8yVUtqdUJlaGdWQ1FkOWppNjZadmtOb3U0RUxBbTVfUnFzeGlKZWxnNWZKd25CUnVoRWRoZDNVb1FuTi1oNlkwOHdR?oc=5",
+       "메모": "22MW급 인증(09-21)"
+      }
+     ],
+     "총점": 56,
+     "최신": "2026-09-21"
+    },
+    {
+     "소재": "통영·해저 미디어아트 테마파크 안전성",
+     "후속": "",
+     "대상": "통영 해저터널",
+     "점수": {
+      "korea": 3,
+      "paradox": 3,
+      "proof": 2,
+      "visual": 3
+     },
+     "제목": "통영 해저터널 안쪽 벽, 80년 된 터널에 조명은 어떻게 달까",
+     "왜_터질까": "09-22 안전성 우려 기사가 근거이나 같은 대상이 이미 위에 있고 사고 해설로 흐를 수 있다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5Oa2dIeHhBemlKb3ZLbG5YZGY1cTBBbjFOOEVxS3pJb0dQSjRuTk9rT1JnQ1Q5UHByN2pJMlRZN0ZaRVN5akg4NjJvTEVRRDg?oc=5",
+       "메모": "오션뷰케이션 공사 안전성 우려(09-22)"
+      }
+     ],
+     "총점": 54,
+     "최신": "2026-09-22"
+    },
+    {
+     "소재": "서산공항 484억이 899억으로",
+     "후속": "",
+     "대상": "서산공항",
+     "점수": {
+      "korea": 3,
+      "paradox": 2,
+      "proof": 2,
+      "visual": 3
+     },
+     "제목": "서산공항 사업비 899억, 활주로는 어떻게 지을까",
+     "왜_터질까": "09-26 기사가 근거이나 사업비 중심이라 정책 해설로 흐를 위험이 있다.",
+     "근거": [
+      {
+       "url": "https://www.msn.com/ko-kr/news/other/484%EC%96%B5%EC%9D%B4-899%EC%96%B5%EC%9C%BC%EB%A1%9C-%EC%A0%84%ED%88%AC%EA%B8%B0%EA%B9%8C%EC%A7%80-%EC%98%A8%EB%8B%A4-%EC%84%9C%EC%82%B0%EA%B3%B5%ED%95%AD-%EA%B2%B9%EA%B2%B9%EC%9D%B4-%EC%8C%93%EC%9D%B4%EB%8A%94-%EB%B3%80%EC%88%98/ar-AA2d1BHo",
+       "메모": "서산공항 사업비 증가와 전투기 배치 변수(09-26)"
+      }
+     ],
+     "총점": 50,
+     "최신": "2026-09-26"
+    },
+    {
+     "소재": "인천공항 최대 규모 컨퍼런스",
+     "후속": "",
+     "대상": "인천국제공항",
+     "점수": {
+      "korea": 4,
+      "paradox": 2,
+      "proof": 1,
+      "visual": 2
+     },
+     "제목": "인천공항 활주로 아래, 비행기 수백 대는 어떻게 안 부딪힐까",
+     "왜_터질까": "인지도는 높으나 기사가 행사 소식이라 물리 역설이 약하다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE8xSWxyTlFZcTVfOWFFQXY3LXlMVWNLNF9jSkZaX0JlZ09fR25qQ3oyYzktdEh3MkRnV3FidnZBYzFwNGtMUnJxNUpxT2VJclo0eVpXaXQyQ2tad3ljeTU5UkQwVklSODUxYkZvSmJR0gFyQVVfeXFMTWhRX2FQWHVLOHVSdk05NXlqTWtzOFFhaks3S3BoODRQbzQtTTE2S3ExNGtCNHRjODd5aXhjSXd3Wk1DMVFpaDYyT0lnbHJBYnE1Z0lzZFlUUGxFZW9YVFg2OHdSZDhqY2N2c1M0WFhSYVlR?oc=5",
+       "메모": "세계항공컨퍼런스 개최(09-13)"
+      }
+     ],
+     "총점": 50,
+     "최신": "2026-09-13"
+    },
+    {
+     "소재": "알프스 종단 열차 55개 터널·196개 다리",
+     "후속": "",
+     "대상": "베르니나 익스프레스",
+     "점수": {
+      "korea": 1,
+      "paradox": 4,
+      "proof": 2,
+      "visual": 5
+     },
+     "제목": "알프스 144km 구간, 터널 55개와 다리 196개는 어떻게 이었을까",
+     "왜_터질까": "09-25 기사가 근거이나 해외 소재이고 최근 추천에 있다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1rak5VV21rTTlib0N0WVFrMm40bTNpdk1RSDhOdG5KMHc2SjFsaU1VZjhxQkpyUzVDYUdSTnBqd0ZrTGE1eFFwb2VrRUtfcExFQ2t4MC0tNU44NGpRdW4zVXRyQXUwT0M1Yko3dFFR?oc=5",
+       "메모": "144km 구간 55개 터널·196개 다리(09-25)"
+      }
+     ],
+     "총점": 48,
+     "최신": "2026-09-25"
+    },
+    {
+     "소재": "콘크리트 강도 42% 증가 연구",
+     "후속": "",
+     "대상": "콘크리트",
+     "점수": {
+      "korea": 2,
+      "paradox": 3,
+      "proof": 2,
+      "visual": 3
+     },
+     "제목": "콘크리트 강도 42% 높인 재료, 어디에 쓸 수 있을까",
+     "왜_터질까": "검색어 급상승이 근거이나 재료가 자극적이고 한국 구조물과 연결이 약하다.",
+     "근거": [
+      {
+       "url": "https://v.daum.net/v/20260927090128321",
+       "메모": "콘크리트 휨 강도 42% 증가 기사"
+      }
+     ],
+     "총점": 47,
+     "최신": "2026-09-27"
     }
    ],
    "calib": {
@@ -585,120 +575,153 @@
     },
     "alpha": 0.51,
     "hits": [],
-    "updated": "2026-09-27 12:02"
+    "updated": "2026-09-27 15:00"
    }
   },
   "거인의무덤": {
-   "at": "2026-09-27 11:36",
-   "model": "Kiro 직접 선정(claude 한도)",
-   "outliers_at": "2026-09-27 06:04",
+   "at": "2026-09-27 15:00",
+   "model": "sonnet",
+   "outliers_at": "2026-09-27 14:05",
    "news_n": 68,
    "trend_n": 10,
-   "fresh_n": 17,
-   "prompt_chars": 15186,
-   "tokens": null,
+   "fresh_n": 16,
+   "prompt_chars": 13727,
+   "tokens": {
+    "in": 14265,
+    "out": 14085,
+    "think": 7805,
+    "usd": 0.197906
+   },
+   "labels": {
+    "korea": "인지도",
+    "paradox": "1등이 왜?",
+    "proof": "근거",
+    "visual": "자료"
+   },
+   "genre_n": null,
+   "genre_hot": null,
    "topics": [
     {
-     "소재": "애플, 진동 특허 하나로 7.7조 배상 평결",
-     "후속": "",
-     "대상": "애플",
-     "점수": {
-      "korea": 5,
-      "paradox": 4,
-      "proof": 5,
-      "visual": 3
-     },
-     "제목": "아이폰 만드는 애플, 진동 기술 하나 때문에 7조 7천억 원을 물어낼 위기",
-     "왜_터질까": "오늘 '특허침해'가 급상승 검색어(1,000+)에 올랐고 미국 특허소송 사상 최대 배상 평결이라 숫자가 극적입니다. 누구나 아는 애플이 작은 기술 하나에 흔들리는 모순이 있습니다.",
-     "근거": [
-      {
-       "url": "https://news.kbs.co.kr/news/view.do?ncd=8672015",
-       "메모": "09-27 애플 특허침해 7.7조원 배상 평결(급상승 검색어)"
-      },
-      {
-       "url": "https://v.daum.net/v/20260927103530177",
-       "메모": "09-27 '햅틱 특허 침해' 7조 원 배상 위기"
-      }
-     ],
-     "첫문장": "아이폰을 쥐면 느껴지는 그 짧은 진동 하나 때문에, 애플이 7조 원 넘게 물어낼 처지가 됐습니다.",
-     "보여줄_장면": "평결 기사 헤드라인, 아이폰 진동 부품 사진, 역대 특허 배상액 막대그래프.",
-     "확인할_사실": [
-      "평결 금액(달러·원 환산 기준일)",
-      "원고 회사와 특허 내용",
-      "항소 여부·확정 시점"
-     ],
-     "위험": "평결은 확정 판결이 아니다 — '물어낸다'가 아니라 '위기'로 말하고 항소로 뒤집힐 수 있음을 밝힌다.",
-     "총점": 91,
-     "최신": "2026-09-27"
-    },
-    {
-     "소재": "홈플러스, 국내외 50곳에 \"사 주세요\"",
-     "후속": "",
-     "대상": "홈플러스",
-     "점수": {
-      "korea": 5,
-      "paradox": 4,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "한때 대형마트 2위 홈플러스, 국내외 50곳에 사 달라고 했다",
-     "왜_터질까": "9월 22일 홈플러스가 국내외 50곳에 인수를 타진한다는 기사가 새로 나왔고, 전국에 매장을 깔았던 2위 마트가 팔리기를 기다리는 모순이 있습니다. 지난번 '회생계획 인가' 추천 뒤 새로 나온 매각 근거입니다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTFBzaHViMmNuejdIaUVvUlZ0WWtwdE1nTTFaWnJ3a19UdGE3N3BGV1JXa2ppWXNxRHNTeEFlX2FkTTNrdzgzallFbVI0OA?oc=5",
-       "메모": "09-22 홈플러스 국내외 50곳에 러브콜, 원매자 맞춤형 매각"
-      }
-     ],
-     "첫문장": "한때 이마트와 1, 2위를 다투던 홈플러스가, 지금은 사 줄 회사를 50곳이나 찾아다니고 있습니다.",
-     "보여줄_장면": "전국 매장 지도에서 문 닫은 매장이 꺼지는 애니메이션, 매출·영업이익 추이 차트, 매각 기사 헤드라인.",
-     "확인할_사실": [
-      "대형마트 순위(연도 기준)",
-      "회생 신청일과 현재 절차 단계",
-      "매장 수 변화(최대→현재)"
-     ],
-     "위험": "매각 협상은 수시로 바뀐다 — 제작 직전 최신 기사로 다시 확인한다.",
-     "총점": 88,
-     "최신": "2026-09-22"
-    },
-    {
-     "소재": "롯데백화점, 역대 최대 매출인데 희망퇴직",
+     "소재": "롯데백화점 역대 최대 매출 속 희망퇴직",
      "후속": "",
      "대상": "롯데백화점",
      "점수": {
       "korea": 5,
       "paradox": 4,
       "proof": 4,
-      "visual": 3
+      "visual": 4
      },
-     "제목": "2분기 역대 최대 매출 롯데백화점, 왜 40개월치 월급을 주며 사람을 내보낼까",
-     "왜_터질까": "9월 21~22일 '역대 최대 매출인데 5년 만에 희망퇴직' 기사가 여러 건 나왔고, 잘 나갈 때 사람을 줄이는 모순과 '40개월치'라는 숫자가 분명합니다.",
+     "제목": "2분기 역대 최대 매출 롯데백화점, 40개월치 걸고 5년 만에 사람을 내보냅니다",
+     "왜_터질까": "가장 잘 나갈 때 감원한다는 모순이 한 줄로 들어오고, 09-27 기사까지 이어지는 최신 이슈다. 이미 추천한 소재지만 09-27 '올해 희망퇴직 인력 재편' 기사가 새 근거다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE56SmVfWU9YVEhhSVdUTGhtbFVyaVhMTzV6amdfUzR1T2cwSWpvRUVTTmtnUnhzSXJESHBSUlpKOTRrVlk2cm5lSGRIYw?oc=5",
-       "메모": "09-22 2분기 역대 최대 매출인데 40개월치 내걸고 희망퇴직"
+       "메모": "2분기 역대 최대 매출인데 40개월치 희망퇴직, 5년 만(09-22)"
       },
       {
        "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9CUFdjNmpDZGhhRVNOZWZRVG1YVUVNRlNaQklyYk5zM05TQks5YkVpR0k2NE9fZ284VlpJS2p3OTQ2b3NpN05YaXBDRVRJSHJMWlVDWkdtOWREQ1hKeFhlUnVkek9ydDhVSWVZbWk0eGVFaE9i?oc=5",
-       "메모": "09-21 5년 만에 두 번째 희망퇴직"
+       "메모": "5년 만에 두 번째 희망퇴직, 실적 개선에도 선제 재편(09-21)"
       },
       {
        "url": "https://www.msn.com/ko-kr/money/%EC%9D%BC%EB%B0%98/%EB%A1%AF%EB%8D%B0%EB%B0%B1%ED%99%94%EC%A0%90-%EC%9E%98-%EB%82%98%EA%B0%88-%EB%95%8C-%EA%B0%90%EC%9B%90-%EC%99%9C-%EC%A0%95%ED%98%84%EC%84%9D-%EC%A0%90%ED%8F%AC-%EC%9D%B4%EC%96%B4-%EC%A1%B0%EC%A7%81%EB%8F%84-%EA%B3%A0%ED%9A%A8%EC%9C%A8-%EC%B2%B4%EC%A7%88-%EA%B5%B3%ED%9E%8C%EB%8B%A4/ar-AA2cI5DY",
-       "메모": "09-22 잘 나갈 때 감원 왜?"
+       "메모": "점포 효율화 이어 조직 '고효율 체질' 강화(09-22)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBDbUFYSkc4cXV1S1NCQ2lXZmJTQ25FTUJwMXdObTBFZWQ5VXdIZUxwU0d2Z3Fyc0pwTXFYUmZ0cWdYeWhIMnJiSlJuR0sxdUV2cW1hQXBWZXR5RWwtY0Z30gFkQVVfeXFMTTJqdXRnVWNNVGx1dU9wRFlsMDdaektZOVdzWkhUSnRDYjAtVmtzbzN5SkdpVkl1SjZXamZzNDFPRHBqaUg2Vjc3d2hwY1FrY042WDhSay1CbkJoT1dvLVdVX29YZQ?oc=5",
+       "메모": "올해 희망퇴직은 인력 재편 신호탄(09-27)"
       }
      ],
-     "첫문장": "장사가 가장 잘된 분기에, 롯데백화점은 직원들에게 40개월치 월급을 줄 테니 나가 달라고 했습니다.",
-     "보여줄_장면": "분기 매출 막대그래프 꼭대기에 희망퇴직 공지를 겹치고, 점포 수·직원 수 추이를 나란히.",
+     "첫문장": "롯데백화점은 2분기에 역대 최대 매출을 올리고도 40개월치 위로금을 내걸었습니다.",
+     "보여줄_장면": "기사 헤드라인 캡처 위에 '역대 최대 매출'과 '희망퇴직'을 좌우로 크게 대비시킨다.",
      "확인할_사실": [
-      "2분기 매출 수치",
-      "희망퇴직 대상·조건(40개월치 기준)",
-      "5년 전 희망퇴직과 비교"
+      "2분기 매출·영업이익 실제 수치",
+      "40개월치 대상 조건",
+      "지난 희망퇴직 시점(5년 전)"
      ],
-     "위험": "몰락 서사가 약하다 — '잘 나갈 때 줄이는 이유'로 가야 하고 과장하면 반박당한다.",
-     "총점": 86,
-     "최신": "2026-09-22"
+     "위험": "실적이 좋은 상태의 구조 재편이라 '몰락'으로 쓰면 과장으로 비칠 수 있다.",
+     "총점": 88,
+     "최신": "2026-09-27"
     },
     {
-     "소재": "혼다, 수입차 3대 중 1대가 일본차이던 시절",
+     "소재": "중앙그룹 5개 계열사 회생신청",
+     "후속": "시청률 28% JTBC는 왜 206억을 못 갚고 무너졌을까?",
+     "대상": "중앙그룹",
+     "점수": {
+      "korea": 5,
+      "paradox": 4,
+      "proof": 4,
+      "visual": 3
+     },
+     "제목": "시청률 28% JTBC 모그룹, 이번엔 5개 계열사가 회생을 신청했습니다",
+     "왜_터질까": "JTBC 편이 우리 채널 최고 성적이고, 09-22~09-23 기사에서 그룹 전체 위기로 번졌다. JTBC 관련은 이 후속 한 편만 낸다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE80Y2JFbkRzaVZIZi05ZmpvV21BT2Q5QXBremF4MjB2d1hHNXRoNzc1ZmRCWGRINHJvQ2Fra2N3ak9oQUdTRnQyakUwaXBDM0RIcS1JUQ?oc=5",
+       "메모": "중앙그룹 5개 계열사 회생신청 칼럼(09-23)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5jU2dNQWlRMl9hWS1Xa2QyNnZ3Y2g1WVpSUy02MWxGZDJYZkROZ0JZUXV4Ymc2WnJiWlMzWTBsLXpxVUxMdW5GUnp5RU04WElGVERKTTF2bFRRbVVZSlZRR3V4TElXTTg?oc=5",
+       "메모": "대기업 은행대출 연체율 5년 만에 최고, 중앙그룹 구조조정 여파(09-22)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBBWkFWUW5TZHRvX1JSckJGNnR2OTN2b2YzWkdJbzc3NVIwN2J2dW0wQ3M2RWYySVRpdUJYTFlCUC1wcjVzbW5CaVYwcXNSQWNWeTA2Q0R5RktSbE9KZlFvYlh4SmZrbXB0WDhYZTN5b1g?oc=5",
+       "메모": "중앙일보 노조 '홍정도 일가 실패가 700여명 삶 흔들어'(09-17)"
+      },
+      {
+       "url": "https://www.youtube.com/watch?v=vCQi_5UL-VA",
+       "메모": "우리 채널 JTBC 본편 4715회"
+      }
+     ],
+     "첫문장": "JTBC를 만든 중앙그룹에서 이번엔 계열사 다섯 곳이 한꺼번에 법원의 문을 두드렸습니다.",
+     "보여줄_장면": "계열사 목록 그래픽과 연체율 5년 만의 최고치 기사를 나란히 띄운다.",
+     "확인할_사실": [
+      "회생신청 5개 계열사 명단과 법원 접수일",
+      "연체율 수치",
+      "노조 주장 700여 명의 범위"
+     ],
+     "위험": "칼럼 제목이 근거라 5개사 회생신청은 법원·공시로 별도 확인이 필요하다.",
+     "총점": 86,
+     "최신": "2026-09-23"
+    },
+    {
+     "소재": "모나미 후속, 주식병합의 함정",
+     "후속": "하루만 삐끗해도 처음부터? 모나미 상장폐지 카운트다운",
+     "대상": "모나미",
+     "점수": {
+      "korea": 5,
+      "paradox": 3,
+      "proof": 4,
+      "visual": 3
+     },
+     "제목": "국민 볼펜 모나미가 놓친 함정, 주식병합한 회사 14%는 다시 동전주가 됐습니다",
+     "왜_터질까": "모나미 쇼츠가 상위권이고, 상장폐지 요건 강화와 주식병합 러시가 09-25 기사로 다시 올라왔다. 이미 추천한 소재라 새 기사(09-25) 근거로만 낸다.",
+     "근거": [
+      {
+       "url": "https://www.newsis.com/view/NISX20260923_0003802567",
+       "메모": "상장폐지 요건 강화에 주식병합 '러시', 14% 다시 동전주(09-25)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFB4ZUwwT2VZQUF1YmNDRmlpYzdrWXdYQzl3WVRESVpNOXhRdWtQSWowSnh5SXBFOFZOa0t2TVk3eG9YbEN4Vk1XNmtSZllqM2RIWUtPdG5UdHNjSzZLcE14WnRqN3RnWTFDV2t3NWRfMnd2ZktscFHSAXZBVV95cUxQeGVMME9lWUFBdWJjQ0ZpaWM3a1l3WEM5d1lURElaTTl4UXVrUElqMEp4eUlwRThWTmtLdk1ZN3hvWGxDeFZNVzZrUmZZajNkSFlLT3RuVHRzY0s2S3BNeFp0ajd0Z1kxQ1drdzVkXzJ3dmZLbHBR?oc=5",
+       "메모": "코스닥 8개사 퇴출, 기업들 생존전(09-25)"
+      },
+      {
+       "url": "https://www.youtube.com/shorts/wYke1Lx1aL8",
+       "메모": "우리 채널 모나미 쇼츠 1661회"
+      }
+     ],
+     "첫문장": "주식을 합쳐 주가를 올린 회사 열 곳 중 한두 곳은 다시 동전주로 돌아갔습니다.",
+     "보여줄_장면": "액면병합 전후 주가 차트를 모나미 153 이미지와 겹쳐 보여준다.",
+     "확인할_사실": [
+      "14%의 정확한 모수와 기준",
+      "모나미의 현재 상장 상태와 병합 여부",
+      "코스닥 8개사 퇴출 명단"
+     ],
+     "위험": "14%는 시장 전체 통계라 모나미 개별 결과처럼 쓰면 오해를 부른다.",
+     "총점": 81,
+     "최신": "2026-09-25"
+    },
+    {
+     "소재": "혼다, 수입차 3대 중 1대였던 시절",
      "후속": "",
      "대상": "혼다",
      "점수": {
@@ -707,31 +730,27 @@
       "proof": 4,
       "visual": 4
      },
-     "제목": "한때 수입차 3대 중 1대가 일본차, 혼다는 왜 한국에서 무너졌을까",
-     "왜_터질까": "9월 25일 '혼다차의 몰락' 연재 기사가 나왔고 '3대 중 1대'라는 숫자 대비가 분명합니다. 자동차 브랜드 고질병 영상이 평소의 63배로 뜨는 등 자동차 브랜드 관심도 높습니다.",
+     "제목": "수입차 3대 중 1대가 일본차였던 한국, 혼다는 왜 밀려났나",
+     "왜_터질까": "누구나 아는 일본차가 한때 수입차의 3분의 1을 차지했다는 숫자 대비가 있다. 09-25 기사는 '혼다차의 몰락' 연재 3편이라 새 근거다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5oU01venVLcEtZZGxCajZwWDBMME4zeFhsXzJ4WC1YWXAwNHQ0WWZBTHZENlhsanhSbkxfM2g3UVdwdVZzZkk5ZVZ1MXB2Mm9xVXhxTTUwd05Pbmk2dHJpekhLNA?oc=5",
-       "메모": "09-25 수입차 3대 중 1대 일본차…혼다차의 몰락③"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/K4Qs2Jh8xqI",
-       "메모": "자동차 브랜드별 고질병 영상 평소의 62.9배"
+       "메모": "한때 수입차 3대 중 1대 일본차, 한국서 왜 생존 갈렸나 [혼다차의 몰락③](09-25)"
       }
      ],
-     "첫문장": "한때 한국 도로를 달리는 수입차 세 대 중 한 대가 일본차였습니다.",
-     "보여줄_장면": "연도별 수입차 점유율 그래프에서 일본차 몫이 줄어드는 모습, 혼다 판매량 막대그래프.",
+     "첫문장": "한때 한국에서 팔린 수입차 세 대 중 한 대는 일본차였습니다.",
+     "보여줄_장면": "연도별 수입차 점유율 차트에서 일본차 구간이 줄어드는 모습을 애니메이션으로 보여준다.",
      "확인할_사실": [
-      "일본차 점유율 최고치와 연도",
-      "혼다코리아 최근 판매량",
-      "불매운동·가격 등 원인별 근거"
+      "3대 중 1대였던 연도와 출처",
+      "혼다 현재 국내 판매량",
+      "생존한 일본 브랜드와 갈린 이유"
      ],
-     "위험": "불매운동 얘기가 정치 싸움으로 흐를 수 있다 — 판매 숫자 중심으로 간다.",
+     "위험": "기사 본문을 못 보면 '몰락' 원인을 잘못 짚을 수 있다.",
      "총점": 80,
      "최신": "2026-09-25"
     },
     {
-     "소재": "LG전자, 로봇이 들어오자 또 희망퇴직",
+     "소재": "LG전자 가전 생산직 또 희망퇴직",
      "후속": "",
      "대상": "LG전자",
      "점수": {
@@ -740,217 +759,168 @@
       "proof": 3,
       "visual": 3
      },
-     "제목": "가전 명가 LG전자, 공장에 로봇이 들어오자 생산직 희망퇴직을 또 받는다",
-     "왜_터질까": "9월 21일 LG전자가 가전 생산직 희망퇴직을 또 받는다는 기사가 나왔고, 가전을 가장 잘 만드는 회사가 사람을 줄이는 이유(자동화)가 질문이 됩니다.",
+     "제목": "가전 1등 LG전자, 자동화가 들어오자 생산직에 또 희망퇴직을 받습니다",
+     "왜_터질까": "누구나 아는 가전 1등이 공장 자동화로 사람을 줄인다는 이야기로, 09-27 희망퇴직 총괄 기사가 새 맥락을 준다. 이미 추천한 소재라 롯데백화점과 묶은 '인력 재편' 각도로 낸다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1GS2RuWU4yT3lYcDhDRzhqZ0tSV1BjR04yQVdFUDVocW5BQ0oySmg2OTBISmg4QjB0bmtkbG12cGI4OUxQT0xGenV3Q3FBbGJsbjV4Zjd3d2FjeFZUSV9SUTJrLTMxa3NpLU5xVlZoSjjSAXRBVV95cUxPOXFiZnZBeTZsTDZaek1DQkVSM0p5dUNXSlpFYjlIQm9Db1BKM1FaaktyXzgzYnlPdGpVX1dqNU5FNGhoSjZac2lsVlh2Y3RQN09rajNhbFJGMEV5bThzVUM0cTdodWlVcmlqdFVMRWFrS2NtSQ?oc=5",
-       "메모": "09-21 LG전자 가전 생산직 또 희망퇴직, 자동화 체질 개선"
+       "메모": "LG전자 가전 생산직 또 희망퇴직, 자동화 체질 개선(09-21)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBDbUFYSkc4cXV1S1NCQ2lXZmJTQ25FTUJwMXdObTBFZWQ5VXdIZUxwU0d2Z3Fyc0pwTXFYUmZ0cWdYeWhIMnJiSlJuR0sxdUV2cW1hQXBWZXR5RWwtY0Z30gFkQVVfeXFMTTJqdXRnVWNNVGx1dU9wRFlsMDdaektZOVdzWkhUSnRDYjAtVmtzbzN5SkdpVkl1SjZXamZzNDFPRHBqaUg2Vjc3d2hwY1FrY042WDhSay1CbkJoT1dvLVdVX29YZQ?oc=5",
+       "메모": "올해 희망퇴직 인력 재편 신호탄(09-27)"
       }
      ],
-     "첫문장": "세탁기와 냉장고를 만들던 LG전자 공장에서, 사람 자리를 로봇이 채우고 있습니다.",
-     "보여줄_장면": "생산 라인 사진에서 사람 자리가 로봇으로 바뀌는 대비, 생산직 인원 추이 차트.",
+     "첫문장": "LG전자가 가전 공장에서 다시 희망퇴직을 받기 시작했습니다.",
+     "보여줄_장면": "자동화 생산라인 사진과 희망퇴직 기사 헤드라인을 번갈아 보여준다.",
      "확인할_사실": [
-      "희망퇴직 대상 공장·규모",
-      "자동화 투자 규모",
-      "이전 희망퇴직 시기"
+      "이번 대상 인원과 조건",
+      "지난 희망퇴직 시점",
+      "자동화 투자 규모"
      ],
-     "위험": "우리 LG 휴대폰 편이 10회에 그쳤다 — 몰락이 아니라 변화 이야기라 숫자 대비가 약하다.",
+     "위험": "숫자 대비가 약해 제목이 밋밋해질 수 있다.",
      "총점": 76,
-     "최신": "2026-09-21"
+     "최신": "2026-09-27"
     },
     {
-     "소재": "토요타, 중국 점유율 7%로 추락",
+     "소재": "토요타 중국 점유율 7% 추락",
      "후속": "",
      "대상": "토요타",
      "점수": {
       "korea": 4,
       "paradox": 4,
       "proof": 3,
-      "visual": 4
+      "visual": 3
      },
-     "제목": "세계에서 차를 가장 많이 파는 토요타, 중국에선 점유율 7%까지 떨어졌다",
-     "왜_터질까": "9월 16일 토요타가 중국 점유율 7%로 떨어져 30년 합작 구조를 깬다는 기사가 나왔고, 세계 1위가 가장 큰 시장에서 밀리는 모순이 분명합니다.",
+     "제목": "점유율 7%로 추락한 토요타, 30년 합작 구조를 스스로 깼습니다",
+     "왜_터질까": "세계 1등 자동차 회사가 중국에서 무너졌다는 모순이다. 이미 추천한 소재라 혼다와 묶어 '일본차 몰락' 시리즈로 이어 붙일 때만 의미가 있다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOcE02SnpqX0dZVVlQSkhmNjNvUlU3ZkVaTWR5d0x5MktCZlZ2VDN2NlNYQWRFSW1ZeF9XdnN5S1BfbDR6SldEdWl6QlRlZ1NUR3VBLWdnN21QVXBOVHdBQk5MdGlUcWVLNDRZQzNnY255VXR5WGNDU1ByOTROODkxSkgwVmZ4aGM?oc=5",
-       "메모": "09-16 점유율 7% 추락…토요타, 中 합작 30년 이원화 깬다"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/K4Qs2Jh8xqI",
-       "메모": "자동차 브랜드 고질병 영상 평소의 62.9배(자동차 관심)"
+       "메모": "점유율 7% 추락, 토요타 中 합작 30년 이원화 깬다(09-16)"
       }
      ],
-     "첫문장": "세계에서 차를 가장 많이 파는 회사가, 세계에서 가장 큰 시장에서는 밀려나고 있습니다.",
-     "보여줄_장면": "중국 자동차 점유율 변화 그래프(토요타 vs 중국 전기차), 합작 구조 도식.",
+     "첫문장": "세계 1위 토요타의 중국 점유율이 7%까지 내려앉았습니다.",
+     "보여줄_장면": "중국 시장 점유율 차트에서 토요타 구간이 줄어드는 모습을 보여준다.",
      "확인할_사실": [
-      "중국 점유율 최고치와 7%의 기준",
-      "합작 구조 변경 내용",
-      "세계 판매 1위 여부(최신 연도)"
+      "7%가 어느 해 기준인지",
+      "30년 합작 구조가 무엇인지",
+      "이전 최고 점유율"
      ],
-     "위험": "한국 시청자와 거리가 있다 — 한국 차 회사와 비교하는 고리가 필요하다.",
-     "총점": 75,
+     "위험": "전성기 점유율을 못 찾으면 '추락' 대비가 약해진다.",
+     "총점": 73,
      "최신": "2026-09-16"
     },
     {
-     "소재": "줄 서던 흑당 버블티 타이거슈가 철수",
-     "후속": "",
-     "대상": "타이거슈가",
-     "점수": {
-      "korea": 4,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "올해만 1,345개 브랜드가 가맹을 접었다, 줄 서서 먹던 흑당 버블티 타이거슈가까지",
-     "왜_터질까": "올해 1,345개 브랜드가 가맹사업을 접었고 한때 줄 서서 먹던 타이거슈가도 철수했다는 기사(9/8)가 있습니다. 우리 채널에서 가장 빨랐던 '줄 서던 손흥민 브랜드의 끝' 쇼츠와 같은 틀입니다.",
-     "근거": [
-      {
-       "url": "https://www.msn.com/ko-kr/news/other/%EC%98%AC%ED%95%B4%EB%A7%8C-1345%EA%B0%9C-%EB%B8%8C%EB%9E%9C%EB%93%9C-%EA%B0%80%EB%A7%B9%EC%82%AC%EC%97%85-%EC%A0%91%EC%97%88%EB%8B%A4-%EB%82%98%EB%9A%9C%EB%A3%A8-%ED%83%80%EC%9D%B4%EA%B1%B0%EC%8A%88%EA%B0%80%EB%8F%84-%EC%B2%A0%EC%88%98/ar-AA2bMVFd",
-       "메모": "09-08 올해만 1,345개 브랜드 가맹 접어…나뚜루·타이거슈가도 철수"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/nW9li4lquqA",
-       "메모": "우리 '3시간 줄 서던 손흥민 브랜드' 쇼츠 0.2일에 1,405회"
-      }
-     ],
-     "첫문장": "몇 년 전만 해도 한 잔 사려고 한참 줄을 서던 버블티 가게가, 한국에서 가맹점을 접었습니다.",
-     "보여줄_장면": "오픈 당시 줄 선 사진, 흑당 버블티 유행이 꺾이는 검색량 그래프, 문 닫은 매장 지도.",
-     "확인할_사실": [
-      "한국 진출 시점과 최대 매장 수",
-      "철수 방식(가맹 종료·직영 유지 여부)",
-      "당시 대기 시간 기록"
-     ],
-     "위험": "기사가 9월 8일이라 신선도가 떨어진다 — 제작 전 최신 상황을 확인한다.",
-     "총점": 75
-    },
-    {
-     "소재": "KDB생명, 사는 쪽이 오히려 1조를 달라",
-     "후속": "",
-     "대상": "KDB생명",
-     "점수": {
-      "korea": 3,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "산업은행이 판다는 KDB생명, 사겠다는 쪽이 오히려 1조를 달라고 한다",
-     "왜_터질까": "9월 21일 인수 우선협상자가 산업은행에 '정상화 비용 1조'를 요구했다는 기사가 나왔고, 파는 쪽이 돈을 얹어 줘야 하는 모순이 분명합니다.",
-     "근거": [
-      {
-       "url": "https://www.esgeconomy.com/news/articleView.html?idxno=16802",
-       "메모": "09-21 한투, 산은에 KDB생명 정상화 비용 1조 요구"
-      },
-      {
-       "url": "https://www.meconomynews.com/news/articleView.html?idxno=200682",
-       "메모": "09-02 KDB생명 인수 '승자의 저주' 리스크"
-      }
-     ],
-     "첫문장": "회사를 파는데, 사는 쪽이 오히려 1조 원을 달라고 합니다.",
-     "보여줄_장면": "역대 매각 시도 타임라인(무산 횟수), 인수가와 요구 비용 막대 비교.",
-     "확인할_사실": [
-      "역대 매각 시도 횟수와 연도",
-      "1조 요구의 정확한 명목",
-      "산업은행이 들인 돈"
-     ],
-     "위험": "협상 중인 사안이라 금액이 바뀔 수 있다. 인지도가 중간이라 쇼츠 제목이 더 중요하다.",
-     "총점": 74,
-     "최신": "2026-09-21"
-    },
-    {
-     "소재": "개그맨이 대표였던 한우 프랜차이즈 폐업 100여 곳",
-     "후속": "",
-     "대상": "이상준 한우 프랜차이즈",
-     "점수": {
-      "korea": 4,
-      "paradox": 3,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "개그맨 이상준이 대표였던 한우 프랜차이즈, 문 닫은 가게만 100곳이 넘었다",
-     "왜_터질까": "이상준 모음 쇼츠가 평소의 113배(862만)로 뜨는 중이고 9월 17일 '폐업 100여 곳' 논란 기사가 나왔지만, 연예인 논란이라 명예훼손 위험이 큽니다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1pOEw0TUE0OGRtVF95bldGWVFad1A0OVhpblVEMklGQU9XYXRUSWJKTzFKVXZYN0o3WlJDUUtqcjRDMFdIdnVTUUk3cjA4OU0?oc=5",
-       "메모": "09-17 이상준 과거 대표직 한우 프랜차이즈 폐업 100여 곳"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/zFTY65nYXnE",
-       "메모": "이상준 모음 쇼츠 평소의 113배"
-      }
-     ],
-     "총점": 73,
-     "최신": "2026-09-17"
-    },
-    {
-     "소재": "금은 불티나게 팔리는데 금은방 줄폐업",
+     "소재": "금값 비싸도 금은방 줄폐업",
      "후속": "",
      "대상": "금은방",
      "점수": {
-      "korea": 3,
-      "paradox": 5,
+      "korea": 4,
+      "paradox": 4,
       "proof": 3,
       "visual": 3
      },
-     "제목": "금이 불티나게 팔리는데, 금은방은 왜 줄줄이 문을 닫을까",
-     "왜_터질까": "'금값 비싸도 불티나게 팔리는데 금은방 줄폐업'이라는 9월 13일 기사(중국 사례)가 역설 그 자체지만, 한국 사례와 숫자 확인이 필요합니다.",
+     "제목": "금은 불티나게 팔리는데 금은방은 줄줄이 문을 닫습니다",
+     "왜_터질까": "금이 잘 팔리는데 가게가 망하는 모순이다. 이미 추천한 소재다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1hVW1ialdET2FjM1VrbnV5S21NMG5qcUxiU2U3cV9oUHZLMFJ1RHBBZDA2eWZ1ZkpmSnFYQkdFNmQtM0I5NTZmeVM3SnE1bFBCMTZOQ2FOanZPUQ?oc=5",
-       "메모": "09-13 금값 비싸도 불티나게 팔리는데…금은방 줄폐업 하는 이유"
+       "메모": "금값 비싸도 불티나게 팔리는데 금은방 줄폐업(09-13)"
       }
      ],
-     "총점": 69,
+     "총점": 73,
      "최신": "2026-09-13"
     },
     {
-     "소재": "주식병합 러시, 14%는 다시 동전주",
-     "후속": "하루만 삐끗해도 처음부터? 모나미 상장폐지 카운트다운",
-     "대상": "상장폐지 요건",
-     "점수": {
-      "korea": 3,
-      "paradox": 4,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "상장폐지 피하려 주식을 합쳤는데, 14%는 다시 동전주가 됐다",
-     "왜_터질까": "9월 25일 상폐 요건 강화로 주식병합이 몰렸지만 14%가 다시 동전주가 됐다는 기사가 나왔고, 우리 모나미 상폐 쇼츠(1,655회)의 후속 각도입니다.",
-     "근거": [
-      {
-       "url": "https://www.fnnews.com/news/202609251059481181",
-       "메모": "09-25 주식병합 러시…14% 다시 동전주"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFB4ZUwwT2VZQUF1YmNDRmlpYzdrWXdYQzl3WVRESVpNOXhRdWtQSWowSnh5SXBFOFZOa0t2TVk3eG9YbEN4Vk1XNmtSZllqM2RIWUtPdG5UdHNjSzZLcE14WnRqN3RnWTFDV2t3NWRfMnd2ZktscFHSAXZBVV95cUxQeGVMME9lWUFBdWJjQ0ZpaWM3a1l3WEM5d1lURElaTTl4UXVrUElqMEp4eUlwRThWTmtLdk1ZN3hvWGxDeFZNVzZrUmZZajNkSFlLT3RuVHRzY0s2S3BNeFp0ajd0Z1kxQ1drdzVkXzJ3dmZLbHBR?oc=5",
-       "메모": "09-25 코스닥 8개사 퇴출"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/wYke1Lx1aL8",
-       "메모": "우리 모나미 상폐 쇼츠 1,655회"
-      }
-     ],
-     "총점": 69,
-     "최신": "2026-09-25"
-    },
-    {
-     "소재": "메디톡스, 9년 소송 뒤 혼자 무너졌다",
+     "소재": "올해만 1,345개 프랜차이즈 브랜드 폐업",
      "후속": "",
-     "대상": "메디톡스",
+     "대상": "프랜차이즈",
      "점수": {
-      "korea": 3,
-      "paradox": 5,
+      "korea": 4,
+      "paradox": 4,
       "proof": 3,
       "visual": 3
      },
-     "제목": "보톡스 1위였던 메디톡스, 9년 소송 전쟁 뒤 왜 혼자 무너졌을까",
-     "왜_터질까": "9년 법적 분쟁 사이 시장이 역전돼 메디톡스 기업가치가 급락했다는 기사(9/9)가 있고, '싸움에 이기려다 시장을 잃었다'는 모순이 분명합니다(1위 시절 기준 확인).",
+     "제목": "올해만 1,345개 브랜드가 가맹사업을 접었습니다, 나뚜루·타이거슈가까지",
+     "왜_터질까": "프랜차이즈 줄폐업이라는 큰 숫자 대비가 있다.",
      "근거": [
       {
-       "url": "https://www.inews24.com/view/2003857",
-       "메모": "09-09 '9년 균주 전쟁'이 가져온 희비…메디톡스 부진"
+       "url": "https://www.msn.com/ko-kr/news/other/%EC%98%AC%ED%95%B4%EB%A7%8C-1345%EA%B0%9C-%EB%B8%8C%EB%9E%9C%EB%93%9C-%EA%B0%80%EB%A7%B9%EC%82%AC%EC%97%85-%EC%A0%91%EC%97%88%EB%8B%A4-%EB%82%98%EB%9A%9C%EB%A3%A8-%ED%83%80%EC%9D%B4%EA%B1%B0%EC%8A%88%EA%B0%80%EB%8F%84-%EC%B2%A0%EC%88%98/ar-AA2bMVFd",
+       "메모": "올해만 1345개 브랜드 가맹사업 접었다(09-08)"
       }
      ],
-     "총점": 69
+     "총점": 73
+    },
+    {
+     "소재": "대우 후속, 한국GM의 브랜드 추가",
+     "후속": "재계 2위 대우그룹은 왜 1년 만에 사라졌을까?",
+     "대상": "한국GM",
+     "점수": {
+      "korea": 4,
+      "paradox": 3,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "재계 2위 대우가 남긴 자동차, 한국GM은 브랜드를 하나 더 붙입니다",
+     "왜_터질까": "대우그룹 편이 우리 채널 상위권이라 이어 붙이기 좋고, 09-23 뷰익 칼럼이 시의성을 준다. 한국GM 소재는 이미 추천했으므로 뷰익 도입 각도로만 낸다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE50MzlzRW1Bc1k5UFg4OXBQb3k5Zm9PSW9Ba3FJdjlfTG1XNEU3cHZZRDhqU081R2I3RFdMUEozMVVxbGJLV29MVmRIVlJ2bkZ2b1M5VU9LZGRFanNPR1ZtRmJTU2tUd2FNa0pUQ0xvSQ?oc=5",
+       "메모": "브랜드 하나 더하면 팔릴까, 뷰익보다 필요한 건 '한국판 모델 Y'(09-23)"
+      },
+      {
+       "url": "https://www.youtube.com/shorts/nKzivmIn_d0",
+       "메모": "우리 채널 대우 쇼츠 2471회"
+      },
+      {
+       "url": "https://www.youtube.com/watch?v=excvbWTRaoU",
+       "메모": "대우 본편 1765회"
+      }
+     ],
+     "첫문장": "재계 2위 대우가 사라진 뒤, 그 자동차는 미국 브랜드 이름으로 계속 팔리고 있습니다.",
+     "보여줄_장면": "대우 시절 차량 사진에서 지금 한국GM 쇼룸으로 넘어가는 컷 전환을 보여준다.",
+     "확인할_사실": [
+      "뷰익 국내 출시 계획이 사실인지",
+      "한국GM 최근 판매 실적",
+      "대우자동차 인수 시점"
+     ],
+     "위험": "칼럼 제목만으로 뷰익 도입을 단정하면 틀릴 수 있다.",
+     "총점": 68,
+     "최신": "2026-09-23"
+    },
+    {
+     "소재": "고려아연·KT&G 106분기 연속 흑자",
+     "후속": "",
+     "대상": "고려아연",
+     "점수": {
+      "korea": 4,
+      "paradox": 3,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "106분기를 한 번도 안 지고 버틴 고려아연·KT&G, 21세기 내내 흑자 기업은 7곳뿐",
+     "왜_터질까": "흑자만 내는 회사와 적자로 무너지는 회사를 대비시키는 역발상이다. 매일유업 37분기 편 계열의 반대 각도다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1HZFJHZ3ZsLTRBWjZwTzcwTzAtYUc1TWgydVJxTFpfZ1hPeTlPS1Q4clJPV1g5Z2FGOV9lNGNZcHBTc3dIWUJqRVdEbVU1U0RBMV9wcmp4QklHdC1uVHZnRGVWZE5qYmc?oc=5",
+       "메모": "고려아연·KT&G 등 7곳 106분기 연속 흑자, LG엔솔은 20분기째 적자(09-23)"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBudl80WGVVN1NtR1NwNkdKai1JZi1kSXlKS0Z2U0xpdnFwQVBVTUdsdGVGUzMxMGRSeHZ6eFlVX0hrMXFEeVA2ZU1SamotTlhpXzE4R2RfUkJxRTVSX1JaaWJvSjM?oc=5",
+       "메모": "7개 대기업 21세기 연속 흑자, 5년 이상 흑자 117곳(09-25)"
+      }
+     ],
+     "첫문장": "21세기가 시작된 뒤 단 한 번도 적자를 내지 않은 대기업은 일곱 곳뿐입니다.",
+     "보여줄_장면": "7개 기업 로고와 분기별 흑자 막대를 106칸으로 채워 보여준다.",
+     "확인할_사실": [
+      "7곳 명단",
+      "106분기 기준 시작 시점",
+      "5년 이상 흑자 117곳의 기준"
+     ],
+     "위험": "몰락 서사가 아니라 생존 서사라 채널 결과와 어긋날 수 있다.",
+     "총점": 68,
+     "최신": "2026-09-25"
     },
     {
      "소재": "포스코 브라질 법인 파산 분쟁",
@@ -962,128 +932,168 @@
       "proof": 3,
       "visual": 3
      },
-     "제목": "철강 1위 포스코가 세운 브라질 법인, 왜 파산 분쟁까지 갔을까",
-     "왜_터질까": "9월 22일 포스코 브라질 법인 파산 분쟁과 지주사 책임 논란 기사가 나왔고, 한국 대표 기업의 해외 투자 실패라는 모순이 있습니다(법인 이름·투자액 확인).",
+     "제목": "포스코 브라질 법인이 파산하자 책임 공방이 본사로 번집니다",
+     "왜_터질까": "대기업 해외 법인 파산이 본사 책임 논란으로 이어진다. 이미 추천한 소재다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9DbHNpbV95VjdYY3ByQWc2Z3pZYmMyNS1LRGE1MXZkNGUtbXI1VmUwQnU2YVNlbkdaRkVaUGR1aWtxbkNfRmdvMlY5eXdrbUN1aGhtZjJkTnBGOXJMYmFFN1FXY2RqbnhhMUV0dlZLRlTSAXRBVV95cUxNRUdUakYtVndhRmNXVE5nYkRQMmVKNTZ1UVJsbnBKSXlmaFE5Q1Z3NEVnemF0U1BZdkRFNWZtZDNHVnlIaWh4TVRjeUxXbHBtVjkwZk52NjYwOTJKeW5SZ3c5MmVmamZoZHhPOEl3ZXZpM1BJbw?oc=5",
-       "메모": "09-22 포스코 브라질 법인 파산 분쟁…포스코홀딩스 책임 여부"
+       "메모": "포스코 브라질 법인 파산 분쟁, 포스코홀딩스 책임 여부 확산(09-22)"
       }
      ],
      "총점": 68,
      "최신": "2026-09-22"
     },
     {
-     "소재": "흑자라더니 감사해 보니 대규모 적자",
+     "소재": "한국 양극재 점유율 9%대",
      "후속": "",
-     "대상": "제이알글로벌리츠",
-     "점수": {
-      "korea": 2,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "흑자라고 공시했던 리츠, 감사인이 열어 보니 대규모 적자였다",
-     "왜_터질까": "9월 22일 법정관리 중에도 흑자로 공시했던 제이알글로벌리츠가 감사에서 대규모 적자로 정정되고 상장폐지 사유가 생겼다는 기사가 나왔지만, 이름이 대중적이지 않습니다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE02cFJzUjNJWmx4SVg1S0lmVnJpOEJkVU9nOFdXNHdzZ2oyYlRsQnVQYjBiVHVHRDdtdjRGOXZfMkw5bk9iS0Q1cGpvM2Job3JzcXBkYV93bll2U3ZFRVdSUkZyUWtaUnY0TlE?oc=5",
-       "메모": "09-22 법정관리에도 흑자 공시…감사인이 대규모 적자로 정정"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5QXzlwV3NDc004MWxlR0lCSVp5Nm53MjRoNzdiZmlSeWRCMUk5OGh5bVhaNHY4bDV1YmIwUjkwa21JVVF1VFNmMHdSRnhqY2ZYUlBSSlZqVXJpNHBCYTJ1d0FjTUJoV2VKalBWUnBqN0c?oc=5",
-       "메모": "09-22 감사의견 '거절'로 상장폐지 사유"
-      }
-     ],
-     "총점": 66,
-     "최신": "2026-09-22"
-    },
-    {
-     "소재": "올해 법인 1,671곳이 쓰러졌다",
-     "후속": "",
-     "대상": "중소기업 파산",
-     "점수": {
-      "korea": 3,
-      "paradox": 3,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "올해 법인 1,671곳이 쓰러졌다, 폐업 공제금만 1조 원을 넘었다",
-     "왜_터질까": "9월 24일 법인 파산 신청 1,600곳 돌파·폐업 공제금 1조 2천억 기사가 나와 숫자가 크지만, 누구나 아는 한 회사가 없어 쇼츠용 숫자 편에 가깝습니다.",
-     "근거": [
-      {
-       "url": "https://www.msn.com/ko-kr/money/topstories/%EC%98%AC%ED%95%B4-1671%EA%B3%B3-%EC%93%B0%EB%9F%AC%EC%A1%8C%EB%8B%A4-%ED%8F%90%EC%97%85-%EA%B3%B5%EC%A0%9C%EA%B8%88%EB%8F%84-1%EC%A1%B0-%ED%9B%8C%EC%A9%8D-%EC%A4%91%EC%86%8C%EA%B8%B0%EC%97%85%EC%9D%98-%EC%B6%94%EC%84%9D/ar-AA2cQGeM",
-       "메모": "09-24 올해 1671곳 쓰러졌다…폐업 공제금도 1조"
-      }
-     ],
-     "총점": 65,
-     "최신": "2026-09-24"
-    },
-    {
-     "소재": "시장은 커졌는데 한국 양극재 점유율 9%대",
-     "후속": "",
-     "대상": "양극재 업계",
+     "대상": "양극재",
      "점수": {
       "korea": 3,
       "paradox": 4,
       "proof": 3,
       "visual": 3
      },
-     "제목": "시장은 32% 커졌는데, 한국 양극재 점유율은 9%대로 떨어졌다",
-     "왜_터질까": "9월 14일 중국 밖 양극재 시장이 32% 커지는 동안 한국 점유율이 9%대로 떨어졌다는 기사로 '시장은 컸는데 몫은 줄었다'는 모순이 분명합니다(회사별 숫자 확인).",
+     "제목": "중국 밖 시장이 32% 커졌는데 한국 양극재 점유율은 9%대로 내려앉았습니다",
+     "왜_터질까": "시장이 커졌는데 점유율이 줄었다는 숫자 대비가 선명하다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQWGtGTFRxZlNDT2NOOUN2TzlJYUJyVXo1aGhGMy1IUWJtaFE1MkhmSzVjQ243b3dMX043dzJoZnJ5TXlWaWRzaEkwNVNxMk1BT1JXWUZ0RHVUcnNuSGtBZzVPZE1OaXlrS3U1UGNkYXNIQnZhRXdIOFYwY0dhVlA4NmpEb3I4dw?oc=5",
-       "메모": "09-14 중국 밖 양극재 시장 32% 커졌는데 韓 점유율 9%대 추락"
+       "메모": "중국 밖 양극재 시장 32% 커졌는데 韓 점유율 9%대 추락(09-14)"
       }
      ],
      "총점": 64,
      "최신": "2026-09-14"
     },
     {
-     "소재": "대우자동차를 이은 한국GM",
-     "후속": "재계 2위 대우그룹이 1년 만에 사라진 이유",
-     "대상": "한국GM",
+     "소재": "아우디 30만대 돌파",
+     "후속": "",
+     "대상": "아우디",
+     "점수": {
+      "korea": 4,
+      "paradox": 2,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "아우디 30만대 돌파, 20조 넘게 판 브랜드는 어떻게 다시 살아났나",
+     "왜_터질까": "혼다와 대비되는 살아남은 수입차 각도다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE83Z05FZ0ZYTlR5VWdVcEZUc3lkWUpGQUdUakJTLXpPSUpHZ2ZEOTlZamFqbmM0eDZCcUxtdUNQUzFLT1puMHRaUjRHM1Jva09aalBSdENtc25tLTVvaWdsdmpIUUl6YzJobVI4?oc=5",
+       "메모": "아우디 30만대 돌파, 20조 훌쩍, '브랜드 회복' 리스타트(09-21)"
+      }
+     ],
+     "총점": 64,
+     "최신": "2026-09-21"
+    },
+    {
+     "소재": "KDB생명 인수 후 정상화 비용 1조",
+     "후속": "",
+     "대상": "KDB생명",
+     "점수": {
+      "korea": 3,
+      "paradox": 4,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "KDB생명을 사는 쪽이 오히려 1조 원을 달라고 합니다",
+     "왜_터질까": "파는 쪽이 돈을 받는 게 아니라 주게 되는 뒤집힌 거래다. 이미 추천한 소재라 재추천이다.",
+     "근거": [
+      {
+       "url": "https://www.esgeconomy.com/news/articleView.html?idxno=16802",
+       "메모": "한투, 산은에 KDB생명 정상화 비용 1조 요구(09-21)"
+      },
+      {
+       "url": "https://www.meconomynews.com/news/articleView.html?idxno=200682",
+       "메모": "인수 '승자의 저주' 리스크(09-02)"
+      }
+     ],
+     "총점": 64,
+     "최신": "2026-09-21"
+    },
+    {
+     "소재": "메디톡스 9년 균주 전쟁",
+     "후속": "",
+     "대상": "메디톡스",
+     "점수": {
+      "korea": 3,
+      "paradox": 4,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "9년을 싸운 메디톡스, 시장은 이미 뒤집혀 있었습니다",
+     "왜_터질까": "소송에 매달린 사이 경쟁사와 격차가 역전됐다는 서사다. 이미 추천한 소재라 재추천이다.",
+     "근거": [
+      {
+       "url": "https://www.inews24.com/view/2003857",
+       "메모": "9년 균주 전쟁이 가져온 희비, 메디톡스 안개 속(09-09)"
+      }
+     ],
+     "총점": 64
+    },
+    {
+     "소재": "LG에너지솔루션 20분기 적자",
+     "후속": "",
+     "대상": "LG에너지솔루션",
      "점수": {
       "korea": 4,
       "paradox": 3,
       "proof": 2,
       "visual": 3
      },
-     "제목": "대우자동차를 이어받은 한국GM, 브랜드를 더해도 왜 안 팔릴까",
-     "왜_터질까": "9월 23일 칼럼이 '브랜드 하나 더하면 팔릴까'라며 한국GM 판매 부진을 짚었고, 우리 대우그룹 편(쇼츠 2,421회)의 후속 각도가 됩니다.",
+     "제목": "배터리 세계 3강 LG에너지솔루션, 20분기째 적자라는 기사가 떴습니다",
+     "왜_터질까": "106분기 흑자 기업들과 나란히 실린 대비가 눈에 띈다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE50MzlzRW1Bc1k5UFg4OXBQb3k5Zm9PSW9Ba3FJdjlfTG1XNEU3cHZZRDhqU081R2I3RFdMUEozMVVxbGJLV29MVmRIVlJ2bkZ2b1M5VU9LZGRFanNPR1ZtRmJTU2tUd2FNa0pUQ0xvSQ?oc=5",
-       "메모": "09-23 '브랜드 하나 더하면 팔릴까' 한국GM 칼럼"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/nKzivmIn_d0",
-       "메모": "우리 대우그룹 쇼츠 2,421회"
+       "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1HZFJHZ3ZsLTRBWjZwTzcwTzAtYUc1TWgydVJxTFpfZ1hPeTlPS1Q4clJPV1g5Z2FGOV9lNGNZcHBTc3dIWUJqRVdEbVU1U0RBMV9wcmp4QklHdC1uVHZnRGVWZE5qYmc?oc=5",
+       "메모": "LG엔솔은 20분기째 '적자'(09-23)"
       }
      ],
      "총점": 63,
      "최신": "2026-09-23"
     },
     {
-     "소재": "롯데 나뚜루 가맹 철수",
+     "소재": "놀부 후속, 법원의 보전관리 명령",
      "후속": "",
-     "대상": "나뚜루",
+     "대상": "놀부",
      "점수": {
       "korea": 4,
       "paradox": 3,
       "proof": 2,
       "visual": 3
      },
-     "제목": "롯데 프리미엄 아이스크림 나뚜루, 가맹점을 접었다",
-     "왜_터질까": "올해 1,345개 브랜드 가맹 종료 기사(9/8)에 나뚜루 철수가 함께 나왔고 이름은 익숙하지만, 몰락 숫자 근거가 아직 부족합니다.",
+     "제목": "매장 1,000개 놀부, 법원이 경영진을 밀어냈습니다",
+     "왜_터질까": "놀부 편의 후속으로 법원 조치라는 결정적 순간이 있다. 다만 본 편 조회수는 낮았다.",
      "근거": [
       {
-       "url": "https://www.msn.com/ko-kr/news/other/%EC%98%AC%ED%95%B4%EB%A7%8C-1345%EA%B0%9C-%EB%B8%8C%EB%9E%9C%EB%93%9C-%EA%B0%80%EB%A7%B9%EC%82%AC%EC%97%85-%EC%A0%91%EC%97%88%EB%8B%A4-%EB%82%98%EB%9A%9C%EB%A3%A8-%ED%83%80%EC%9D%B4%EA%B1%B0%EC%8A%88%EA%B0%80%EB%8F%84-%EC%B2%A0%EC%88%98/ar-AA2bMVFd",
-       "메모": "09-08 나뚜루·타이거슈가도 가맹 철수"
+       "url": "https://www.newsis.com/view/NISX20260831_0003769511",
+       "메모": "놀부 회생신청, 법원 '경영진보다 제3자 재산 보전이 적절'(08-31)"
+      },
+      {
+       "url": "https://www.youtube.com/watch?v=vGmMvn9Spus",
+       "메모": "우리 채널 놀부 본편 44회"
       }
      ],
      "총점": 63
+    },
+    {
+     "소재": "MBK 국내 M&A 복귀",
+     "후속": "",
+     "대상": "MBK파트너스",
+     "점수": {
+      "korea": 4,
+      "paradox": 3,
+      "proof": 2,
+      "visual": 2
+     },
+     "제목": "홈플러스 논란의 MBK, 2년 만에 한국 M&A 시장에 돌아왔습니다",
+     "왜_터질까": "홈플러스를 직접 다루지 않고 인수 주체 쪽에서 낸 새 각도다.",
+     "근거": [
+      {
+       "url": "https://plus.hankyung.com/apps/newsinside.view?aid=2026090202201&sns=y",
+       "메모": "MBK, 2년 만에 국내 M&A 시장 컴백(09-02)"
+      }
+     ],
+     "총점": 61
     },
     {
      "소재": "테일러메이드 매각 지지부진",
@@ -1095,37 +1105,37 @@
       "proof": 3,
       "visual": 3
      },
-     "제목": "한국 사모펀드가 산 골프 브랜드 테일러메이드, 왜 못 팔고 있을까",
-     "왜_터질까": "9월 23일 환율에 몸값이 눌려 매각 본계약이 지지부진하다는 기사가 나왔고, 비싸게 산 브랜드를 못 파는 모순이 있습니다(인수가·희망가 확인).",
+     "제목": "골프 1위 테일러메이드, 환율에 눌린 몸값에 매각이 늦어집니다",
+     "왜_터질까": "세계적 브랜드의 몸값이 환율 때문에 눌렸다는 각도다. 이미 추천한 소재다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPbnZKbjVyMkFYVllGZzRyLUcyTVlnVTZ6WmJuWjJpc184VVJsYTJUZVliWURNaGlBbEctUXh2bXVmUlpNenQ1cUp0dnphc0EzMHRvbjJHQXJ5M0ZCQ2dfdkJvcXp5TTRYVXF6eEotNFhLaFhOdy1aam9fUkx2a1dNZTN3dkktM0nSAZsBQVVfeXFMTkFGV1cwMHV4X0NJMl85cEdNTU5zRFJtSGZsN0tEZDFhMXRuVFZRaUVpSVpUWjFQQlMtMi1OLWpGVFhCN0VXbWNiNHJFVFN3bmhfNmluVWw0VUpUZUhsVmRKcGRZbVNvV3JCckpVVlNqcDhtRXpBeVpVM2lzaVVYZ0ZZZjZETGJCb1ZkelR3Y0FvVmVBQzYyU1hGMFE?oc=5",
-       "메모": "09-23 센트로이드, 테일러메이드 매각 본계약 지지부진"
+       "메모": "환율에 눌린 몸값, 센트로이드 테일러메이드 매각 본계약 지지부진(09-23)"
       }
      ],
      "총점": 60,
      "최신": "2026-09-23"
     },
     {
-     "소재": "오키나와 정글리아 모회사 173억 엔 적자",
+     "소재": "진에어 적자 지속",
      "후속": "",
-     "대상": "정글리아",
+     "대상": "진에어",
      "점수": {
-      "korea": 2,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 4
+      "korea": 4,
+      "paradox": 2,
+      "proof": 2,
+      "visual": 2
      },
-     "제목": "오키나와 대형 테마파크 정글리아, 모회사 결산은 173억 엔 적자",
-     "왜_터질까": "9월 26일 정글리아 모회사 173억 엔 적자 기사가 나왔고 숫자는 크지만, 한국 인지도가 낮은 일본 사례입니다.",
+     "제목": "국내 저비용항공사 진에어, 적자가 이어진다는 전망이 나왔습니다",
+     "왜_터질까": "기업 이름이 익숙하지만 숫자 근거가 부족하다.",
      "근거": [
       {
-       "url": "https://note.com/lively_yarrow270/n/n1c6814c188b3?hl=ko",
-       "메모": "09-26 173억 엔 적자, 정글리아 모회사 결산"
+       "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1TSFAwZ2JBV1d0NWs0alZVajZaNzNGcFVhMWczY2hSVWp0eTBVWWs1Q1JKeWpoeGRSekVoaXF4ZjVkMnVNZGhPUTN3WXNjYldsTERXekk0VEU3UQ?oc=5",
+       "메모": "LG화학 영업이익 전망 8% 상승, 진에어는 적자 지속(09-27)"
       }
      ],
-     "총점": 59,
-     "최신": "2026-09-26"
+     "총점": 56,
+     "최신": "2026-09-27"
     }
    ],
    "calib": {
@@ -1165,7 +1175,7 @@
       "영상": "JTBC 모그룹 흔들리자 대기업 연체율 5년 만에 최고",
       "url": "https://www.youtube.com/shorts/O0D1GKNtotg",
       "3일조회": null,
-      "지금조회": 1316
+      "지금조회": 1323
      },
      {
       "추천시각": "2026-09-26 11:38",
@@ -1174,7 +1184,7 @@
       "영상": "3시간 줄 서던 손흥민 브랜드, 4년 만에 문 닫는다",
       "url": "https://www.youtube.com/shorts/nW9li4lquqA",
       "3일조회": null,
-      "지금조회": 1413
+      "지금조회": 1522
      },
      {
       "추천시각": "2026-09-26 15:00",
@@ -1183,25 +1193,43 @@
       "영상": "손흥민 이름으로 완판 행렬, 4년 만에 문 닫는 NOS7",
       "url": "https://www.youtube.com/watch?v=DPvVMTOnKuc",
       "3일조회": null,
+      "지금조회": 3
+     },
+     {
+      "추천시각": "2026-09-26 15:00",
+      "소재": "남양유업 옆 매일유업: 설립 후 한 번도 적자 없는 우유 회사",
+      "추천점수": 76,
+      "영상": "남양 불매 13년 뒤, 매일유업 37분기 적자 0번",
+      "url": "https://www.youtube.com/shorts/ag0-b6zZ72U",
+      "3일조회": null,
+      "지금조회": 927
+     },
+     {
+      "추천시각": "2026-09-26 15:00",
+      "소재": "남양유업 옆 매일유업: 설립 후 한 번도 적자 없는 우유 회사",
+      "추천점수": 76,
+      "영상": "13년 전 불매 맞은 남양유업 옆에서, 37분기 한 번도 적자 없던 매일유업..?",
+      "url": "https://www.youtube.com/watch?v=cv7OxLmin9Y",
+      "3일조회": null,
       "지금조회": 2
      }
     ],
-    "updated": "2026-09-27 12:02"
+    "updated": "2026-09-27 15:01"
    }
   },
   "논스킵": {
-   "at": "2026-09-27 12:41",
+   "at": "2026-09-27 15:00",
    "model": "sonnet",
-   "outliers_at": "2026-09-27 12:41",
-   "news_n": 85,
+   "outliers_at": "2026-09-27 15:11",
+   "news_n": 86,
    "trend_n": 10,
-   "fresh_n": 6,
-   "prompt_chars": 17833,
+   "fresh_n": 7,
+   "prompt_chars": 18326,
    "tokens": {
-    "in": 18100,
-    "out": 13730,
-    "think": 7817,
-    "usd": 0.209696
+    "in": 18738,
+    "out": 41107,
+    "think": 34877,
+    "usd": 0.486018
    },
    "labels": {
     "korea": "인지도",
@@ -1210,461 +1238,472 @@
     "visual": "자료"
    },
    "genre_n": 25,
+   "genre_hot": [
+    {
+     "제목": "일본 야쿠쟈에게 깝친 BJ의 최후",
+     "채널": "안협소",
+     "종류": "쇼츠",
+     "평소대비": 16.2,
+     "하루조회": 201778,
+     "url": "https://www.youtube.com/shorts/jnzpgmqgsZQ"
+    },
+    {
+     "제목": "요즘 유행하는 ‘L을 가져가’는 대체 뭘까?",
+     "채널": "타임스낵",
+     "종류": "쇼츠",
+     "평소대비": 21.4,
+     "하루조회": 136354,
+     "url": "https://www.youtube.com/shorts/civ17R8k8os"
+    },
+    {
+     "제목": "사실 매우 과학적이었던 애니 속 여캐 달리기 자세",
+     "채널": "타임스낵",
+     "종류": "쇼츠",
+     "평소대비": 11.4,
+     "하루조회": 121536,
+     "url": "https://www.youtube.com/shorts/bsm7AJ9FdkQ"
+    }
+   ],
    "topics": [
     {
-     "소재": "육영수 저격 사건, 경축식장에 들어온 권총",
-     "후속": "",
-     "대상": "육영수 저격 사건",
-     "점수": {
-      "korea": 5,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "광복절 경축식장에 권총이 들어왔다, 1974년 '육영수 저격 사건'",
-     "왜_터질까": "누구나 이름은 아는 사건이지만 권총이 어떻게 행사장 안까지 들어갔는지는 잘 모른다. 어제 기사에 '진짜 배후를 쫓다'가 올라 관심이 다시 커졌다.",
-     "근거": [
-      {
-       "url": "https://www.koreatimes.net/ArticleViewer/Article/179635",
-       "메모": "2026-09-26 기사, 1974년 8월 15일 장충동 국립중앙극장 경축식과 문세광 언급"
-      }
-     ],
-     "첫문장": "1974년 8월 15일, 국립극장 객석에 앉은 한 청년의 품에는 권총이 있었습니다.",
-     "보여줄_장면": "장충동 지도, 경축식 당일 시간표 연표, 당시 신문 헤드라인 카드, 재구성 일러스트.",
-     "확인할_사실": [
-      "경축식장 반입·경호 실패 경위와 당시 조사 결과",
-      "문세광 재판·사형 집행 일자",
-      "공식 재조사·검증 결과와 아직 남은 의문"
-     ],
-     "위험": "'배후'를 단정하면 정치 공방과 법적 문제가 생기므로 확인된 사실과 남은 의문만 구분해 써야 한다.",
-     "총점": 82,
-     "최신": "2026-09-26"
-    },
-    {
-     "소재": "월가의 왕 메이도프, 놓친 경고들",
-     "후속": "",
-     "대상": "버나드 메이도프",
-     "점수": {
-      "korea": 3,
-      "paradox": 4,
-      "proof": 4,
-      "visual": 5
-     },
-     "제목": "경고를 받고도 놓쳤다, 월가가 믿었던 폰지 사기 '버나드 메이도프'",
-     "왜_터질까": "이름은 알아도 어떻게 오래 버텼는지는 모르는 세계적 사기 사건이다. 참고 채널의 같은 소재가 4일 만에 34만 조회를 넘겼고, '희대의 사기꾼' 방송 소재도 뉴스에 오르고 있다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/watch?v=5JbVYMJzsD0",
-       "메모": "당신이 몰랐던 이야기 메이도프 영상, 경과 4일 조회 345,452"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE5kWWl4WW9OSDVnSzU5UERaSXd5b3dpX0pmcDBDODI2OXdqWHNFWnJ6UVctN0JZQWd3YWhzZ2lQSnJUTU1PVUwzOEkxaw?oc=5",
-       "메모": "2026-09-23 희대의 사기꾼 방송 기사(다른 사기 사건, 사기 장르 관심 근거)"
-      }
-     ],
-     "첫문장": "그는 월가의 왕이었고, 그를 의심한 사람은 아무도 듣는 이가 없었습니다.",
-     "보여줄_장면": "사기 구조를 단순화한 도식, 연표, 당시 보도 헤드라인 카드, 뉴욕 지도.",
-     "확인할_사실": [
-      "피해액과 선고 형량",
-      "내부 고발자가 감독기관에 경고한 횟수와 시점",
-      "체포·수감·사망 시점"
-     ],
-     "위험": "참고 채널이 이미 다룬 소재라 다른 각도(놓친 경고)가 없으면 중복으로 보일 수 있다.",
-     "총점": 75,
-     "최신": "2026-09-23"
-    },
-    {
-     "소재": "강릉 무장공비 침투, 30년 만의 이야기",
+     "소재": "강릉 무장공비 침투사건 30주년",
      "후속": "",
      "대상": "강릉 무장공비 침투사건",
      "점수": {
       "korea": 4,
-      "paradox": 3,
-      "proof": 4,
+      "paradox": 4,
+      "proof": 5,
       "visual": 4
      },
-     "제목": "해안에 잠수함이 좌초한 새벽, 30년이 지나도 끝나지 않은 '강릉 무장공비 침투사건'",
-     "왜_터질까": "30주기 기획 기사가 연달아 나왔고, 지도와 시간표로 보여주기 좋은 사건이다. 왜 오래 수색이 이어졌는지가 풀리지 않은 질문이 된다.",
+     "제목": "\"잠수함이 좌초됐다\" 강릉을 뒤흔든 무장공비 침투사건, 30년 후 남은 것",
+     "왜_터질까": "30주기를 맞아 새 기사가 나온 지금이 적기이며, 49일간의 소탕작전 전체 전말을 아는 사람은 적다. 최근 추천에도 있었지만 30주기 신규 보도로 새 근거가 생겼다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5iY2N1OExnck1Ba253Qlp6enN6ZE9GWHhodXoweFQwYl9QVUVYUnVJYWk0cDF5MlJCS3lERjBzeFEzLVRMRWlraHROd1Y1TkpzdC04Vlk1MHAwbTZOdFhXRGF0ajBleWxPbF9hNThR?oc=5",
-       "메모": "2026-09-22 '30년 전 강릉 무장공비 침투사건은 아직 끝나지 않았다'"
+       "메모": "09-22, 강릉 무장공비 침투사건 30년 후 재조명 기사"
       },
       {
        "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5hQUpuVkhDUlRyc3o1YmJyVFBXT01SUUVDUkFydi13anVsa29McTVtOFo5LTZYYU5wUmRkbzJEdW5lNWNtWlp2cFlfcDJJZmg0SGpScmVtdElCWnfSAWBBVV95cUxQSXN0QmV5LUhyVTJBRDNmWVJZbF8xUE9Ed2treVh0Ni1VZ2RCR1Z0dUVVRUYxWUlaT1c4eVJnaE9lY0MzWGdOQkVBbmYxa0hCZmpqODBKd0RPUTdubWZXVkg?oc=5",
-       "메모": "2026-09-17 잠수함 침투 사건 전사자 유족 현장 기사"
+       "메모": "09-17, 잠수함 침투로 전사한 유가족 현장 보도"
       }
      ],
-     "첫문장": "1996년 9월, 강릉 앞바다에서 정체불명의 잠수함이 발견됐습니다.",
-     "보여줄_장면": "강릉·동해안 지도, 수색 일정 연표, 당시 보도 헤드라인 카드, 재구성 일러스트.",
+     "첫문장": "1996년 9월, 강릉 앞바다에 좌초된 잠수함 한 척이 발견됐다.",
+     "보여줄_장면": "잠수함 좌초 지점·도피 경로 지도, 소탕작전 연표, 당시 신문 헤드라인 카드.",
      "확인할_사실": [
-      "침투 일자와 수색 기간",
-      "침투 인원·사망·생존자 수",
-      "군 작전 실패 지점에 대한 공식 기록"
+      "정확한 침투 인원·전사자 수",
+      "작전 종료 정확한 날짜",
+      "30주기 추모 행사 세부 내용"
      ],
-     "위험": "전사자와 유족 관련 서술이 있으므로 조롱이나 영웅담식 표현을 피해야 한다.",
-     "총점": 75,
+     "위험": "군사·안보 소재라 정치적 해석 댓글 유입 가능 — 사실 위주 서술 유지.",
+     "총점": 85,
      "최신": "2026-09-22"
     },
     {
-     "소재": "요도호 납치, 평양 대신 김포에 내린 여객기",
+     "소재": "화성 연쇄살인사건(이춘재 자백)",
+     "후속": "",
+     "대상": "화성 연쇄살인사건",
+     "점수": {
+      "korea": 5,
+      "paradox": 5,
+      "proof": 2,
+      "visual": 5
+     },
+     "제목": "\"33년 만에 잡았다\" 대한민국을 얼어붙게 한 '화성 연쇄살인사건'의 진범",
+     "왜_터질까": "이름은 국민 전체가 알지만 이춘재가 왜 33년간 잡히지 않았는지, 8차 사건 진범 아닌 사람이 옥살이한 이유는 잘 모른다. DNA 재감정 한 방으로 뒤집힌 전개는 채널의 '결정적 순간+반전' 공식에 정확히 들어맞는다.",
+     "근거": [],
+     "첫문장": "1986년부터 1991년까지, 경기도 화성의 논밭에서 여성들이 잇따라 살해됐다.",
+     "보여줄_장면": "사건 발생 지도, 수사본부 연표, DNA 재감정 결과 발표 카드.",
+     "확인할_사실": [
+      "정확한 피해자 수·차수 구분",
+      "이춘재 자백 시점·검거 경위",
+      "8차 사건 재심 무죄 확정일"
+     ],
+     "위험": "33년 전 사건이라 자료 대부분 재구성 일러스트에 의존해야 하며, 유족 신상 보호 주의.",
+     "총점": 85
+    },
+    {
+     "소재": "개구리소년 실종사건",
+     "후속": "",
+     "대상": "개구리소년 실종사건",
+     "점수": {
+      "korea": 5,
+      "paradox": 5,
+      "proof": 2,
+      "visual": 5
+     },
+     "제목": "\"11년 만에 유골로 발견됐다\" 대한민국을 울린 '개구리소년' 실종사건",
+     "왜_터질까": "이름은 다 알아도 11년간 어디 있었는지, 왜 실종 직후 수색이 실패했는지는 모른다. 동종 장르 최대 흥행작(449만)이 존재해 수요가 검증된 소재다.",
+     "근거": [],
+     "첫문장": "1991년 봄, 다섯 명의 아이들이 도롱뇽 알을 잡으러 산에 올라간 뒤 돌아오지 않았다.",
+     "보여줄_장면": "대구 와룡산 지도, 실종 당일 동선 연표, 대규모 수색 기록사진.",
+     "확인할_사실": [
+      "실종·유골 발견 정확한 날짜",
+      "수색 인원·기간 규모",
+      "사인 관련 공식 발표 내용"
+     ],
+     "위험": "아동 실종·사망 사건이라 신상·사진 사용에 특히 주의, 유족 언급 최소화 필요.",
+     "총점": 85
+    },
+    {
+     "소재": "신창원 탈옥사건",
+     "후속": "",
+     "대상": "신창원",
+     "점수": {
+      "korea": 5,
+      "paradox": 5,
+      "proof": 2,
+      "visual": 5
+     },
+     "제목": "\"907일 동안 경찰을 따돌렸다\" 탈옥수 신창원은 어떻게 안 잡혔나",
+     "왜_터질까": "이름과 '탈옥'이라는 단어는 다 알아도 907일간 어떻게 도피했는지, 왜 여러 번 검거 직전에 놓쳤는지는 모른다. 동종 장르에서 '체포 작전'만으로 140만 조회를 낸 전례가 있다.",
+     "근거": [],
+     "첫문장": "1997년, 탈옥수 신창원은 경찰이 가장 잡고 싶어 하던 남자가 됐다.",
+     "보여줄_장면": "전국 도피 경로 지도, 검거 실패 시점 연표, 당시 신문 헤드라인 카드.",
+     "확인할_사실": [
+      "탈옥 정확한 날짜·기간",
+      "검거 당시 상황",
+      "도피 중 주요 목격 지점"
+     ],
+     "위험": "도피 수법을 지나치게 상세히 설명하면 모방 우려 — 경로는 지도로만, 수법은 요약으로 처리.",
+     "총점": 85
+    },
+    {
+     "소재": "이형호 유괴사건('그놈 목소리')",
+     "후속": "",
+     "대상": "이형호 유괴사건",
+     "점수": {
+      "korea": 5,
+      "paradox": 5,
+      "proof": 2,
+      "visual": 4
+     },
+     "제목": "\"그놈 목소리\" 아이를 유괴하고 몸값만 받아 간 남자",
+     "왜_터질까": "'그놈 목소리'라는 표현은 다 알아도 몸값 전달 실패 지점, 왜 끝내 못 잡았는지는 잘 모른다. 실제 공개된 협박 전화 음성이 존재해 증거 자료 완성도가 매우 높다.",
+     "근거": [],
+     "첫문장": "1991년 1월, 아홉 살 이형호는 학교 앞에서 사라졌다.",
+     "보여줄_장면": "몸값 전달 장소 지도, 협박 전화 연표, 공개된 음성 파형 그래픽.",
+     "확인할_사실": [
+      "사건 정확한 발생·종결 시점",
+      "공소시효 만료 시점",
+      "음성 공개 경위"
+     ],
+     "위험": "아동 피해자 사건 — 얼굴·신상 노출 절대 금지, 음성은 재구성 그래픽으로만 처리.",
+     "총점": 82
+    },
+    {
+     "소재": "이태원 살인사건",
+     "후속": "",
+     "대상": "이태원 살인사건",
+     "점수": {
+      "korea": 5,
+      "paradox": 5,
+      "proof": 2,
+      "visual": 4
+     },
+     "제목": "\"두 사람 중 한 명이 범인이다\" 20년을 끈 '이태원 살인사건'의 진실",
+     "왜_터질까": "영화로도 알려진 이름이지만 두 용의자 중 누가 진범인지, 왜 재판이 그렇게 오래 걸렸는지 정확히 아는 사람은 적다. 재판 뒤집힘이라는 채널 뼈대(누가 거짓말했나)에 정확히 맞는다.",
+     "근거": [],
+     "첫문장": "1997년 4월, 이태원의 한 햄버거 가게 화장실에서 대학생이 흉기에 찔려 숨졌다.",
+     "보여줄_장면": "사건 현장 건물 지도, 재판 뒤집힘 연표, 두 용의자 진술 비교 카드.",
+     "확인할_사실": [
+      "최종 확정판결 연도",
+      "미국 송환 경위",
+      "정확한 형량"
+     ],
+     "위험": "확정 유죄 인물 외 나머지는 무죄 확정 — 단정적 표현 금지, 확정 판결 기준으로만 서술.",
+     "총점": 82
+    },
+    {
+     "소재": "요도호 납치사건 용의자 사망",
      "후속": "",
      "대상": "요도호 납치사건",
      "점수": {
       "korea": 3,
       "paradox": 4,
-      "proof": 4,
+      "proof": 5,
       "visual": 4
      },
-     "제목": "평양으로 가려던 여객기가 김포에 내렸다, 남·북·일이 얽힌 '요도호 납치사건'",
-     "왜_터질까": "한국과 직접 이어진 1970년 사건인데 자세한 전말은 잘 모른다. 납치범 한 명이 평양에서 숨진 것으로 보인다는 보도가 새 근거다.",
+     "제목": "\"용의자가 평양에서 죽었다\" 56년 만에 드러난 요도호 납치사건의 끝",
+     "왜_터질까": "용의자 사망 소식으로 사건이 다시 뉴스에 올랐고, 한국을 거쳐 북한으로 간 특이한 경로를 지도로 보여주기 좋다.",
      "근거": [
       {
-       "url": "https://www.msn.com/ko-kr/%EC%9D%BC%EB%B0%98/%EC%9D%BC%EB%B0%98/%EC%9A%94%EB%8F%84%ED%98%B8-%EB%82%A9%EC%B9%98%EC%82%AC%EA%B1%B4-%EC%9D%98-%EC%A0%81%EA%B5%B0%ED%8C%8C-%EC%9A%A9%EC%9D%98%EC%9E%90-1%EB%AA%85-%EC%A7%80%EB%82%9C-12%EC%9D%BC-%ED%8F%89%EC%96%91%EC%84%9C-%EC%82%AC%EB%A7%9D/ar-AA2coKvb",
-       "메모": "2026-09-17 아카기 시로(78) 지난 12일 평양서 사망 보도"
+       "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFAzcEJpaU5jV2hqZFhwWG9yb2xfbU9OU2JSSVpxYUYyYTZIZHR4djY3MEJGcjRZNEQ4VzJ1U2p6S1Fnd1lzc3BCbzhxWHpLeEs3OGpoS3VnZjI0OHfSAWBBVV95cUxQeTNWX19LaXZ4blBTX2dEZjZJWnB5TTNlTXFqeDd1aXNTMmFabWl4MFA2a1c2Qmx2UjM3eGh1Qmt3RERzWjZabjNOR0RSVEFzakJEVjlsWXR1OVlwNHRBOXU?oc=5",
+       "메모": "09-17, 요도호 납치사건 용의자 평양서 사망 보도"
       },
       {
        "url": "https://www.msn.com/ko-kr/news/world/%EB%82%A8-%EB%B6%81-%EC%9D%BC-%EC%96%BD%ED%98%94%EB%8D%98-%EC%9A%94%EB%8F%84%ED%98%B8-%EB%82%A9%EC%B9%98%EC%82%AC%EA%B1%B4-%EC%9A%A9%EC%9D%98%EC%9E%90-1%EB%AA%85-%EB%B6%81%ED%95%9C%EC%97%90%EC%84%9C-%EC%B5%9C%EA%B7%BC-%EC%82%AC%EB%A7%9D%ED%95%9C-%EB%93%AF/ar-AA2cpa9J",
-       "메모": "2026-09-17 남·북·일 얽힌 사건 기사"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFAzcEJpaU5jV2hqZFhwWG9yb2xfbU9OU2JSSVpxYUYyYTZIZHR4djY3MEJGcjRZNEQ4VzJ1U2p6S1Fnd1lzc3BCbzhxWHpLeEs3OGpoS3VnZjI0OHfSAWBBVV95cUxQeTNWX19LaXZ4blBTX2dEZjZJWnB5TTNlTXFqeDd1aXNTMmFabWl4MFA2a1c2Qmx2UjM3eGh1Qmt3RERzWjZabjNOR0RSVEFzakJEVjlsWXR1OVlwNHRBOXU?oc=5",
-       "메모": "2026-09-17 용의자 1명 평양서 사망"
+       "메모": "09-17, 남·북·일 얽힌 사건 경위 종합 보도"
       }
      ],
-     "첫문장": "1970년, 일본에서 출발한 여객기 한 대가 평양을 향해 날아갔습니다.",
-     "보여줄_장면": "일본·한국·북한 항로 지도, 사건 경과 연표, 당시 보도 헤드라인 카드, 공개된 기록 사진.",
-     "확인할_사실": [
-      "납치 일자와 승객·승무원 수",
-      "김포공항에서 벌어진 일과 석방 경위",
-      "나머지 용의자들의 현재 소재"
-     ],
-     "위험": "북한 관련 정치 공방으로 흐르지 않게 사건 경과 중심으로 써야 한다.",
-     "총점": 72,
+     "총점": 78,
      "최신": "2026-09-17"
     },
     {
-     "소재": "조작 간첩 재심, 54년 만의 무죄 판결문",
-     "후속": "",
-     "대상": "간첩 조작 사건 재심",
-     "점수": {
-      "korea": 3,
-      "paradox": 4,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "'아버지 제사상에 무죄 판결문 올려야죠' 54년 만에 벗은 간첩 누명",
-     "왜_터질까": "재심 무죄가 이어지고 있고 누명이 벗겨지기까지 걸린 시간 자체가 극적인 숫자다. 검찰이 재심 청구에 다시 기각 의견을 낸 사례도 나와 뒷이야기가 있다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFA4NHY3YTY1S1Y2N0xLcUh4QndxMkh0dng2WWlxRXdYYWVLTFJiRGVMVTdfdTFvb09LQ1BsaHBvcUFaWTROZ3o4THFmOVFZbnM?oc=5",
-       "메모": "2026-09-13 54년 만에 누명 벗은 유족 인터뷰"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNLTB1eEFKZThtaTN5SHJPZVU3MFNCU2Utbk5Dd2FLbXRJUmNNYnBpS19aR3ZaVmxCbWFJWEFkMnplbXdnOVY3U1RsS0JxWFIyNC1KV00tNHZac1V4TUplVXk5WEpCZlVKVVVwblpaZW43NEdlZDBoTVJ0MWpQZExYei02QTgxOW8?oc=5",
-       "메모": "· = 2026-09-22 국보법 위반 50대 2명 33년 만에 재심 무죄"
-      },
-      {
-       "url": "https://www.msn.com/ko-kr/news/other/50%EB%85%84%EA%B0%84-%EC%94%8C%EC%9B%8C%EC%A7%84-%EA%B0%84%EC%B2%A9-%EB%88%84%EB%AA%85-%EC%9E%AC%EC%8B%AC-%EC%B2%AD%EA%B5%AC%EC%97%90-%EA%B2%80%EC%B0%B0-%EB%98%90%EB%8B%A4%EC%8B%9C-%EA%B8%B0%EA%B0%81-%EC%9D%98%EA%B2%AC/ar-AA2cR9H4",
-       "메모": "2026-09-24 50년간 씌워진 간첩 누명, 재심 청구에 검찰 기각 의견"
-      }
-     ],
-     "첫문장": "54년 만에 받은 무죄 판결문은 아버지의 제사상에 올랐습니다.",
-     "보여줄_장면": "사건 시점부터 무죄 확정까지 연표, 지역 지도, 판결문 문구 카드, 재구성 일러스트.",
-     "확인할_사실": [
-      "대상 사건별 체포 연도와 무죄 확정 일자",
-      "재심 무죄의 근거",
-      "아직 기각·계류 중인 사건"
-     ],
-     "위험": "특정 사건 하나로 좁히지 않으면 정치적 해석 논란이 생길 수 있다.",
-     "총점": 70,
-     "최신": "2026-09-24"
-    },
-    {
-     "소재": "조세이탄광, 바다 밑에 남은 사람들",
-     "후속": "",
-     "대상": "조세이(長生)탄광",
-     "점수": {
-      "korea": 3,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "바다 밑에 그대로 남았다, 한국인 희생자 유골이 발견된 '조세이탄광'",
-     "왜_터질까": "일제강점기 수몰 사고에서 유골이 발견된 지 1년이 지났는데 한국인 희생자 확인이 더디다는 점이 풀리지 않은 질문이다. 지도와 기록 사진으로 보여주기 좋다.",
-     "근거": [
-      {
-       "url": "https://www.yna.co.kr/view/AKR20260908096600004",
-       "메모": "2026-09-08 조세이탄광 유골 발견 1년, 한국인 희생자 유해 확인 지지부진"
-      }
-     ],
-     "첫문장": "바다 밑 갱도에는 80년 넘게 사람들이 그대로 남아 있었습니다.",
-     "보여줄_장면": "일본 우베시 위치 지도, 갱도 단면 도식, 연표, 공개된 기록 사진.",
-     "확인할_사실": [
-      "사고 일자와 희생자 수(한국인 수 포함)",
-      "유골 발견 시점과 이후 신원 확인 진행",
-      "유해 봉환 상황"
-     ],
-     "위험": "강제동원 관련 정치·외교 논쟁으로 흐를 수 있어 기록된 사실 위주로 서술해야 한다.",
-     "총점": 68
-    },
-    {
-     "소재": "태완이 사건, 공소시효는 끝났는데 진실은 그대로",
-     "후속": "",
-     "대상": "대구 황산테러 사건(태완이 사건)",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 1,
-      "visual": 3
-     },
-     "제목": "공소시효가 끝나 범인을 처벌할 수 없다, '대구 황산테러 사건'",
-     "왜_터질까": "공소시효 폐지 논의까지 이끈 이름 있는 미제 사건이다.",
-     "총점": 68,
-     "근거": []
-    },
-    {
-     "소재": "박왕열, 드론으로 탈옥하려던 마약왕",
+     "소재": "박왕열 드론탈옥 계획",
      "후속": "",
      "대상": "박왕열",
      "점수": {
       "korea": 3,
-      "paradox": 3,
-      "proof": 4,
-      "visual": 3
+      "paradox": 4,
+      "proof": 5,
+      "visual": 4
      },
-     "제목": "75kg을 드는 드론으로 탈옥을 시도했다, 텔레그램 마약왕 '박왕열'",
-     "왜_터질까": "최근 전말이 여러 매체에 나왔고, 탈옥이라는 소재에 마약·해외 수감이라는 이면이 더해졌다.",
+     "제목": "\"드론에 매달려 탈옥하려 했다\" 마약왕 박왕열의 마지막 도박",
+     "왜_터질까": "송환 직전 드론 탈옥을 계획했다는 새 사실이 보도돼 시의성이 강하고 결정적 장면 하나로 영상을 끌 수 있다.",
      "근거": [
       {
-       "url": "https://www.msn.com/ko-kr/news/other/%EB%A7%88%EC%95%BD%EC%99%95-%EB%B0%95%EC%99%95%EC%97%B4-%EC%9D%B4%EA%B2%83-%EC%9C%BC%EB%A1%9C-%ED%83%88%EC%98%A5-%EC%8B%9C%EB%8F%84%ED%95%98%EB%A0%A4%EB%8D%98-%EC%A0%84%EB%A7%90-%EB%93%9C%EB%9F%AC%EB%82%98/ar-AA2cX9m1",
-       "메모": "2026-09-25 드론 탈옥 시도 전말"
-      },
-      {
-       "url": "https://www.msn.com/ko-kr/%EC%9D%BC%EB%B0%98/%EC%9D%BC%EB%B0%98/%EC%9D%B4%EB%B2%88%EC%97%94-75-%EB%B2%84%ED%8B%B0%EB%8A%94-%EB%93%9C%EB%A1%A0-%EB%A7%88%EC%95%BD%EC%99%95-%EB%B0%95%EC%99%95%EC%97%B4%EC%9D%98-3%EC%B0%A8%EB%A1%80-%ED%83%88%EC%98%A5-%EC%8B%9C%EB%8F%84-%EC%A0%84%EB%A7%90/ar-AA2cHBsL",
-       "메모": "2026-09-22 3차례 탈옥 시도 전말"
+       "url": "https://www.msn.com/ko-kr/news/other/%ED%83%88%EC%98%A5%EB%8F%84-%EC%9D%B4-%EC%A0%95%EB%8F%84%EB%8A%94-%ED%95%B4%EC%A4%98%EC%95%BC-%EB%B0%95%EC%99%95%EC%97%B4-%EC%86%A1%ED%99%98-%ED%95%9C-%EB%8B%AC-%EC%A0%84-%EB%93%9C%EB%A1%A0-%ED%83%88%EC%98%A5-%EA%B3%84%ED%9A%8D%ED%96%88%EB%8B%A4/ar-AA2cdVkh",
+       "메모": "09-15, 박왕열 송환 한 달 전 드론 탈옥 계획 보도"
       },
       {
        "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE5ueHkwSXBfTDg1MXJtS1ZPZ0xGZ1NwYWxoQ1F5d2Z1dkVKTi16VkpqUGxkMGpTWE12RXpKNGx6TDhFUEhySTd2T0ItS0RDVklvd1M5bA?oc=5",
-       "메모": "2026-09-14 송환 직전 드론 탈옥 준비"
+       "메모": "09-14, 드론 탈옥 준비·실패 정황 단독 보도"
       }
      ],
-     "첫문장": "필리핀 수용 시설 안에서 한 남자가 드론으로 사라질 계획을 세웠습니다.",
-     "보여줄_장면": "필리핀·한국 지도, 탈옥 시도 3회 연표, 보도 헤드라인 카드, 재구성 일러스트.",
-     "확인할_사실": [
-      "3차례 시도의 시점과 방식(수법은 상세히 쓰지 않음)",
-      "송환 및 재판 진행 상황",
-      "확정된 혐의와 형량"
-     ],
-     "위험": "재판이 진행 중이면 보류 대상이고, 탈옥 수법은 따라 할 수 없게 개략만 다뤄야 한다.",
-     "총점": 65,
-     "최신": "2026-09-25"
+     "총점": 78,
+     "최신": "2026-09-15"
     },
     {
-     "소재": "강진 연쇄실종, 25년 만에 나온 출소 소식",
+     "소재": "유영철 연쇄살인사건",
      "후속": "",
-     "대상": "강진 연쇄실종 사건",
+     "대상": "유영철",
      "점수": {
-      "korea": 3,
-      "paradox": 3,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "사라진 사람들, 25년 뒤 출소한 이름 '강진 연쇄실종 사건'",
-     "왜_터질까": "강진 사건을 다룬 영상이 4일 만에 24만 조회를 얻었다. '어디로 사라졌나' 구조가 그대로 들어맞는다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/watch?v=mZmCNIzHEiA",
-       "메모": "kimwontv김원 강진 연쇄실종 영상, 경과 4일 조회 242,647"
-      }
-     ],
-     "첫문장": "강진에서는 사람들이 한 명씩 사라졌고, 몇 년이 지나서야 이야기가 이어졌습니다.",
-     "보여줄_장면": "강진 지도, 실종 시점 연표, 당시 보도 헤드라인 카드, 재구성 일러스트.",
-     "확인할_사실": [
-      "실종자 수와 실종 시기",
-      "유죄 확정된 범죄와 확정되지 않은 의혹의 구분",
-      "이번 출소 소식의 실제 내용"
-     ],
-     "위험": "유력 용의자로 지목된 인물을 유죄 확정 여부 확인 없이 범인으로 단정하면 안 된다.",
-     "총점": 65
-    },
-    {
-     "소재": "요가대장 최갑복, 유치장에서 사라지다",
-     "후속": "",
-     "대상": "최갑복 유치장 탈주",
-     "점수": {
-      "korea": 3,
-      "paradox": 3,
-      "proof": 3,
-      "visual": 3
-     },
-     "제목": "유치장에서 사라진 '요가대장', 대한민국 탈주사건 '최갑복'",
-     "왜_터질까": "탈주 소재로 유사 영상이 4일 만에 13만 조회를 기록했다. 신창원급의 유명 탈주극은 아니지만 어떻게 빠져나갔는지가 관심 포인트다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/watch?v=xKeBadb64TU",
-       "메모": "김복준의 사건속으로 요가대장 최갑복 유치장 탈주사건, 경과 4일 조회 136,640"
-      }
-     ],
-     "첫문장": "유치장 안에서 몸을 접어 빠져나간 남자가 있었습니다.",
-     "보여줄_장면": "유치장 구조 도식, 탈주 후 행적 지도, 당시 보도 헤드라인 카드, 재구성 일러스트.",
-     "확인할_사실": [
-      "탈주 일자와 검거까지 걸린 기간",
-      "유치장의 관리 허점",
-      "재판 결과"
-     ],
-     "위험": "탈주 방법을 상세히 쓰면 수법 안내가 되므로 개략만 써야 한다.",
-     "총점": 60
-    },
-    {
-     "소재": "홍은동 등산로 살인사건",
-     "후속": "",
-     "대상": "홍은동 등산로 살인사건",
-     "점수": {
-      "korea": 3,
-      "paradox": 3,
-      "proof": 3,
-      "visual": 3
-     },
-     "제목": "등산로에서 벌어진 일, '홍은동 등산로 살인사건'",
-     "왜_터질까": "관련 분석 영상이 2일 만에 25만 조회를 얻었다.",
-     "총점": 60,
-     "근거": []
-    },
-    {
-     "소재": "검찰 미제 16만 건, 어디로 가나",
-     "후속": "",
-     "대상": "검찰 미제사건",
-     "점수": {
-      "korea": 2,
-      "paradox": 3,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "검찰에 쌓인 미제 16만 건, 검찰청이 사라지면 어디로 가나",
-     "왜_터질까": "검찰청 폐지를 앞두고 미제 이관 문제가 연일 기사화됐다.",
-     "총점": 57,
-     "근거": []
-    },
-    {
-     "소재": "제주 한경면 강간살인 사건",
-     "후속": "",
-     "대상": "제주 한경면 강간살인 사건",
-     "점수": {
-      "korea": 3,
-      "paradox": 3,
-      "proof": 3,
-      "visual": 2
-     },
-     "제목": "범인은 외지인이었나, '제주 한경면 강간살인 사건'",
-     "왜_터질까": "관련 영상이 12.8일 경과에도 8.8만 조회를 유지했다.",
-     "총점": 57,
-     "근거": []
-    },
-    {
-     "소재": "무연고 사망, 부모와 연 끊는 사회",
-     "후속": "",
-     "대상": "무연고 사망",
-     "점수": {
-      "korea": 2,
-      "paradox": 3,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "'받을 재산 없잖아' 부모와 연 끊는 사람들, 늘어나는 '무연고 사망'",
-     "왜_터질까": "관련 기사가 올라왔고 사회 이면 갈래에 맞는다.",
-     "총점": 55,
-     "근거": []
-    },
-    {
-     "소재": "다크웹 운영자, 실크로드",
-     "후속": "",
-     "대상": "실크로드(다크웹 마켓)",
-     "점수": {
-      "korea": 2,
-      "paradox": 3,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "다크웹 운영자가 발견된 충격적인 장소, '실크로드'",
-     "왜_터질까": "관련 다크웹 영상들이 3일 만에 29만 조회를 얻었다.",
-     "총점": 55,
-     "근거": []
-    },
-    {
-     "소재": "일본 엔자이, 유죄율 99%",
-     "후속": "",
-     "대상": "일본 엔자이",
-     "점수": {
-      "korea": 2,
+      "korea": 5,
       "paradox": 4,
       "proof": 2,
       "visual": 4
      },
-     "제목": "'유죄율 99%' 재판에 가면 유죄, 일본 '엔자이'",
-     "왜_터질까": "참고 채널의 같은 소재가 4만 조회를 넘겼다.",
-     "총점": 55,
-     "근거": []
+     "제목": "\"21명을 죽이고도 몰랐다\" 유영철은 어떻게 그렇게 오래 안 잡혔나",
+     "왜_터질까": "이름과 수식어는 다 알아도 경찰이 놓친 결정적 지점, 검거 당시 상황은 잘 모른다. 신창원·화성 사건과 함께 채널 초반 대표작 라인업을 완성한다.",
+     "근거": [],
+     "첫문장": "2003년부터 2004년까지, 서울 곳곳에서 사람들이 잇따라 사라졌다.",
+     "보여줄_장면": "범행 지역 지도, 검거까지 연표, 당시 수사본부 보도 헤드라인 카드.",
+     "확인할_사실": [
+      "정확한 피해자 수",
+      "검거 결정적 단서",
+      "최종 확정 형량"
+     ],
+     "위험": "잔혹성이 매우 강한 사건 — 수법·시신 묘사 절대 배제, 지도·연표 중심 서술.",
+     "총점": 78
     },
     {
-     "소재": "넷카페 난민",
+     "소재": "대도 조세형 사건",
      "후속": "",
-     "대상": "넷카페 난민",
+     "대상": "대도 조세형",
      "점수": {
-      "korea": 2,
-      "paradox": 3,
-      "proof": 3,
+      "korea": 5,
+      "paradox": 4,
+      "proof": 2,
       "visual": 4
      },
-     "제목": "'죽을 때까지 벗어나지 못한다' 도시 속 난민, 일본 '넷카페 난민'",
-     "왜_터질까": "참고 채널 영상이 10만 조회를 기록했고 사회 이면 제목이 강했다.",
-     "총점": 55,
-     "근거": []
+     "제목": "\"대한민국 부잣집을 털었다\" 전설의 도둑 '대도' 조세형의 진실",
+     "왜_터질까": "'대도'라는 별명은 다 알아도 실제 행적은 잘 몰라 광고 안전성 높은 무혈 소재로 적합하다.",
+     "근거": [],
+     "총점": 78
     },
     {
-     "소재": "대구 미문화원 폭파, 고문 피해자의 배상",
+     "소재": "오대양 집단 변사사건",
      "후속": "",
-     "대상": "대구 미문화원 폭파 사건",
+     "대상": "오대양 사건",
      "점수": {
-      "korea": 2,
+      "korea": 4,
+      "paradox": 5,
+      "proof": 2,
+      "visual": 4
+     },
+     "제목": "\"32명이 한꺼번에 죽었다\" 아직도 못 믿는 '오대양' 집단 변사사건",
+     "왜_터질까": "이름은 유명해도 자살인지 타살인지, 왜 수사가 그렇게 종결됐는지 제대로 아는 사람은 드물다. '사이비 종교' 앵글은 사회이면 30% 비중에 정확히 맞는다.",
+     "근거": [],
+     "첫문장": "1987년 여름, 경기도의 한 공장 천장에서 서른두 구의 시신이 발견됐다.",
+     "보여줄_장면": "공장 건물 배치도, 사망자 발견 위치 연표, 당시 보도 헤드라인 카드.",
+     "확인할_사실": [
+      "사망자 정확한 인원·신원",
+      "공식 수사 결론(자살/타살)",
+      "관련 종교단체 실체"
+     ],
+     "위험": "사망자 다수 사건 — 시신·잔혹 묘사 절대 금지, 연표·지도 중심으로만 구성.",
+     "총점": 75
+    },
+    {
+     "소재": "조세이탄광 유골 발견 1주년",
+     "후속": "",
+     "대상": "조세이탄광",
+     "점수": {
+      "korea": 3,
       "paradox": 3,
-      "proof": 3,
+      "proof": 4,
+      "visual": 4
+     },
+     "제목": "\"유골 찾은 지 1년, 이름은 아직이다\" 조세이탄광의 멈춘 시간",
+     "왜_터질까": "발견 1주년 보도가 나왔고 왜 1년째 신원 확인이 안 되는지가 새로운 질문이 된다.",
+     "근거": [
+      {
+       "url": "https://www.yna.co.kr/view/AKR20260908096600004",
+       "메모": "09-08, 조세이탄광 유골발견 1년, 한국인 희생자 신원 확인 지지부진 보도"
+      }
+     ],
+     "총점": 68
+    },
+    {
+     "소재": "화성 8차사건 재심(윤성여 무죄)",
+     "후속": "",
+     "대상": "화성 8차사건",
+     "점수": {
+      "korea": 4,
+      "paradox": 4,
+      "proof": 2,
       "visual": 3
      },
-     "제목": "대법원이 국가 배상책임을 인정한 '대구 미문화원 폭파 사건'",
-     "왜_터질까": "대법원 판단이 2026-09-23에 나온 사건이다.",
-     "총점": 52,
-     "근거": []
+     "제목": "\"진범이 아닌 사람이 20년을 살았다\" 화성 8차사건의 진짜 피해자",
+     "왜_터질까": "이춘재 편과 다른 각도로 '무고한 20년'이라는 질문 하나로 전혀 다른 이야기를 만들 수 있다.",
+     "근거": [],
+     "총점": 68
+    },
+    {
+     "소재": "없는 나라 사기꾼(그레거 맥그리거)",
+     "후속": "",
+     "대상": "그레거 맥그리거(포야이스 사기)",
+     "점수": {
+      "korea": 2,
+      "paradox": 4,
+      "proof": 4,
+      "visual": 4
+     },
+     "제목": "\"존재하지 않는 나라를 팔았다\" 역사상 최악의 사기꾼 이야기",
+     "왜_터질까": "현재 방송에서 다뤄져 화제성이 있고 '없는 나라'를 판다는 파격적 소재라 지도·문서 재현이 잘 맞는다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE5kWWl4WW9OSDVnSzU5UERaSXd5b3dpX0pmcDBDODI2OXdqWHNFWnJ6UVctN0JZQWd3YWhzZ2lQSnJUTU1PVUwzOEkxaw?oc=5",
+       "메모": "09-23, 없는 나라로 3조원 챙긴 희대의 사기꾼 보도"
+      },
+      {
+       "url": "https://www.msn.com/ko-kr/news/other/%EC%84%A4%EB%A1%9D-%EC%9E%A5%ED%95%AD%EC%A4%80-%EB%B4%89%ED%83%9C%EA%B7%9C-%E7%BE%8E-%E8%8B%B1-%ED%9D%94%EB%93%A0-%ED%9D%AC%EB%8C%80%EC%9D%98-%EC%82%AC%EA%B8%B0%EA%BE%BC%EC%97%90-%EB%84%88%EB%AC%B4-%ED%98%B9%ED%95%98%EB%8A%94%EB%8D%B0/ar-AA2cIrsp",
+       "메모": "09-22, 미·영 흔든 사기꾼 방송 소개 기사"
+      }
+     ],
+     "총점": 65,
+     "최신": "2026-09-23"
     },
     {
      "소재": "제주 택시 괴담의 정체",
      "후속": "",
      "대상": "제주 택시 괴담",
      "점수": {
-      "korea": 2,
+      "korea": 3,
       "paradox": 3,
-      "proof": 3,
+      "proof": 4,
       "visual": 3
      },
-     "제목": "'택시 탔다 눈 떠보니 갈대밭' 제주 괴담은 어떻게 퍼졌나",
-     "왜_터질까": "괴담 확산 경로를 짚은 팩트체크가 있어 실체 추적 구성이 가능하다.",
-     "총점": 52,
-     "근거": []
+     "제목": "\"택시 탔다가 갈대밭에서 눈떴다\" 제주 괴담은 어떻게 퍼졌나",
+     "왜_터질까": "최근 팩트체크 기사로 다시 화제가 됐고 도시전설의 실제 근원 추적이 쇼츠 확산에도 유리하다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBqSEFha1hlWDdQUHR5WWJPUUFXMldLZjlqWENoVDRJbWVkbExDeUd4ck1pRFRDWkhKT1F3SW5iaWZYZHpTVG9odFZEV2hvS0kzaEkxY1M3cC1jYXRnV0E?oc=5",
+       "메모": "09-14, 제주 택시 괴담 팩트체크 보도"
+      }
+     ],
+     "총점": 65,
+     "최신": "2026-09-14"
     },
     {
-     "소재": "광주 조폭 아내 살인사건",
+     "소재": "국정원 국립외교원 해킹 미스터리",
      "후속": "",
-     "대상": "광주 조폭 아내 살인사건",
+     "대상": "국립외교원 해킹사건",
      "점수": {
       "korea": 2,
+      "paradox": 4,
+      "proof": 4,
+      "visual": 3
+     },
+     "제목": "\"외교관 신상 1만 건이 새어 나갔다\" 아직 못 잡은 해킹범",
+     "왜_터질까": "국가기관 해킹인데 범인도 경위도 안 밝혀져 풀리지 않은 질문 공식에 정확히 맞는다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE83OGwzQXhDajNuRmxmSTdYWWZsdHF6ZDJUQldoMmlCRzZ5bHpMRmpfNUNTd19hdkl5cEkzS1htOTdwUHhwV0xyWlV4SVFfZ0tMVDRKR3pKZnBZOHpwZkZkWGpEcVZva0tNUjNSZ2UyUldMWTZuemhuYUt3?oc=5",
+       "메모": "09-13, 국정원 요원 600명 신상 유출 의혹 보도"
+      },
+      {
+       "url": "https://www.msn.com/ko-kr/news/other/국정원-명단-600명-털렸나-국립외교원-해킹사건-미스터리/ar-AA2c05pE",
+       "메모": "09-11, 국립외교원 해킹 경위 상세 보도"
+      }
+     ],
+     "총점": 62,
+     "최신": "2026-09-13"
+    },
+    {
+     "소재": "장윤기 사건, 경찰 봐주기 파문",
+     "후속": "",
+     "대상": "장윤기 사건",
+     "점수": {
+      "korea": 2,
+      "paradox": 4,
+      "proof": 4,
+      "visual": 3
+     },
+     "제목": "\"경찰 아버지라 무죄였다\" 장윤기 사건 봐주기 수사의 전말",
+     "왜_터질까": "곧 첫 공판이 열리는 시의성 최고점이고 옥중생활 폭로와 겹쳐 화제성이 검증됐다.",
+     "근거": [
+      {
+       "url": "https://www.yna.co.kr/view/AKR20260911151300054",
+       "메모": "09-13, 장윤기 사건 봐주기 파문 경찰관 첫 공판 보도"
+      },
+      {
+       "url": "https://www.youtube.com/watch?v=9cnj3pDmGi0",
+       "메모": "5.9일 경과·2.5배 급성장, 장윤기 옥중생활 폭로 영상"
+      }
+     ],
+     "총점": 62,
+     "최신": "2026-09-13"
+    },
+    {
+     "소재": "지존파 사건",
+     "후속": "",
+     "대상": "지존파",
+     "점수": {
+      "korea": 4,
       "paradox": 3,
+      "proof": 2,
+      "visual": 3
+     },
+     "제목": "\"부자를 증오해서 죽였다\" 지존파는 왜 그렇게까지 갔나",
+     "왜_터질까": "이름은 유명해도 결성 배경과 검거 순간은 잘 몰라 1990년대 흉악범죄 라인업을 완성한다.",
+     "근거": [],
+     "총점": 62
+    },
+    {
+     "소재": "오원춘 사건(수원 토막살인)",
+     "후속": "",
+     "대상": "오원춘 사건",
+     "점수": {
+      "korea": 4,
+      "paradox": 3,
+      "proof": 2,
+      "visual": 2
+     },
+     "제목": "\"112 신고를 받고도 놓쳤다\" 오원춘 사건이 남긴 질문",
+     "왜_터질까": "'경찰이 무엇을 놓쳤나'라는 채널 뼈대에 정확히 맞는 유명 사건이다.",
+     "근거": [],
+     "총점": 60
+    },
+    {
+     "소재": "부산 신혼부부 10년 실종사건",
+     "후속": "",
+     "대상": "부산 신혼부부 실종사건",
+     "점수": {
+      "korea": 2,
+      "paradox": 4,
       "proof": 3,
       "visual": 3
      },
-     "제목": "조폭의 아내에게 벌어진 일, '광주 조폭 아내 살인사건'",
-     "왜_터질까": "사건 재조명 영상이 1일 만에 17만 조회를 기록했다.",
-     "총점": 52,
-     "근거": []
+     "제목": "\"신혼여행 간 부부가 10년째 사라졌다\"",
+     "왜_터질까": "타 채널에서 빠르게 크는 소재를 국내 가족 시점이라는 다른 각도로 풀면 차별화된다.",
+     "근거": [
+      {
+       "url": "https://www.youtube.com/watch?v=321cbDjE6ZI",
+       "메모": "22.7일 경과·6.5배 급성장, 부산 신혼부부 10년 실종사건 보도 영상"
+      }
+     ],
+     "총점": 57
     }
    ],
    "calib": {
@@ -1688,652 +1727,610 @@
     },
     "alpha": 0.0,
     "hits": [],
-    "updated": "2026-09-27 12:41"
+    "updated": "2026-09-27 15:11"
    }
   },
   "The Paradox Desk": {
-   "at": "2026-09-27 11:44",
-   "model": "Kiro 직접 선정(claude 한도)",
-   "outliers_at": "2026-09-27 11:45",
+   "at": "2026-09-27 15:00",
+   "model": "sonnet",
+   "outliers_at": "2026-09-27 15:05",
    "news_n": 123,
    "trend_n": 10,
    "fresh_n": 18,
-   "prompt_chars": 20820,
-   "tokens": null,
+   "prompt_chars": 21754,
+   "tokens": {
+    "in": 18016,
+    "out": 31333,
+    "think": 23654,
+    "usd": 0.38539
+   },
+   "labels": {
+    "korea": "한국·미국 고리",
+    "paradox": "역설",
+    "proof": "근거",
+    "visual": "화면"
+   },
+   "genre_n": 9,
+   "genre_hot": [
+    {
+     "제목": "First delivery of KF-21 fighter jet - ultimate shield in Korea and abroad?",
+     "채널": "KOREA NOW",
+     "종류": "본편",
+     "평소대비": 21.3,
+     "하루조회": 71983,
+     "url": "https://www.youtube.com/watch?v=_iSrrWg6xUY"
+    },
+    {
+     "제목": "North Korea’s Denuclearization Must Start by Turning Off the Tap",
+     "채널": "Why Korea",
+     "종류": "쇼츠",
+     "평소대비": 26.5,
+     "하루조회": 14088,
+     "url": "https://www.youtube.com/shorts/y5IwQuw4vOs"
+    },
+    {
+     "제목": "A South Korean Investor Used Leverage To Try To Retire Early. Was The Risk Worth It? | Money Mind",
+     "채널": "CNA Insider",
+     "종류": "본편",
+     "평소대비": 4.8,
+     "하루조회": 137523,
+     "url": "https://www.youtube.com/watch?v=JvsuUf-N6Eo"
+    }
+   ],
    "topics": [
     {
-     "소재": "반도체는 사상 최대, 청년 취업자는 46개월째 감소",
+     "소재": "South Korea's Chip Boom Leaves Youth Without Jobs",
      "후속": "",
-     "대상": "청년 고용",
+     "대상": "삼성전자 반도체 부문",
      "점수": {
       "korea": 5,
       "paradox": 5,
-      "proof": 4,
+      "proof": 5,
       "visual": 4
      },
-     "제목": "South Korea's Chip Boom Left Its Young People Behind (반도체 호황, 한국 청년은 뒤에 남겨졌다)",
-     "왜_터질까": "삼성전자가 3분기 영업익 첫 100조 원을 넘본다는 기사(9/26)와 청년 취업자가 46개월째 줄었다는 기사(9/26)가 같은 주에 나와 '부자인데 미래가 없다' 역설이 2026년 숫자로 선명합니다. 같은 틀의 Curistaan 영상이 평소의 3배(146만)로 뜨고 있습니다.",
+     "제목": "South Korea's Chip Boom Leaves Youth Without Jobs (한국의 반도체 호황, 청년은 소외된다)",
+     "왜_터질까": "삼성전자가 분기 영업이익 100조원을 눈앞에 둔 같은 주에 청년 취업자는 46개월째 줄고 있다는 상반된 통계가 동시에 터졌다. 나라 전체의 부와 청년 개인의 삶이 갈라지는 전형적 역설이라 미국 시청자도 '성장의 배신'으로 공감할 고리가 크다.",
      "근거": [
       {
+       "url": "https://www.hani.co.kr/arti/economy/marketing/1279591.html",
+       "메모": "2026-09-27 삼성전자 3분기 영업이익 100조원 전망"
+      },
+      {
        "url": "https://www.fnnews.com/news/202609270602207768",
-       "메모": "09-26 삼성전자 3분기 영업익 첫 100조 넘나"
+       "메모": "2026-09-27 D램 이익률 80% 전망"
       },
       {
        "url": "https://www.msn.com/ko-kr/money/topstories/%EC%89%AC%EC%97%88%EC%9D%8C-%EC%B2%AD%EB%85%84-7%EA%B0%9C%EC%9B%94%EC%A7%B8-%EC%A4%84%EC%97%88%EB%8A%94%EB%8D%B0-%EC%B7%A8%EC%97%85%EC%9E%90%EB%8A%94-46%EA%B0%9C%EC%9B%94%EC%A7%B8-%EC%B2%AD%EB%85%84-%EA%B3%A0%EC%9A%A9-%EC%B0%A9%EC%8B%9C-%EC%9A%B0%EB%A0%A4/ar-AA2cYPDa",
-       "메모": "09-26 청년 취업자 46개월째 감소·고용 통계 착시"
+       "메모": "2026-09-26 청년 쉬었음 감소·취업자 46개월째 감소"
       },
       {
-       "url": "https://www.youtube.com/watch?v=qPifnFTekQo",
-       "메모": "영어권 'Super Rich... Ended Its Future' 평소의 3배·146만"
-      },
-      {
-       "url": "https://www.youtube.com/watch?v=nIbxQN1nHsQ",
-       "메모": "영어권 'Korea's AI Stock Crash' 37.9만(공급 있음, 각도 다름)"
+       "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE05MzFOQmtjUkx1UmNYLWNzWDdwZUxGWUI4SVNBUWI1U0dmZmNLVko2Q3luMmJ3TGluSXFUQW5NdEdyeC10TUZLTDZIRXdfeHlOblNMMDRJd1FIdlN4cWc?oc=5",
+       "메모": "2026-09-13 20대 취업자 19만명 감소"
       }
      ],
-     "첫문장": "This quarter, one Korean company may earn more than 100 trillion won — and the number of young Koreans with jobs just fell for the 46th month in a row. (이번 분기 한 한국 회사가 100조 원 넘게 벌지도 모르는데, 일하는 한국 청년 수는 46개월 연속 줄었습니다.)",
-     "보여줄_장면": "반도체 수출·영업이익이 치솟는 선과 청년 취업자 수가 내려가는 선을 한 차트에서 교차시킨다.",
+     "첫문장": "Samsung is about to report its biggest quarterly profit in history, but young South Koreans still can't find work. (삼성전자는 역대 최대 분기 이익을 눈앞에 두고 있지만, 한국 청년들은 여전히 일자리를 찾지 못하고 있다.)",
+     "보여줄_장면": "반도체 공장 항공샷과 채용박람회 줄 선 청년들을 교차 편집, 실적 발표 차트 애니메이션.",
      "확인할_사실": [
-      "3분기 영업이익 전망치와 확정 발표일(10월 잠정실적)",
-      "청년 취업자 46개월 감소의 연령 기준",
-      "원화→달러 환산 환율 날짜"
+      "삼성전자 3분기 영업이익 100조원 돌파 실제 발표치",
+      "청년(15~29세) 취업자 46개월 연속 감소 정확 수치",
+      "반도체 수출과 청년 고용률 상관관계 출처"
      ],
-     "위험": "전망치를 확정치처럼 말하면 틀린다 — 잠정실적 발표 뒤 숫자로 고친다.",
-     "총점": 92,
-     "최신": "2026-09-26"
-    },
-    {
-     "소재": "한국을 부자로 만든 세대가 가장 가난하다",
-     "후속": "",
-     "대상": "노인 빈곤",
-     "점수": {
-      "korea": 5,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "South Korea Got Rich. Its Grandparents Didn't. (한국은 부자가 됐다. 할머니·할아버지는 아니었다.)",
-     "왜_터질까": "노인 3명 중 1명이 빈곤(상대빈곤율 35.9%)이라는 기사와 기초연금 개편 논쟁(9/15~22)이 새로 나왔고, 한강의 기적을 만든 세대가 부자 나라에서 가장 가난하다는 역설이 분명합니다. 영어권에 이 각도의 장편이 거의 없습니다.",
-     "근거": [
-      {
-       "url": "https://www.msn.com/ko-kr/money/%EA%B2%BD%EC%A0%9C/%EB%85%B8%EC%9D%B8-3%EB%AA%85-%EC%A4%91-1%EB%AA%85-%EB%B9%88%EA%B3%A4-%EC%83%81%ED%99%A9-%EA%B8%B0%EC%B4%88%EC%97%B0%EA%B8%88-%ED%95%98%ED%9B%84%EC%83%81%EB%B0%95-%EC%9D%BC%EC%9E%90%EB%A6%AC-%EC%97%B0%EA%B3%84%ED%95%B4%EC%95%BC/ar-AA2cxrhu",
-       "메모": "09-19 노인 상대빈곤율 35.9%"
-      },
-      {
-       "url": "https://www.msn.com/ko-kr/money/%EC%A0%95%EB%B6%80-%EC%A7%80%EC%9B%90-%EB%B0%8F-%EB%B3%B5%EC%A7%80/%EB%82%B4%EB%85%84-%EA%B8%B0%EC%B4%88%EC%97%B0%EA%B8%88-%ED%95%98%ED%9B%84-%EC%B2%AB%EB%B0%9C-%EB%85%B8%EC%9D%B8%EB%B9%88%EA%B3%A4%EC%9C%A8-20-%EB%8C%80%EB%A1%9C-%EB%82%AE%EC%B6%9C%EA%B9%8C/ar-AA2cIvim",
-       "메모": "09-22 내년 기초연금 차등 지급 도입"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5YZXRLNnpRQXY0QXNNUXk1V1NRWmxmTlpYR0tGMGREVVdMdFR5Skp5dlVFLVRCdUM5WlpRdDg2bXBVUWl6NnZQOV82eU5yWFlobi03a1JHa3RlVXdMN0lZUmhUNUdrOEk4dV8ybVJR?oc=5",
-       "메모": "09-15 기초연금 개편안 논란"
-      },
-      {
-       "url": "https://www.mt.co.kr/politics/2026/09/27/2026092121093058503",
-       "메모": "09-27 급상승 '부모' — 무연고 사망 급증 기사"
-      }
-     ],
-     "첫문장": "In one of the richest countries on Earth, more than one in three people over 65 lives in poverty. (세계에서 손꼽히게 부유한 나라에서, 65세 이상 세 명 중 한 명 넘게 가난하게 삽니다.)",
-     "보여줄_장면": "1960년대부터 지금까지 1인당 소득 곡선 위에 노인 빈곤율 막대를 겹치고 OECD·미국과 나란히 비교한다.",
-     "확인할_사실": [
-      "노인 상대빈곤율 35.9%의 출처·연도",
-      "OECD 평균·미국 수치",
-      "기초연금 개편 내용과 시행일"
-     ],
-     "위험": "노인 자살 얘기로 넘어가면 광고 안전에서 벗어난다 — 빈곤·연금·일 중심으로.",
-     "총점": 92,
+     "위험": "10월 말 실제 실적이 예상치를 밑돌면 '기록적'이라는 제목 표현이 틀릴 수 있음",
+     "총점": 98,
      "최신": "2026-09-27"
     },
     {
-     "소재": "징병제 나라에 병사가 모자란다",
+     "소재": "South Korea's Jeonse System Is Broken by Record Rents",
      "후속": "",
-     "대상": "병역 자원",
-     "점수": {
-      "korea": 5,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "Why South Korea Is Suddenly Running Out of Soldiers (한국은 왜 갑자기 군인이 모자랄까)",
-     "왜_터질까": "병역판정 수검자가 31% 줄었다는 기사(9/23)와 육군이 인구 절벽 때문에 AI·무인 전투를 시험한다는 기사가 나와, 징병제 나라가 병사를 못 채우는 역설이 2026년 숫자로 보입니다. 영어권 군사 주제는 12개월 4편 중 2편이 100만을 넘길 만큼 공급이 적습니다.",
-     "근거": [
-      {
-       "url": "https://www.joongdo.co.kr/web/view.php?key=20260923010007557",
-       "메모": "09-23 병역판정 수검자 31% 감소"
-      },
-      {
-       "url": "https://www.fnnews.com/news/202609011009581708",
-       "메모": "09-01 인구 절벽 맞선 육군 AI 유·무인 전투"
-      },
-      {
-       "url": "https://www.youtube.com/watch?v=qJYWNypKGcA",
-       "메모": "영어권 '기술기업 병역특례 재개' 6.7천(공급 적음)"
-      }
-     ],
-     "첫문장": "Every South Korean man has to serve in the military — and there still aren't enough of them. (한국 남자는 모두 군대에 가야 하는데, 그래도 병사가 모자랍니다.)",
-     "보여줄_장면": "20세 남성 인구 막대가 해마다 짧아지는 차트 위로 필요 병력 선을 긋고 교차 지점을 표시한다.",
-     "확인할_사실": [
-      "수검자 31% 감소의 기간·기준",
-      "현재 병력 규모와 목표치",
-      "주한미군 수(미국 다리용)"
-     ],
-     "위험": "북한 군사 위협을 크게 다루면 광고 안전에서 벗어난다 — 인구 숫자 중심으로.",
-     "총점": 92,
-     "최신": "2026-09-23"
-    },
-    {
-     "소재": "KF-21, 미국이 기술을 거절하자 직접 만들었다",
-     "후속": "",
-     "대상": "KF-21",
+     "대상": "서울 전세 제도(HUG 전세보증)",
      "점수": {
       "korea": 5,
       "paradox": 4,
       "proof": 5,
       "visual": 4
      },
-     "제목": "South Korea's Fighter Jet Began With America Saying No (한국 전투기는 미국의 '거절'에서 시작됐다)",
-     "왜_터질까": "KF-21 첫 인도 영상이 평소의 21배(하루 7만 회)로 지금 가장 빠르게 크는 영어권 한국 영상이고, 미국이 핵심 기술 이전을 거절하자 직접 만들었다는 미국 고리가 있습니다. 방산은 영어권 공급이 적은 경외감 주제입니다.",
+     "제목": "South Korea's Jeonse System Is Broken by Record Rents (한국의 전세 제도, 역대 최고 전세금에 무너지다)",
+     "왜_터질까": "서울 전세금이 역대 최고치를 찍은 동시에 정부가 HUG를 통해 전세금을 직접 관리하겠다고 나선 것은 2026년 신규 통계·정책이 겹친 1순위 소재다. 청년·신혼부부의 주거비 부담이라는 미국인도 이해하는 렌트 위기 프레임과 바로 연결된다.",
      "근거": [
       {
-       "url": "https://www.youtube.com/watch?v=_iSrrWg6xUY",
-       "메모": "영어권 'First delivery of KF-21' 평소의 21.3배·하루 7.2만"
+       "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBsNVhlX2d1akZWSVRreEhlek9qVEljMDd1WjRickNCcEo4TzRRVTBOcHpoMGRsVVdqN0JFUUgxZzBPdWQ1VzJDb2lxdzZPVkJiRkMzUlZZQ0E?oc=5",
+       "메모": "2026-09-27 서울 전세금 역대 최고치"
       },
-      {
-       "url": "https://biz.heraldcorp.com/article/10858428",
-       "메모": "09-01 KF-21 양산 예산 3조 3천억"
-      },
-      {
-       "url": "https://biz.heraldcorp.com/article/10858654",
-       "메모": "09-01 국방예산 70조 시대"
-      }
-     ],
-     "첫문장": "In 2015, the United States refused to hand over four key technologies South Korea needed to build its own fighter jet. (2015년 미국은 한국이 전투기를 만드는 데 필요한 핵심 기술 네 가지를 넘겨주지 않았습니다.)",
-     "보여줄_장면": "개발 연표(거절→독자 개발→첫 비행→첫 인도)와 수출 대상국 지도, 기종 비교 표.",
-     "확인할_사실": [
-      "미국이 거절한 기술 4가지와 연도",
-      "첫 인도 날짜·대수",
-      "엔진 등 미국 부품 비율"
-     ],
-     "위험": "'미국 없이 만들었다'고 하면 틀린다(엔진은 미국제) — 거절받은 기술만 정확히 말한다.",
-     "총점": 92
-    },
-    {
-     "소재": "다들 삼성은 끝났다고 했다",
-     "후속": "",
-     "대상": "삼성전자",
-     "점수": {
-      "korea": 5,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "South Korea's Samsung Was Written Off. Then AI Arrived. (다들 삼성은 끝났다고 했다. 그런데 AI가 왔다.)",
-     "왜_터질까": "'Samsung is in Crisis'(350만)처럼 삼성 위기 영상이 크게 터졌는데, 9월 26일 3분기 영업익 첫 100조 원·D램 이익률 80% 전망 기사가 나와 첫 편과 같은 '끝났다더니 반전' 틀이 됩니다. 칩 주제 공급은 SK하이닉스 편(20만) 정도입니다.",
-     "근거": [
-      {
-       "url": "https://www.fnnews.com/news/202609270602207768",
-       "메모": "09-26 3분기 영업익 첫 100조·D램 이익률 80% 전망"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1odzk2S3FLMExZVW5aOGlmRWRRanZ4dHo2MWI4eDVEbTBObmhZV3JscExBYUxmV3g1Vk9GQ3dfSC1mV1BSSFg0T1lFR25YZ0k?oc=5",
-       "메모": "09-21 삼성전자 4% 급등"
-      },
-      {
-       "url": "https://www.youtube.com/watch?v=Cg5tAujp6Go",
-       "메모": "영어권 'SK hynix and the HBM Revolution' 20만(공급, 삼성 각도 아님)"
-      }
-     ],
-     "첫문장": "Not long ago, investors were calling Samsung a fallen giant. (얼마 전까지 투자자들은 삼성을 '몰락한 거인'이라고 불렀습니다.)",
-     "보여줄_장면": "분기 영업이익 막대(바닥→급반등)와 D램 가격 선을 겹치고, 메모리 칩 적층 구조를 단면 그래픽으로.",
-     "확인할_사실": [
-      "3분기 실적 전망치 출처와 확정 발표일",
-      "'위기' 시기 실적 수치",
-      "D램 이익률 80%의 출처"
-     ],
-     "위험": "전망 기사에 기대면 발표 뒤 틀릴 수 있다 — 10월 잠정실적 뒤 제작. 브랜드 로고는 화면에 쓰지 않는다.",
-     "총점": 90,
-     "최신": "2026-09-26"
-    },
-    {
-     "소재": "외국인 없으면 농사를 못 짓는 나라",
-     "후속": "",
-     "대상": "외국인 계절노동자",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "Why South Korea Can't Farm Without Foreigners Anymore (한국은 왜 이제 외국인 없이 농사를 못 지을까)",
-     "왜_터질까": "올해 계절노동자가 11만 7,113명으로 2021년 7,340명의 16배가 됐다는 기사(9/25)와 건설현장 외국인 인명피해가 2년 새 30% 늘었다는 기사(9/26)가 새로 나왔고, 단일민족이라던 나라가 외국인 손에 기대는 역설이 있습니다. 미국 H-2A 비자와 바로 비교됩니다.",
-     "근거": [
-      {
-       "url": "https://www.eroun.net/news/articleView.html?idxno=89975",
-       "메모": "09-25 계절노동자 11만 7,113명(2021년 7,340명)"
-      },
-      {
-       "url": "https://www.fnnews.com/news/202609270804026860",
-       "메모": "09-26 건설현장 외국인 근로자 인명피해 2년 새 30%↑"
-      },
-      {
-       "url": "https://www.kbmaeil.com/article/20260927500065",
-       "메모": "09-27 상주시 라오스 계절근로자 협력"
-      }
-     ],
-     "첫문장": "Five years ago, South Korea brought in about 7,000 seasonal farm workers. This year, it's more than 117,000. (5년 전 한국은 계절 농업 노동자를 약 7천 명 들였습니다. 올해는 11만 7천 명이 넘습니다.)",
-     "보여줄_장면": "연도별 계절노동자 수가 폭증하는 막대 차트, 출신국에서 한국 농촌으로 이어지는 지도 화살표, 농촌 고령화 인구 피라미드.",
-     "확인할_사실": [
-      "11만 7,113명이 배정 인원인지 실제 입국 인원인지",
-      "출신국 순위",
-      "미국 H-2A 비자 인원(비교용)"
-     ],
-     "위험": "특정 국가·집단 비하가 되지 않게 제도 중심으로 다룬다.",
-     "총점": 85,
-     "최신": "2026-09-27"
-    },
-    {
-     "소재": "전세가 사라진다",
-     "후속": "",
-     "대상": "전세",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "Why South Korea's No-Rent Housing System Is Collapsing (월세 없는 한국의 전세 제도는 왜 무너지고 있나)",
-     "왜_터질까": "서울 아파트 전셋값이 2년 새 8천만 원 뛰고 월세가 24% 올랐다는 기사(9/26)와 '전세가 사라진다'(9/22)·전세사기 사각지대(9/24) 기사가 새로 나왔고, 외국인에게는 '큰돈을 맡기고 월세 0원'이라는 제도 자체가 역설입니다. 채널 기획 첫 12편 후보입니다.",
-     "근거": [
       {
        "url": "https://www.kyeonggi.com/article/20260927580001",
-       "메모": "09-26 서울 아파트 전셋값 2년 새 8천만 원↑·월세 24%↑"
+       "메모": "2026-09-26 서울 아파트 전셋값 2년새 8천만원 상승, 월세 24%↑"
       },
       {
-       "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE9OTFdBaTg1TmtlazhmSlRwMm54WUIyUzMtTy1jWnl3XzBtY0UtVHQ1RWtkTXNEeUNwaTJhNzhzU1M5elZWbFNqRXQyYw?oc=5",
-       "메모": "09-22 전세가 사라진다, 매물 줄고 갱신만"
+       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFA5SUxwQ1FfQ1pOQ3VONVhpbWdaazJVQkY5dXA0OG1oN1FZaU52cDNjYXFETV9Tbjk0VUF0Qmk3ellRZWRNaV9zaVYxb3RxYXVXQndibUVfM3JPMU1ZeExqT214MFFQN2k3UmpMbUdNODQ?oc=5",
+       "메모": "2026-09-22 HUG 안심신탁 전세사고 방지"
       },
       {
-       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE9SSF9LaGhOWXdSWERoMVVXMElfeGJnekZOclhYY054TmV1M1REWG9IOFdqc2JhYWFCaDNsYmpUWGNoUEZ0eUdnMzQxWXRFSkU2NExSeTNmMzVocHFtVlZVQ9IBeEFVX3lxTE1xTG5KV3BydUc1elJNQWQzYlRVSThFejc3clBQMUpaVVpIX2JvWHRTZl9TdXhWOHRsbHdnemROV2VWcUlORGhRSWJUSFp2cjVfYURRenlOTUlXRUpHakJ2MlJ2YkkxNVJFUi1vSjk0VWNxN21xc2ExRg?oc=5",
-       "메모": "09-24 전세사기 보증금 미반환 사각지대"
+       "url": "https://www.newspim.com/news/view/20260917000685",
+       "메모": "2026-09-17 HUG 안심신탁 본격화"
       }
      ],
-     "첫문장": "In Seoul, you can rent an apartment for zero dollars a month — if you first hand your landlord a few hundred thousand dollars. (서울에서는 월세 0원으로 아파트에 살 수 있습니다, 먼저 집주인에게 수억 원을 맡긴다면요.)",
-     "보여줄_장면": "보증금이 세입자→집주인→은행·투자→다시 세입자로 도는 돈의 흐름 도식과, 전세·월세 비중이 뒤집히는 차트.",
+     "첫문장": "In Seoul this month, renters are being asked to pay eighty million won more just to stay two more years. (이번 달 서울에서는 세입자들이 2년 더 살기 위해 8000만원을 추가로 요구받고 있다.)",
+     "보여줄_장면": "서울 아파트 단지 전경, 부동산 중개소 전세 시세표, 계약서에 도장 찍는 손 클로즈업.",
      "확인할_사실": [
-      "서울 아파트 평균 전세 보증금(달러 환산 날짜)",
-      "전세·월세 비중 추이",
-      "전세사기 피해 규모 최신 통계"
+      "서울 전세금 역대 최고치 정확 기준일·수치",
+      "HUG 안심신탁 가입 규모",
+      "2년새 8000만원 상승 통계 원문"
      ],
-     "위험": "전세사기 피해자 사연은 실명·얼굴 없이, 판단보다 구조 설명을 먼저.",
-     "총점": 85,
-     "최신": "2026-09-26"
-    },
-    {
-     "소재": "학원은 이제 네 살부터",
-     "후속": "",
-     "대상": "사교육",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "South Korea's Cram Schools Now Start at Age Four (한국의 학원은 이제 네 살부터 시작한다)",
-     "왜_터질까": "영유아 영어학원 '4세 고시' 금지 영어권 보도(4일 전)와 밤 10시 이후 학원 불시점검(9/25), 청년 10명 중 9명이 취업 사교육을 받는다는 조사(9/26)가 이어져 '4살부터 30살까지 학원'이라는 역설이 2026년 숫자로 나옵니다. 교육 주제는 영어권 12개월 공급이 2편뿐입니다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/watch?v=fiM5gTIKy7Y",
-       "메모": "영어권 '4-year-old exams banned' 8.9천(공급 적음)"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1LOWoyVHY3NUpVQ1JOeGtFbVl6SHBSamh4R2Y4SU8yMVl3OTNiRHc1aHY3SVVxaklxYmZ0M0VBT21iVEstVmF3dEZHamhEcU5OVzlQTVM3ZmZEX0tSd0RfRVRFVGo3UQ?oc=5",
-       "메모": "09-25 밤 10시 이후 입시학원 불시점검"
-      },
-      {
-       "url": "https://www.msn.com/ko-kr/money/topstories/10%EB%AA%85-%EC%A4%91-9%EB%AA%85-%EC%B7%A8%EC%97%85%EC%A1%B0%EC%B0%A8-%EC%82%AC%EA%B5%90%EC%9C%A1-%ED%8F%89%EA%B7%A0%EB%B9%84%EC%9A%A9-%EC%97%B0-360%EB%A7%8C%EC%9B%90/ar-AA2cZr35",
-       "메모": "09-26 청년 10명 중 9명 취업 사교육·연 360만 원"
-      },
-      {
-       "url": "https://www.youtube.com/shorts/ml9bajomHB8",
-       "메모": "영어권 쇼츠 'Korea Banned Tutoring. The Rich Kept Studying.' 평소의 4.1배"
-      }
-     ],
-     "첫문장": "In South Korea, some four-year-olds sit an entrance exam — to get into an English cram school. (한국에서는 네 살 아이가 입학시험을 봅니다, 영어 학원에 들어가려고요.)",
-     "보여줄_장면": "나이별(4세→30세) 사교육 단계 타임라인과 가구당 사교육비 막대, 밤 10시 학원가 거리 스톡 영상.",
-     "확인할_사실": [
-      "'4세 고시' 금지의 정확한 내용·시행일",
-      "초중고 사교육비 최신 통계",
-      "취업 사교육 360만 원 조사 출처"
-     ],
-     "위험": "수능 편(11월)과 겹치지 않게 수능은 한 줄만. 아이 얼굴이 주인공인 화면 금지.",
-     "총점": 85,
-     "최신": "2026-09-26"
-    },
-    {
-     "소재": "전력 계량기로 고독사를 찾는 나라",
-     "후속": "",
-     "대상": "고독사",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 4
-     },
-     "제목": "South Korea's Power Meters Now Check If You're Alive (한국의 전력 계량기는 이제 당신이 살아 있는지 확인한다)",
-     "왜_터질까": "한전이 전력·통신 데이터로 1인 가구 위기를 찾는다는 기사(9/15)와 '받을 재산 없다며 부모와 연 끊는다, 무연고 사망 급증'이 오늘 급상승 검색어(1,000+)에 올라 고독의 역설이 생생합니다.",
-     "근거": [
-      {
-       "url": "https://www.hankookilbo.com/news/article/A2026091516240000723",
-       "메모": "09-15 한전, 전력·통신 데이터로 고독사 예방"
-      },
-      {
-       "url": "https://www.mt.co.kr/politics/2026/09/27/2026092121093058503",
-       "메모": "09-27 급상승 '부모' — 무연고 사망 급증"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5zMFYxU2xRS3NaSTNXR2FMZXFTOUx0M0FIMW1MU0tselBaZVZwN0t4WkN5S05oUnU0SDhZU093NEdFZUNqTDlIRGNfYV9TQWp3Nk5EenJDLVVYWTdYc0lfdW5Fa3pnbUNoQ1E?oc=5",
-       "메모": "09-18 중장년 1인 가구 224만"
-      },
-      {
-       "url": "https://www.youtube.com/watch?v=zm5atgbHTWo",
-       "메모": "영어권 'Korean mail carrier does more than deliver mail' 평소의 2.6배"
-      }
-     ],
-     "총점": 85,
+     "위험": "'역대 최고치'가 지역·평형별로 다를 수 있어 과장 소지",
+     "총점": 92,
      "최신": "2026-09-27"
     },
     {
-     "소재": "미국에 약속한 3,500억 달러",
+     "소재": "South Korea's Smart Fridges Are Destroying Your Groceries",
      "후속": "",
-     "대상": "대미 투자",
+     "대상": "삼성 스마트 냉장고(Family Hub)",
+     "점수": {
+      "korea": 4,
+      "paradox": 4,
+      "proof": 5,
+      "visual": 3
+     },
+     "제목": "South Korea's Smart Fridges Are Destroying Your Groceries (한국의 스마트 냉장고가 당신의 식료품을 망친다)",
+     "왜_터질까": "삼성 스마트 냉장고 펌웨어 업데이트가 미국 소비자들의 식료품을 상하게 했다는 사건은 발생 3일 이내의 가장 신선한 뉴스이며, 이 각도로 만든 장편은 아직 없다. 첨단 한국 가전이 스스로 무너지는 아이러니는 어두운 훅으로 강력하다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQbzJEVVA0cGlMTHVGb2pYREJwMFJ2UmgwanFTRDFZSm1VemN3a3gzLWE1TkQ4OUcxT1BoWG53WWhQS2M5RHJxcnJ0ZWEyS2dlcG5ONGZPYW5OUEVHU3p1dXVkMHl5OEJwRmFlbkZ1Q1ZZOUtDY2MydG1wOXBCVm9PVXNVX25fX3ozaUZVelZzN2RyTm5sYjk0d1NtRkpFdHBMZ25fdXU4c2lmcFFkY2c?oc=5",
+       "메모": "2026-09-25 냉장고 브릭 소비자 불만"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPS1BMNnFOOU9oalFxaS1Uc3dyRGk4bk5sdWFYMXRLTTFyYUh3a0JMTnBTZ29CV3k4ekxUa0RXZHgyYmdMMTlObzJKM3VGT0FCSHFBNV9LaHJtdEg5dGhSSTJpWXFCeFJDSzhGaG9aMXFpR0gzSUpLRllQMmt1bk9saVNWaFg2bXJVVGRnM0V1YWFXekJPQ2Q3VzU4MWUzcUplMWdMWWN1RF8zX0tOQkcwSWwtaEZEanB3?oc=5",
+       "메모": "2026-09-24 펌웨어 업데이트로 냉장고 먹통"
+      }
+     ],
+     "첫문장": "This week, Samsung customers in the United States say a software update turned their refrigerators into expensive coolers that ruined their food. (이번 주 미국의 삼성 고객들은 소프트웨어 업데이트가 냉장고를 못 쓰게 만들어 음식을 상하게 했다고 말한다.)",
+     "보여줄_장면": "미국 가정 주방의 스마트 냉장고, 상한 음식 폐기 장면, 삼성 서비스센터 외경.",
+     "확인할_사실": [
+      "정확히 몇 대의 냉장고가 영향받았는지",
+      "삼성 공식 해명·보상 정책 원문",
+      "결함의 기술적 원인"
+     ],
+     "위험": "개별 소비자 불만이 '전체 냉장고 결함'처럼 과장될 위험",
+     "총점": 82,
+     "최신": "2026-09-25"
+    },
+    {
+     "소재": "South Korea's Housing Prices Have Become Impossible to Stop",
+     "후속": "",
+     "대상": "서울 아파트 가격지수",
      "점수": {
       "korea": 5,
-      "paradox": 4,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "Why South Korea Promised America $350 Billion (한국은 왜 미국에 3,500억 달러를 약속했나)",
-     "왜_터질까": "3,500억 달러 대미 투자 첫 사업이 사업성 우려 속에 확정됐다는 영어권 보도(9/22)와 대한항공 보잉 103대 주문(9/17)이 나와 미국 시청자에게 가장 직접적인 고리입니다.",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOa3paUTZVYm9BWEp0aE1sUmdtUkJPd3pHOUxGaWdMdldGeU50VTdSam1UNk16ZGN2N3MtWXUtTEtCTTg0dXhYZ01aN042Zkg1NF9DYW9QbnA3aFZBYUVOTGJlWUxPM2p4eEVYOFExd2htYUR0d25JVFByMWF4VmF1Qkxuek42azJFUlZtYWRFWUtyRG9QakJ4UVl5bXIzMUhGQTNGZk5rN1psQ3ZxWGJ0M0xBRzd6NE5VQmdHcWlaX3FsODNlNmJDeHBlZFQ?oc=5",
-       "메모": "09-22 $350 billion US investment pact 첫 사업 확정"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPUlUzdlRub2pGSTg4SnRxemd0UUs4b2JjYXBGNXdDNWI5UEhMdF9hdVFxXzM5WU5GZEhvQk1qUmdpamdoM2V3WE9yOV9oelRCYXNoUE0zM0MzYzVVOFJQaTU4REI3RnBVU3JDVnB3UVRpd1VOMzlpNkZ6SG9JLVFOVVY0X0lTNm40VVUyWEI5MzZ3bXM4YlY1aWJiYlhIWjd2bHg4SzROOGpTUldG?oc=5",
-       "메모": "09-17 Korean Air Boeing 103대 주문"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPU21JeWtmU3dxVTQtWk5Ib2NlemJEWTAxR0w5YmRUSGRxQ1E1b1hpb1JNSFVtYnJUWkpYN3c2VEZDOERaRHpKdVNQbGo2eVlMdFowb0ZlMWdORnYwQVBRb1ViMUtrdy1iU3dFRXlWVDNGbndaNUxVcU5vSExYdFFURTZmeWFVS0JfX21J?oc=5",
-       "메모": "09-22 캔자스시티 한국 투자"
-      }
-     ],
-     "총점": 85,
-     "최신": "2026-09-22"
-    },
-    {
-     "소재": "사라지는 141곳",
-     "후속": "",
-     "대상": "지방 소멸",
-     "점수": {
-      "korea": 4,
-      "paradox": 4,
-      "proof": 4,
-      "visual": 5
-     },
-     "제목": "South Korea Has 141 Towns That Are Disappearing (한국에는 사라지고 있는 지역이 141곳 있다)",
-     "왜_터질까": "229개 지자체 중 141곳이 소멸 위기라는 기사(9/22)와 접경지 폐교 기사(9/26)가 나왔고, 지도에서 한 곳씩 꺼지는 장면이 채널 화면 공식(지도 20~25%)에 딱 맞습니다.",
-     "근거": [
-      {
-       "url": "https://www.mt.co.kr/living/2026/09/22/2026092216502015118",
-       "메모": "09-22 229개 지자체 중 141곳 소멸 위기"
-      },
-      {
-       "url": "https://www.kyeongin.com/article/1771494",
-       "메모": "09-26 경기북부 폐교 증가"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1nZUZQX0lTaVdYaGNhc1dQVUFqekVndFkwYmp0NF9qRWs2NHFqcGUtVURMYkF4el93WTBkaHQ1VUFNaVJ1ZEJzVll2RVp5eVVwblpYU2xTay15TkU?oc=5",
-       "메모": "09-23 인구이동 53년 만에 최소"
-      }
-     ],
-     "총점": 82,
-     "최신": "2026-09-26"
-    },
-    {
-     "소재": "외환위기가 만든 PC방 나라",
-     "후속": "",
-     "대상": "PC방",
-     "점수": {
-      "korea": 4,
-      "paradox": 5,
-      "proof": 4,
-      "visual": 3
-     },
-     "제목": "How a Crash Made South Korea the Gaming Capital (경제 위기는 어떻게 한국을 게임의 수도로 만들었나)",
-     "왜_터질까": "24시간 PC방 하루 영상이 382만(46일)으로 영어권 한국 영상 중 가장 크게 터졌고, 1997년 외환위기에 밀려난 직장인들이 PC방을 열었다는 숨은 이유를 다룬 장편은 거의 없습니다.",
-     "근거": [
-      {
-       "url": "https://www.youtube.com/watch?v=-H78SEwR5B4",
-       "메모": "영어권 '24/7 Korean Internet Cafe' 382만(46일)"
-      }
-     ],
-     "총점": 82
-    },
-    {
-     "소재": "서울 아파트값 85주 연속 상승",
-     "후속": "",
-     "대상": "서울 아파트",
-     "점수": {
-      "korea": 4,
-      "paradox": 4,
+      "paradox": 3,
       "proof": 4,
       "visual": 4
      },
-     "제목": "Why South Korea's Apartment Prices Won't Stop Rising (한국 아파트값은 왜 멈추지 않을까)",
-     "왜_터질까": "서울 아파트값이 85주 연속 올라 역대 최장 기록과 동률이라는 기사(9/24)가 여러 건 나왔고, 인구가 줄어드는 나라에서 집값만 오르는 역설이 있습니다.",
+     "제목": "South Korea's Housing Prices Have Become Impossible to Stop (한국의 집값, 멈출 수 없게 되다)",
+     "왜_터질까": "85주 연속 상승으로 역대 최장 기록과 동률을 이룬 09-24 기사는 새롭고, 강남 3구는 하락하는데 전국은 오른다는 지역 역설이 그래픽으로 풀기 좋다.",
      "근거": [
       {
        "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE90eEt4Z1kta1BOM3FCenhPbktfb1V5clMtVFBtNFY2aWl6a1BlcS1yMDBQcHVteXZ0X2Y5a3FJbWZ1X09Zd0hmZk1kRW5lckh1c3JlaXRwaWdHYlFkTEE?oc=5",
-       "메모": "09-24 서울 아파트값 85주 상승, 역대 최장 동률"
+       "메모": "2026-09-24 서울 아파트값 85주 상승 역대 최장 동률"
       },
       {
        "url": "https://v.daum.net/v/20260924142511572",
-       "메모": "09-24 85주 연속 상승 역대 최장 동률"
-      },
-      {
-       "url": "https://www.kyeonggi.com/article/20260927580001",
-       "메모": "09-26 전셋값 2년 새 8천만 원↑"
+       "메모": "2026-09-24 강남3구 하락폭 커졌지만 전체 85주 연속 상승"
       }
      ],
-     "총점": 80,
+     "첫문장": "For eighty-five straight weeks, apartment prices in Seoul have gone up — tying the longest streak ever recorded. (85주 연속으로 서울 아파트값이 올랐다 — 역대 최장 기록과 동률이다.)",
+     "보여줄_장면": "강남 스카이라인 항공샷, 부동산 시세 전광판, 상승 그래프 애니메이션.",
+     "확인할_사실": [
+      "85주 연속 상승 정확 시작일",
+      "강남3구 하락폭 대 전체 상승폭 수치",
+      "이전 최장 기록(문재인 정부) 기간 비교"
+     ],
+     "위험": "강남 하락과 전국 상승을 동시에 다뤄 메시지 혼란 가능",
+     "총점": 82,
+     "최신": "2026-09-24"
+    },
+    {
+     "소재": "South Korea's Pension Fix Is Already Broken for Elders",
+     "후속": "elderly poverty",
+     "대상": "기초연금 제도",
+     "점수": {
+      "korea": 4,
+      "paradox": 4,
+      "proof": 4,
+      "visual": 3
+     },
+     "제목": "South Korea's Pension Fix Is Already Broken for Elders (한국의 연금 개혁, 노인에게는 이미 무너졌다)",
+     "왜_터질까": "기초연금 개편안이 나온 지 며칠 만에 여당 토론회에서조차 '빈곤율 변화 없다'는 지적이 나온 것은 신선한 2026년 뉴스다. 우리 대박 편(노인 빈곤)의 자연스러운 후속으로 기존 시청층을 이어갈 수 있다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1DNVE3T2M1MUJ5c3Q4eGMzclRpZmVkTnpOTENKOGYtRHNONDZFanFHT19sSkZzOVllNDFsMkFWOTZwNDBQbWFJTnFjTTRKOVFOVnUwSllTOUpJQQ?oc=5",
+       "메모": "2026-09-22 기초연금 하후 첫발, 노인빈곤율 20%대 목표"
+      },
+      {
+       "url": "https://www.msn.com/ko-kr/money/%EA%B2%BD%EC%A0%9C/%EB%85%B8%EC%9D%B8-3%EB%AA%85-%EC%A4%91-1%EB%AA%85-%EB%B9%88%EA%B3%A4-%EC%83%81%ED%99%A9-%EA%B8%B0%EC%B4%88%EC%97%B0%EA%B8%88-%ED%95%98%ED%9B%84%EC%83%81%EB%B0%95-%EC%9D%BC%EC%9E%90%EB%A6%AC-%EC%97%B0%EA%B3%84%ED%95%B4%EC%95%BC/ar-AA2cxrhu",
+       "메모": "2026-09-19 노인 3명 중 1명 빈곤 35.9%"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5YZXRLNnpRQXY0QXNNUXk1V1NRWmxmTlpYR0tGMGREVVdMdFR5Skp5dlVFLVRCdUM5WlpRdDg2bXBVUWl6NnZQOV82eU5yWFlobi03a1JHa3RlVXdMN0lZUmhUNUdrOEk4dV8ybVJR?oc=5",
+       "메모": "2026-09-15 기초연금 개편안 후퇴 비판"
+      }
+     ],
+     "첫문장": "South Korea just redesigned its basic pension to fight elderly poverty — but experts say the poverty rate won't move at all. (한국은 노인 빈곤과 싸우기 위해 기초연금을 새로 설계했다 — 그러나 전문가들은 빈곤율이 전혀 바뀌지 않을 것이라 말한다.)",
+     "보여줄_장면": "폐지 줍는 노인, 국회 토론회 장면, 기초연금 수급 안내문.",
+     "확인할_사실": [
+      "노인 상대빈곤율 35.9% 원문 출처",
+      "개편안 구체 인상액",
+      "'빈곤율 20%대' 목표치 근거"
+     ],
+     "위험": "여야 정치 논쟁이라 균형 안 맞추면 편향 시비",
+     "총점": 78,
+     "최신": "2026-09-22"
+    },
+    {
+     "소재": "South Korea's Building Boom Is Killing More Migrant Workers",
+     "후속": "",
+     "대상": "건설현장 외국인 근로자",
+     "점수": {
+      "korea": 4,
+      "paradox": 4,
+      "proof": 4,
+      "visual": 3
+     },
+     "제목": "South Korea's Building Boom Is Killing More Migrant Workers (한국의 건설 붐, 이주 노동자를 더 많이 죽인다)",
+     "왜_터질까": "건설현장 외국인 근로자 인명피해가 2년 새 30% 늘었다는 09-26 신규 통계는 '한국 경제를 지탱하는 외국인'이라는 미국 이민 논쟁과도 이어지는 주제다.",
+     "근거": [
+      {
+       "url": "https://www.fnnews.com/news/202609270804026860",
+       "메모": "2026-09-26 전남광주 건설현장 외국인 근로자 인명피해 2년새 30%↑"
+      },
+      {
+       "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=236745",
+       "메모": "2026-09-14 이주노동자 폭행 신고 급증"
+      }
+     ],
+     "첫문장": "In South Korea's construction sites, migrant worker deaths have jumped thirty percent in just two years. (한국 건설현장에서 외국인 근로자 사망이 단 2년 만에 30% 늘었다.)",
+     "보여줄_장면": "건설 현장 크레인과 외국인 근로자 작업 장면, 안전모, 사고 현장 통제선.",
+     "확인할_사실": [
+      "인명피해 30% 증가 정확 수치(40명→52명 등)",
+      "산업재해 통계 발표기관·기준연도",
+      "외국인 근로자 전체 규모 대비 사고율"
+     ],
+     "위험": "개별 사망사고를 다뤄 유가족 관련 민감성 있음, 균형 필요",
+     "총점": 78,
      "최신": "2026-09-26"
     },
     {
-     "소재": "재벌 지배구조",
-     "후속": "",
-     "대상": "재벌",
+     "소재": "South Korea's Army Turns to Robots as Soldiers Disappear",
+     "후속": "soldiers",
+     "대상": "육군 AI 무인전투체계(아미 타이거)",
      "점수": {
-      "korea": 5,
+      "korea": 4,
+      "paradox": 4,
+      "proof": 3,
+      "visual": 4
+     },
+     "제목": "South Korea's Army Turns to Robots as Soldiers Disappear (한국 육군, 병사가 사라지자 로봇에 의존하다)",
+     "왜_터질까": "병역판정 수검자가 31% 줄었는데 검사 예산은 43% 늘었다는 09-23 새 통계와, 인구절벽에 맞선 AI 무인전투체계 실전 시현(09-01)이 겹쳐 우리 대박 편(soldiers)의 다른 각도 후속이 된다.",
+     "근거": [
+      {
+       "url": "https://www.joongdo.co.kr/web/view.php?key=20260923010007557",
+       "메모": "2026-09-23 병역판정 수검자 31% 감소, 지방병무청 예산 43%↑"
+      },
+      {
+       "url": "https://www.fnnews.com/news/202609011009581708",
+       "메모": "2026-09-01 인구절벽 맞선 아미타이거 AI 무인전투체계"
+      },
+      {
+       "url": "https://www.fnnews.com/news/202609011215128060",
+       "메모": "2026-09-01 국방예산 73조원 8.2%↑"
+      }
+     ],
+     "첫문장": "As South Korea runs out of young men to draft, its army is betting on AI robots to fill the ranks. (한국이 징집할 청년이 부족해지자, 육군은 그 자리를 AI 로봇으로 채우려 하고 있다.)",
+     "보여줄_장면": "무인 전투체계 시연 영상, 훈련장 로봇과 병사 함께 이동하는 장면, 병무청 앞 대기줄.",
+     "확인할_사실": [
+      "아미 타이거 AI 무인전투체계 구체 내용",
+      "병역판정 수검자 31% 감소 출처",
+      "국방예산 중 AI·무인체계 배정액"
+     ],
+     "위험": "군사 소재라 전투 묘사가 과하면 광고 정책상 민감할 수 있음",
+     "총점": 75,
+     "최신": "2026-09-23"
+    },
+    {
+     "소재": "South Korea's Best Students Are Quitting Top Universities",
+     "후속": "",
+     "대상": "서울대·연대·고대 자퇴생",
+     "점수": {
+      "korea": 4,
       "paradox": 4,
       "proof": 3,
       "visual": 3
      },
-     "제목": "South Korea's Economy Still Belongs to a Few Families (한국 경제는 아직 몇몇 가문의 것이다)",
-     "왜_터질까": "개정 상법 시험대에 오른 재계 빅4 지배구조 연재(9/16~23)가 2026년 새 근거지만, 로고를 못 써서 화면 만들기가 까다롭습니다.",
+     "제목": "South Korea's Best Students Are Quitting Top Universities (한국의 최우수 학생들, 명문대를 떠나다)",
+     "왜_터질까": "지금 한국에서 검색어 급상승 중인 'SKY 자퇴·의대행' 이슈는 영어권에 같은 각도의 공급이 거의 없고, 학원·입시라는 채널 핵심 소재와도 바로 연결된다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE95blRlTUdsRlpHTE1FQmJGX3hGNFhBdHQ2bzdtUzhTRFhYM0FFaGd1REN6WlBHcUloOVFqV3pQN0ZOcVFuZ3BFRGF6RHRHZWZZeTVLTTlNMTRJM1R2UjFYeA?oc=5",
-       "메모": "09-23 재계 빅4 지배구조 2.0 — 현대차그룹"
+       "url": "https://v.daum.net/v/20260927080131669",
+       "메모": "최근 트렌드 SKY 자퇴 학생 5년새 1만명 돌파, 의대행 추정"
       },
       {
-       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5jd2hKYUVwNmYtbGxlMmU3X0phamtlbmhES3VWTG4zeVpxVlBXRFJSdlAtckJiWG9aNEszTXM5UUMzWHYyTVJkWGhwaVhpTEtoMEdkYWt6MkszbVZLTTFTUg?oc=5",
-       "메모": "09-16 최태원 32% 지배력 시험대"
-      },
-      {
-       "url": "https://www.hani.co.kr/arti/economy/marketing/1277261.html",
-       "메모": "09-11 삼전·닉스 낡은 지배구조"
+       "url": "https://news.kbs.co.kr/news/view.do?ncd=8672046",
+       "메모": "최근 트렌드 종로학원 SKY 자퇴생 5년간 만명 통계"
       }
      ],
-     "총점": 80,
-     "최신": "2026-09-23"
+     "첫문장": "Over the past five years, more than ten thousand students have walked away from South Korea's most prestigious universities — many chasing a single dream: medical school. (지난 5년간 만 명 넘는 학생들이 한국 최고 명문대를 떠났다 — 상당수가 의대라는 하나의 꿈을 좇아서다.)",
+     "보여줄_장면": "서울대 정문, 종로 학원가 간판들, 의대 입시 학원 강의실.",
+     "확인할_사실": [
+      "5년간 자퇴생 1만명 돌파 정확 출처(종로학원)",
+      "자퇴 후 의대 진학 비율 추정치",
+      "SKY 각 대학별 자퇴생 분포"
+     ],
+     "위험": "'결국 의대행'이 확정된 사실인지 추정인지 구분 필요",
+     "총점": 72,
+     "최신": "2026-09-27"
     },
     {
-     "소재": "30분 배달의 대가",
+     "소재": "South Korea's Baby Boom Is Only Happening in Seoul",
      "후속": "",
-     "대상": "배달",
+     "대상": "혼인·출산 반등의 수도권 쏠림",
      "점수": {
       "korea": 4,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "The Dark Side of South Korea's 30-Minute Delivery (한국 30분 배달의 어두운 면)",
-     "왜_터질까": "미국 도어대시가 배달기사 대기시간 임금으로 뉴욕시에 약 1,800억 원을 낸 기사(9/24)와 한국 배달앱 수수료 상한제 공방(9/21)이 겹쳐 미국과 바로 비교됩니다.",
-     "근거": [
-      {
-       "url": "https://www.msn.com/ko-kr/news/other/%EC%86%8D%EB%B3%B4-%EB%9D%BC%EC%9D%B4%EB%8D%94-%EB%8C%80%EA%B8%B0-%EC%8B%9C%EA%B0%84%EB%8F%84-%EB%8F%88-%EC%A4%98%EC%95%BC-%EB%B0%B0%EB%8B%AC%EC%95%B1-1800%EC%96%B5-%ED%8F%AD%ED%83%84-%ED%84%B0%EC%A1%8C%EB%8B%A4-%EA%B3%BD%EC%9A%A9%ED%9D%AC%EC%9D%98-%EC%9D%BC%EC%9E%90%EB%A6%AC%EB%85%B8%ED%8A%B8/ar-AA2cRchp",
-       "메모": "09-24 도어대시 뉴욕시에 1억 3,150만 달러"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYmxuTm55V0tyV0FLenp0aFJZU3g3YVg1YmtnMWh1d2l3c3R1b3ZHem5rd3Blc29VMm1IN2dQOFBIRXpKanYybFNQVU03ZkQwamxkMDFYSnFlUW1BSFB6ZldRbUlSdWoxQWZXMkY2c2RSVzdYNmZxazVkcGV3QmpVa3QxTjhJUdIBmgFBVV95cUxQdzVxMXBINHN4ZlhjMDBzUGs0VGtReTJqTXJKY3lkOW1XUGw4Z0ROeFVJS2dWLVdNUlNXeGRBcU5UUENQWTlVVTBtZlJtOTgyVFpiR1lhRjVxcHFEcmtUWFRlRFZRaFRIR3V1Wm4wRGZnMnpqZWhHeTZsQWJnSF80c3k2NS1iUTFpZUJEMWR5cy1LS05HeklyTENR?oc=5",
-       "메모": "09-21 배달앱 수수료 상한제"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFB5ZGh0VEQ4Wk1IcXV6TWdJMnZ0azl0Qk1aVHU0UmZuTGRvLUpOWWdCd3Jad0k0Q1hvNnlYQTdNa0h5QlRLRkxKY01SV2Z0cGkweFJNSA?oc=5",
-       "메모": "09-17 배달 기사들이 공공배달앱 외면"
-      }
-     ],
-     "총점": 75,
-     "최신": "2026-09-24"
-    },
-    {
-     "소재": "쓰레기통 없는 거리",
-     "후속": "",
-     "대상": "쓰레기 종량제",
-     "점수": {
-      "korea": 4,
-      "paradox": 4,
-      "proof": 3,
-      "visual": 4
-     },
-     "제목": "Why South Korea's Streets Have No Trash Cans (한국 거리에는 왜 쓰레기통이 없을까)",
-     "왜_터질까": "'New York has a food waste problem. South Korea has already solved it'(9/17) 보도로 미국 고리가 분명하고, 쓰레기통이 없는데 거리가 깨끗한 역설은 기획안 예비 주제입니다(BBC 짧은 영상 공급 있음).",
-     "근거": [
-      {
-       "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPUkVWWWQwYU9PcXZvSkJxQUo5SUdhczMyX0w0VVBOeEdJd20tNjV0U3RRelpNcloxeXVJMFVaYU5CRFZuQ0VMTDVDcmNEWlFLRlI0VjBXWEhFZjRpRWVFclkxRG4xenhxb2ZveWFYSHFEcFVNNEV3eV9GRHVZMFZGeDJPQm1EalJteHNLYzY2VTN1V1RRWk1MWllRMFdycmpiYnh3UmRsQjR3SHFZT2pJLQ?oc=5",
-       "메모": "09-17 New York food waste vs South Korea solved it"
-      },
-      {
-       "url": "https://www.youtube.com/watch?v=k3U_pSo1ioY",
-       "메모": "영어권 BBC 음식물 쓰레기 영상 7천(공급 있음)"
-      }
-     ],
-     "총점": 75,
-     "최신": "2026-09-17"
-    },
-    {
-     "소재": "인구 이동 53년 만에 최소",
-     "후속": "",
-     "대상": "인구 이동",
-     "점수": {
-      "korea": 3,
-      "paradox": 4,
+      "paradox": 3,
       "proof": 4,
-      "visual": 4
+      "visual": 3
      },
-     "제목": "South Koreans Have Suddenly Stopped Moving (한국인이 갑자기 이사를 멈췄다)",
-     "왜_터질까": "8월 인구 이동이 53년 만에 최소라는 기사(9/23)가 나와 '빨리빨리' 나라가 멈춰 선 역설을 고령화·집값으로 풀 수 있습니다.",
+     "제목": "South Korea's Baby Boom Is Only Happening in Seoul (한국의 베이비붐, 서울에서만 일어난다)",
+     "왜_터질까": "출산율 반등 뒤에 숨은 지역 불균형은 우리 대박 편(출산율)의 자연스러운 후속이며 09-23 새 통계로 뒷받침된다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1nZUZQX0lTaVdYaGNhc1dQVUFqekVndFkwYmp0NF9qRWs2NHFqcGUtVURMYkF4el93WTBkaHQ1VUFNaVJ1ZEJzVll2RVp5eVVwblpYU2xTay15TkU?oc=5",
-       "메모": "09-23 8월 인구이동 53년 만에 최소"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE41czQ2LXlGdE9mb0tnRlZ1LWd5X1BDT0cxdVNvcFB4ME5NZW5XTXZYTUtoYjhOTWNmdmZXalhNTDhzSjNxeW1XZlpTNjZWOXBIZEpxaXI4SHU0aHV0SXdGNtIBeEFVX3lxTE1yT2pPZUQ5Q1RXbjEwbUJma0hHUWV6SXBVTFZxaWtJZUFMa3E1aEk2eGR1QXkyWnlKT2xfdm1WSE5zNnd5ZmQxYUd1MGlDaVBlbWI1MUtua2RNb29Ta3IwemJZRWEwLUlneVJtUWs5TnhROFFPT1h3Rg?oc=5",
-       "메모": "09-23 주택거래 줄고 고령화 겹쳐"
+       "url": "https://www.inews24.com/view/2008791",
+       "메모": "2026-09-23 출생·혼인 반등이 경기·서울에 집중"
       }
      ],
      "총점": 72,
      "최신": "2026-09-23"
     },
     {
-     "소재": "K팝, AI로 제작비를 줄인다",
+     "소재": "South Korea's Gas Prices Hinge on a Distant War",
      "후속": "",
-     "대상": "K팝",
+     "대상": "호르무즈 해협·한국 겨울 가스 도입가",
      "점수": {
       "korea": 4,
       "paradox": 3,
       "proof": 3,
-      "visual": 3
+      "visual": 4
      },
-     "제목": "Why South Korea's K-Pop Is Cutting Costs With AI (K팝은 왜 AI로 제작비를 줄이나)",
-     "왜_터질까": "수억 원 세트비를 AI로 '0원'에 가깝게 줄인다는 연재(9/26)가 새 근거고 K팝은 영어권 100만 히트가 12개월 3편인 주제지만, 역설의 힘은 중간입니다.",
+     "제목": "South Korea's Gas Prices Hinge on a Distant War (한국의 가스값, 먼 나라 전쟁에 달렸다)",
+     "왜_터질까": "호르무즈 해협 리스크로 유럽이 가스 확보 경쟁에 나서며 한국 겨울 도입가가 흔들린다는 최신 기사가 미국 에너지 시장과도 바로 연결된다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFBWOVBxVERBdkdoQXVNZFNocGlzNmJxV1FSNkp2OS1RUU9menRkZEVJNU5LeXM1d21sVXhjWk9YaUhFLVNJV21NbktHaVQ1YXFfdldaTGkxallLaVpGcHV1LTVR?oc=5",
-       "메모": "09-26 K팝과 AI 혁명 — 수억 세트비 '0원'"
+       "url": "https://www.newsis.com/view/NISX20260926_0003803921",
+       "메모": "최근 호르무즈 리스크 EU 가스 수요 억제 검토"
       },
       {
-       "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE00SEdoUzE2cFBlSjdMcWpoa3NZWnY1WklfdG1FRjMyR3hEaUVoUXI0Q3V1NGpoeDhsOGg1b0R0OU9JSTJKN3lHX01SQlE5WHZKWGFna0gxZzY1dUhMZ1VPLV9pbk1PSGZvNk5KQmE5b2h0VDV2cFRpQlR6RHRxaDQ?oc=5",
-       "메모": "09-21 Why K-Pop Took Off When C-Pop Didn't"
-      },
-      {
-       "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQdDlpWGkzMXZMVG1BcVAtZUZQUTk3MzF2enlJZGh6VUJOQWR3MWtMZGMxN0llUmpxc1hLY1ZCWkFuLWp3eG0yakZvUTRJLU82RFl3UG14RjdJOUtoM256YTV5Y3E0Z3Y2eEJBWHhUaE9oWU9keEZJbkZPOWFib1p4YjJaRzB6SzZhMkQtTnVpZzJ6Zw?oc=5",
-       "메모": "09-16 디즈니-카카오 K팝 계약"
+       "url": "https://www.g-enews.com/article/Global-Biz/2026/09/20260926164842147fbbec65dfb_1",
+       "메모": "최근 호르무즈 뱃길 차질, 한국 겨울 도입가 흔들"
       }
      ],
-     "총점": 68,
-     "최신": "2026-09-26"
+     "총점": 70,
+     "최신": "2026-09-27"
     },
     {
-     "소재": "K뷰티 위조품 경제",
+     "소재": "South Korea's Hyundai Faces a Reckoning Over Old Ownership",
      "후속": "",
-     "대상": "K뷰티",
+     "대상": "현대차그룹 지배구조",
      "점수": {
       "korea": 4,
       "paradox": 3,
       "proof": 3,
       "visual": 3
      },
-     "제목": "The Dark Side of South Korea's Beauty Boom (한국 뷰티 붐의 어두운 면)",
-     "왜_터질까": "K뷰티 위조품 경제를 다룬 영어권 보도(9/17)가 새 근거고 뷰티는 영어권 공급 4편 중 2편이 100만을 넘긴 주제지만, 성형 편(238만)과 각도를 달리해야 합니다.",
+     "제목": "South Korea's Hyundai Faces a Reckoning Over Old Ownership (한국 현대차그룹, 낡은 지배구조의 심판대에 서다)",
+     "왜_터질까": "개정 상법 시행으로 현대차그룹 순환출자 해법이 시험대에 올랐다는 09-23 새 기사가 있다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQa1ZVcXY5d3JlR1NFRUZMMFhEUXp5ZnlIbG9pQkM1YWJmd2pSNFh6a0NGZ2ZuV2ZIa0JzaVBoTExnVnQ0a2ZQT1dwbUpwWUswV2NwRVhwWDJCazlpU2FXaXVxZnB0X1RVTWRlNlZpeGp2WDctRkVQendRVC0xNTE3alJlemFfQWoyUXZkUlhB?oc=5",
-       "메모": "09-17 K-beauty's counterfeit economy"
-      },
-      {
-       "url": "https://www.youtube.com/watch?v=QSwzpwwA_tk",
-       "메모": "영어권 'Korea's Bone & Face Diagnosis Industry' 9.8만(공급 있음)"
+       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE95blRlTUdsRlpHTE1FQmJGX3hGNFhBdHQ2bzdtUzhTRFhYM0FFaGd1REN6WlBHcUloOVFqV3pQN0ZOcVFuZ3BFRGF6RHRHZWZZeTVLTTlNMTRJM1R2UjFYeA?oc=5",
+       "메모": "2026-09-23 개정 상법 시험대 현대차그룹 순환출자 해법"
       }
      ],
      "총점": 68,
+     "최신": "2026-09-23"
+    },
+    {
+     "소재": "How South Korea's Airline Bet Big With a 103-Jet Order",
+     "후속": "",
+     "대상": "대한항공",
+     "점수": {
+      "korea": 4,
+      "paradox": 2,
+      "proof": 3,
+      "visual": 4
+     },
+     "제목": "How South Korea's Airline Bet Big With a 103-Jet Order (한국 항공사는 어떻게 103대 주문에 승부를 걸었나)",
+     "왜_터질까": "대한항공의 보잉 103대 주문은 경외감 카테고리에 맞는 메가프로젝트급 뉴스이며 미국 보잉과 직접 연결된다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPUlUzdlRub2pGSTg4SnRxemd0UUs4b2JjYXBGNXdDNWI5UEhMdF9hdVFxXzM5WU5GZEhvQk1qUmdpamdoM2V3WE9yOV9oelRCYXNoUE0zM0MzYzVVOFJQaTU4REI3RnBVU3JDVnB3UVRpd1VOMzlpNkZ6SG9JLVFOVVY0X0lTNm40VVUyWEI5MzZ3bXM4YlY1aWJiYlhIWjd2bHg4SzROOGpTUldG?oc=5",
+       "메모": "2026-09-17 대한항공 보잉 103대 주문"
+      }
+     ],
+     "총점": 65,
      "최신": "2026-09-17"
     },
     {
-     "소재": "수소차 1등이 밀린다",
+     "소재": "South Korea's Inheritance Laws Are Tearing Families Apart",
      "후속": "",
-     "대상": "수소차",
+     "대상": "상속법(혼외자·유류분)",
      "점수": {
       "korea": 3,
       "paradox": 4,
       "proof": 3,
       "visual": 3
      },
-     "제목": "Why South Korea Is Losing the Hydrogen Car Race (한국은 왜 수소차 경쟁에서 지고 있나)",
-     "왜_터질까": "'세계 최초 수소차 만들고도 중국에 1위 내줄 판'(9/17) 기사로 1등이 밀리는 역설이 있지만 영어권 관심은 중간입니다.",
+     "제목": "South Korea's Inheritance Laws Are Tearing Families Apart (한국의 상속법, 가족을 갈라놓다)",
+     "왜_터질까": "혼외자 등장으로 재산 분배가 뒤집히는 사례와 딸만 상속에서 제외된 사례가 최근 검색 트렌드에서 급상승했다.",
      "근거": [
       {
-       "url": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE45cC12ZlVHX0VPazM5VVNkWnh4OThYLXhrelEySkZKMkdIOEJXVXJMQl9sMkZIWlNnbTFmRnhZVUo0Z0dpVnc?oc=5",
-       "메모": "09-17 세계 최초 수소차 만들고도 중국에 1위 내줄 판"
+       "url": "https://www.edaily.co.kr/News/Read?newsId=01144726645584384&mediaCodeNo=257",
+       "메모": "최근 트렌드 혼외자 등장, 재산 분배 뒤집힘"
       },
       {
-       "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9lYUJSdE9LcG1WRk5WX1QxeTdSbTNiVi11VTdXUU1qUExWSVhfdUVFSUVkZTcwZE1oT2JsZXVFcW9DU0g0ejJCaEtKSHpSWThsX3hjZ1Yxa2JCRDF5OHVaQlRHQWNZaVczMmJ1btIBckFVX3lxTFBURnJmYmN4X1FzSFpfRjRLczFVcUs2VkdwZ0Qza0VFbzlldk54TVpna1dYbE9SMDltb0RfTEdMcWpiNGNDZjZ3OFhtX1ljZDlvYjU3UkhNMXRXY052UWN6MDBKdXBlVUFVUkNOS3ZiUzUtdw?oc=5",
-       "메모": "09-17 중국 수소정책 매년 100개"
+       "url": "https://www.kyeonggi.com/article/20260926580062",
+       "메모": "최근 트렌드 딸들만 재산 못받은 사례 법원 판단"
       }
      ],
      "총점": 65,
-     "최신": "2026-09-17"
+     "최신": "2026-09-27"
+    },
+    {
+     "소재": "This South Korean Village Is Paying People Just to Stay",
+     "후속": "",
+     "대상": "충북 괴산 불정면 농어촌기본소득",
+     "점수": {
+      "korea": 3,
+      "paradox": 4,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "This South Korean Village Is Paying People Just to Stay (이 한국 마을은 그저 머물기만 해도 돈을 준다)",
+     "왜_터질까": "인구소멸 지역이 기본소득까지 동원하는 극단적 실험은 아직 영어권에 없는 각도다.",
+     "근거": [
+      {
+       "url": "https://www.msn.com/ko-kr/news/other/%EC%9D%B8%EA%B5%AC-%EA%B0%90%EC%86%8C-%EB%8F%8C%ED%8C%8C%EA%B5%AC-%EC%B6%A9%EB%B6%81-%EA%B4%B4%EC%82%B0-%EB%B6%88%EC%A0%95%EB%A9%B4-%EB%86%8D%EC%96%B4%EC%B4%8C%EA%B8%B0%EB%B3%B8%EC%86%8C%EB%93%9D-%EC%9C%A0%EC%B9%98-%EB%82%98%EC%84%9C/ar-AA2d2w7G",
+       "메모": "2026-09-27 괴산 불정면 농어촌기본소득 유치"
+      }
+     ],
+     "총점": 65,
+     "최신": "2026-09-27"
+    },
+    {
+     "소재": "South Korea's Kia Just Bet Its Future on a Strange New Van",
+     "후속": "",
+     "대상": "기아 PV7",
+     "점수": {
+      "korea": 3,
+      "paradox": 3,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "South Korea's Kia Just Bet Its Future on a Strange New Van (한국의 기아, 낯선 신차에 미래를 걸다)",
+     "왜_터질까": "기아의 세계 최초 PV7 공개는 경외감 버킷에 맞는 신선한 메가프로젝트급 소재다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE1rN3l2OXhvNUhpcElKRDVXOXo1VktBTUduMzNHRjhBTFdJZEQxUVBzTkkyX29RWlZqVlp6QWxEbTBrdzktTTZPTVptNHJhdlZGNU5fd3puR3hRYnRSMUNwZzlTaU5od1Q1THREUUJvRllPQQ?oc=5",
+       "메모": "2026-09-14 기아 PV7 세계 최초 공개"
+      }
+     ],
+     "총점": 60,
+     "최신": "2026-09-14"
+    },
+    {
+     "소재": "South Korea's Court Fined North Korea $32 Million",
+     "후속": "",
+     "대상": "서울 법원의 대북 배상 판결",
+     "점수": {
+      "korea": 3,
+      "paradox": 3,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "South Korea's Court Fined North Korea $32 Million (한국 법원, 북한에 3200만 달러 벌금을 매기다)",
+     "왜_터질까": "남북 군사 갈등을 직접 다루지 않으면서도 법적 드라마로 풀 수 있는 새로운 국제뉴스다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOSGQ3YlpoaXk5Zk5BbkVjMlBVcmF5SDFrVlVjS2xza3ZTRkt2UFRpSGZXWm5CYUNqV0pWVXJKbXQ4SFVRMUtrZFN3cU1lREZodXFfek9jQTNjUUdOenIwSFhyUG1NTlNFWlpvUVNBSWpGOHlkSm84UFhSV0ZCaHUzS09lcThZbjNndWNzWUFwSzkyaHdxd1M3R2J5alkxMld6NEFlaHZpNTEwQdIBrwFBVV95cUxOWXNCZ0V2TGtjN0tOcE9JU013OERET1N2eFdQWXZzZ3JaY21pSG8yM2NvcGh3Y1JNclVPdjFSTDUtOXB2SnJIZ240YUlFTk1pRXp4WDgzZEd6RUdQM2pmUkdFX3J5MVJQUDRVemJBUkZXcVBBZUJCYzFwNFFtVHBEbGNHam5jbC1lRmxYOU5NeURoYlpBdUFfSmI0TmlNMFlXMWR4YkJfbFVJNDZlLURR?oc=5",
+       "메모": "2026-09-16 서울법원 북한에 3250만달러 배상 판결"
+      }
+     ],
+     "총점": 60,
+     "최신": "2026-09-16"
+    },
+    {
+     "소재": "South Korea's Riders Still Wait for Free, Unlike America's",
+     "후속": "",
+     "대상": "한국 배달 라이더 대기시간 무급 문제",
+     "점수": {
+      "korea": 3,
+      "paradox": 3,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "South Korea's Riders Still Wait for Free, Unlike America's (한국 라이더는 여전히 공짜로 기다린다, 미국과 달리)",
+     "왜_터질까": "도어대시의 1800억원대 뉴욕 합의를 거울삼아 한국 라이더의 대기시간 무급 문제를 대조할 수 있다.",
+     "근거": [
+      {
+       "url": "https://www.etnews.com/20260925000043",
+       "메모": "2026-09-25 도어대시 뉴욕 1800억 합의"
+      },
+      {
+       "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYmxuTm55V0tyV0FLenp0aFJZU3g3YVg1YmtnMWh1d2l3c3R1b3ZHem5rd3Blc29VMm1IN2dQOFBIRXpKanYybFNQVU03ZkQwamxkMDFYSnFlUW1BSFB6ZldRbUlSdWoxQWZXMkY2c2RSVzdYNmZxazVkcGV3QmpVa3QxTjhJUdIBmgFBVV95cUxQdzVxMXBINHN4ZlhjMDBzUGs0VGtReTJqTXJKY3lkOW1XUGw4Z0ROeFVJS2dWLVdNUlNXeGRBcU5UUENQWTlVVTBtZlJtOTgyVFpiR1lhRjVxcHFEcmtUWFRlRFZRaFRIR3V1Wm4wRGZnMnpqZWhHeTZsQWJnSF80c3k2NS1iUTFpZUJEMWR5cy1LS05HeklyTENR?oc=5",
+       "메모": "2026-09-21 배달앱 수수료 상한제 정부 압박"
+      }
+     ],
+     "총점": 60,
+     "최신": "2026-09-25"
+    },
+    {
+     "소재": "How South Korea's Hanwha Family Is Quietly Securing Control",
+     "후속": "",
+     "대상": "한화에너지 승계",
+     "점수": {
+      "korea": 3,
+      "paradox": 3,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "How South Korea's Hanwha Family Is Quietly Securing Control (한화 가문은 어떻게 조용히 지배력을 확보하나)",
+     "왜_터질까": "중복상장 규제 사각지대를 이용한 한화 3세 승계 구조가 09-10 기사로 새로 드러났다.",
+     "근거": [
+      {
+       "url": "https://www.msn.com/ko-kr/money/%EC%9D%BC%EB%B0%98/%EC%83%81%EC%9E%A5-%EC%88%9C%EC%84%9C%EB%A7%8C-%EB%B0%94%EA%BE%B8%EB%A9%B4-%EA%B4%9C%EC%B0%AE%EB%8B%A4-%ED%95%9C%ED%99%94-%EC%A4%91%EB%B3%B5%EC%83%81%EC%9E%A5-%EA%B8%B8-%ED%84%B0%EC%A4%80-%EA%B7%9C%EC%A0%9C-%EC%82%AC%EA%B0%81%EC%A7%80%EB%8C%80/ar-AA2bXVWN",
+       "메모": "2026-09-10 한화에너지 승계작업 중복상장 규제 사각지대"
+      }
+     ],
+     "총점": 60
+    },
+    {
+     "소재": "South Korea Is Quietly Courting Central Asia's New Leaders",
+     "후속": "",
+     "대상": "한국-중앙아시아 정상외교",
+     "점수": {
+      "korea": 3,
+      "paradox": 2,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "South Korea Is Quietly Courting Central Asia's New Leaders (한국, 조용히 중앙아시아 새 지도자들을 끌어안다)",
+     "왜_터질까": "자원·지정학적 이해관계 속에서 한국이 중앙아시아 지도자들을 끌어안는 최근 외교 기사가 있다.",
+     "근거": [
+      {
+       "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxON0pvMVNYLXAwQzlmcTk3WmwwQ1RWQ1NNQmowR092Nlhab0ppcVJiaWJGVHNaeTJwX3g3UzNzejNOSW5PTjRXU3VkNjhXOVQzaHJ2T1FzQ090Y0Npa1ZFNVFQZ2hhcHl0WGE1d1ozUTM5aFZOUGtCZnJjU19ud0lrcUpMOFdWYUVfcEFGaG1nUm96aTVzTFEtRHJuQ1g4dUNwQmVBU1lEQjJCSlpiMGZyYmpNWFYzd9IBuwFBVV95cUxObUtaNTNVQl9GYUdZdDJaV0hNZ2ZDdFRndkFnRkp5QWw0RzZHTUFmWVhManI2MTQ5eWlRY05KX3ZiclVKOGltUnNoVzVtcDA0TnNBVnhaNUNGUi1rX2dYTU5XY1YtU1hBWlVrc0hjSVdGN0pJZ1FMV25qMlZpWmlHaEI0dHZjM1B6MGJqeTNHcmdyellObzdtMFFoOVBEOVNmbE9Ga293NTVSZFBBQnpSWlR1R3R2bHhKV3VF?oc=5",
+       "메모": "2026-09-15 한국, 중앙아시아 지도자들과 관계 강화"
+      }
+     ],
+     "총점": 55,
+     "최신": "2026-09-15"
+    },
+    {
+     "소재": "South Korea Wants K-Pop Concerts to Go Carbon Neutral",
+     "후속": "",
+     "대상": "K팝 저탄소 공연 가이드라인",
+     "점수": {
+      "korea": 3,
+      "paradox": 2,
+      "proof": 3,
+      "visual": 3
+     },
+     "제목": "South Korea Wants K-Pop Concerts to Go Carbon Neutral (한국, K팝 공연을 탄소중립으로 만들려 한다)",
+     "왜_터질까": "K팝 산업이 탄소중립 가이드라인을 만든다는 09-08 새 뉴스로, 소프트파워와 환경이라는 신선한 교차점이다.",
+     "근거": [
+      {
+       "url": "https://www.msn.com/ko-kr/news/national/k%ED%8C%9D-%EC%A0%80%ED%83%84%EC%86%8C-%EA%B3%B5%EC%97%B0-%EA%B0%80%EC%9D%B4%EB%93%9C%EB%9D%BC%EC%9D%B8-%EB%A7%8C%EB%93%A0%EB%8B%A4-%ED%83%84%EC%86%8C%EB%B0%B0%EC%B6%9C-%EA%B4%80%EB%A6%AC-%EC%B2%AB%EB%B0%9C/ar-AA2bNkUM",
+       "메모": "2026-09-08 K팝 저탄소 공연 가이드라인 민관산학 협의체"
+      },
+      {
+       "url": "https://www.msn.com/ko-kr/entertainment/music/k-%ED%8C%9D-%EC%A0%80%ED%83%84%EC%86%8C-%EA%B3%B5%EC%97%B0-%EA%B0%80%EC%9D%B4%EB%93%9C%EB%9D%BC%EC%9D%B8-%EC%B2%AB%EB%B0%9C-%EB%AF%BC%EA%B4%80%EC%82%B0%ED%95%99-%ED%98%91%EC%9D%98%EC%B2%B4-%EC%B6%9C%EB%B2%94/ar-AA2bO2hk",
+       "메모": "2026-09-08 저탄소 공연 가이드라인 첫발"
+      }
+     ],
+     "총점": 55
     }
    ],
    "calib": {
@@ -2357,12 +2354,52 @@
     },
     "alpha": 0.0,
     "hits": [],
-    "updated": "2026-09-27 12:02"
+    "updated": "2026-09-27 15:03"
    }
   }
  },
- "at": "2026-09-27 12:41",
+ "at": "2026-09-27 15:00",
  "trends": [
+  {
+   "검색어": "은가은",
+   "검색량": "2000+",
+   "날짜": "2026-09-27"
+  },
+  {
+   "검색어": "나 혼자 산다",
+   "검색량": "1000+",
+   "날짜": "2026-09-27"
+  },
+  {
+   "검색어": "살인",
+   "검색량": "10000+",
+   "날짜": "2026-09-27"
+  },
+  {
+   "검색어": "학생",
+   "검색량": "2000+",
+   "날짜": "2026-09-27"
+  },
+  {
+   "검색어": "콘크리트",
+   "검색량": "1000+",
+   "날짜": "2026-09-27"
+  },
+  {
+   "검색어": "선우은숙",
+   "검색량": "1000+",
+   "날짜": "2026-09-27"
+  },
+  {
+   "검색어": "상속",
+   "검색량": "5000+",
+   "날짜": "2026-09-27"
+  },
+  {
+   "검색어": "권 민아",
+   "검색량": "5000+",
+   "날짜": "2026-09-27"
+  },
   {
    "검색어": "부산광역시",
    "검색량": "500+",
@@ -2370,47 +2407,7 @@
   },
   {
    "검색어": "천연가스",
-   "검색량": "1000+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "노주현",
-   "검색량": "1000+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "나나",
-   "검색량": "1000+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "세종특별자치시",
-   "검색량": "1000+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "지진",
-   "검색량": "200+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "유태빈",
    "검색량": "2000+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "노윤서",
-   "검색량": "500+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "부모",
-   "검색량": "2000+",
-   "날짜": "2026-09-27"
-  },
-  {
-   "검색어": "조혜련",
-   "검색량": "1000+",
    "날짜": "2026-09-27"
   }
  ]
