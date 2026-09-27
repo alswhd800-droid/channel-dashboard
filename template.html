@@ -224,6 +224,77 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .huntmeta{color:var(--sub);font-size:11px;margin:2px 0 8px}
 .when{font-weight:400;color:var(--sub);font-size:12px;margin-left:6px}
 @media(max-width:520px){.hunt .sub2{font-size:10px}.hunt .rank{width:16px}.hunt .hg{display:none}.hunt .hm{display:block;margin-top:2px}.hunt .hm .mult{display:inline;font-size:13px}.sbar{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}}
+
+/* ───── 마케팅팀·제작 현황·채널 효율·업로드 달력 (2026-09-27) ───── */
+.face{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:19px;line-height:1;border:2px solid var(--line);background:var(--soft)}
+.face.lg{width:56px;height:56px;font-size:28px}
+.face.sm{width:26px;height:26px;font-size:13px;border-width:1.5px}
+.say{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px}
+.bub{flex:1;min-width:0;background:var(--tip);color:var(--tip-ink);border-radius:4px 14px 14px 14px;padding:9px 12px 10px;font-size:13px;line-height:1.62}
+.bub b{color:var(--ink);font-weight:700}
+.nm2{font-size:11.5px;color:var(--sub);margin-bottom:2px}.nm2 b{color:var(--ink);font-size:12.5px;margin-right:5px}
+.meet{padding:4px 16px 8px}
+.meet .mhead{display:flex;align-items:center;gap:10px;padding:10px 0 9px;border-bottom:1px solid var(--line)}
+.meet .faces{display:flex}.meet .faces .face{margin-left:-7px;border-color:var(--card)}.meet .faces .face:first-child{margin-left:0}
+.meet .ln{display:flex;gap:10px;align-items:flex-start;padding:10px 0}
+.meet .ln+.ln{border-top:1px dashed var(--line)}
+.meet .ln .bub{background:var(--soft);color:var(--ink)}
+.meet .ln.lead .bub{background:color-mix(in srgb,#6c5ce7 13%,var(--card))}
+.tone{display:inline-block;font-size:10.5px;font-weight:800;border-radius:5px;padding:0 6px;vertical-align:1px}
+.tone.good{background:color-mix(in srgb,#1f9d6b 17%,transparent);color:#1f9d6b}
+.tone.bad{background:color-mix(in srgb,#e0392b 15%,transparent);color:#e0392b}
+.tone.idea{background:color-mix(in srgb,#2b6de0 15%,transparent);color:#2b6de0}
+.go{display:inline-block;margin-top:3px;font-size:12px;font-weight:600;color:var(--sub);text-decoration:underline;text-underline-offset:2px}
+.todo{margin-top:12px}
+.todo h3{margin:0 0 2px;font-size:15px}
+.todo ul{margin:6px 0 0;padding:0}
+.todo li{list-style:none;display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5}
+.todo input{flex:none;width:19px;height:19px;margin:1px 0 0;accent-color:#1f9d6b;cursor:pointer}
+.todo li.done .tx{text-decoration:line-through;color:var(--sub)}
+.todo .by{display:block;font-size:11.5px;color:var(--sub);margin-top:1px}
+.team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.staff .ptop{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.staff .t1{font-weight:800;font-size:16px}.staff .t2{font-size:12.5px;color:var(--sub);font-weight:500}
+.staff .desc{font-size:13px;color:var(--sub);margin:0 0 6px;line-height:1.55}
+.staff .rp{font-size:13px;line-height:1.6;padding:7px 0;border-top:1px solid var(--line)}
+.staff .tabs2{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.notes .ln{display:flex;gap:8px;align-items:flex-start;padding:8px 0;font-size:13px;line-height:1.55}
+.notes .ln+.ln{border-top:1px solid var(--line)}
+.grp{margin-top:14px}
+.grp>h3{font-size:14px;margin:0 0 2px;display:flex;align-items:center;gap:6px}
+.grp>h3 .cn{font-size:12px;color:var(--sub);font-weight:600}
+.pcard{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:8px}
+.pcard .ctop{font-size:12px;color:var(--sub);line-height:1.5}
+.pcard .ctop .dot{margin-right:3px}
+.pcard .t{font-weight:700;font-size:14px;margin-top:3px;line-height:1.4}
+.pcard .m{font-size:12.5px;color:var(--sub);margin-top:4px;line-height:1.5}
+.pcard .vid{display:flex;gap:10px;align-items:center;margin-top:8px}
+.effocus{border:2px solid color-mix(in srgb,#2b6de0 45%,var(--line))}
+.effocus h3{margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.effocus ul{margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.7}
+.erow{padding:12px 0;border-top:1px solid var(--line)}
+.erow:first-child{border-top:0;padding-top:4px}
+.erow .ctop{display:flex;align-items:center;gap:8px;font-weight:700}
+.egrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.egrid div{background:var(--soft);border-radius:10px;padding:7px 9px;font-size:11.5px;color:var(--sub);min-width:0}
+.egrid b{display:block;color:var(--ink);font-size:14px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.egrid .top1{box-shadow:0 0 0 2px color-mix(in srgb,#1f9d6b 60%,transparent) inset}
+.calhd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));font-size:10.5px;color:var(--sub);margin:2px 0 4px}
+.crow2{padding:9px 0;border-top:1px solid var(--line)}
+.crow2 .ctop{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;margin-bottom:6px}
+.crow2 .ctop .st{font-size:12px;color:var(--sub);text-align:right}
+.crow2 .ctop .st.bad{color:#e0392b;font-weight:700}
+.crow2 .ctop>span:first-child{flex:none;white-space:nowrap}
+.crow2 .ctop .st{flex:1;min-width:0}
+.crow2 .ctop .st .due{color:#d08700;font-weight:700}
+.cells{display:grid;grid-template-columns:repeat(28,minmax(0,1fr));gap:2px}
+.cells i{display:block;height:14px;border-radius:3px;background:var(--soft)}
+.cells i.s{background:var(--shorts)}.cells i.l{background:var(--long)}
+.cells i.b{background:linear-gradient(135deg,var(--shorts) 50%,var(--long) 50%)}
+.cells i.today{box-shadow:0 0 0 1.5px var(--ink) inset}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--sub);margin:10px 0 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+@media (max-width:860px){.team{grid-template-columns:minmax(0,1fr)}.egrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -237,8 +308,8 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 <script>
 const D = /*__DATA__*/null;
 const PALETTE = ["#f2b705", "#e0392b", "#2b6de0", "#1f9d6b", "#8e44ad", "#ff7a00", "#00a3a3", "#d6336c", "#5c7cfa", "#66a80f", "#a47148", "#94a3b8"];
-const MENU = [["summary", "🏠", "요약"], ["topics", "🎯", "소재 추천", "소재"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["hunt", "🔥", "발굴"], ["insight", "💡", "인사이트"], ["money", "💰", "수익"], ["cost", "🧾", "제작비"]];
-const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
+const MENU = [["summary", "🏢", "회의실", "회의"], ["topics", "🎯", "소재 추천", "소재"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["hunt", "🔥", "발굴"], ["insight", "💡", "인사이트"], ["money", "💰", "수익"], ["cost", "🧾", "제작비"]];
+const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["efficiency", "📊", "채널 효율"], ["cadence", "📅", "업로드 달력"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -267,6 +338,62 @@ const ago = iso => {
   return `${Math.round(m / 1440)}일 전`;
 };
 const tip = html => `<div class="tip">${html}</div>`;
+
+/* ───────── 마케팅팀(2026-09-27): 직원 7명 — 명단·회의는 collect.py 가 대시보드 숫자로 만든다(AI 호출 없음) ───────── */
+const M = (D && D.meeting) || null;
+const STAFF = (M && M.staff) || {};
+const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+const jo2 = (w, a, b) => { const c = String(w).trim().slice(-1), k = c.charCodeAt(0) - 0xAC00; return (k >= 0 && k <= 11171 ? k % 28 !== 0 : /[lmn0136780]$/i.test(c)) ? a : b; };
+const face = (who, cls = "") => { const x = STAFF[who] || {}; return `<span class="face ${cls}" style="border-color:${x.color || "var(--line)"};background:color-mix(in srgb,${x.color || "#888"} 14%,var(--card))" aria-hidden="true">${x.emoji || "🙂"}</span>`; };
+const TONE = { good: "좋았던 점", bad: "아쉬운 점", idea: "제안" };
+const toneTag = t => TONE[t] ? `<span class="tone ${t}">${TONE[t]}</span>` : "";
+const nameRow = (who, tone) => { const x = STAFF[who] || {}; return `<div class="nm2"><b>${esc(x.name || "")}</b>${esc(x.role || "")} ${toneTag(tone)}</div>`; };
+const golink = (l, txt = "자세히 ›") => l ? `<a class="go" href="${esc(l)}"${l.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}>${txt}</a>` : "";
+// 각 화면 위: 담당 직원이 설명한다(예전 회색 설명 상자 자리). 명단이 없으면 예전 상자.
+const say = (who, html) => STAFF[who] ? `<div class="say">${face(who)}<div class="bub">${nameRow(who)}${html}</div></div>` : tip(html);
+const TODO_KEY = "dash_todo";
+const todoDone = () => { try { return JSON.parse(localStorage.getItem(TODO_KEY) || "{}"); } catch (e) { return {}; } };
+const todoKey = t => (M ? M.at.slice(0, 10) : "") + "|" + t.text;
+function meetingHtml() {
+  if (!M || !(M.lines || []).length) return "";
+  const who = Object.keys(STAFF), done = todoDone();
+  const lines = M.lines.map(l => `<div class="ln ${l.who === "lead" ? "lead" : ""}">${face(l.who)}<div class="bub">${nameRow(l.who, l.tone)}${md(l.text)}${l.link ? `<div>${golink(l.link)}</div>` : ""}</div></div>`).join("");
+  const todo = (M.todo || []).map(t => {
+    const k = todoKey(t), ok = !!done[k], x = STAFF[t.who] || {};
+    return `<li class="${ok ? "done" : ""}"><input type="checkbox" data-todo="${esc(k)}" ${ok ? "checked" : ""} aria-label="${esc(t.text)} 끝냄">
+      <div style="min-width:0"><div class="tx">${esc(t.text)}</div><span class="by">담당 ${esc(x.name || "")} · ${esc(x.role || "")}${t.link ? " · " + golink(t.link, "바로 가기 ›") : ""}</span></div></li>`;
+  }).join("");
+  return `<div class="sec"><span>🏢 마케팅팀 ${esc(M.kind)}</span><a class="more" href="#team">팀 소개 ›</a></div>
+  <section class="card meet"><div class="mhead"><div class="faces">${who.map(w => face(w, "sm")).join("")}</div>
+    <div class="muted" style="font-size:12.5px">${who.length}명 참석 · ${esc(M.at.slice(5).replace("-", "/"))} 기준 · 숫자는 대시보드 그대로</div></div>${lines}</section>
+  ${todo ? `<section class="card todo"><h3>✅ 오늘 할 일</h3><div class="muted" style="font-size:12px">회의에서 나온 일이에요 · 체크는 이 기기에만 저장돼요</div><ul>${todo}</ul></section>` : ""}`;
+}
+function bindTodo() {
+  document.querySelectorAll("[data-todo]").forEach(cb => cb.onchange = () => {
+    const d = todoDone();
+    if (cb.checked) d[cb.dataset.todo] = 1; else delete d[cb.dataset.todo];
+    try { localStorage.setItem(TODO_KEY, JSON.stringify(d)); } catch (e) {}
+    cb.closest("li").classList.toggle("done", cb.checked);
+  });
+}
+function pageTeam() {
+  if (!M) return `<h2 class="pt">👥 우리 마케팅팀</h2><div class="card"><div class="empty">다음 수집 때 팀이 채워져요</div></div>`;
+  return `<h2 class="pt">👥 우리 마케팅팀</h2><p class="pd">${Object.keys(STAFF).length}명이 대시보드 숫자를 나눠 맡아요. 말은 10분마다 새 숫자로 바뀌고, AI를 부르지 않아 토큰을 쓰지 않아요.</p>
+  <div class="team">${Object.entries(STAFF).map(([k, x]) => {
+    const rp = (M.reports || {})[k] || [], mood = (M.mood || {})[k] || {};
+    return `<section class="card staff"><div class="ptop">${face(k, "lg")}<div><div class="t1">${esc(x.name)} <span class="t2">${esc(x.role)}</span></div>
+      <div class="t2">오늘 보고 ${rp.length}건${mood.good ? ` · 좋았던 점 ${mood.good}` : ""}${mood.bad ? ` · 아쉬운 점 ${mood.bad}` : ""}</div></div></div>
+      <p class="desc">${esc(x.desc)}</p>
+      ${rp.map(l => `<div class="rp">${toneTag(l.tone)} ${md(l.text)} ${golink(l.link, "›")}</div>`).join("") || '<div class="rp muted">오늘은 따로 보고할 게 없어요</div>'}
+      <div class="tabs2">${(x.tabs || []).filter(([, h]) => h !== "#team").map(([l, h]) => `<a class="chip" href="${esc(h)}">${esc(l)}</a>`).join("")}</div></section>`;
+  }).join("")}</div>`;
+}
+function teamNotes(name) {   // 채널 화면: 그 채널 얘기만 모아서
+  if (!M) return "";
+  const rows = Object.values(M.reports || {}).flat().filter(l => l.text.includes(name)).slice(0, 4);
+  return rows.length ? `<div class="sec"><span>💬 팀 의견</span><a class="more" href="#team">팀 소개 ›</a></div><div class="card notes">${rows.map(l =>
+    `<div class="ln">${face(l.who, "sm")}<div style="min-width:0"><span class="muted" style="font-size:12px">${esc((STAFF[l.who] || {}).name || "")}</span> ${toneTag(l.tone)}<div>${md(l.text)}</div></div></div>`).join("")}</div>` : "";
+}
 let charts = [];
 const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", tch: "", tf: "all", tsort: "score" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
@@ -292,7 +419,7 @@ function videoItem(v, right, lead = "") {
       <div class="m">${typeTag(v)}${dotc}${esc(v.ch)}${v.published ? " · " + v.published : ""}</div></div>
     <div class="g">${right(v)}</div></a>`;
 }
-const ALERT_ICON = { surge: "🚀", upload: "🆕", early: "📈", goal: "🎉", money: "💰", weekly: "🗓️", topic: "🎯" };
+const ALERT_ICON = { surge: "🚀", upload: "🆕", early: "📈", goal: "🎉", money: "💰", weekly: "🗓️", topic: "🎯", cadence: "📅" };
 function alertRow(a) {
   const inner = `<span class="ic">${ALERT_ICON[a.type] || "🔔"}</span>
     <div style="min-width:0"><div class="at">${esc(a.title)}</div><div class="ad">${esc(a.ch)}${a.detail ? " · " + esc(a.detail) : ""}</div></div>
@@ -321,7 +448,9 @@ function pageSummary() {
   const stat = (k, d, s) => `<div class="card stat"><div class="k">${k}</div><div class="v">${plus(d)}</div><div class="s">${s}</div></div>`;
   const hot = D.videos.filter(v => v.gain).sort((a, b) => b.gain - a.gain).slice(0, 5);
   const al = D.alerts.slice(0, 3);
-  return `<h2 class="pt">오늘 한눈에</h2><p class="pd">모든 채널을 합친 오늘 성적이에요 · ${esc(D.updated.slice(5).replace("-", "/"))} 기준, 10분마다 새로 고침</p>
+  return `<h2 class="pt">🏢 회의실</h2><p class="pd">마케팅팀 7명이 대시보드 숫자를 보고 회의해요 · ${esc(D.updated.slice(5).replace("-", "/"))} 기준, 10분마다 새로</p>
+  ${meetingHtml()}
+  <div class="sec"><span>오늘 숫자</span><span class="more">모든 채널 합계</span></div>
   <div class="grid4">
     ${stat("오늘 조회수", T.d_views, `누적 ${man(T.views)}`)}
     ${stat("오늘 쇼츠 조회수", T.d_shorts, `쇼츠 누적 ${man(T.shorts_views)}`)}
@@ -348,6 +477,7 @@ function pageSummary() {
   <div class="card list">${hot.length ? hot.map(v => videoItem(v, v => `<b class="up">▲${man(v.gain)}</b><span class="muted">${man(v.views)}</span>`)).join("") : '<div class="empty">내일부터 표시돼요 (어제와 비교)</div>'}</div>`;
 }
 function afterSummary() {
+  bindTodo();
   const draw = () => {
     charts.forEach(c => c.destroy()); charts = [];
     chart($("#c1"), { type: "bar", data: { labels: labels(), datasets: D.channels.map(c => ({ label: c.name, data: D.series.by_channel[c.name][state.kind], backgroundColor: color(c.name), borderRadius: 3, stack: "s" })) },
@@ -384,6 +514,7 @@ function pageChannel(name) {
     <div class="pbar"><i class="${ad.done ? "done" : ""}" style="width:${Math.max(ad.overall, 1)}%"></i></div>
     <div class="muted" style="font-size:12px">구독자 ${man(c.subs)}/1,000 · 쇼츠 90일 ${man(ad.items.find(i => i.key === "shorts90").cur)}/1,000만 · 시청 시간(추정) ${man(ad.items.find(i => i.key === "watch").cur)}/4,000 ›</div>
   </a>
+  ${teamNotes(c.name)}
   ${topicsMini(c.name)}
   <div class="sec">날짜별 조회수 (쇼츠 · 본편)</div>
   <div class="card">${noSeries() || '<div class="chart"><canvas id="c2"></canvas></div>'}</div>
@@ -406,7 +537,7 @@ function afterChannel(name) {
 
 /* ───────── 영상 ───────── */
 function pageVideos() {
-  return `<h2 class="pt">영상</h2>
+  return `<h2 class="pt">영상</h2>${say("reviewer", "우리 채널 영상을 한눈에 봐요. <b>어제 늘어난 조회</b>순으로 보면 지금 뜨는 편이, <b>하루 평균</b>순으로 보면 오래 꾸준한 편이 보여요. 새 영상의 6·24·48시간 성적은 인사이트 → 새 영상 성적에 있어요.")}
   <div class="filters">
     <div class="chips" id="vch">${[["all", "전체 채널"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) => `<button class="chip ${state.vch === k ? "on" : ""}" data-k="${esc(k)}">${k === "all" ? "" : `<span class="dot" style="background:${color(k)}"></span>`}${esc(l)}</button>`).join("")}</div>
     <div class="line">
@@ -478,6 +609,7 @@ function pageMoney(name) {
   };
   if (!sel) {
     return `${chips}<h2 class="pt">광고 수익까지</h2>
+    ${say("money", "광고 수익 조건은 <b>구독 1,000명</b>에 <b>본편 시청 4,000시간</b>(최근 12개월) 또는 <b>쇼츠 조회 1,000만 회</b>(최근 90일) 중 하나예요. 채널마다 막힌 곳과 지금 속도로 걸리는 날을 적어 뒀어요.")}
     ${moneyGuide()}
     <div class="card rows">${D.channels.map(c => {
       const ad = adOf(c);
@@ -504,6 +636,7 @@ function pageMoney(name) {
   const cell = (i, unit) => i.left === 0 ? `<b class="good">달성</b>` : `<b>+${man(i.need_per_day)}${unit}</b>`;
   const now = i => i.speed === null ? `<span class="muted">-</span>` : `<span class="muted">+${man(i.key === "shorts90" ? Math.round(Math.max(0, i.speed)) : Math.max(0, i.speed))}</span>`;
   return `${chips}<h2 class="pt">광고 수익까지</h2>
+  ${say("money", `<b>${esc(c.name)}</b>의 광고 수익 조건을 하나씩 봤어요. 흐린 쪽은 더 먼 길이라, 진한 쪽부터 채우면 돼요.`)}
   <div class="card money">
     <div class="mh">${avatar(c)}<div><div class="n">${esc(c.name)}</div><div class="muted" style="font-size:12px">${esc(c.handle)}</div></div>
       <span class="badge ${ad.done ? "ok" : ""}">${ad.done ? "조건 달성 · 신청하세요" : `광고 수익까지 ${pct(ad.overall)}`}</span></div>
@@ -524,7 +657,7 @@ function pageMoney(name) {
 const won = n => n === null || n === undefined ? "-" : man(n) + "원";
 function pageCost(name) {
   const C = D.costs;
-  if (!C) return `<h2 class="pt">💵 제작비</h2>${tip("아직 제작비 자료가 없어요. 맥에서 <b>채널대시보드/비용_업데이트.command</b>를 한 번 실행하면 여기에 편당 비용이 채워집니다.")}`;
+  if (!C) return `<h2 class="pt">💵 제작비</h2>${say("money", "아직 제작비 자료가 없어요. 맥에서 <b>채널대시보드/비용_업데이트.command</b>를 한 번 실행하면 여기에 편당 비용이 채워집니다.")}`;
   const sel = name && C.채널.find(c => c.name === name);
   const chips = `<div class="chips" style="margin-top:16px">${[["", "전체"]].concat(C.채널.map(c => [c.name, c.name])).map(([k, l]) =>
     `<a class="chip ${(sel ? sel.name : "") === k ? "on" : ""}" href="#cost${k ? "/" + encodeURIComponent(k) : ""}">${k && D.channels.some(x => x.name === k) ? `<span class="dot" style="background:${color(k)}"></span>` : ""}${esc(l)}</a>`).join("")}</div>`;
@@ -532,7 +665,7 @@ function pageCost(name) {
   if (!sel) {
     const avg = C.편수 ? C.합계krw / C.편수 : 0;
     const paid = C.채널.filter(c => c.천회당krw !== null && c.천회당krw !== undefined);
-    return `${chips}<h2 class="pt">💵 제작비</h2>${tip(note)}
+    return `${chips}<h2 class="pt">💵 제작비</h2>${say("money", note)}
     <div class="grid4">
       <div class="card stat"><div class="k">지금까지 쓴 돈</div><div class="v">${won(C.합계krw)}</div><div class="s">영상 ${C.편수}편</div></div>
       <div class="card stat"><div class="k">1편 평균</div><div class="v">${won(Math.round(avg))}</div><div class="s">채널 ${C.채널.length}개</div></div>
@@ -554,7 +687,7 @@ function pageCost(name) {
   }
   const c = sel;
   const eps = [...c.편].sort((a, b) => (b.완성일 || "").localeCompare(a.완성일 || ""));
-  return `${chips}<h2 class="pt">💵 ${esc(c.name)} 제작비</h2>${tip(note)}
+  return `${chips}<h2 class="pt">💵 ${esc(c.name)} 제작비</h2>${say("money", note)}
   <div class="grid4">
     <div class="card stat"><div class="k">총 제작비</div><div class="v">${won(c.합계krw)}</div><div class="s">${c.편수}편</div></div>
     <div class="card stat"><div class="k">1편 평균</div><div class="v">${won(Math.round(c.합계krw / c.편수))}</div><div class="s">${c.tts === "elevenlabs" ? "일레븐랩스" : esc(c.tts)}</div></div>
@@ -617,8 +750,8 @@ function pageHunt() {
   const sortKey = isCh ? (CSORT.some(x => x[0] === state.csort) ? state.csort : "score") : state.hsort;
   const sorted = [...list].sort((a, b) => (b[sortKey] || 0) - (a[sortKey] || 0));
   const head = isCh
-    ? tip("<b>구독자가 갑자기 빠르게 느는 국내 일반인 채널</b>이에요. 지금 먹히는 소재를 가장 빨리 알려주는 신호입니다. 방송사·기업·언론 채널은 빼고, 영상 3천 개 넘는 클립 채널도 제외했어요. <b>이력이 쌓여야 계산되니 하루 이틀 지나야 채워집니다.</b>")
-    : tip("<b>구독자 수가 아니라 '그 채널 평소보다 몇 배'</b>를 봅니다. 구독 3천 채널의 30만이 구독 100만 채널의 100만보다 훨씬 중요한 신호예요. 배수 기준은 그 채널 최근 영상의 <b>중간값</b>, 속도는 올라온 뒤 시간당 조회수입니다.");
+    ? say("trend", "<b>구독자가 갑자기 빠르게 느는 국내 일반인 채널</b>이에요. 지금 먹히는 소재를 가장 빨리 알려주는 신호입니다. 방송사·기업·언론 채널은 빼고, 영상 3천 개 넘는 클립 채널도 제외했어요. <b>이력이 쌓여야 계산되니 하루 이틀 지나야 채워집니다.</b>")
+    : say("trend", "<b>구독자 수가 아니라 '그 채널 평소보다 몇 배'</b>를 봅니다. 구독 3천 채널의 30만이 구독 100만 채널의 100만보다 훨씬 중요한 신호예요. 배수 기준은 그 채널 최근 영상의 <b>중간값</b>, 속도는 올라온 뒤 시간당 조회수입니다.");
   const empty = isCh
     ? '<div class="empty">아직 이력이 부족해요. 구독자 변화는 두 번째 수집부터 계산됩니다 (한국시간 06·14·21시).</div>'
     : '<div class="empty">조건에 맞는 후보가 없어요. 다음 수집 때 다시 확인해 주세요.</div>';
@@ -663,7 +796,7 @@ function topicCard(t, i, lab, open, ch) {
   return `<article class="topic">
     <div class="hd"><div class="sc ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}<small>점</small></div>
       <div style="min-width:0;flex:1"><div class="nm">${i + 1}. ${esc(t["소재"])}</div>
-        <div class="tags">${t["최신"] ? `<span class="tg new">📰 ${esc(String(t["최신"]).slice(5).replace("-", "/"))} 기사</span>` : ""}${t["후속"] ? '<span class="tg fu">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="tg">${esc(t["대상"])}</span>` : ""}</div></div></div>
+        <div class="tags">${pipeTag(ch, t)}${t["최신"] ? `<span class="tg new">📰 ${esc(String(t["최신"]).slice(5).replace("-", "/"))} 기사</span>` : ""}${t["후속"] ? '<span class="tg fu">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="tg">${esc(t["대상"])}</span>` : ""}</div></div></div>
     <div class="ttl"><div class="tx">${esc(ti)}${ko ? `<span class="ko">${esc(ko)}</span>` : ""}</div>
       <div class="acts"><button class="copy" type="button" data-copy="${esc(t["제목"] || "")}" aria-label="제목 복사">복사</button>
       <button class="star ${stars()[starKey(ch, t)] ? "on" : ""}" type="button" data-star="${esc(starKey(ch, t))}" data-ti="${i}" aria-label="찜" aria-pressed="${stars()[starKey(ch, t)] ? "true" : "false"}">${stars()[starKey(ch, t)] ? "★" : "☆"}</button></div></div>
@@ -678,12 +811,48 @@ function topicCard(t, i, lab, open, ch) {
       ${t["후속"] ? `<div><div class="k">이어 가는 우리 편</div>${esc(t["후속"])}</div>` : ""}</div></details>` : ""}
   </article>`;
 }
+const PSTAT = { picked: ["📋", "대기"], making: ["🛠", "제작 중"], upload: ["✅", "업로드"] };
+function pipeTag(ch, t) {
+  const x = (((D.pipeline || {}).items) || []).find(p => p.ch === ch && p["소재"] === t["소재"]);
+  return x ? `<span class="tg" style="background:color-mix(in srgb,#1f9d6b 15%,transparent);color:#1f9d6b">${PSTAT[x.status][0]} ${PSTAT[x.status][1]} ${esc(x.id)}</span>` : "";
+}
+const v3txt = v => v.v3 === null || v.v3 === undefined ? "3일 조회는 3일 뒤" : `3일 ${man(v.v3)}회${v.ratio ? ` (평소의 <b>${v.ratio}배</b>)` : ""}`;
+function pipeCard(x) {
+  const v = x.video;
+  return `<div class="pcard"><div class="ctop"><span class="dot" style="background:${color(x.ch)}"></span>${esc(x.ch)} · <b>${esc(x.id)}</b> · 추천 ${x["총점"] ?? "-"}점${x.rank ? ` · 고를 때 ${x.rank}위` : ""} · ${esc(String(x.picked_at || "").slice(5, 10).replace("-", "/"))} 고름</div>
+    <div class="t">${esc(x["소재"])}</div>
+    ${x["제목"] ? `<div class="m">제목 안: ${esc(splitKo(x["제목"])[0])} <button class="copy" type="button" data-copy="${esc(x["제목"])}" aria-label="제목 복사">복사</button></div>` : ""}
+    ${x.status === "making" ? `<div class="m">🛠 편 폴더 <b>${esc(x.folder)}</b> — 채널에 올라가면 저절로 '업로드'로 바뀌어요</div>` : ""}
+    ${x.status === "picked" ? '<div class="m">편 폴더가 생기면 저절로 \'제작 중\'으로 바뀌어요</div>' : ""}
+    ${v ? `<a class="vid" href="${esc(v.url)}" target="_blank" rel="noopener">${thumbImg(v)}<div style="min-width:0"><div class="t" style="font-size:13px">${esc(v.title)}</div>
+      <div class="m">${v.short ? "쇼츠" : "본편"} · ${esc(v.published.slice(5).replace("-", "/"))} 공개 · 지금 ${man(v.views)}회 · ${v3txt(v)}</div></div></a>` : ""}
+  </div>`;
+}
+function pagePipeline(chipsHtml) {
+  const P = D.pipeline || { items: [], hits: [] };
+  const by = st => (P.items || []).filter(x => x.status === st);
+  const names0 = (((D.efficiency || {}).focus || {}).name && D.topics && D.topics.channels && D.topics.channels[D.efficiency.focus.name]) ? D.efficiency.focus.name : Object.keys((D.topics && D.topics.channels) || {})[0] || "거대한비밀";
+  const grp = st => `<div class="grp"><h3>${PSTAT[st][0]} ${PSTAT[st][1]} <span class="cn">${by(st).length}</span></h3>${by(st).map(pipeCard).join("") || '<div class="empty" style="padding:8px 0">없어요</div>'}</div>`;
+  const hits = (P.hits || []).map(h => { const v = h.video, done3 = v.v3 !== null && v.v3 !== undefined; return `<a class="item" href="${esc(v.url)}" target="_blank" rel="noopener">${thumbImg(v)}<div style="min-width:0"><div class="t">${esc(v.title)}</div>
+    <div class="m"><span class="dot" style="background:${color(h.ch)}"></span> ${esc(h.ch)} · ${v.short ? "쇼츠" : "본편"} · ${esc(v.published.slice(5).replace("-", "/"))} 공개 · 추천 ${h["추천점수"] ?? "-"}점 '${esc(h["소재"] || "")}'</div></div>
+    <div class="g"><b>${man(done3 ? v.v3 : v.views)}</b><span class="muted">${done3 ? (v.ratio ? `3일 · 평소의 ${v.ratio}배` : "3일 조회") : "지금 조회"}</span></div></a>`; }).join("");
+  return chipsHtml + say("planner", `만들기로 한 소재를 여기서 끝까지 챙겨요. 번호를 말씀해 주시면(예: <b>'거대한비밀 3위 만들어 줘'</b>) 제가 목록에 올려요. 편 폴더가 생기면 <b>제작 중</b>, 채널에 올라가면 <b>업로드</b>로 저절로 바뀌고, 3일이 지나면 평소보다 잘 됐는지도 붙어요.`)
+    + `<section class="card"><div class="tbar"><span class="pill">📋 대기 <b>${by("picked").length}</b></span><span class="pill">🛠 제작 중 <b>${by("making").length}</b></span><span class="pill">✅ 업로드 <b>${by("upload").length}</b></span>${P.hit_n ? `<span class="pill">추천과 비슷한 영상 <b>${P.hit_n}편</b>${P.hit_ratio ? ` · 평소의 <b>${P.hit_ratio}배</b>` : ""}</span>` : ""}</div>
+    ${(P.items || []).length ? grp("picked") + grp("making") + grp("upload") : `<div class="empty">아직 만들기로 한 소재가 없어요.<br>채널 칩을 눌러 추천을 보고 <b>'${esc(names0)} 1위 만들어 줘'</b>처럼 말씀해 주세요.</div>`}</section>
+  <div class="sec"><span>🎯 추천이 맞았나 — 추천 뒤에 올라온 비슷한 영상</span></div>
+  <div class="card list">${hits || '<div class="empty">추천 소재로 만든 영상이 올라가면 3일 조회수와 함께 여기 쌓여요</div>'}</div>`;
+}
 function pageTopics(want) {
   const T = D.topics;
   if (!T || !T.channels || !Object.keys(T.channels).length) return `<section class="card"><h2>🎯 소재 추천</h2>
     <div class="empty">아직 추천 전이에요. 맥에서 매일 오전 7시·오후 3시에 자동으로 채워져요.</div></section>`;
   const names = Object.keys(T.channels);
-  if (want && names.includes(want)) state.tch = want;
+  if (want === "제작") state.tch = "__pipe";
+  else if (want && names.includes(want)) state.tch = want;
+  const pipeN = ((D.pipeline || {}).items || []).length;
+  const chipRow = on => `<div class="chips" style="margin-bottom:12px"><button type="button" class="chip ${on === "__pipe" ? "on" : ""}" data-tch="__pipe">📋 제작 현황 <span class="cn">${pipeN}</span></button>${names.map(x =>
+    `<button type="button" class="chip ${x === on ? "on" : ""}" data-tch="${esc(x)}"><span class="dot" style="background:${color(x)}"></span>${esc(x)} <span class="cn">${(T.channels[x].topics || []).length}</span></button>`).join("")}</div>`;
+  if (state.tch === "__pipe") return `<h2 class="pt">🎯 소재 추천</h2><p class="pd">만들기로 한 소재가 어디까지 왔는지 · 매일 오전 7시·오후 3시에 추천이 새로 나와요</p>` + pagePipeline(chipRow("__pipe"));
   const cur = names.includes(state.tch) ? state.tch : names[0];
   const c = T.channels[cur], all = c.topics || [];
   const lab = { ...TLABEL, ...(c.labels || {}) };
@@ -704,7 +873,8 @@ function pageTopics(want) {
     같은 대상은 2개까지, 최근 추천에 3번 넘게 나온 대상은 1개까지만 넣어요. 📰는 최근 14일 기사·검색어에 근거한 소재예요.
     총점 가중치: ${Object.keys(TLABEL).map(k => esc(lab[k]) + " ×" + (+(((c.calib || {}).weights || { korea: 3, paradox: 2, proof: 2, visual: 1 })[k])).toFixed(1).replace(".0", "")).join(" · ")} (우리 영상 성적으로 자동 보정). <b>숫자는 만들기 전에 꼭 확인</b>하세요.</p></details>`;
   return `<h2 class="pt">🎯 소재 추천</h2><p class="pd">채널마다 ${all.length}개 · 매일 오전 7시·오후 3시에 새로 골라요</p>
-    <div class="chips" style="margin-bottom:12px">${names.map(x => `<button type="button" class="chip ${x === cur ? "on" : ""}" data-tch="${esc(x)}"><span class="dot" style="background:${color(x)}"></span>${esc(x)} <span class="cn">${(T.channels[x].topics || []).length}</span></button>`).join("")}</div>
+    ${say("planner", `채널마다 소재 20개를 골라 뒀어요. <b>📰</b>는 최근 2주 기사·검색어가 근거, <b>☆</b>를 누르면 이 기기에 찜돼요. 만들 소재는 번호로 말씀해 주세요(예: <b>'${esc(cur)} 3위 만들어 줘'</b>) — <a href="#topics/제작">📋 제작 현황</a>에 올려서 끝까지 챙길게요.`)}
+    ${chipRow(cur)}
     <section class="card"><h2 class="ch2"><span class="dot" style="background:${color(cur)}"></span>${esc(cur)} <span class="when">${esc(c.at)} 기준</span></h2>
     <div class="tbar">${pills}</div>${how}
     ${c.stale ? `<div class="warn" style="margin:0 0 10px">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
@@ -731,7 +901,7 @@ function calibCard(cal, lab = TLABEL) {
   const hits = (cal.hits || []).map(x => `<a class="item" href="${esc(x.url)}" target="_blank" rel="noopener"><div style="min-width:0"><div class="t">${esc(x.영상)}</div>
       <div class="m">추천 ${esc(x.추천시각)} · ${x.추천점수}점 · ${esc(x.소재)}</div></div><div class="g hg"><div class="mult">${x["3일조회"] === null || x["3일조회"] === undefined ? "3일 전" : man(x["3일조회"])}</div><div class="sub2">지금 ${man(x.지금조회)}</div></div></a>`).join("");
   return `<section class="card" style="margin-top:12px"><h2 class="ch2">점수 기준 자동 보정 <span class="when">${esc(cal.updated || "")}</span></h2>
-    ${tip(`우리 채널에 올린 영상 <b>${cal.n}편</b>을 같은 기준으로 (조회수는 가리고) 채점한 뒤, 올린 지 3일째 조회수와 얼마나 맞는지 쟀어요. 채널이 커지는 추세는 빼고 비교합니다. 상관이 +면 그 기준이 실제로 잘 맞는 것 → 가중치를 조금 올리고, −면 조금 내려요. 자료가 쌓일수록 더 많이 반영돼요(지금 반영 ${Math.round((cal.alpha || 0) * 100)}%).`)}
+    ${say("planner", `우리 채널에 올린 영상 <b>${cal.n}편</b>을 같은 기준으로 (조회수는 가리고) 채점한 뒤, 올린 지 3일째 조회수와 얼마나 맞는지 쟀어요. 채널이 커지는 추세는 빼고 비교합니다. 상관이 +면 그 기준이 실제로 잘 맞는 것 → 가중치를 조금 올리고, −면 조금 내려요. 자료가 쌓일수록 더 많이 반영돼요(지금 반영 ${Math.round((cal.alpha || 0) * 100)}%).`)}
     <div class="card rows" style="padding:0 14px"><div class="crow head" style="grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr))"><span>기준</span><span>원래</span><span>지금</span><span>조회수와 상관</span></div>${rows}</div>
     <div class="sec" style="margin-top:14px">추천 → 실제 조회수</div>
     <div class="list">${hits || '<div class="empty">추천 소재로 만든 영상이 아직 없어요. 올리면 3일 뒤 여기서 추천 점수와 실제 조회수를 비교해요.</div>'}</div>
@@ -762,7 +932,7 @@ function afterTopics() {
 function pageInsight(sub) {
   const cur = INSIGHTS.some(x => x[0] === sub) ? sub : "alerts";
   const chips = `<div class="chips" style="margin-top:16px">${INSIGHTS.map(([k, ic, l]) => `<a class="chip ${k === cur ? "on" : ""}" href="#insight/${k}">${ic} ${l}</a>`).join("")}</div>`;
-  return chips + { alerts: insAlerts, early: insEarly, weekly: insWeekly, engage: insEngage, timing: insTiming, bench: insBench }[cur]();
+  return chips + { alerts: insAlerts, early: insEarly, weekly: insWeekly, efficiency: insEfficiency, cadence: insCadence, engage: insEngage, timing: insTiming, bench: insBench }[cur]();
 }
 function channelFilter(key) {
   return `<div class="chips" id="flt" style="margin-bottom:12px">${[["all", "전체 채널"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) =>
@@ -770,7 +940,7 @@ function channelFilter(key) {
 }
 function insAlerts() {
   return `<h2 class="pt">🔔 알림</h2>
-  ${tip(`채널에 좋은 일이 생기면 자동으로 기록돼요. <b>🚀 급등</b>(1시간 조회수가 평소의 ${D.settings.surge_ratio}배 이상, ${D.settings.surge_min}회 이상) · <b>🆕 새 영상</b> · <b>📈 24시간 성적</b> · <b>🎉 구독자·조회수 목표 돌파</b> · <b>💰 수익 조건 진행</b> · <b>🗓️ 주간 리포트</b>(월요일 오전).`)}
+  ${say("analyst", `채널에 좋은 일이 생기면 자동으로 기록돼요. <b>🚀 급등</b>(1시간 조회수가 평소의 ${D.settings.surge_ratio}배 이상, ${D.settings.surge_min}회 이상) · <b>🆕 새 영상</b> · <b>📈 24시간 성적</b> · <b>🎉 구독자·조회수 목표 돌파</b> · <b>💰 수익 조건 진행</b> · <b>🗓️ 주간 리포트</b>(월요일 오전).`)}
   <div class="card" style="margin-bottom:12px;display:flex;align-items:center;gap:10px">
     <span style="font-size:22px">📱</span>
     <div style="flex:1;min-width:0"><b>폰으로 바로 받기</b><div class="muted" style="font-size:12.5px">${D.telegram ? "텔레그램으로 알림이 전송되고 있어요 ✅" : "텔레그램을 연결하면 알림이 폰으로 바로 와요 (설정은 클로드에게 '텔레그램 연결해줘')"}</div></div>
@@ -786,7 +956,7 @@ function insEarly() {
     return `<div><span class="muted">${h}시간</span><b>${man(e.views)}회</b><span class="r ${r === null ? "muted" : r >= 1 ? "up" : "down"}">${r === null ? "비교 대기" : `평소의 ${r}배`}</span></div>`;
   };
   return `<h2 class="pt">📈 새 영상 성적</h2>
-  ${tip("새 영상을 올리고 <b>6시간 · 24시간 · 48시간</b>에 조회수를 기록해서, 같은 채널의 다른 영상(쇼츠는 쇼츠끼리, 본편은 본편끼리)과 비교해요. <b>1배보다 크면 평소보다 잘 되는 중</b>이에요. 대시보드를 만든 뒤에 올린 영상부터 기록돼요.")}
+  ${say("reviewer", "새 영상을 올리고 <b>6시간 · 24시간 · 48시간</b>에 조회수를 기록해서, 같은 채널의 다른 영상(쇼츠는 쇼츠끼리, 본편은 본편끼리)과 비교해요. <b>1배보다 크면 평소보다 잘 되는 중</b>이에요. 대시보드를 만든 뒤에 올린 영상부터 기록돼요.")}
   ${channelFilter("ech")}
   <div class="card list">${list.length ? list.map(v => `<a class="item" href="${esc(v.url)}" target="_blank" rel="noopener" style="display:block">
       <div style="display:flex;gap:12px;align-items:center">${thumbImg(v)}<div style="min-width:0"><div class="t">${esc(v.title)}</div>
@@ -796,9 +966,9 @@ function insEarly() {
 }
 function insWeekly() {
   const W = D.weekly;
-  if (!W.days) return `<h2 class="pt">🗓️ 주간 리포트</h2>${tip("최근 7일 동안 채널이 얼마나 컸는지 정리해요. 매주 월요일 오전에 알림으로도 보내드려요.")}<div class="card"><div class="empty">기록이 하루치뿐이라 내일부터 계산돼요</div></div>`;
+  if (!W.days) return `<h2 class="pt">🗓️ 주간 리포트</h2>${say("analyst", "최근 7일 동안 채널이 얼마나 컸는지 정리해요. 매주 월요일 오전에 알림으로도 보내드려요.")}<div class="card"><div class="empty">기록이 하루치뿐이라 내일부터 계산돼요</div></div>`;
   return `<h2 class="pt">🗓️ 주간 리포트</h2>
-  ${tip(`최근 ${W.days}일(${W.from.slice(5).replace("-", "/")} → ${W.to.slice(5).replace("-", "/")}) 동안 채널이 얼마나 컸는지 정리했어요. 7일치가 안 되면 쌓인 만큼만 계산해요.`)}
+  ${say("analyst", `최근 ${W.days}일(${W.from.slice(5).replace("-", "/")} → ${W.to.slice(5).replace("-", "/")}) 동안 채널이 얼마나 컸는지 정리했어요. 7일치가 안 되면 쌓인 만큼만 계산해요.`)}
   <div class="grid4">
     <div class="card stat"><div class="k">조회수 증가</div><div class="v">${plus(W.total.d_views)}</div><div class="s">최근 ${W.days}일</div></div>
     <div class="card stat"><div class="k">구독자 증가</div><div class="v">${plus(W.total.d_subs)}</div><div class="s">최근 ${W.days}일</div></div>
@@ -816,6 +986,45 @@ function insWeekly() {
     ${c.best ? `<div style="margin-top:8px">${videoItem({ ...c.best, ch: c.name, published: "" }, v => `<b class="up">▲${man(v.gain)}</b><span class="muted">이번 주 1위</span>`)}</div>` : ""}
   </div>`).join("")}`;
 }
+function insEfficiency() {
+  const E = D.efficiency || { rows: [] }, f = E.focus, rows = E.rows || [];
+  const top = (k, lo) => { const xs = rows.map(r => r[k]).filter(x => x !== null && x !== undefined && x > 0); return xs.length ? (lo ? Math.min(...xs) : Math.max(...xs)) : null; };
+  const cell = (label, val, hi) => `<div class="${hi ? "top1" : ""}">${label}<b>${val}</b></div>`;
+  const g = r => r.growth === null || r.growth === undefined ? "" : ` <span class="${r.growth >= 0 ? "up" : "down"}">${r.growth > 0 ? "+" : ""}${r.growth}%</span>`;
+  return `<h2 class="pt">📊 채널 효율</h2>
+  ${say("analyst", "새 영상 1편이 조회를 얼마나 끌어오는지, 제작비는 알맞은지 채널끼리 견줘 봤어요. <b>편당 조회</b>는 최근 30일에 올린 영상의 평균이라 쇼츠가 많은 채널이 유리해요. 초록 테두리가 그 칸 1위예요.")}
+  ${f ? `<section class="card effocus" style="margin-bottom:12px"><h3>🎯 이번 주 집중할 채널 <span class="dot" style="background:${color(f.name)}"></span>${esc(f.name)}</h3><ul>${f.why.map(w => `<li>${esc(w)}</li>`).join("")}</ul>${f.next ? `<div class="muted" style="font-size:12.5px;margin-top:6px">다음 후보: ${esc(f.next)}</div>` : ""}</section>` : ""}
+  <section class="card">${rows.map(r => `<div class="erow"><div class="ctop"><span class="dot" style="background:${color(r.name)}"></span>${esc(r.name)}<span class="muted" style="font-weight:500;font-size:12px;margin-left:auto">최근 30일 ${r.uploads30}편 · 14일 ${r.uploads14}편</span></div>
+    <div class="egrid">
+      ${cell("편당 조회(30일)", r.per_ep === null ? "-" : man(r.per_ep) + "회", r.per_ep !== null && r.per_ep === top("per_ep"))}
+      ${cell("최근 7일 조회", r.w7 === null ? "-" : "+" + man(r.w7) + g(r), r.w7 !== null && r.w7 === top("w7"))}
+      ${cell("1천 회당 구독", r.subs_per_1k === null || r.subs_per_1k === undefined ? "-" : (r.subs_per_1k ? (+r.subs_per_1k).toFixed(1) : 0) + "명", r.subs_per_1k > 0 && r.subs_per_1k === top("subs_per_1k"))}
+      ${cell("1천 회당 제작비", r.cost_per_1k ? man(r.cost_per_1k) + "원" : "-", r.cost_per_1k && r.cost_per_1k === top("cost_per_1k", true))}
+    </div>
+    <div class="muted" style="font-size:12px;margin-top:6px">쇼츠 편당 ${r.per_ep_s === null ? "-" : man(r.per_ep_s) + "회"} · 본편 편당 ${r.per_ep_l === null ? "-" : man(r.per_ep_l) + "회"}${r.cost_per_ep ? ` · 편당 제작비 ${man(r.cost_per_ep)}원` : ""}${r.ads !== null && r.ads !== undefined ? ` · 수익 조건 ${pct(r.ads)}` : ""}${r.best ? ` · 최고 <a href="${esc(r.best.url)}" target="_blank" rel="noopener">${esc(r.best.title.slice(0, 22))}…</a> ${man(r.best.views)}회` : ""}</div>
+  </div>`).join("") || '<div class="empty">아직 계산할 기록이 없어요</div>'}</section>
+  <div class="note">7일 증가율은 기록이 14일 넘게 쌓이면 나와요. 제작비는 제작비 탭과 같은 값이에요(요금표 기준, 실제보다 적을 수 있음).</div>`;
+}
+function insCadence() {
+  const C = D.cadence || { rows: [], dates: [] }, ds = C.dates || [];
+  const hd = ds.length === 28 ? `<div class="calhd">${[0, 7, 14, 21].map(i => `<span>${esc(ds[i].slice(5).replace("-", "/"))}~</span>`).join("")}</div>` : "";
+  const today = ds[27] || "", tmr = (() => { const d = new Date(today + "T12:00:00"); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })();
+  const hm = s => { const [d, t] = String(s).split(" "); return (d === today ? "오늘" : d === tmr ? "내일" : d.slice(5).replace("-", "/")) + " " + parseInt(t, 10) + "시"; };
+  const next = r => !r.due || r.target < 2 ? "" : r.due < today ? ` · <span class="due">${r.late_at ? esc(hm(r.late_at)) + "까지 " : ""}올릴 차례</span>`
+    : r.due === today ? ` · <span class="due">오늘 올릴 차례</span>` : ` · 다음 ${esc(r.due.slice(5).replace("-", "/"))}`;
+  const st = r => r.n === 0 ? '<span class="st">공개 영상 기록 없음</span>'
+    : r.late ? `<span class="st bad">⚠ ${Math.round(r.since)}일째 (평소 ${r.target}일마다)</span>`
+    : `<span class="st">마지막 ${r.since < 1 ? Math.max(1, Math.round(r.since * 24)) + "시간" : Math.round(r.since) + "일"} 전${r.target ? ` · 평소 ${r.target}일마다` : ""}${next(r)}</span>`;
+  const cell = (x, i) => { const [a, b] = x, c = a && b ? "b" : a ? "s" : b ? "l" : ""; return `<i class="${c}${i === 27 ? " today" : ""}" title="${esc((ds[i] || "").slice(5).replace("-", "/"))} 쇼츠 ${a} · 본편 ${b}"></i>`; };
+  const late = (C.rows || []).filter(r => r.late);
+  const lateTxt = late.length ? ` 지금 늦은 채널은 <b>${late.map(r => esc(r.name)).join(", ")}</b>${jo2(late[late.length - 1].name, "이에요", "예요")}.` : " 지금 늦은 채널은 없어요.";
+  return `<h2 class="pt">📅 업로드 달력</h2>
+  ${say("scheduler", `채널마다 평소 올리는 간격을 재서, 그보다 많이 늦어지면(평소의 1.5배를 넘기면) 알려 드려요. 텔레그램으로도 한 번 보내요. 칸 하나가 하루예요.${lateTxt}`)}
+  <section class="card">${hd}${(C.rows || []).map(r => `<div class="crow2"><div class="ctop"><span><span class="dot" style="background:${color(r.name)}"></span> ${esc(r.name)}${r.set ? ` <span class="muted" style="font-size:11px">· 목표 ${r.target}일마다</span>` : ""}</span>${st(r)}</div>
+    <div class="cells">${(r.cal || []).map(cell).join("")}</div></div>`).join("")}
+    <div class="legend"><span><i style="background:var(--shorts)"></i>쇼츠</span><span><i style="background:var(--long)"></i>본편</span><span><i style="background:linear-gradient(135deg,var(--shorts) 50%,var(--long) 50%)"></i>둘 다</span><span><i style="background:var(--soft);box-shadow:0 0 0 1.5px var(--ink) inset"></i>오늘</span></div></section>
+  <div class="note">평소 간격은 올린 날짜끼리 최근 10번 간격의 중앙값이에요. 채널마다 목표 간격을 정하고 싶으면 알려 주세요(예: '거인의무덤은 이틀에 한 편').</div>`;
+}
 function insEngage() {
   const rows = D.channels.map(c => {
     const views = c.shorts_views + c.long_views;
@@ -824,7 +1033,7 @@ function insEngage() {
   });
   const fans = D.videos.filter(v => v.views >= 30 && v.like_rate !== null).sort((a, b) => b.like_rate - a.like_rate).slice(0, 8);
   return `<h2 class="pt">❤️ 반응률</h2>
-  ${tip("조회수만 보면 놓치는 것 — <b>본 사람 중 몇 %가 좋아요·댓글을 눌렀는지</b>, <b>1,000회 볼 때 구독자가 몇 명 늘었는지</b>예요. 반응률이 높은 영상은 팬을 만드는 영상이라 비슷한 주제를 더 만들면 좋아요. (보통 좋아요율 2~5%면 괜찮은 편)")}
+  ${say("reviewer", "조회수만 보면 놓치는 것 — <b>본 사람 중 몇 %가 좋아요·댓글을 눌렀는지</b>, <b>1,000회 볼 때 구독자가 몇 명 늘었는지</b>예요. 반응률이 높은 영상은 팬을 만드는 영상이라 비슷한 주제를 더 만들면 좋아요. (보통 좋아요율 2~5%면 괜찮은 편)")}
   <div class="card scroll"><table class="tbl">
     <tr><th>채널</th><th>좋아요율</th><th>댓글율</th><th>1,000회당 구독</th></tr>
     ${rows.map(r => `<tr><td><span class="dot" style="background:${color(r.c.name)}"></span> ${esc(r.c.name)}</td>
@@ -844,7 +1053,7 @@ function insTiming() {
   };
   const best = [...T.slot, ...T.weekday].filter(x => x.avg && x.n >= 2).sort((a, b) => b.avg - a.avg)[0];
   return `<h2 class="pt">⏰ 업로드 시간</h2>
-  ${tip(`어느 요일·시간대에 올린 영상이 잘 됐는지 비교해요. 막대 숫자는 그 시간에 올린 영상들의 <b>평균 하루 조회수</b>(24시간 기록이 3개 이상 쌓이면 24시간 조회수)예요. 지금은 영상 ${T.n}개 기준이라 <b>참고용</b>이고, 영상이 20개 넘게 쌓이면 믿을 만해져요.`)}
+  ${say("scheduler", `어느 요일·시간대에 올린 영상이 잘 됐는지 비교해요. 막대 숫자는 그 시간에 올린 영상들의 <b>평균 하루 조회수</b>(24시간 기록이 3개 이상 쌓이면 24시간 조회수)예요. 지금은 영상 ${T.n}개 기준이라 <b>참고용</b>이고, 영상이 20개 넘게 쌓이면 믿을 만해져요.`)}
   ${best ? `<div class="card" style="margin-bottom:10px">지금까지는 <b class="up">${best.label}</b>에 올린 영상이 가장 잘 됐어요 <span class="muted">(영상 ${best.n}개 평균)</span></div>` : ""}
   <div class="grid2">
     <div class="card"><div class="hlh"><b>시간대별</b><span class="muted">한국 시간</span></div>${bars(T.slot)}</div>
@@ -857,7 +1066,7 @@ function insBench() {
   const names = new Set(B.channels.filter(c => state.bfor === "all" || c.for === state.bfor).map(c => c.name));
   const vids = B.videos.filter(v => names.has(v.ch)).slice(0, 20);
   return `<h2 class="pt">🔭 벤치마크</h2>
-  ${tip("비슷한 주제의 <b>인기 채널</b>에서 최근 14일 안에 올라온 영상 중 <b>하루 조회수가 높은 순</b>이에요. 요즘 어떤 주제·제목이 먹히는지 아이디어를 얻는 용도예요. 6시간마다 새로 확인해요.")}
+  ${say("trend", "비슷한 주제의 <b>인기 채널</b>에서 최근 14일 안에 올라온 영상 중 <b>하루 조회수가 높은 순</b>이에요. 요즘 어떤 주제·제목이 먹히는지 아이디어를 얻는 용도예요. 6시간마다 새로 확인해요.")}
   <div class="chips" id="bfor" style="margin-bottom:12px">${fors.map(k => `<button class="chip ${state.bfor === k ? "on" : ""}" data-k="${esc(k)}">${k === "all" ? "전체" : esc(k) + " 참고"}</button>`).join("")}</div>
   <div class="card scroll" style="margin-bottom:10px"><table class="tbl">
     <tr><th>참고 채널</th><th>구독자</th><th>우리 채널</th></tr>
@@ -878,11 +1087,11 @@ function route() {
   if (!D) { $("#app").innerHTML = '<div class="empty">아직 수집 전이에요</div>'; return; }
   const [page, arg] = (location.hash.slice(1) || "summary").split("/");
   const a = arg ? decodeURIComponent(arg) : null;
-  const cur = MENU.some(m => m[0] === page) ? page : "summary";
-  const nav = short => MENU.map(([k, ic, l, s]) => `<a href="#${k}" class="${k === cur ? "on" : ""}"><span class="ic">${ic}</span>${short && s ? s : l}</a>`).join("");
+  const cur = MENU.some(m => m[0] === page) ? page : (page === "team" ? "team" : "summary");
+  const nav = short => MENU.map(([k, ic, l, s]) => `<a href="#${k}" class="${k === cur || (cur === "team" && k === "summary") ? "on" : ""}"><span class="ic">${ic}</span>${short && s ? s : l}</a>`).join("");
   $("#tabs").innerHTML = nav(false); $("#bottom").innerHTML = nav(true);
   charts.forEach(c => c.destroy()); charts = [];
-  const pages = { summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
+  const pages = { team: [pageTeam, () => {}], summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
     money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(a), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)] };
   $("#app").innerHTML = pages[cur][0]();
   pages[cur][1]();

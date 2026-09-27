@@ -38,6 +38,9 @@
                                         # claude 를 못 쓸 때(구독 한도 등): --dry 재료 + 폴더/채널.txt(같은 줄 형식 답, 또는 .json)로 마무리
   python3 소재추천.py --score-only       # 우리 영상 채점·정확도 보정만
   python3 소재추천.py --done-only        # 편 폴더를 읽어 topics/done.json 만 갱신(데스크톱에서 — 비용_자동갱신.sh 가 편마다 부름)
+  python3 소재추천.py --pick 거대한비밀 3 5    # 대시보드 3·5위를 '만들기로 함'에 올리고 바로 대시보드에 올림(이름 일부도 됨)
+  python3 소재추천.py --link P3 --folder 030-한옥기둥 --video 영상ID   # 자동으로 못 맞춘 편 폴더·영상을 직접 연결
+  python3 소재추천.py --unpick P3 · --picks    # 목록에서 빼기 · 목록 보기   (--no-push: 올리지 않음)
 """
 import html
 import json
@@ -618,6 +621,7 @@ def gather(c, ob, cal, trend):
     info = {"news_n": len(kr_news) + len(en_news), "fresh_news_n": sum(1 for r in kr_news + en_news if r["날짜"] >= fresh_cut()),
             "trend_n": len(trend), "outliers_at": eo["at"] if eo else ob.get("기준시각"),
             "genre_n": len(eo["hot"]) if eo else None, "genre_scanned": eo["scanned"] if eo else None,
+            "genre_hot": [{k: r[k] for k in ("제목", "채널", "종류", "평소대비", "하루조회", "url")} for r in eo["hot"][:3]] if eo else None,
             "outliers_n": len(fob.get("쇼츠", [])) + len(fob.get("본편", [])) if fob else None,
             "ours_n": ours["편수"], "done_n": len(done["편_폴더"]), "often": [x["대상"] for x in recent["자주_나온_대상"]]}
     return {"mats": mats, "recent": recent, "calib": cal}, allowed, dates, overused, info, R.by_id
@@ -811,8 +815,133 @@ def clean(c, got, allowed, weights=None, dates=None, overused=()):
     return kept[:CFG["per_channel"]]
 
 
+PICKS = OUT / "picks.json"   # 만들기로 한 소재(2026-09-27 사용자: "여기서 몇 위 몇 위 만들어 달라고 하면")
+
+
+def _nz(s):
+    return re.sub(r"[\W_]+", "", str(s or "")).lower()
+
+
+def resolve_channel(key):
+    """채널 이름을 느슨하게 찾는다: 정확히 → 일부 → '영어'는 영어채널."""
+    names = [c["name"] for c in CFG["channels"]]
+    if key in names:
+        return key
+    k = _nz(key)
+    hit = [n for n in names if k and k in _nz(n)]
+    if not hit and k in ("영어", "영어채널", "paradox", "desk", "en"):
+        hit = [c["name"] for c in CFG["channels"] if c.get("lang") == "en"]
+    if len(hit) == 1:
+        return hit[0]
+    raise SystemExit(f"채널을 못 정했어요({key}) — 이 중에서: {', '.join(names)}")
+
+
+def git_sync(paths=(), msg=None):
+    """대시보드 기록과 맞추기: 먼저 받아 오고(순위가 대시보드와 같게), msg 가 있으면 paths 를 올린다. --no-push 면 아무것도 안 한다."""
+    if "--no-push" in sys.argv:
+        return True
+    run = lambda *a: subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True)
+    if msg:
+        run("add", *[str(p) for p in paths])
+        if run("diff", "--cached", "--quiet").returncode == 0:
+            return True
+        run("-c", "user.name=dashboard-bot", "-c", "user.email=dashboard-bot@users.noreply.github.com", "commit", "-q", "-m", msg)
+    r = run("pull", "--rebase", "--autostash", "-q")
+    ok = r.returncode == 0 and (not msg or run("push", "-q").returncode == 0)
+    if not ok:
+        log("! 대시보드와 맞추기 실패(다음에 다시):", (r.stderr or "")[:200])
+    return ok
+
+
+def load_picks():
+    return json.loads(PICKS.read_text(encoding="utf-8")) if PICKS.exists() else {"next": 1, "items": []}
+
+
+def find_topic(ch, key):
+    """순위(대시보드 번호) 또는 이름 일부로 소재를 찾는다. 지금 목록 → 지난 추천(최근 것부터). 돌려줌: (소재, 순위, 추천 시각)"""
+    latest = json.loads((OUT / "latest.json").read_text(encoding="utf-8")) if (OUT / "latest.json").exists() else {"channels": {}}
+    cur = latest["channels"].get(ch) or {}
+    topics = cur.get("topics") or []
+    if str(key).isdigit():
+        i = int(key) - 1
+        if 0 <= i < len(topics):
+            return topics[i], i + 1, cur.get("at")
+        raise SystemExit(f"{ch} 지금 목록은 {len(topics)}위까지예요({key}위 없음)")
+    k = _nz(key)
+    for i, t in enumerate(topics):
+        if k and k in _nz(" ".join(str(t.get(f) or "") for f in ("소재", "제목", "대상"))):
+            return t, i + 1, cur.get("at")
+    hp = OUT / "history.jsonl"
+    runs = [json.loads(l) for l in hp.read_text(encoding="utf-8").splitlines() if l.strip()] if hp.exists() else []
+    for r in reversed([r for r in runs if r.get("channel") == ch]):
+        for i, t in enumerate(r.get("topics", [])):
+            if k and k in _nz(" ".join(str(t.get(f) or "") for f in ("소재", "제목", "대상"))):
+                return t, i + 1, r.get("at")
+    raise SystemExit(f"{ch}에서 '{key}' 소재를 못 찾았어요")
+
+
+def cmd_picks(args):
+    """--pick 채널 순위|이름 … [--folder 편폴더] [--video 영상ID] · --link P번호 [--folder …] [--video …] · --unpick P번호 · --picks"""
+    opt = lambda k: args[args.index(k) + 1] if k in args and args.index(k) + 1 < len(args) else None
+    git_sync()                                   # 대시보드와 같은 순위를 보려고 먼저 받아 온다
+    d, now, changed = load_picks(), datetime.now(KST).strftime("%Y-%m-%d %H:%M"), []
+    if "--pick" in args:
+        rest = args[args.index("--pick") + 1:]
+        keys = []
+        for x in rest[1:]:
+            if x.startswith("--"):
+                break
+            keys.append(x)
+        if not rest or not keys:
+            raise SystemExit("쓰기: --pick 채널 순위|이름 …   예) --pick 거대한비밀 3 5")
+        ch = resolve_channel(rest[0])
+        c = next(x for x in CFG["channels"] if x["name"] == ch)
+        known = scan_done(c)
+        for key in keys:
+            t, rank, at = find_topic(ch, key)
+            if any(p["ch"] == ch and p["소재"] == t.get("소재") for p in d["items"]):
+                log(f"이미 목록에 있어요: [{ch}] {t.get('소재')}"); continue
+            item = {"id": f"P{d['next']}", "ch": ch, "picked_at": now, "rec_at": at, "rank": rank,
+                    **{k: t.get(k) for k in ("소재", "제목", "대상", "총점", "최신", "첫문장", "왜_터질까", "근거", "확인할_사실")
+                       if t.get(k) not in (None, "", [])},
+                    "known_folders": known}
+            for k in ("folder", "video"):
+                if opt("--" + k):
+                    item[k] = opt("--" + k)
+            d["next"] += 1
+            d["items"].append(item)
+            changed.append(f"{item['id']} [{ch}] {rank}위 {t.get('소재')} (추천 {at})")
+    for pid in [x for x in args if re.fullmatch(r"P\d+", x)] if ("--link" in args or "--unpick" in args) else []:
+        it = next((p for p in d["items"] if p["id"] == pid), None)
+        if not it:
+            raise SystemExit(f"{pid} 가 목록에 없어요")
+        if "--unpick" in args:
+            d["items"].remove(it); changed.append(f"{pid} 뺌: [{it['ch']}] {it['소재']}")
+        else:
+            for k in ("folder", "video"):
+                if opt("--" + k):
+                    it[k] = opt("--" + k)
+            changed.append(f"{pid} 연결: 폴더 {it.get('folder') or '-'} · 영상 {it.get('video') or '-'}")
+    if changed:
+        OUT.mkdir(exist_ok=True)
+        PICKS.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+        for x in changed:
+            log(x)
+        if "--no-push" in sys.argv:
+            log("(--no-push: 대시보드에는 안 올림)")
+        elif git_sync([PICKS, OUT / "done.json"], "만들기로 한 소재: " + " / ".join(x.split(" (")[0] for x in changed)[:120]):
+            log("✔ 대시보드에 올림 — 10분 안에 🎯 소재 → 📋 제작 현황에 보여요")
+    for p in d["items"]:
+        print(f"  {p['id']:<4} [{p['ch']}] {p.get('rank')}위 {p['소재']} · 고른 날 {p['picked_at']}"
+              + (f" · 폴더 {p['folder']}" if p.get("folder") else "") + (f" · 영상 {p['video']}" if p.get("video") else ""))
+    if not d["items"]:
+        print("  (만들기로 한 소재 없음)")
+
+
 def main():
     args = sys.argv
+    if any(k in args for k in ("--pick", "--unpick", "--link", "--picks")):
+        return cmd_picks(args)
     opt = lambda k: args[args.index(k) + 1] if k in args and args.index(k) + 1 < len(args) else None
     only, dry, answers, label = opt("--channel"), "--dry" in args, opt("--answers"), opt("--label") or "외부 답"
     OUT.mkdir(exist_ok=True)
@@ -873,7 +1002,7 @@ def main():
             fresh_n = sum(1 for t in topics if t.get("최신"))
             latest["channels"][name] = {"at": at, "model": model, "outliers_at": info.get("outliers_at"), "news_n": info.get("news_n"),
                                         "trend_n": info.get("trend_n"), "fresh_n": fresh_n, "prompt_chars": info.get("prompt_chars"),
-                                        "tokens": use, "labels": c.get("labels"), "genre_n": info.get("genre_n"), "topics": topics, "calib": view}
+                                        "tokens": use, "labels": c.get("labels"), "genre_n": info.get("genre_n"), "genre_hot": info.get("genre_hot"), "topics": topics, "calib": view}
             with (OUT / "history.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": at, "channel": name, "topics": [{"소재": t.get("소재"), "대상": t.get("대상"), "제목": t.get("제목"),
                                                                             "총점": t["총점"], "최신": t.get("최신")} for t in topics]}, ensure_ascii=False) + "\n")
@@ -886,6 +1015,8 @@ def main():
     if not dry:
         cp.write_text(json.dumps(calib_all, ensure_ascii=False, indent=1), encoding="utf-8")
         latest["at"] = now
+        if trend:   # 대시보드 마케팅팀 회의에서 '지금 검색 급상승'으로 말한다(2026-09-27)
+            latest["trends"] = [{"검색어": t["검색어"], "검색량": t["검색량"], "날짜": t["날짜"]} for t in trend[:10]]
         latest_p.write_text(json.dumps(latest, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
