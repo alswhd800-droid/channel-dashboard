@@ -32,6 +32,7 @@ KST = timezone(timedelta(hours=9))
 API = "https://www.googleapis.com/youtube/v3/"
 DASHBOARD_URL = "https://alswhd800-droid.github.io/channel-dashboard/"
 TOPIC_ALERT_MIN = 80   # 🎯 소재 추천 알림 기준 점수
+TOPIC_ALERT_TOP = 3    # 채널마다 점수 높은 몇 개만 알림(2026-09-27 추천이 채널당 20개로 늘어서 — 텔레그램 4,000자 넘지 않게)
 RETENTION = 0.35              # 본편 평균 시청 비율 가정(시청 시간 추정용)
 EARLY_HOURS = (6, 24, 48)     # 새 영상 성적 확인 시점
 SURGE_MIN_PER_HOUR = 50       # 급등: 1시간 조회수 최소
@@ -440,7 +441,7 @@ def collect():
 
     # 🎯 AI 소재 추천(맥 소재추천.py, 하루 2번): 새로 올라온 80점 이상 소재는 알림 + 텔레그램(2026-09-26 사용자 요청)
     for ch, cv in ((load_topics() or {}).get("channels") or {}).items():
-        for t in cv.get("topics", []):
+        for t in sorted(cv.get("topics", []), key=lambda t: -(t.get("총점") or 0))[:TOPIC_ALERT_TOP]:
             if (t.get("총점") or 0) < TOPIC_ALERT_MIN:
                 continue
             before = len(new_alerts)

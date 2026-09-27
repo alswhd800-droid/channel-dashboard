@@ -613,7 +613,7 @@ function topicCard(t, i) {
   const facts = (t["확인할_사실"] || []).map(x => `<li>${esc(x)}</li>`).join("");
   return `<div class="topic">
     <div class="hd"><div class="sc ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}<small>점</small></div>
-      <div style="min-width:0"><div class="nm">${i + 1}. ${esc(t["소재"])}${t["후속"] ? '<span class="fu">대박 편 후속</span>' : ""}</div>
+      <div style="min-width:0"><div class="nm">${i + 1}. ${esc(t["소재"])}${t["후속"] ? '<span class="fu">대박 편 후속</span>' : ""}${t["최신"] ? `<span class="fu" style="color:#2b6de0">📰 ${esc(String(t["최신"]).slice(5).replace("-", "/"))} 기사</span>` : ""}</div>
         <div class="ti">제목: ${esc(t["제목"])}</div>
         ${t["첫문장"] ? `<div class="fs">첫 문장: ${esc(t["첫문장"])}</div>` : ""}</div></div>
     <p class="why">${esc(t["왜_터질까"])}</p>
@@ -636,10 +636,10 @@ function pageTopics(want) {
   const chips = `<h2 class="pt">소재 추천</h2><p class="pd">채널 버튼을 누르면 그 채널에 맞는 소재 ${(c.topics || []).length}개가 나와요 · 매일 오전 7시·오후 3시에 새로 골라요</p>
     <div class="chips" style="margin-bottom:12px">${names.map(n => `<button class="chip ${n === cur ? "on" : ""}" data-tch="${esc(n)}"><span class="dot" style="background:${color(n)}"></span>${esc(n)}</button>`).join("")}</div>`;
   return chips + `<section class="card"><h2 class="ch2"><span class="dot" style="background:${color(cur)}"></span>${esc(cur)} <span class="when">${esc(c.at)} 기준</span></h2>
-    ${tip(`발굴 탭의 <b>지금 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 45일 뉴스</b>를 AI가 채널 떡상 공식으로 채점했어요. 총점 가중치는 ${Object.keys(TLABEL).map(k => TLABEL[k] + " ×" + (+(((c.calib || {}).weights || {korea: 3, paradox: 2, proof: 2, visual: 1})[k])).toFixed(1).replace(".0", "")).join(" · ")} (우리 영상 성적으로 자동 보정). <b>숫자는 만들기 전에 꼭 확인</b>하세요(펼치기).`)}
+    ${tip(`발굴 탭의 <b>지금 빨리 크는 영상</b>(영어 채널은 <b>영어권에서 뜨는 한국 영상</b>), 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 30일 뉴스</b>(구글·빙)와 <b>구글 트렌드</b>를 AI가 채널 떡상 공식으로 채점했어요. <b>📰</b>는 최근 14일 기사에 근거한 소재예요. 같은 대상은 2개까지, 최근 추천에 자주 나온 대상은 1개까지만 넣어요. 총점 가중치는 ${Object.keys(TLABEL).map(k => TLABEL[k] + " ×" + (+(((c.calib || {}).weights || {korea: 3, paradox: 2, proof: 2, visual: 1})[k])).toFixed(1).replace(".0", "")).join(" · ")} (우리 영상 성적으로 자동 보정). <b>숫자는 만들기 전에 꼭 확인</b>하세요(펼치기).`)}
     ${c.stale ? `<div class="empty" style="margin-bottom:8px">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
     ${(c.topics || []).map(topicCard).join("") || '<div class="empty">추천이 비어 있어요</div>'}
-    <div class="huntmeta" style="margin-top:10px">발굴 기준 ${esc(c.outliers_at || "-")} · 뉴스 ${c.news_n || 0}건 · 모델 ${esc(c.model || "")}</div>
+    <div class="huntmeta" style="margin-top:10px">발굴 기준 ${esc(c.outliers_at || "-")} · 뉴스 ${c.news_n || 0}건${c.trend_n ? ` · 트렌드 ${c.trend_n}개` : ""}${c.fresh_n !== undefined ? ` · 📰 최신 근거 ${c.fresh_n}개` : ""} · 모델 ${esc(c.model || "")}</div>
   </section>` + calibCard(c.calib);
 }
 function calibCard(cal) {

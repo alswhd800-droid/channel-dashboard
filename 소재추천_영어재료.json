@@ -1,0 +1,363 @@
+{
+ "updated": "2026-09-27",
+ "note": "The Korea Paradox 소재 추천용 재료. rss_channels 는 영어채널/문서/벤치마크 CSV(2026-09-26 조사)에서 뽑은 영어권 채널 — 유튜브 RSS(할당량 0)로 최근 15편을 훑어 한국 관련 영상의 평소 대비 배수·하루 조회수를 잰다. supply 는 주제별 영어권 수요·공급(같은 조사). 채널을 더하거나 빼려면 이 파일만 고친다.",
+ "rss_channels": [
+  {
+   "name": "Kurzgesagt",
+   "id": "UCsXVk37bltHxD1rDPwtNM8Q"
+  },
+  {
+   "name": "RealLifeLore",
+   "id": "UCP5tjEmvPItGyLhmjdwP7Ww"
+  },
+  {
+   "name": "fern",
+   "id": "UCODHrzPMGbNv67e84WDZhQQ"
+  },
+  {
+   "name": "Wendover",
+   "id": "UC9RM-iSvTu1uPJb8X5yp3EQ"
+  },
+  {
+   "name": "Infographics Show",
+   "id": "UCfdNM3NAhaBOXCafH7krzrA"
+  },
+  {
+   "name": "Johnny Harris",
+   "id": "UCmGSJVG3mCRXVOP4yZrU1Dw"
+  },
+  {
+   "name": "Economics Explained",
+   "id": "UCZ4AMrDcNrfy3X6nsU8-rPg"
+  },
+  {
+   "name": "Moon",
+   "id": "UCmFeOdJI3IXgTBDzqBLD8qg"
+  },
+  {
+   "name": "OBF",
+   "id": "UCK1XzxcKXB_v_dcw_tflC1A"
+  },
+  {
+   "name": "Gattsu",
+   "id": "UCCCmapQ-VnHWNZlK1Jdnalg"
+  },
+  {
+   "name": "Casual Scholar",
+   "id": "UCcvczmsieHPRsrpc3v7GUmg"
+  },
+  {
+   "name": "2 and 20",
+   "id": "UCL1VdVcXmP5sQyVLt81QMyg"
+  },
+  {
+   "name": "Papiens",
+   "id": "UCADEYQiszEI_cMARTSi5GdQ"
+  },
+  {
+   "name": "Dr. Jonathan Tam",
+   "id": "UCcc_LE8kzIzcloTVAttch5w"
+  },
+  {
+   "name": "Asianometry",
+   "id": "UC1LpsuAUaKoMzzJSEt5WImw"
+  },
+  {
+   "name": "Curistaan",
+   "id": "UC3RO_n-4HNftaWZmInt-DQg"
+  },
+  {
+   "name": "Explained with Dom",
+   "id": "UC5wT-aIWaUcGoAZYfN2Gs-A"
+  },
+  {
+   "name": "Fat Little Asian Man",
+   "id": "UC7hVEBYDz2bn54TyjKv7aSw"
+  },
+  {
+   "name": "Why Korea",
+   "id": "UCJuwS63VvOFL8tBEYCoCeYA"
+  },
+  {
+   "name": "Howdy Korea",
+   "id": "UCdZlDpmgey_8MgiCXen6rkA"
+  },
+  {
+   "name": "Behind Asia",
+   "id": "UCokeVZg4VaSLVBDiziJsMDA"
+  },
+  {
+   "name": "The Invisible Hand",
+   "id": "UCW-B3YqxljqVGYChJS0FjxQ"
+  },
+  {
+   "name": "hoser",
+   "id": "UCAiEWppTvoNSHU939xhMb2g"
+  },
+  {
+   "name": "PolyMatter",
+   "id": "UCgNg3vwj3xt7QOrcIDaHdFg"
+  },
+  {
+   "name": "Asian Route",
+   "id": "UCq-L7Z5zi40SKxJooCCnCAg"
+  },
+  {
+   "name": "CONSTRUCT X",
+   "id": "UCxVaQsR0qtXmXqvM0xqoStg"
+  },
+  {
+   "name": "KOREA NOW",
+   "id": "UCR-L8oZkHzgDh1ahJhH2WDQ"
+  },
+  {
+   "name": "Asian Boss",
+   "id": "UC2-_WWPT_124iN6jiym4fOw"
+  },
+  {
+   "name": "Rotten Mango",
+   "id": "UC0JJtK3m8pwy6rVgnBz47Rw"
+  },
+  {
+   "name": "VICE",
+   "id": "UCn8zNIfYAQNdrFRrr8oibKw"
+  },
+  {
+   "name": "TED",
+   "id": "UCAuUUnT6oDeKwE6v1NGQxug"
+  },
+  {
+   "name": "DW Documentary",
+   "id": "UCW39zufHfsuGgpLviKh297Q"
+  },
+  {
+   "name": "BBC News",
+   "id": "UC16niRr50-MSBwiO3YDb3RA"
+  },
+  {
+   "name": "Vox",
+   "id": "UCLXo7UDZvByw2ixzpQCufnA"
+  },
+  {
+   "name": "National Geographic",
+   "id": "UCpVm7bg6pXKo1Pr6k5kxG9A"
+  },
+  {
+   "name": "The New Yorker",
+   "id": "UCsD-Qms-AkXDrsU962OicLw"
+  },
+  {
+   "name": "Best Documentary",
+   "id": "UCmOCpBKeoBPp-HwarhIBA2g"
+  },
+  {
+   "name": "CNA Insider",
+   "id": "UC_Lnb8ZHqqgLbp-7hltuT9w"
+  },
+  {
+   "name": "Korean Comic",
+   "id": "UClHbjVXWB1rCNfB-MQDw-Nw"
+  },
+  {
+   "name": "Simple History",
+   "id": "UC510QYlOlKNyhy_zdQxnGYw"
+  },
+  {
+   "name": "The Wall Street Journal",
+   "id": "UCK7tptUDHh-RYDsdxO1-5QQ"
+  },
+  {
+   "name": "TheThings Celebrity",
+   "id": "UC1Ydgfp2x8oLYG66KZHXs1g"
+  },
+  {
+   "name": "mapsinanutshell",
+   "id": "UCVt9cQsDsjjaVPeEms3tvTQ"
+  },
+  {
+   "name": "BBC World Service",
+   "id": "UCQXHTFnQYFTqN0MqmNh9EIA"
+  },
+  {
+   "name": "ColdFusion",
+   "id": "UC4QZ_LsYcvcq7qOsOhpAX4A"
+  },
+  {
+   "name": "Geography Now",
+   "id": "UCmmPgObSUPw1HL2lq6H4ffA"
+  },
+  {
+   "name": "Stephanie Soo",
+   "id": "UCo9ZZ04kIhN_8xGxvnjaduQ"
+  },
+  {
+   "name": "K Explorer",
+   "id": "UCZkjqFCvTZgOv6paMBdZRyQ"
+  },
+  {
+   "name": "BBC deepwatch",
+   "id": "UCcjoLhqu3nyOFmdqF17LeBQ"
+  },
+  {
+   "name": "BE AMAZED",
+   "id": "UCkQO3QsgTpNTsOw6ujimT5Q"
+  },
+  {
+   "name": "Task & Purpose",
+   "id": "UCSq3p5NKEtyp5Rjd4ctiEbg"
+  },
+  {
+   "name": "Biographics",
+   "id": "UClnDI2sdehVm1zm_LmUHsjQ"
+  },
+  {
+   "name": "criminals and crime fighters",
+   "id": "UCYuXyzwA_w4-c1FJrqOnR0A"
+  },
+  {
+   "name": "How to Survive Show",
+   "id": "UCOch_vMp7AKaiGE7e6kSHfg"
+  },
+  {
+   "name": "CBS Mornings",
+   "id": "UC-SJ6nODDmufqBzPBwCvYvQ"
+  },
+  {
+   "name": "TODAY",
+   "id": "UChDKyKQ59fYz3JO2fl0Z6sg"
+  },
+  {
+   "name": "Anna Lee",
+   "id": "UC4JtVFtfTFEXdgLil-v0Fgg"
+  },
+  {
+   "name": "Behind the News",
+   "id": "UCcbE7twlpJfQVF2dO21fB1A"
+  },
+  {
+   "name": "WonderWhy",
+   "id": "UCcEPmwpXKrKzZahqjwpIAsQ"
+  }
+ ],
+ "supply": [
+  {
+   "주제": "Birth rate / extinction / marriage",
+   "최근12개월_편수": 13,
+   "그중_10만이상": 9,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "2.6M Papiens 'My Country Is Choosing Extinction (Korea)'"
+  },
+  {
+   "주제": "Economy rise-fall / bubble / rich-poor",
+   "최근12개월_편수": 13,
+   "그중_10만이상": 9,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "2.9M Andrei Jikh 'South Korea’s AI Bubble Just Popped'"
+  },
+  {
+   "주제": "Chaebol / Samsung / Hyundai",
+   "최근12개월_편수": 14,
+   "그중_10만이상": 6,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "3.5M ColdFusion 'Samsung is in Crisis'"
+  },
+  {
+   "주제": "Education / exam (CSAT, hagwon)",
+   "최근12개월_편수": 2,
+   "그중_10만이상": 2,
+   "최근12개월_100만이상": 0,
+   "최근24개월_최고": "0.7M BBC News 'South Korea exam chief quits over 'insane' En'"
+  },
+  {
+   "주제": "Work culture / jobs",
+   "최근12개월_편수": 6,
+   "그중_10만이상": 4,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "1.0M Asian Boss 'Why Firing Someone Is Almost Impossible in So'"
+  },
+  {
+   "주제": "Suicide / mental health / loneliness",
+   "최근12개월_편수": 6,
+   "그중_10만이상": 4,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "2.0M Dr. Jonathan Tam 'Why Korea Leads the World in Suicides'"
+  },
+  {
+   "주제": "Beauty / plastic surgery",
+   "최근12개월_편수": 4,
+   "그중_10만이상": 4,
+   "최근12개월_100만이상": 2,
+   "최근24개월_최고": "2.4M 2 and 20 'Why Plastic Surgery Is Destroying Korea'"
+  },
+  {
+   "주제": "K-pop / K-culture / soft power",
+   "최근12개월_편수": 13,
+   "그중_10만이상": 6,
+   "최근12개월_100만이상": 3,
+   "최근24개월_최고": "6.4M Korean Comic 'KPOP DEMON HUNTERS EXPLAINED BY A KOREAN'"
+  },
+  {
+   "주제": "Dystopia / \"Korea is over\" (whole-country decline)",
+   "최근12개월_편수": 12,
+   "그중_10만이상": 10,
+   "최근12개월_100만이상": 4,
+   "최근24개월_최고": "15.8M Kurzgesagt – In a Nutshell 'SOUTH KOREA IS OVER'"
+  },
+  {
+   "주제": "Housing / poverty / tiny rooms / slums",
+   "최근12개월_편수": 11,
+   "그중_10만이상": 6,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "1.5M Korebap 'This Is What Being Broke at 40 Looks Like — L'"
+  },
+  {
+   "주제": "Gender war / feminism",
+   "최근12개월_편수": 4,
+   "그중_10만이상": 3,
+   "최근12개월_100만이상": 0,
+   "최근24개월_최고": "1.0M DW Documentary 'Resistance through no sex: The 4B movement in'"
+  },
+  {
+   "주제": "North Korea",
+   "최근12개월_편수": 33,
+   "그중_10만이상": 28,
+   "최근12개월_100만이상": 13,
+   "최근24개월_최고": "10.2M The Wall Street Journal 'The North Korean Operatives Hiding Inside U.S'"
+  },
+  {
+   "주제": "History / Korean War / division",
+   "최근12개월_편수": 4,
+   "그중_10만이상": 4,
+   "최근12개월_100만이상": 2,
+   "최근24개월_최고": "4.4M 60 Minutes Australia 'The real North Korea: Life inside the Hermit '"
+  },
+  {
+   "주제": "Military / defense exports / nuclear",
+   "최근12개월_편수": 4,
+   "그중_10만이상": 4,
+   "최근12개월_100만이상": 2,
+   "최근24개월_최고": "1.8M Howdy Korea 'A Day with an Army Cook on South Korea's Fron'"
+  },
+  {
+   "주제": "Megaprojects / cities / infrastructure / regions",
+   "최근12개월_편수": 7,
+   "그중_10만이상": 6,
+   "최근12개월_100만이상": 2,
+   "최근24개월_최고": "3.4M The Wall Street Journal 'How North Korea’s New Warship Exposes Fast Sh'"
+  },
+  {
+   "주제": "Crime / scandal",
+   "최근12개월_편수": 4,
+   "그중_10만이상": 2,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "2.9M yapmaster 'Most Disturbing Crimes That Happened In The K'"
+  },
+  {
+   "주제": "Tech / AI / chips",
+   "최근12개월_편수": 8,
+   "그중_10만이상": 6,
+   "최근12개월_100만이상": 1,
+   "최근24개월_최고": "2.9M Andrei Jikh 'South Korea’s AI Bubble Just Popped'"
+  }
+ ]
+}
