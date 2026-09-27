@@ -1,0 +1,171 @@
+{
+ "next": 6,
+ "items": [
+  {
+   "id": "P1",
+   "ch": "거인의무덤",
+   "picked_at": "2026-09-27 18:39",
+   "rec_at": "2026-09-27 15:00",
+   "rank": 1,
+   "소재": "롯데백화점 역대 최대 매출 속 희망퇴직",
+   "제목": "2분기 역대 최대 매출 롯데백화점, 40개월치 걸고 5년 만에 사람을 내보냅니다",
+   "대상": "롯데백화점",
+   "총점": 88,
+   "최신": "2026-09-27",
+   "첫문장": "롯데백화점은 2분기에 역대 최대 매출을 올리고도 40개월치 위로금을 내걸었습니다.",
+   "왜_터질까": "가장 잘 나갈 때 감원한다는 모순이 한 줄로 들어오고, 09-27 기사까지 이어지는 최신 이슈다. 이미 추천한 소재지만 09-27 '올해 희망퇴직 인력 재편' 기사가 새 근거다.",
+   "근거": [
+    {
+     "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE56SmVfWU9YVEhhSVdUTGhtbFVyaVhMTzV6amdfUzR1T2cwSWpvRUVTTmtnUnhzSXJESHBSUlpKOTRrVlk2cm5lSGRIYw?oc=5",
+     "메모": "2분기 역대 최대 매출인데 40개월치 희망퇴직, 5년 만(09-22)"
+    },
+    {
+     "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9CUFdjNmpDZGhhRVNOZWZRVG1YVUVNRlNaQklyYk5zM05TQks5YkVpR0k2NE9fZ284VlpJS2p3OTQ2b3NpN05YaXBDRVRJSHJMWlVDWkdtOWREQ1hKeFhlUnVkek9ydDhVSWVZbWk0eGVFaE9i?oc=5",
+     "메모": "5년 만에 두 번째 희망퇴직, 실적 개선에도 선제 재편(09-21)"
+    },
+    {
+     "url": "https://www.msn.com/ko-kr/money/%EC%9D%BC%EB%B0%98/%EB%A1%AF%EB%8D%B0%EB%B0%B1%ED%99%94%EC%A0%90-%EC%9E%98-%EB%82%98%EA%B0%88-%EB%95%8C-%EA%B0%90%EC%9B%90-%EC%99%9C-%EC%A0%95%ED%98%84%EC%84%9D-%EC%A0%90%ED%8F%AC-%EC%9D%B4%EC%96%B4-%EC%A1%B0%EC%A7%81%EB%8F%84-%EA%B3%A0%ED%9A%A8%EC%9C%A8-%EC%B2%B4%EC%A7%88-%EA%B5%B3%ED%9E%8C%EB%8B%A4/ar-AA2cI5DY",
+     "메모": "점포 효율화 이어 조직 '고효율 체질' 강화(09-22)"
+    },
+    {
+     "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBDbUFYSkc4cXV1S1NCQ2lXZmJTQ25FTUJwMXdObTBFZWQ5VXdIZUxwU0d2Z3Fyc0pwTXFYUmZ0cWdYeWhIMnJiSlJuR0sxdUV2cW1hQXBWZXR5RWwtY0Z30gFkQVVfeXFMTTJqdXRnVWNNVGx1dU9wRFlsMDdaektZOVdzWkhUSnRDYjAtVmtzbzN5SkdpVkl1SjZXamZzNDFPRHBqaUg2Vjc3d2hwY1FrY042WDhSay1CbkJoT1dvLVdVX29YZQ?oc=5",
+     "메모": "올해 희망퇴직은 인력 재편 신호탄(09-27)"
+    }
+   ],
+   "확인할_사실": [
+    "2분기 매출·영업이익 실제 수치",
+    "40개월치 대상 조건",
+    "지난 희망퇴직 시점(5년 전)"
+   ],
+   "known_folders": []
+  },
+  {
+   "id": "P2",
+   "ch": "거인의무덤",
+   "picked_at": "2026-09-27 18:39",
+   "rec_at": "2026-09-27 15:00",
+   "rank": 2,
+   "소재": "중앙그룹 5개 계열사 회생신청",
+   "제목": "시청률 28% JTBC 모그룹, 이번엔 5개 계열사가 회생을 신청했습니다",
+   "대상": "중앙그룹",
+   "총점": 86,
+   "최신": "2026-09-23",
+   "첫문장": "JTBC를 만든 중앙그룹에서 이번엔 계열사 다섯 곳이 한꺼번에 법원의 문을 두드렸습니다.",
+   "왜_터질까": "JTBC 편이 우리 채널 최고 성적이고, 09-22~09-23 기사에서 그룹 전체 위기로 번졌다. JTBC 관련은 이 후속 한 편만 낸다.",
+   "근거": [
+    {
+     "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE80Y2JFbkRzaVZIZi05ZmpvV21BT2Q5QXBremF4MjB2d1hHNXRoNzc1ZmRCWGRINHJvQ2Fra2N3ak9oQUdTRnQyakUwaXBDM0RIcS1JUQ?oc=5",
+     "메모": "중앙그룹 5개 계열사 회생신청 칼럼(09-23)"
+    },
+    {
+     "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5jU2dNQWlRMl9hWS1Xa2QyNnZ3Y2g1WVpSUy02MWxGZDJYZkROZ0JZUXV4Ymc2WnJiWlMzWTBsLXpxVUxMdW5GUnp5RU04WElGVERKTTF2bFRRbVVZSlZRR3V4TElXTTg?oc=5",
+     "메모": "대기업 은행대출 연체율 5년 만에 최고, 중앙그룹 구조조정 여파(09-22)"
+    },
+    {
+     "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBBWkFWUW5TZHRvX1JSckJGNnR2OTN2b2YzWkdJbzc3NVIwN2J2dW0wQ3M2RWYySVRpdUJYTFlCUC1wcjVzbW5CaVYwcXNSQWNWeTA2Q0R5RktSbE9KZlFvYlh4SmZrbXB0WDhYZTN5b1g?oc=5",
+     "메모": "중앙일보 노조 '홍정도 일가 실패가 700여명 삶 흔들어'(09-17)"
+    },
+    {
+     "url": "https://www.youtube.com/watch?v=vCQi_5UL-VA",
+     "메모": "우리 채널 JTBC 본편 4715회"
+    }
+   ],
+   "확인할_사실": [
+    "회생신청 5개 계열사 명단과 법원 접수일",
+    "연체율 수치",
+    "노조 주장 700여 명의 범위"
+   ],
+   "known_folders": []
+  },
+  {
+   "id": "P3",
+   "ch": "거인의무덤",
+   "picked_at": "2026-09-27 18:39",
+   "rec_at": "2026-09-27 15:00",
+   "rank": 3,
+   "소재": "모나미 후속, 주식병합의 함정",
+   "제목": "국민 볼펜 모나미가 놓친 함정, 주식병합한 회사 14%는 다시 동전주가 됐습니다",
+   "대상": "모나미",
+   "총점": 81,
+   "최신": "2026-09-25",
+   "첫문장": "주식을 합쳐 주가를 올린 회사 열 곳 중 한두 곳은 다시 동전주로 돌아갔습니다.",
+   "왜_터질까": "모나미 쇼츠가 상위권이고, 상장폐지 요건 강화와 주식병합 러시가 09-25 기사로 다시 올라왔다. 이미 추천한 소재라 새 기사(09-25) 근거로만 낸다.",
+   "근거": [
+    {
+     "url": "https://www.newsis.com/view/NISX20260923_0003802567",
+     "메모": "상장폐지 요건 강화에 주식병합 '러시', 14% 다시 동전주(09-25)"
+    },
+    {
+     "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFB4ZUwwT2VZQUF1YmNDRmlpYzdrWXdYQzl3WVRESVpNOXhRdWtQSWowSnh5SXBFOFZOa0t2TVk3eG9YbEN4Vk1XNmtSZllqM2RIWUtPdG5UdHNjSzZLcE14WnRqN3RnWTFDV2t3NWRfMnd2ZktscFHSAXZBVV95cUxQeGVMME9lWUFBdWJjQ0ZpaWM3a1l3WEM5d1lURElaTTl4UXVrUElqMEp4eUlwRThWTmtLdk1ZN3hvWGxDeFZNVzZrUmZZajNkSFlLT3RuVHRzY0s2S3BNeFp0ajd0Z1kxQ1drdzVkXzJ3dmZLbHBR?oc=5",
+     "메모": "코스닥 8개사 퇴출, 기업들 생존전(09-25)"
+    },
+    {
+     "url": "https://www.youtube.com/shorts/wYke1Lx1aL8",
+     "메모": "우리 채널 모나미 쇼츠 1661회"
+    }
+   ],
+   "확인할_사실": [
+    "14%의 정확한 모수와 기준",
+    "모나미의 현재 상장 상태와 병합 여부",
+    "코스닥 8개사 퇴출 명단"
+   ],
+   "known_folders": []
+  },
+  {
+   "id": "P4",
+   "ch": "거인의무덤",
+   "picked_at": "2026-09-27 18:39",
+   "rec_at": "2026-09-27 15:00",
+   "rank": 4,
+   "소재": "혼다, 수입차 3대 중 1대였던 시절",
+   "제목": "수입차 3대 중 1대가 일본차였던 한국, 혼다는 왜 밀려났나",
+   "대상": "혼다",
+   "총점": 80,
+   "최신": "2026-09-25",
+   "첫문장": "한때 한국에서 팔린 수입차 세 대 중 한 대는 일본차였습니다.",
+   "왜_터질까": "누구나 아는 일본차가 한때 수입차의 3분의 1을 차지했다는 숫자 대비가 있다. 09-25 기사는 '혼다차의 몰락' 연재 3편이라 새 근거다.",
+   "근거": [
+    {
+     "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5oU01venVLcEtZZGxCajZwWDBMME4zeFhsXzJ4WC1YWXAwNHQ0WWZBTHZENlhsanhSbkxfM2g3UVdwdVZzZkk5ZVZ1MXB2Mm9xVXhxTTUwd05Pbmk2dHJpekhLNA?oc=5",
+     "메모": "한때 수입차 3대 중 1대 일본차, 한국서 왜 생존 갈렸나 [혼다차의 몰락③](09-25)"
+    }
+   ],
+   "확인할_사실": [
+    "3대 중 1대였던 연도와 출처",
+    "혼다 현재 국내 판매량",
+    "생존한 일본 브랜드와 갈린 이유"
+   ],
+   "known_folders": []
+  },
+  {
+   "id": "P5",
+   "ch": "거인의무덤",
+   "picked_at": "2026-09-27 18:39",
+   "rec_at": "2026-09-27 15:00",
+   "rank": 5,
+   "소재": "LG전자 가전 생산직 또 희망퇴직",
+   "제목": "가전 1등 LG전자, 자동화가 들어오자 생산직에 또 희망퇴직을 받습니다",
+   "대상": "LG전자",
+   "총점": 76,
+   "최신": "2026-09-27",
+   "첫문장": "LG전자가 가전 공장에서 다시 희망퇴직을 받기 시작했습니다.",
+   "왜_터질까": "누구나 아는 가전 1등이 공장 자동화로 사람을 줄인다는 이야기로, 09-27 희망퇴직 총괄 기사가 새 맥락을 준다. 이미 추천한 소재라 롯데백화점과 묶은 '인력 재편' 각도로 낸다.",
+   "근거": [
+    {
+     "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1GS2RuWU4yT3lYcDhDRzhqZ0tSV1BjR04yQVdFUDVocW5BQ0oySmg2OTBISmg4QjB0bmtkbG12cGI4OUxQT0xGenV3Q3FBbGJsbjV4Zjd3d2FjeFZUSV9SUTJrLTMxa3NpLU5xVlZoSjjSAXRBVV95cUxPOXFiZnZBeTZsTDZaek1DQkVSM0p5dUNXSlpFYjlIQm9Db1BKM1FaaktyXzgzYnlPdGpVX1dqNU5FNGhoSjZac2lsVlh2Y3RQN09rajNhbFJGMEV5bThzVUM0cTdodWlVcmlqdFVMRWFrS2NtSQ?oc=5",
+     "메모": "LG전자 가전 생산직 또 희망퇴직, 자동화 체질 개선(09-21)"
+    },
+    {
+     "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBDbUFYSkc4cXV1S1NCQ2lXZmJTQ25FTUJwMXdObTBFZWQ5VXdIZUxwU0d2Z3Fyc0pwTXFYUmZ0cWdYeWhIMnJiSlJuR0sxdUV2cW1hQXBWZXR5RWwtY0Z30gFkQVVfeXFMTTJqdXRnVWNNVGx1dU9wRFlsMDdaektZOVdzWkhUSnRDYjAtVmtzbzN5SkdpVkl1SjZXamZzNDFPRHBqaUg2Vjc3d2hwY1FrY042WDhSay1CbkJoT1dvLVdVX29YZQ?oc=5",
+     "메모": "올해 희망퇴직 인력 재편 신호탄(09-27)"
+    }
+   ],
+   "확인할_사실": [
+    "이번 대상 인원과 조건",
+    "지난 희망퇴직 시점",
+    "자동화 투자 규모"
+   ],
+   "known_folders": []
+  }
+ ]
+}
