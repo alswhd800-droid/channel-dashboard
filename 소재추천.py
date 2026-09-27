@@ -4,12 +4,17 @@
 
 2026-09-26 사용자: "대시보드 시장조사를 하루 2번씩 조회수 빵빵 터질 만한 소재를 판단해서 가져오게" → 거대한비밀·거인의무덤, 내 맥, 07·15시.
 2026-09-27 사용자: "새 영어채널도, 5개 말고 20개씩, 너무 똑같은 주제만 나오고 최신 이슈 반영이 안 된다"
-  → The Korea Paradox 추가 · 채널당 20개 · 뉴스 빙(최신순)+구글(최근 14일) · 구글 트렌드 · 영어권 한국 영상(유튜브 RSS)
+  → The Korea Paradox 추가 · 채널당 20개 · 뉴스 빙+구글(최근 14일) · 구글 트렌드 · 영어권 한국 영상(유튜브 RSS)
     · 최근 추천에 자주 나온 대상 억제 + 같은 대상 2개까지 · 근거 기사 날짜로 📰 최신 표시.
+2026-09-27 사용자: "논스킵은 '당신이 몰랐던 이야기'처럼 신창원·개구리소년 같은 미스터리·사건 이야기 채널"
+  → 논스킵 추가 · 같은 장르 채널 훑기를 채널 설정("genre")으로 일반화 · 발굴 재료를 채널 키워드("outlier_keywords")로 줄임
+    · 채널별 점수 이름("labels")을 대시보드에 표시.
 
 입력(판단 재료 — 전부 프로그램이 모은다, AI 토큰 0):
   · 발굴 결과(한국어 채널): gh-pages 의 data/outliers.json (발굴.py 가 06·14·21시에 찾은 '채널 평소보다 몇 배 빨리 크는 영상')
-  · 영어권 한국 영상(영어 채널): 소재추천_영어재료.json 의 채널을 유튜브 RSS(할당량 0)로 훑어 평소 대비 배수·하루 조회수 + 최근 공급
+    — 채널 키워드가 있으면 종합 상위 8편 + 키워드 든 영상만
+  · 같은 장르 채널(영어채널·논스킵): 채널 설정 "genre" 의 파일(소재추천_영어재료.json·소재추천_장르_논스킵.json)의 채널을
+    유튜브 RSS(할당량 0)로 훑어 평소 대비 배수·하루 조회수 + 최근 공급. RSS 가 막히면 3일 안의 지난 성공분(topics/_rss_cache.json)
   · 우리 채널 성적: gh-pages 의 data/videos.json (무엇이 터졌고 무엇이 멈췄나)
   · 이미 만든 편: 각 채널 episodes 폴더 이름 (반복 금지). 폴더를 못 보는 예약 실행은 topics/done.json 사본
   · 최근 추천: topics/history.jsonl — 최근 추천 소재 + 자주 나온 대상(최근 8번 중 몇 번)
@@ -55,8 +60,14 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "topics"
 KST = timezone(timedelta(hours=9))
 CFG = json.loads((ROOT / "소재추천_기준.json").read_text(encoding="utf-8"))
-_EN = ROOT / "소재추천_영어재료.json"
-EN_CONF = json.loads(_EN.read_text(encoding="utf-8")) if _EN.exists() else {}
+_GENRE = {}   # 장르 파일(같은 장르 채널 목록) 캐시 — 채널 설정의 "genre": {"file": …}
+
+
+def genre_conf(name):
+    if name not in _GENRE:
+        p = ROOT / name
+        _GENRE[name] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    return _GENRE[name]
 VIDEOS, VIEWS = None, None   # gh-pages 의 우리 영상 목록·일별 조회수(main 에서 한 번 읽음)
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"}
 NEWS_DAYS = 30     # 이보다 오래된 기사는 재료에서 뺀다
@@ -132,14 +143,14 @@ def sec_outliers(ob, R):
     return "\n".join(L)
 
 
-def sec_en(eo, R):
-    L = [f"기준 {eo['기준시각']} · 훑은 채널 {eo['훑은_채널']} · 칸: 번호|종류|평소대비(배)|하루조회|경과일|채널|제목"]
-    L += [f"{R(r['url'])}|{r['종류']}|{r['평소대비']}|{r['하루조회']}|{r['경과일']}|{r['채널']}|{r['제목']}" for r in eo["뜨는_영어권_한국영상"]]
-    L.append("최근 60일 영어권 한국 본편(공급 — 같은 각도가 이미 있나) · 칸: 번호|경과일|조회|채널|제목")
-    L += [f"{R(r.get('url'))}|{r['경과일']}|{r['조회']}|{r['채널']}|{r['제목']}" for r in eo["최근60일_영어권_한국본편(공급)"]]
-    L.append("주제별 영어권 수요·공급(2026-09-26 조사) · 칸: 주제|최근12개월 편수|그중 10만+|100만+|최근24개월 최고")
-    L += [f"{r['주제']}|{r['최근12개월_편수']}|{r['그중_10만이상']}|{r['최근12개월_100만이상']}|{r['최근24개월_최고']}"
-          for r in eo["주제별_영어권_수요공급(2026-09-26 조사)"]]
+def sec_genre(eo, R):
+    L = [f"기준 {eo['at']} · 훑은 채널 {eo['scanned']} · 칸: 번호|종류|평소대비(배)|하루조회|경과일|채널|제목"]
+    L += [f"{R(r['url'])}|{r['종류']}|{r['평소대비']}|{r['하루조회']}|{r['경과일']}|{r['채널']}|{r['제목']}" for r in eo["hot"]] or ["(없음)"]
+    L.append("최근 60일 같은 장르 본편(공급 — 같은 소재·각도가 이미 있나) · 칸: 번호|경과일|조회|채널|제목")
+    L += [f"{R(r.get('url'))}|{r['경과일']}|{r['조회']}|{r['채널']}|{r['제목']}" for r in eo["supply"]]
+    if eo.get("table"):
+        L.append("주제별 수요·공급(조사표) · 칸: 주제|최근12개월 편수|그중 10만+|100만+|최근24개월 최고")
+        L += [f"{r['주제']}|{r['최근12개월_편수']}|{r['그중_10만이상']}|{r['최근12개월_100만이상']}|{r['최근24개월_최고']}" for r in eo["table"]]
     return "\n".join(L)
 
 
@@ -216,9 +227,10 @@ def _yt_feed(cid, tries=5):
     return name, rows
 
 
-def en_outliers(conf, days=30, top=25):
-    """영어권 한국 영상 — 벤치마크 채널을 RSS 로 훑는다. 발굴.py 와 같은 생각: 절대 조회수가 아니라
-    그 채널 평소(최근 영상 중간값, 쇼츠·본편 따로) 대비 배수 + 속도(하루 조회수). 최근 60일 한국 본편은 '공급'으로 따로 준다."""
+def genre_outliers(conf, flt=None, days=30, top=25):
+    """같은 장르 채널을 RSS 로 훑는다(할당량 0). 발굴.py 와 같은 생각: 절대 조회수가 아니라
+    그 채널 평소(최근 영상 중간값, 쇼츠·본편 따로) 대비 배수 + 속도(하루 조회수). 최근 60일 본편은 '공급'으로 따로 준다.
+    flt: 제목 거르기(영어채널은 한국 관련만). 2026-09-27 영어채널 전용에서 일반화(논스킵 미스터리 채널 추가)."""
     now = datetime.now(timezone.utc)
 
     def run(ch):
@@ -253,7 +265,7 @@ def en_outliers(conf, days=30, top=25):
         for r in rows:
             r["age_d"] = max((seen_at - r["pub"]).total_seconds() / 86400, 0.25)
         for r in rows:
-            if not KOREA_RE.search(r["title"]):
+            if flt and not flt.search(r["title"]):
                 continue
             same = [x["views"] for x in rows if x["short"] == r["short"] and x["id"] != r["id"] and x["age_d"] >= 3]
             base = statistics.median(same) if len(same) >= 3 else None
@@ -272,9 +284,23 @@ def en_outliers(conf, days=30, top=25):
             r["점수"] = round(100 * (1 - (bm[id(r)] + bv[id(r)]) / (2 * n)), 1)
         cand.sort(key=lambda r: -r["점수"])
     supply.sort(key=lambda r: r["경과일"])
-    return {"기준시각": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "훑은_채널": f"{live}/{len(chans)}" + (f" (+지난 성공분 {old})" if old else ""),
-            "뜨는_영어권_한국영상": cand[:top], "최근60일_영어권_한국본편(공급)": supply[:40],
-            "주제별_영어권_수요공급(2026-09-26 조사)": conf.get("supply", [])}
+    return {"at": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "scanned": f"{live}/{len(chans)}" + (f" (+지난 성공분 {old})" if old else ""),
+            "hot": cand[:top], "supply": supply[:40], "table": conf.get("supply", [])}
+
+
+def filter_outliers(ob, c, keep=8, cap=24):
+    """발굴 결과를 채널에 맞게 줄인다(토큰 절약): 종합 상위 keep 개 + 채널 키워드가 제목에 든 영상(최대 cap).
+    키워드가 없는 채널은 그대로. 2026-09-27 — 발굴 40편 중 대부분이 예능·스포츠라 채널과 무관했다."""
+    kw = c.get("outlier_keywords")
+    if not kw:
+        return ob
+    rx = re.compile(kw, re.I)
+    out = dict(ob)
+    for k in ("쇼츠", "본편"):
+        rows = ob.get(k, [])
+        out[k] = [r for i, r in enumerate(rows) if i < keep or rx.search(r.get("제목") or "")][:cap]
+    out["뜨는채널"] = [r for i, r in enumerate(ob.get("뜨는채널", [])) if i < 4 or rx.search(r.get("채널") or "")][:10]
+    return out
 
 
 def ours_brief(ch):
@@ -565,21 +591,21 @@ def calibrate(c, scored):
 
 def gather(c, ob, cal, trend):
     """채널 하나의 판단 재료(표 줄 + R번호). 돌려줌: (프롬프트 재료, 근거로 쓸 수 있는 주소, 주소→기사 날짜, 1개만 허용할 대상, 요약 숫자, R번호→주소)"""
-    en = c.get("lang") == "en"
     R = Refs()
     recent, overused = recent_brief(c["name"])
     ours, done = ours_brief(c["name"]), done_topics(c)
     kr_news = news(c["news"], per=c.get("news_per", 5))
-    en_news, eo = [], None
-    if en:
-        eo = en_outliers(EN_CONF)
-        en_news = news(c.get("news_en", []), per=4, cap=40, sources=("google",), lang="en")
-        mats = [("영어권에서 지금 빨리 크는 한국 영상(유튜브 RSS — 그 채널 평소 대비 배수·하루 조회수) · 공급 · 주제별 수요", sec_en(eo, R))]
-    else:
-        mats = [("지금 한국 유튜브에서 평소보다 몇 배 빨리 크는 영상(발굴)", sec_outliers(ob, R))]
+    en_news = news(c["news_en"], per=4, cap=40, sources=("google",), lang="en") if c.get("news_en") else []
+    g, eo, fob, mats = c.get("genre"), None, None, []
+    if g:   # 같은 장르 채널 훑기(영어채널·논스킵)
+        eo = genre_outliers(genre_conf(g["file"]), KOREA_RE if g.get("filter") == "korea" else None)
+        mats.append((g.get("label", "같은 장르 채널에서 지금 빨리 크는 영상(유튜브 RSS — 그 채널 평소 대비 배수·하루 조회수) · 공급"), sec_genre(eo, R)))
+    if c.get("use_outliers", not g):   # 한국 유튜브 전체 발굴(채널 키워드로 줄임)
+        fob = filter_outliers(ob, c)
+        mats.append(("지금 한국 유튜브에서 평소보다 몇 배 빨리 크는 영상(발굴)", sec_outliers(fob, R)))
     mats += [("우리 채널 성적", sec_ours(ours, R)), ("이미 만든 편", sec_done(done)), ("최근 추천(반복 금지용)", sec_recent(recent)),
              (f"최신 한국 뉴스(최근 {NEWS_DAYS}일)", sec_news(kr_news, R))]
-    if en:
+    if en_news:
         mats.append((f"영어권 언론이 지금 다루는 한국(최근 {FRESH_DAYS}일)", sec_news(en_news, R)))
     mats.append(("지금 한국에서 검색이 급상승한 말(구글 트렌드) — 채널 공식에 맞을 때만 쓴다", sec_trend(trend, R)))
     allowed, dates = set(R.by_url), {}      # 재료로 실제 보낸 주소만 근거로 인정
@@ -590,8 +616,9 @@ def gather(c, ob, cal, trend):
             if a.get("url"):
                 dates.setdefault(a["url"], t["날짜"])
     info = {"news_n": len(kr_news) + len(en_news), "fresh_news_n": sum(1 for r in kr_news + en_news if r["날짜"] >= fresh_cut()),
-            "trend_n": len(trend), "outliers_at": eo["기준시각"] if en else ob.get("기준시각"),
-            "outliers_n": len(eo["뜨는_영어권_한국영상"]) if en else len(ob.get("쇼츠", [])) + len(ob.get("본편", [])),
+            "trend_n": len(trend), "outliers_at": eo["at"] if eo else ob.get("기준시각"),
+            "genre_n": len(eo["hot"]) if eo else None, "genre_scanned": eo["scanned"] if eo else None,
+            "outliers_n": len(fob.get("쇼츠", [])) + len(fob.get("본편", [])) if fob else None,
             "ours_n": ours["편수"], "done_n": len(done["편_폴더"]), "often": [x["대상"] for x in recent["자주_나온_대상"]]}
     return {"mats": mats, "recent": recent, "calib": cal}, allowed, dates, overused, info, R.by_id
 
@@ -606,7 +633,7 @@ def build_prompt(c, data):
     often = ", ".join(f"{x['대상']}({x['나온_횟수']}번)" for x in rec.get("자주_나온_대상", []))
     repeat_rule = (f"- 반복 금지(가장 중요): 최근 {rec.get('살펴본_추천_횟수', 0)}번의 추천에 자주 나온 대상 — {often}. 이 대상들은 각각 1개까지만, "
                    f"그것도 최근 {FRESH_DAYS}일 안의 새 기사나 지금 새로 터지는 영상이 근거일 때만 낸다. " if often else "- 반복 금지(가장 중요): ") + \
-                  "공식에 예로 든 이름들은 '이만큼 유명한 대상'이라는 예시일 뿐이다 — 그 이름을 되풀이하지 말고 같은 급의 다른 대상을 찾아라."
+                  "공식에 예로 든 이름은 '이만큼 유명한 대상'이라는 뜻이다 — 이미 만든 편이나 최근 추천에 있는 이름이면 되풀이하지 말고 같은 급의 다른 대상을 찾고, 아직 만든 적 없는 이름이면 추천해도 된다."
     L = [f"너는 유튜브 채널 「{c['name']}」의 소재 기획자다. 아래 재료만 보고, 지금 만들면 조회수가 가장 크게 터질 소재 {ask}개를 골라라"
          f"(프로그램이 같은 대상 겹침을 걸러 {n}개를 쓴다).",
          "", "[채널 형식]", c["format"],
@@ -622,6 +649,8 @@ def build_prompt(c, data):
          "② 우리 대박 편의 새 후속 ③ 지금 빨리 크는 영상에서 나온 소재 ④ 아직 아무도 안 한 새 각도.",
          "- 최신 우선: 점수가 비슷하면 최근 기사에 근거한 소재를 앞에 둔다. 기사를 근거로 쓸 때는 메모에 기사 날짜를 적는다.",
          "- 확인 안 된 숫자는 제목에 쓰지 말고 확인 줄에 넣어라."]
+    if c.get("genre"):
+        L.append("- 같은 장르 채널 영상(재료 1)은 무엇이 먹히는지(장르·각도·제목 틀)를 보는 신호다. 그 채널들이 최근 60일 안에 다룬 사건·소재를 그대로 따라 하지 말고, 같은 대상이면 확실히 다른 각도일 때만 낸다.")
     if c.get("output_note"):
         L.append("- " + c["output_note"])
     L += ["", "[출력 형식 — JSON·설명·머리말 없이 아래 줄 형식만. 소재마다 '## '로 시작, 총점이 높을 것 같은 순서]",
@@ -630,7 +659,7 @@ def build_prompt(c, data):
           f"점수: {' '.join(keys)} 순서로 0~5 정수 {len(keys)}개 (예: 5 3 2 4)",
           "제목: 유튜브 제목 초안(#shorts 빼고)",
           "왜: 왜 터질까 — 근거를 짚어 2문장 이내",
-          "근거: R번호 = 무엇이 근거인가(기사면 날짜) | R번호 = …",
+          "근거: R번호 = 무엇이 근거인가(기사면 날짜) | R번호 = …   (R번호는 이 줄에만 쓴다. 왜·장면·확인 줄에는 쓰지 않는다)",
           "첫문장: 영상 첫 문장",
           "장면: 화면으로 무엇을 보여주나(1문장)",
           "확인: 제작 전 확인할 숫자·사실 | …(3개 이내)",
@@ -727,6 +756,20 @@ def tok_str(use):
     return s + (f" ${use['usd']:.2f}" if use.get("usd") else "")
 
 
+REF_IN_TEXT = (re.compile(r"\s*[(\[]\s*R\d+(?:\s*[~,·\-–]\s*R?\d+)*\s*[)\]]"), re.compile(r"\bR\d+(?:\s*[~,·\-–]\s*R?\d+)*\b\s*"))
+
+
+def strip_refs(x):
+    """설명 글에 새어 나온 재료 번호(R12, (R3~R5))를 지운다 — 번호는 근거 줄에만 의미가 있다(2026-09-27)."""
+    if isinstance(x, list):
+        return [strip_refs(v) for v in x]
+    if not isinstance(x, str):
+        return x
+    for rx in REF_IN_TEXT:
+        x = rx.sub(" " if rx is REF_IN_TEXT[1] else "", x)
+    return re.sub(r"\s{2,}", " ", x).strip()
+
+
 def clean(c, got, allowed, weights=None, dates=None, overused=()):
     """AI 답 정리: 점수→총점(보정 가중치), 지어낸 근거 주소 버림, 근거 기사 날짜로 '최신' 표시,
     같은 대상은 2개까지(최근 추천에 3번 이상 나온 대상은 1개) — 2026-09-27 '똑같은 주제만 나온다'."""
@@ -744,6 +787,12 @@ def clean(c, got, allowed, weights=None, dates=None, overused=()):
             except (TypeError, ValueError):
                 s[k] = 0
         t["점수"] = s
+        for k in ("첫문장", "왜_터질까", "보여줄_장면", "확인할_사실", "위험"):   # 제목·소재는 건드리지 않는다
+            if k in t:
+                t[k] = strip_refs(t[k])
+        for e in t.get("근거") or []:
+            if isinstance(e, dict) and isinstance(e.get("메모"), str):
+                e["메모"] = strip_refs(e["메모"])
         t["총점"] = round(sum(s.get(k, 0) * w[k] for k in w) / top * 100)
         t["근거"] = [e for e in (t.get("근거") or []) if isinstance(e, dict) and e.get("url") in allowed]   # 지어낸 주소는 버린다
         ds = sorted((dates[e["url"]] for e in t["근거"] if e["url"] in dates), reverse=True)
@@ -809,7 +858,7 @@ def main():
                 data, allowed, dates, overused, info, refs = gather(c, ob, cal, trend)
                 prompt = build_prompt(c, data)
                 info["prompt_chars"] = len(prompt)
-                log(name, f"재료: {'영어권 한국영상' if c.get('lang') == 'en' else '발굴'} {info['outliers_n']}, 우리 {info['ours_n']}편, "
+                log(name, f"재료: 장르 {info['genre_n'] if info['genre_n'] is not None else '-'}·발굴 {info['outliers_n'] if info['outliers_n'] is not None else '-'}, 우리 {info['ours_n']}편, "
                           f"만든 편 {info['done_n']}, 뉴스 {info['news_n']}(최근 {FRESH_DAYS}일 {info['fresh_news_n']}), 트렌드 {info['trend_n']}, "
                           f"자주 나온 대상 {info['often'] or '없음'}, 프롬프트 {len(prompt):,}자")
                 if dry:
@@ -824,7 +873,7 @@ def main():
             fresh_n = sum(1 for t in topics if t.get("최신"))
             latest["channels"][name] = {"at": at, "model": model, "outliers_at": info.get("outliers_at"), "news_n": info.get("news_n"),
                                         "trend_n": info.get("trend_n"), "fresh_n": fresh_n, "prompt_chars": info.get("prompt_chars"),
-                                        "tokens": use, "topics": topics, "calib": view}
+                                        "tokens": use, "labels": c.get("labels"), "genre_n": info.get("genre_n"), "topics": topics, "calib": view}
             with (OUT / "history.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": at, "channel": name, "topics": [{"소재": t.get("소재"), "대상": t.get("대상"), "제목": t.get("제목"),
                                                                             "총점": t["총점"], "최신": t.get("최신")} for t in topics]}, ensure_ascii=False) + "\n")

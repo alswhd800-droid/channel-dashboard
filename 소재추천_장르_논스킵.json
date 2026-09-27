@@ -1,0 +1,29 @@
+{
+ "updated": "2026-09-27",
+ "note": "논스킵(미스터리·사건 이야기) 소재 추천용 같은 장르 채널. 2026-09-27 yt-dlp 검색(미제사건·실종사건 미스터리·대한민국 미스터리 사건·탈옥수 신창원·개구리소년 사건·소름돋는 실화 사건)에서 조회수 합이 큰 개인 채널을 골랐다(방송사·언론·예능·스트리머 제외). 유튜브 RSS(할당량 0)로 최근 15편을 훑어 평소 대비 배수·하루 조회수를 잰다. 채널을 더하거나 빼려면 이 파일만 고친다.",
+ "reference": {"name": "당신이 몰랐던 이야기", "handle": "@dangmolee", "subs": 1330000, "long_median_views": 376500, "long_median_min": 13.3, "upload_every_days": 4.7, "hits_1m": 30, "quote_title_share": 0.59},
+ "rss_channels": [
+  {"name": "당신이 몰랐던 이야기", "id": "UC5Znk83wpDdporFLdDWHARQ"},
+  {"name": "디바제시카", "id": "UCh6O-aBKR-99dg4rPy69CXg"},
+  {"name": "괴인협회", "id": "UC9zf6ouMhTKgGhTLrbfG1wg"},
+  {"name": "미스스한 이야기", "id": "UC11A8CPmI7QboPTwF270Www"},
+  {"name": "기묘한 밤", "id": "UC_SgaM1zbb1Mibnsp6J0fJA"},
+  {"name": "안협소", "id": "UCYYqb06Ym3aeubtHFwA4ECg"},
+  {"name": "사건의뢰", "id": "UCGsLaVFoPgTuJUDYW1ygcAg"},
+  {"name": "kimwontv김원", "id": "UCRSEOIfPNgUYY8xkEzxqfVg"},
+  {"name": "[팟빵] CRIME", "id": "UCPfxQojZxhPUl7cFnfu_svQ"},
+  {"name": "교양 Voyage", "id": "UCe8HrlhMkYlQ_61EjrrQlHw"},
+  {"name": "숫노루 TV", "id": "UCmgKzCmRtNBOMJrzybUQLXg"},
+  {"name": "철멍뭉", "id": "UCh9Hs6LCnksZbSs2SqSdfqg"},
+  {"name": "붉은실", "id": "UCPWru8rZz5rEi1YWhQQSvPA"},
+  {"name": "타임스낵", "id": "UCvi7EYzMlfSB0ZkX55i5LlA"},
+  {"name": "캬랑Kyaryang", "id": "UCKlwaOCK1FqXMTKv0RlCmfg"},
+  {"name": "엑스톨(Extol)", "id": "UCHRG_xhaJj-5TsYnAjhJXVQ"},
+  {"name": "잡학게티", "id": "UCa5c474zwav6yij1MCB8dQg"},
+  {"name": "형사들의 수다", "id": "UCnyPqaHE9-QdBmlJ8O_DKhA"},
+  {"name": "전세계비극사", "id": "UCKCmqa4Dy-W8YT8vT5n_lrg"},
+  {"name": "시선너머", "id": "UCuffPygXAe4oPvqFMjWmjfA"},
+  {"name": "미스터리큐브", "id": "UC3IADSkxnThwXLW5f8TZb7w"},
+  {"name": "김복준의 사건속으로", "id": "UCIgwNwkp_zGvMoZ23L8HgAQ"}
+ ]
+}

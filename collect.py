@@ -538,14 +538,29 @@ def load_outliers():
 
 
 def load_topics():
-    """소재추천.py(맥, 하루 2번)가 main 브랜치 topics/latest.json 에 쓴 AI 소재 추천. 없으면 None."""
+    """소재추천.py(맥, 하루 2번)가 main 브랜치 topics/latest.json 에 쓴 AI 소재 추천. 없으면 None.
+    지난 추천(채널별 최근 6번, 이번 것 제외)도 같이 싣는다 — 새 추천으로 바뀌어도 좋은 소재를 다시 볼 수 있게(2026-09-27)."""
     p = ROOT / "topics" / "latest.json"
     if not p.exists():
         return None
     try:
-        return json.loads(p.read_text(encoding="utf-8"))
+        d = json.loads(p.read_text(encoding="utf-8"))
     except Exception:
         return None
+    hist, hp = {}, ROOT / "topics" / "history.jsonl"
+    if hp.exists():
+        for line in hp.read_text(encoding="utf-8").splitlines():
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            hist.setdefault(r.get("channel"), []).append({"at": r.get("at"), "topics": [
+                {k: t.get(k) for k in ("소재", "제목", "총점", "최신") if t.get(k) is not None} for t in r.get("topics", [])]})
+        for ch in list(hist):
+            cur = ((d.get("channels") or {}).get(ch) or {}).get("at")
+            hist[ch] = [h for h in hist[ch] if h["at"] != cur][-6:][::-1]
+    d["history"] = hist
+    return d
 
 
 def build(ctx):
