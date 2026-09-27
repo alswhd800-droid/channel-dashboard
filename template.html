@@ -308,7 +308,28 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .live{display:inline-flex;align-items:center;background:#e0392b;color:#fff;font-weight:800;font-size:11px;border-radius:6px;padding:2px 7px;animation:livepulse 1.6s ease-in-out infinite}
 .live.end{background:#3a3f4b;animation:none}
 @keyframes livepulse{50%{opacity:.62}}
-.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.stage{display:grid;gap:8px}
+.spk{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/3;background:#1b1e27;box-shadow:0 0 0 1px rgba(255,255,255,.08);transition:box-shadow .2s}
+.spk .pv{position:absolute;inset:0;opacity:0;transition:opacity .28s ease}.spk .pv.on{opacity:1}
+.spk .pv>svg,.spk .pv>img,.spk .pv>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 36%;display:block}
+.spk .pv>video{opacity:0;transition:opacity .15s}.spk .pv.vid>video{opacity:1}
+.spk .pv.on{animation:breathe 9s ease-in-out infinite}.spk .pv.talk>svg{animation:nod 1.15s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1.01)}50%{transform:scale(1.03) translateY(-.4%)}}
+.spk.talking{box-shadow:0 0 0 3px #3ddc84,0 0 22px rgba(61,220,132,.35)}
+.spk::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 58%,rgba(0,0,0,.3))}
+.spk .lt{position:absolute;z-index:2;left:10px;bottom:10px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.58);color:#fff;border-radius:8px;padding:4px 9px;font-size:13px}
+.spk .lt b{font-size:13.5px}.spk .lt span:last-child{color:#c9ced8;font-size:11.5px}.spk .lt b:empty+span:empty{display:none}
+.spk .mic{display:inline-flex;gap:2px;align-items:flex-end;height:12px}.spk .mic i{display:block;width:2.5px;height:3px;background:#9aa0ad;border-radius:2px}
+.spk.talking .mic i{background:#3ddc84;animation:bar .5s ease-in-out infinite}.spk.talking .mic i:nth-child(2){animation-delay:-.2s}.spk.talking .mic i:nth-child(3){animation-delay:-.35s}
+.strip{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+.strip .tile{border-radius:9px}.strip .tile .tn{font-size:9.5px;left:3px;bottom:3px;padding:0 4px}
+.tile .cam>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s}
+.tile.vid .cam>.iv{opacity:1}.tile.laugh .cam>.lv{opacity:1}
+.strip .tile .bars{right:3px;top:3px;height:11px;padding:1px 3px}.strip .tile .pop{font-size:20px}.strip .meav{font-size:0;width:58%}.strip .meav::before{content:"👤";font-size:13px}.strip .tile.me .tn{display:none}
+.callhd .tm{font-variant-numeric:tabular-nums;color:#c9ced8;font-size:12px}
+.call.joining .spk .pv{opacity:0!important}.call.joining .strip .tile{animation:join .45s ease-out both}
+.call.joining .strip .tile:nth-child(1){animation-delay:0.00s}.call.joining .strip .tile:nth-child(2){animation-delay:0.15s}.call.joining .strip .tile:nth-child(3){animation-delay:0.30s}.call.joining .strip .tile:nth-child(4){animation-delay:0.45s}.call.joining .strip .tile:nth-child(5){animation-delay:0.60s}.call.joining .strip .tile:nth-child(6){animation-delay:0.75s}.call.joining .strip .tile:nth-child(7){animation-delay:0.90s}.call.joining .strip .tile:nth-child(8){animation-delay:1.05s}
+@keyframes join{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
 .tile{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1/1;background:#1b1e27;box-shadow:0 0 0 1px rgba(255,255,255,.07);transition:box-shadow .2s,transform .2s}
 .tile .cam{position:absolute;inset:0}
 .tile .cam>svg,.tile .cam>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -338,7 +359,9 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .ctrl button[aria-pressed="true"]{background:#3ddc84;color:#0b2a17}
 .ctrl button:focus-visible{outline:2px solid #3ddc84;outline-offset:2px}
 .minutes{padding:4px 14px 10px}
-.minutes .mhd{display:flex;align-items:center;gap:8px;padding:9px 0 4px}.minutes .mhd h3{margin:0;font-size:15px}.minutes .mhd .more{margin-left:auto}
+.minutes .mhd{display:flex;align-items:center;gap:8px;padding:10px 0 6px;cursor:pointer;list-style:none}.minutes .mhd::-webkit-details-marker{display:none}.minutes .mhd h3{margin:0;font-size:15px}
+.minutes .fold{margin-left:auto;font-size:12px;color:var(--sub)}.minutes .fold::after{content:'펼치기 ▾'}.minutes[open] .fold::after{content:'접기 ▴'}
+.minutes .mfoot{display:flex;justify-content:flex-end;padding:6px 0 2px}
 .log{list-style:none;margin:0;padding:0}.log [hidden]{display:none!important}
 .log .div{display:flex;align-items:center;gap:8px;margin:12px 0 2px;font-size:12px;font-weight:800;color:var(--sub)}
 .log .div::before,.log .div::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -353,8 +376,8 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .rx{font-size:11.5px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--sub);white-space:nowrap}
 .msg.all .stack{display:flex;flex:none;padding-top:2px}.msg.all .stack .face{margin-left:-8px;border-color:var(--card)}.msg.all .stack .face:first-child{margin-left:0}
 .staff .motto{font-size:12.5px;color:var(--sub);font-style:italic;margin:-2px 0 6px}
-@media(min-width:900px){.tiles{grid-template-columns:repeat(8,minmax(0,1fr))}.cap{font-size:15px}}
-@media (prefers-reduced-motion:reduce){.avs .ey,.talk .avs .mt,.tile .bars i,.live,.msg,.tile .pop.go,.tile .cam>svg{animation:none!important}.tile,.avs .bl,.avs .bR{transition:none}}
+@media(min-width:900px){.stage{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);align-items:start}.strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.strip .tile .tn{font-size:11px}.strip .meav{font-size:12px;width:62%}.strip .meav::before{content:none}.strip .tile.me .tn{display:block}.cap{font-size:15px}}
+@media (prefers-reduced-motion:reduce){.avs .ey,.talk .avs .mt,.tile .bars i,.live,.msg,.tile .pop.go,.tile .cam>svg,.spk .pv,.spk .pv>svg,.spk .mic i{animation:none!important}.tile,.avs .bl,.avs .bR{transition:none}}
 </style>
 </head>
 <body>
@@ -497,14 +520,19 @@ function msgHtml(l, i) {   // 회의록 한 줄(안건 구분선 + 말풍선 + �
   return `${sec}<li class="msg${l.who === "lead" ? " lead" : ""}${l.aside ? " aside" : ""}" data-i="${i}">${face(l.who, l.tone && l.tone !== "info" ? "m-" + l.tone : "")}<div class="mb">
     <div class="mh"><b>${esc(x.name || "")}</b><span>${esc(x.role || "")}</span>${l.aside ? "" : toneTag(l.tone)}</div><div class="bub">${md(l.text)}</div>${foot}</div></li>`;
 }
-function stageHtml() {   // 화상회의 화면: 직원 7명 + 사장님(나, 카메라 꺼짐)
+function stageHtml() {   // 화상회의 화면(발표자 보기): 말하는 사람이 크게, 나머지는 아래 줄에. 사진·영상(staff/)이 없으면 그림 얼굴
   const who = Object.keys(STAFF);
-  const tiles = who.map(w => { const x = STAFF[w]; return `<div class="tile" data-who="${w}" role="img" aria-label="${esc(x.name)} · ${esc(x.role)}">
-      <div class="cam">${avatarSvg(w, false)}${x.img ? `<img src="${esc(x.img)}" alt="" onerror="this.remove()">` : ""}</div>
-      <span class="tn">${esc(x.name)}</span><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="pop" aria-hidden="true"></span></div>`; }).join("");
-  return `<section class="call" id="call" aria-label="마케팅팀 화상회의">
-    <div class="callhd"><span class="live" id="mlive">● 회의 중</span><b>마케팅팀 ${esc(M.kind)}</b><span class="cm">${esc(M.at.slice(5).replace("-", "/"))} 숫자 · ${who.length + 1}명 참석</span></div>
-    <div class="tiles">${tiles}<div class="tile me" role="img" aria-label="사장님(나) · 카메라 꺼짐"><div class="cam"><span class="meav">사장님</span></div><span class="tn">나</span><span class="off" aria-hidden="true">🔇</span></div></div>
+  const big = who.map(w => { const x = STAFF[w], v = x.vid;
+    return `<div class="pv" data-who="${w}">${v ? `<img class="po" src="${esc(v.poster)}" alt="" decoding="async"><video class="tv" muted playsinline loop preload="none" data-src="${esc(v.talk)}"></video>`
+      : avatarSvg(w, false)}</div>`; }).join("");
+  const strip = who.map(w => { const x = STAFF[w], v = x.vid;
+    return `<div class="tile" data-who="${w}" role="img" aria-label="${esc(x.name)} · ${esc(x.role)}"><div class="cam">${v
+      ? `<img class="po" src="${esc(x.img || v.poster)}" alt="" loading="lazy">${v.idle ? `<video class="iv" muted playsinline loop preload="none" data-src="${esc(v.idle)}"></video>` : ""}${v.laugh ? `<video class="lv" muted playsinline preload="none" data-src="${esc(v.laugh)}"></video>` : ""}`
+      : avatarSvg(w, false)}</div><span class="tn">${esc(x.name)}</span><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="pop" aria-hidden="true"></span></div>`; }).join("");
+  return `<section class="call${who.some(w => STAFF[w].vid) ? " real" : ""}" id="call" aria-label="마케팅팀 화상회의">
+    <div class="callhd"><span class="live" id="mlive">● 회의 중</span><b>마케팅팀 ${esc(M.kind)}</b><span class="tm" id="mtime">00:00</span><span class="cm">${who.length + 1}명 참석</span></div>
+    <div class="stage"><div class="spk" id="spk">${big}<div class="lt"><span class="mic" aria-hidden="true"><i></i><i></i><i></i></span><b id="spkn"></b><span id="spkr"></span></div></div>
+      <div class="strip">${strip}<div class="tile me" role="img" aria-label="사장님(나) · 카메라 꺼짐"><div class="cam"><span class="meav">사장님</span></div><span class="tn">나</span><span class="off" aria-hidden="true">🔇</span></div></div></div>
     <div class="cap" id="mcap" aria-hidden="true"><span class="cw"></span><span class="ct"></span></div>
     <div class="ctrl"><button type="button" data-mp="play">⏸ 잠깐 멈춤</button><button type="button" data-mp="end">⏭ 끝까지 보기</button>
       <button type="button" data-mp="fast" aria-pressed="false">⚡ 2배속</button><button type="button" data-mp="sound" aria-pressed="false" hidden>🔈 소리로 듣기</button></div>
@@ -519,8 +547,8 @@ function meetingHtml() {
       <div style="min-width:0"><div class="tx">${esc(t.text)}</div><span class="by">${face(t.who, "xs")} 담당 ${esc(x.name || "")} · ${esc(x.role || "")}${t.link ? " · " + golink(t.link, "바로 가기 ›") : ""}</span></div></li>`;
   }).join("");
   return `${stageHtml()}
-  <section class="card minutes"><div class="mhd"><h3>📝 회의록</h3><span class="muted" id="mprog"></span><a class="more" href="#team">팀 소개 ›</a></div>
-    <ol class="log" id="mlog" aria-live="polite">${M.lines.map(msgHtml).join("")}</ol></section>
+  <details class="card minutes" id="mmin" open><summary class="mhd"><h3>📝 회의록</h3><span class="muted" id="mprog"></span><span class="fold" aria-hidden="true"></span></summary>
+    <ol class="log" id="mlog" aria-live="polite">${M.lines.map(msgHtml).join("")}</ol><div class="mfoot"><a class="more" href="#team">직원 소개 ›</a></div></details>
   ${todo ? `<section class="card todo"><h3>✅ 오늘 할 일</h3><div class="muted" style="font-size:12px">회의에서 나온 일이에요 · 체크는 이 기기에만 저장돼요</div><ul>${todo}</ul></section>` : ""}`;
 }
 function bindTodo() {
@@ -532,33 +560,54 @@ function bindTodo() {
   });
 }
 /* 회의 재생: 말하는 사람 칸이 초록으로 켜지고 입이 움직이며 자막이 흐른다. 회의(날짜+아침·오후·저녁)마다 이 기기에서 한 번만 저절로 튼다 */
-const MP = { i: 0, on: false, t: 0, fast: false, sound: false, gen: 0, ended: false };
+const MP = { i: 0, on: false, t: 0, fast: false, sound: false, gen: 0, ended: false, ck: 0, sec: 0, lv: 0 };
 const MEET_SEEN = "dash_meet_seen", meetSlot = () => M ? M.at.slice(0, 10) + "|" + M.kind : "";
 const calm = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 const sp = ms => ms / (MP.fast ? 2 : 1);
-function mpStop() { MP.on = false; MP.gen++; clearTimeout(MP.t); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
+function mpStop() { MP.on = false; MP.gen++; clearTimeout(MP.t); mpClock(false); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
 function mpBtn() { const b = $("[data-mp=play]"); if (b) b.textContent = MP.ended ? "↺ 처음부터 다시 보기" : MP.on ? "⏸ 잠깐 멈춤" : "▶ 이어 보기"; }
 function mpProg() { const p = $("#mprog"), n = (M.lines || []).length; if (p) p.textContent = MP.ended ? `${n}마디 · 회의 끝` : `${Math.min(MP.i, n)} / ${n}마디`; }
-function mpFace(who, tone, talk) {
-  document.querySelectorAll("#call .tile[data-who]").forEach(t => {
-    if (who !== "all" && t.dataset.who !== who) { t.classList.remove("talk"); return; }
-    t.classList.toggle("talk", talk);
-    if (tone) { t.classList.remove("m-good", "m-bad", "m-idea"); if (tone !== "info") t.classList.add("m-" + tone); }   // 표정은 다음에 말할 때까지 남는다
+const vplay = v => { if (!v) return; if (!v.getAttribute("src") && v.dataset.src) v.src = v.dataset.src; const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+function mpFace(who, tone, talk) {   // 말하는 사람: 큰 화면에 띄우고(영상이면 말하는 영상 재생) 아래 줄 칸에 초록 테두리
+  const call = $("#call"); if (!call) return;
+  const setMood = el => { if (!tone) return; el.classList.remove("m-good", "m-bad", "m-idea"); if (tone !== "info") el.classList.add("m-" + tone); };   // 표정은 다음에 말할 때까지 남는다
+  call.querySelectorAll(".strip .tile[data-who]").forEach(t => { const me = who === "all" || t.dataset.who === who; t.classList.toggle("talk", talk && me); if (me) setMood(t); });
+  const w = who === "all" ? "lead" : who;
+  call.querySelectorAll(".spk .pv").forEach(p => {
+    const on = p.dataset.who === w, v = p.querySelector("video");
+    p.classList.toggle("on", on); p.classList.toggle("talk", on && talk); if (on) setMood(p);
+    if (!v) return;
+    if (on && talk && !calm()) { if (!p.classList.contains("vid")) try { v.currentTime = 0; } catch (e) {} v.onplaying = () => p.classList.add("vid"); vplay(v); }   // 매번 입 다문 첫 장면부터
+    else { v.pause(); p.classList.remove("vid"); }
   });
+  const x = STAFF[w] || {}, n = $("#spkn"), r = $("#spkr"), s = $("#spk");
+  if (n) n.textContent = who === "all" ? "모두" : x.name || ""; if (r) r.textContent = who === "all" ? "" : x.role || ""; if (s) s.classList.toggle("talking", !!talk);
 }
-function mpPop(l) {   // 반응 이모지가 그 사람 칸에서 떠오른다
-  (l.react || []).forEach(([e, w], k) => setTimeout(() => {
-    const p = $(`#call .tile[data-who="${w}"] .pop`);
-    if (!p) return;
-    const t = p.closest(".tile"); t.classList.remove("m-good", "m-bad", "m-idea"); t.classList.add(/😮|👀|🤔/.test(e) ? "m-idea" : "m-good");
+function mpPop(l) {   // 반응: 그 사람 칸에 이모지가 떠오르고 표정이 바뀐다(영상이면 웃는 영상 한 번)
+  const react = l.who === "all" ? Object.keys(STAFF).map(w => ["👋", w]) : (l.react || []);
+  react.forEach(([e, w], k) => setTimeout(() => {
+    const t = $(`#call .strip .tile[data-who="${w}"]`); if (!t) return;
+    const p = t.querySelector(".pop"), lv = t.querySelector(".lv");
+    t.classList.remove("m-good", "m-bad", "m-idea"); t.classList.add(/😮|👀|🤔|😟/.test(e) ? "m-idea" : "m-good");
     p.textContent = e; p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
-  }, k * 220));
+    if (lv && /🎉|👏|🔥|🙌|💪|😄|👋/.test(e) && !calm()) { lv.currentTime = 0; lv.onended = () => t.classList.remove("laugh"); lv.onplaying = () => t.classList.add("laugh"); vplay(lv); }
+  }, k * 200));
+}
+function mpClock(on) {   // 회의 시간(진짜 통화처럼 흘러간다)
+  clearInterval(MP.ck);
+  if (!on) return;
+  MP.ck = setInterval(() => { MP.sec = (MP.sec || 0) + 1; const t = $("#mtime"); if (t) t.textContent = String(Math.floor(MP.sec / 60)).padStart(2, "0") + ":" + String(MP.sec % 60).padStart(2, "0"); }, 1000);
+}
+function stripLive(on) {   // 아래 줄 사람들: 듣는 영상(눈 깜빡임·고개 조금)을 화면에 보일 때만 튼다
+  document.querySelectorAll("#call .strip .iv").forEach(v => { if (on && !calm()) { v.onplaying = () => v.closest(".tile").classList.add("vid"); vplay(v); } else v.pause(); });
 }
 function mpShow(i, on) { document.querySelectorAll(i === "all" ? "#mlog [data-i]" : `#mlog [data-i="${i}"]`).forEach(e => { e.hidden = !on; }); }
 function mpCap(who, text, typing) { const c = $("#mcap"); if (!c) return; c.querySelector(".cw").textContent = who; c.querySelector(".ct").textContent = text; c.classList.toggle("typing", !!typing); }
 function mpEnd() {
-  mpStop(); MP.ended = true; const me = $("#call .tile.me"); if (me) me.classList.remove("ask"); MP.i = (M.lines || []).length; mpShow("all", true);
+  mpStop(); MP.ended = true; const cj = $("#call"); if (cj) cj.classList.remove("joining"); const me = $("#call .tile.me"); if (me) me.classList.remove("ask"); MP.i = (M.lines || []).length; mpShow("all", true);
   document.querySelectorAll("#call .tile").forEach(t => t.classList.remove("talk"));
+  mpFace("lead", null, false);
+  clearTimeout(MP.lv); MP.lv = setTimeout(() => stripLive(false), 30000);   // 끝나고 30초 뒤엔 아래 줄 영상도 쉰다
   const lv = $("#mlive"); if (lv) { lv.textContent = "회의 끝"; lv.classList.add("end"); }
   const n = (M.todo || []).length;
   mpCap("회의 끝", n ? `오늘 할 일 ${n}가지를 아래에 적어 뒀어요. 회의록에서 전부 다시 볼 수 있어요.` : "오늘은 급한 일이 없어요. 회의록에서 전부 다시 볼 수 있어요.");
@@ -570,32 +619,40 @@ function mpStep() {
   if (MP.i >= L.length) return mpEnd();
   const l = L[MP.i], i = MP.i, x = STAFF[l.who] || {}, words = l.text.replace(/\*\*/g, "").split(" ");
   const name = SPK(l.who) + (x.role ? " · " + x.role : "");
-  const finish = () => { if (g !== MP.gen) return; mpShow(i, true); mpFace(l.who, null, false); mpPop(l); MP.i++; mpProg(); MP.t = setTimeout(mpStep, sp(l.aside ? 260 : 420)); };
+  const same = i > 0 && L[i - 1].who === l.who, dur = sp(Math.min(4200, Math.max(600, 220 + l.text.replace(/\*\*/g, "").length * 30)));
+  const finish = () => { if (g !== MP.gen) return; mpShow(i, true); if (!(L[i + 1] && L[i + 1].who === l.who)) mpFace(l.who, null, false); mpPop(l); MP.i++; mpProg(); MP.t = setTimeout(mpStep, sp(l.aside ? 200 : 300)); };
   mpFace(l.who, l.who === "all" ? "good" : l.tone, true);
   const me = $("#call .tile.me"); if (me) me.classList.toggle("ask", /사장님/.test(l.text));   // 사장님께 묻는 말이면 내 칸이 노랗게
   const talk = MP.sound ? ttsSay(l) : null;
   if (talk) {
     mpCap(name, words.join(" "));
-    const t0 = Date.now(), need = sp(Math.min(3900, Math.max(700, 260 + l.text.length * 33)));
+    const t0 = Date.now(), need = dur;
     talk.then(() => { if (g === MP.gen) MP.t = setTimeout(finish, Math.max(0, need - (Date.now() - t0))); });
     return;
   }
-  mpCap(name, "• • •", true);
+  if (!same) mpCap(name, "🎙️", true);
   MP.t = setTimeout(() => {   // 말하는 속도로 자막을 한 낱말씩
     if (g !== MP.gen) return;
     let k = 0;
-    const per = sp(Math.min(3900, Math.max(700, 260 + words.join(" ").length * 33))) / words.length;
+    const per = dur / words.length;
     const tick = () => { if (g !== MP.gen) return; mpCap(name, words.slice(0, ++k).join(" ")); MP.t = setTimeout(k < words.length ? tick : finish, k < words.length ? per : sp(240)); };
     tick();
-  }, sp(l.aside ? 220 : 380));
+  }, sp(same ? 90 : l.aside ? 180 : 280));
 }
 function mpPlay(fromStart) {
   mpStop();
   if (fromStart || MP.ended) {
-    MP.i = 0; MP.ended = false; mpShow("all", false);
+    MP.i = 0; MP.ended = false; MP.sec = 0; mpShow("all", false);
     const lv = $("#mlive"); if (lv) { lv.textContent = "● 회의 중"; lv.classList.remove("end"); }
+    const tm = $("#mtime"); if (tm) tm.textContent = "00:00";
   }
-  MP.on = true; mpBtn(); mpProg(); mpStep();
+  clearTimeout(MP.lv);
+  MP.on = true; mpBtn(); mpProg(); mpClock(true); stripLive(true);
+  const call = $("#call"), g = MP.gen;
+  if (fromStart && call && !calm()) {
+    call.classList.add("joining"); mpCap("회의 연결 중", "🔗 팀원들이 들어오고 있어요…", true);
+    MP.t = setTimeout(() => { if (g !== MP.gen) return; call.classList.remove("joining"); mpCap("회의 연결됨", `${Object.keys(STAFF).length + 1}명 모두 들어왔어요`); MP.t = setTimeout(mpStep, sp(500)); }, 1500);
+  } else mpStep();
 }
 /* 소리로 듣기: 브라우저에 든 한국어 음성으로 읽는다(무료·토큰 0). 남자 음성이 없으면 같은 음성의 높낮이로 사람을 나눈다 */
 const TTS = { ok: typeof window !== "undefined" && "speechSynthesis" in window, voices: [] };
@@ -641,7 +698,7 @@ function bindMeeting() {
   MP.i = 0; MP.ended = false;
   call.querySelectorAll("[data-mp]").forEach(b => b.onclick = () => {
     const k = b.dataset.mp;
-    if (k === "play") { if (MP.on) { mpStop(); mpBtn(); } else mpPlay(MP.ended); }
+    if (k === "play") { if (MP.on) { mpStop(); mpBtn(); } else { const mm = $("#mmin"); if (mm) mm.open = true; mpPlay(MP.ended); } }
     if (k === "end") mpEnd();
     if (k === "fast") { MP.fast = !MP.fast; b.setAttribute("aria-pressed", String(MP.fast)); }
     if (k === "sound") {
@@ -654,14 +711,19 @@ function bindMeeting() {
   ttsLoad(); setTimeout(ttsLoad, 900); setTimeout(ttsLoad, 2500);   // 아이폰 사파리는 음성 목록이 늦게 온다
   let seen = "";
   try { seen = localStorage.getItem(MEET_SEEN) || ""; } catch (e) {}
-  if (calm() || seen === meetSlot()) { mpEnd(); return; }   // 이미 본 회의·움직임 줄이기 설정이면 회의록을 바로 다 보여 준다
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) stripLive(false); else if (MP.on || !MP.ended) stripLive(true); }), { threshold: 0.2 });
+    io.observe(call);
+  }
+  document.addEventListener("visibilitychange", () => { if (document.hidden) { stripLive(false); if (MP.on) { mpStop(); mpBtn(); } } });
+  if (calm() || seen === meetSlot()) { mpEnd(); const mm = $("#mmin"); if (mm) mm.open = false; return; }   // 이미 본 회의면 회의록은 접어 둔다   // 이미 본 회의·움직임 줄이기 설정이면 회의록을 바로 다 보여 준다
   try { localStorage.setItem(MEET_SEEN, meetSlot()); } catch (e) {}
   mpShow("all", false); mpProg();
   MP.t = setTimeout(() => mpPlay(true), 700);
 }
 function pageTeam() {
   if (!M) return `<h2 class="pt">👥 우리 마케팅팀</h2><div class="card"><div class="empty">다음 수집 때 팀이 채워져요</div></div>`;
-  return `<h2 class="pt">👥 우리 마케팅팀</h2><p class="pd">${Object.keys(STAFF).length}명이 대시보드 숫자를 나눠 맡아요. 말은 10분마다 새 숫자로 바뀌고, AI를 부르지 않아 토큰을 쓰지 않아요.</p>
+  return `<h2 class="pt">👥 우리 마케팅팀</h2><p class="pd">${Object.keys(STAFF).length}명이 대시보드 숫자를 나눠 맡아요. 말은 10분마다 새 숫자로 바뀌고, AI를 부르지 않아 토큰을 쓰지 않아요.${Object.values(STAFF).some(x => x.img || x.vid) ? " 얼굴은 AI로 만든 가상의 인물이에요." : ""}</p>
   <div class="team">${Object.entries(STAFF).map(([k, x]) => {
     const rp = (M.reports || {})[k] || [], mood = (M.mood || {})[k] || {};
     return `<section class="card staff"><div class="ptop">${face(k, "lg m-good")}<div><div class="t1">${esc(x.name)} <span class="t2">${esc(x.role)}</span></div>

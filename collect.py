@@ -14,6 +14,7 @@
 - 새 영상 성적: 올린 뒤 6·24·48시간 조회수를 같은 채널·같은 종류(쇼츠/본편) 영상의 중간값과 비교
 - 벤치마크: benchmarks.json 채널의 최근 영상을 6시간마다 확인
 """
+import hashlib
 import json
 import os
 import random
@@ -780,6 +781,20 @@ STAFF = {   # 화면(template)도 이 명단을 그대로 쓴다
 }
 
 
+def staff_media(k):
+    """직원 얼굴(staff/ 폴더 — 이 맥의 ~/.cache/dashboard-staff/make_staff_media.py 가 만든다): 작은 얼굴 <키>.webp, 큰 화면 정지 사진 <키>.jpg,
+    말하기·듣기·웃음 영상 <키>_talk/idle/laugh.mp4. AI로 만든 가상의 인물(RealVisXL 사진 + LivePortrait 움직임, 이 맥에서 무료로 만듦).
+    파일이 있는 것만 알려 준다(없으면 화면이 그림 얼굴로 대신한다). ?v= 는 파일을 바꾸면 휴대폰이 옛 파일을 안 쓰게(내용 해시)."""
+    d, m = ROOT / "staff", {}
+    ver = lambda f: f"staff/{f}?v={hashlib.md5((d / f).read_bytes()).hexdigest()[:8]}"   # 내용이 바뀔 때만 바뀐다(깃허브는 받을 때마다 파일 시각이 바뀜)
+    if (d / f"{k}.webp").exists():
+        m["img"] = ver(f"{k}.webp")
+    vid = {n: ver(f"{k}_{n}.mp4") for n in ("talk", "idle", "laugh") if (d / f"{k}_{n}.mp4").exists()}
+    if "talk" in vid and (d / f"{k}.jpg").exists():
+        m["vid"] = dict(vid, poster=ver(f"{k}.jpg"))
+    return m
+
+
 def _batchim(w):
     w = re.sub(r"[\s)\]'\"’”.·*…]+$", "", str(w))
     if not w:
@@ -866,7 +881,7 @@ def meeting(D, now):
         if yy > 0:
             cmp_ = f"(그제의 {bae(y / yy)})" if y / yy >= 3 else f"(그제보다 {round((y - yy) / yy * 100):+d}%)"
         nums = f"어제 하루 전체 조회가 **+{fmt(y)}**{cmp_}, 구독은 **{ys:+,}명**이었어요." + (f" 오늘은 {now.hour}시까지 **+{fmt(t)}**{jo(fmt(t), '이에요/예요')}." if t is not None else "")
-        F.update(nums=nums, ratio=y / yy if yy > 0 else None)
+        F.update(nums=nums, ratio=y / yy if yy > 0 else None, y=y, yy=yy, ys=ys, today=t)
         say("lead:open", f"{kind} 시작할게요. " + nums, "info", None, 0)
         cut = (now - timedelta(hours=24)).isoformat(timespec="minutes")   # 지난 24시간 목표 달성(구독·채널 조회, 영상은 1만 회 넘는 것만)
         F["goals"] = [a for a in (D.get("alerts") or []) if a.get("type") == "goal" and a.get("t", "") >= cut
@@ -888,7 +903,7 @@ def meeting(D, now):
                 avg = statistics.median(arr)
                 if avg >= 200 and yv < avg * 0.5:
                     how = "거의 안 늘었어요" if yv < avg * 0.05 else f"평소의 {round(yv / avg * 100)}%로 줄었어요"
-                    say("analyst:drop", f"**{n}**{jo(n, '은/는')} 어제 조회가 {how}(보통 하루 {fmt(avg)}회, 어제 +{fmt(yv)}).", "bad", "#channel/" + q(n), 2, {"ch": n})
+                    say("analyst:drop", f"**{n}**{jo(n, '은/는')} 어제 조회가 {how}(보통 하루 {fmt(avg)}회, 어제 +{fmt(yv)}).", "bad", "#channel/" + q(n), 2, {"ch": n, "how": how, "avg": avg, "yv": yv})
                 elif avg >= 100 and yv > avg * 2:
                     say("analyst:jump", f"**{n}**{jo(n, '은/는')} 어제 조회가 평소의 {bae(yv / avg)}로 튀었어요(보통 하루 {fmt(avg)}회, 어제 +{fmt(yv)}).", "good", "#channel/" + q(n), 2,
                         {"ch": n, "x": yv / avg, "avg": avg, "yv": yv})
@@ -904,7 +919,8 @@ def meeting(D, now):
                 + (f"(조회 1천 회당 {c['subs_per_1k']}명)" if c.get("subs_per_1k") is not None else "") + ".", "good", "#insight/weekly", 4)
         if focus:
             say("analyst:focus", f"효율로 보면 이번 주 집중할 채널은 **{focus}**{jo(focus, '이에요/예요')}. {E['focus']['why'][0]}예요.", "idea", "#insight/efficiency", 1.5,
-                {"ch": focus, "why": E["focus"]["why"][0]})
+                {"ch": focus, "why": E["focus"]["why"][0], "per_ep": next((r["per_ep"] for r in E.get("rows") or [] if r["name"] == focus), None),
+                 "n": sum(1 for r in E.get("rows") or [] if r["uploads30"] >= 2 and r["per_ep"])})
 
     def reviewer():
         likes = {c["name"]: c["likes"] / (c["shorts_views"] + c["long_views"]) * 100 for c in chans if (c["shorts_views"] + c["long_views"]) > 0}
@@ -930,11 +946,13 @@ def meeting(D, now):
                 lr, avg = bv.get("like_rate"), likes.get(bv["ch"])
                 if lr and avg and lr >= avg * 1.5 and bv["views"] >= 100:
                     txt += f" 좋아요율도 {lr:.1f}%로 채널 평균 {avg:.1f}%보다 높아서, 비슷한 소재를 더 만들 만해요."
-                say("reviewer:best", txt, "good", bv["url"], 1, {"ch": bv["ch"], "ratio": ratio})
+                say("reviewer:best", txt, "good", bv["url"], 1, {"ch": bv["ch"], "ratio": ratio, "title": short(bv["title"], 22), "h": h, "views": views,
+                    "kind": "쇼츠" if bv["short"] else "본편"})
             wv, (h2, r2, v2) = min(rated, key=lambda x: x[1][1])
             if r2 <= 0.6 and wv is not bv:
                 ti = short(wv["title"])
-                say("reviewer:worst", f"반대로 {wv['ch']}의 **'{ti}'**{jo(ti, '은/는')} {h2}시간 성적이 평소의 {bae(r2)}라 아쉬워요. 제목 앞 두세 단어와 첫 장면을 다시 볼 만해요.", "bad", wv["url"], 2)
+                say("reviewer:worst", f"반대로 {wv['ch']}의 **'{ti}'**{jo(ti, '은/는')} {h2}시간 성적이 평소의 {bae(r2)}라 아쉬워요. 제목 앞 두세 단어와 첫 장면을 다시 볼 만해요.", "bad", wv["url"], 2,
+                    {"ch": wv["ch"], "title": short(wv["title"], 22), "h": h2, "ratio": r2, "kind": "쇼츠" if wv["short"] else "본편"})
                 do("reviewer", f"'{short(wv['title'], 22)}' 제목·첫 장면 점검 (24시간 평소의 {bae(r2)})", wv["url"], f"'{short(wv['title'], 14)}' 제목·첫 장면 점검")
         elif fresh:
             say("reviewer:pending", f"최근 3일 새 영상 {len(fresh)}편은 아직 비교 기록(6시간)이 쌓이는 중이에요.", "info", "#insight/early", 4)
@@ -959,7 +977,8 @@ def meeting(D, now):
             k, n, is_s, label, ma, mb, na, nb = best
             better = ma > mb
             say("reviewer:pattern", f"패턴 하나 찾았어요: **{n}** {'쇼츠는' if is_s else '본편은'} {label} 제목의 24시간 조회 중앙값이 {fmt(ma)}로, "
-                f"아닌 제목({fmt(mb)})보다 **{k:.1f}배 {'높아요' if better else '낮아요'}** ({na}편 대 {nb}편).", "idea", "#videos", 2.5)
+                f"아닌 제목({fmt(mb)})보다 **{k:.1f}배 {'높아요' if better else '낮아요'}** ({na}편 대 {nb}편).", "idea", "#videos", 2.5,
+                {"ch": n, "kind": "쇼츠" if is_s else "본편", "label": label, "k": k, "better": better, "na": na, "nb": nb})
 
     def trend():
         O = D.get("outliers") or {}
@@ -971,11 +990,11 @@ def meeting(D, now):
                 ti = short(r.get("title"))
                 say("trend:ev", f"**{ch}** 추천 {i}위 '{short(t.get('소재'), 24)}'의 근거 영상 **'{ti}'**{jo(ti, '이/가')} 지금 평소의 **{bae(r.get('mult') or 0)}**로 "
                     f"크고 있어요(구독 {fmt(r.get('subs') or 0)} 채널). 이 소재는 지금이 타이밍이에요.", "idea", r.get("url"), 1,
-                    {"ch": ch, "rank": i, "topic": t.get("소재"), "mult": r.get("mult") or 0})
+                    {"ch": ch, "rank": i, "topic": t.get("소재"), "mult": r.get("mult") or 0, "title": short(r.get("title"), 22), "subs": r.get("subs") or 0})
             g = (cv.get("genre_hot") or [None])[0]
             if g and (g.get("평소대비") or 0) >= 2:
                 ti = short(g.get("제목"))
-                say("trend:genre", f"**{ch}**{jo(ch, '과/와')} 같은 장르에선 {g.get('채널')}의 **'{ti}'**{jo(ti, '이/가')} 평소의 {bae(g['평소대비'])}로 크고 있어요.", "idea", g.get("url"), 1.2, {"ch": ch})
+                say("trend:genre", f"**{ch}**{jo(ch, '과/와')} 같은 장르에선 {g.get('채널')}의 **'{ti}'**{jo(ti, '이/가')} 평소의 {bae(g['평소대비'])}로 크고 있어요.", "idea", g.get("url"), 1.2, {"ch": ch, "src": g.get("채널"), "title": short(g.get("제목"), 22), "x": g["평소대비"]})
         tr = (D.get("topics") or {}).get("trends") or []
         if tr:
             say("trend:search", "지금 검색 급상승: " + " · ".join(f"{t.get('검색어')}({t.get('검색량')})" for t in tr[:5]) + ". 채널 공식에 맞는 말만 추천에 넣었어요.", "info", "#topics", 2)
@@ -984,7 +1003,8 @@ def meeting(D, now):
         bv = next((v for v in (B.get("videos") or []) if bfor.get(v.get("ch")) in names), None)   # 지금 있는 채널의 참고 채널만(옛 이유상자 참고 채널은 뺀다)
         if bv:
             ti = short(bv["title"])
-            say("trend:bench", f"**{bfor[bv['ch']]}** 참고 채널 중엔 **{bv['ch']}**의 '{ti}'{jo(ti, '이/가')} 하루 {fmt(bv['per_day'])}회로 가장 빨라요.", "info", bv.get("url"), 3)
+            say("trend:bench", f"**{bfor[bv['ch']]}** 참고 채널 중엔 **{bv['ch']}**의 '{ti}'{jo(ti, '이/가')} 하루 {fmt(bv['per_day'])}회로 가장 빨라요.", "info", bv.get("url"), 3,
+                {"for": bfor[bv["ch"]], "ch": bv["ch"], "title": short(bv["title"], 22), "per_day": bv["per_day"]})
 
     def planner():
         items = P.get("items") or []
@@ -996,7 +1016,7 @@ def meeting(D, now):
             lead_in = f"서윤 님 말대로 이번 주 **{fch}**에 힘을 싣는다면, " if fch == focus else f"추천 점수로는 **{fch}**{jo(fch, '이/가')} 가장 높아요. "
             say("planner:pick", lead_in + f"{'아직 안 고른 것 중 ' if i > 1 else ''}추천 {i}위 **'{t0.get('소재')}'**({t0.get('총점')}점"
                 + (f", 📰 {str(t0['최신'])[5:].replace('-', '/')} 기사 근거" if t0.get("최신") else "") + ")부터 가면 좋겠어요.", "idea", "#topics/" + q(fch), 1,
-                {"ch": fch, "rank": i, "topic": t0.get("소재"), "focus": fch == focus})
+                {"ch": fch, "rank": i, "topic": t0.get("소재"), "focus": fch == focus, "score": t0.get("총점"), "fresh": t0.get("최신")})
         picked = sorted([x for x in items if x["status"] == "picked"], key=lambda x: x.get("picked_at") or "")
         making = [x for x in items if x["status"] == "making"]
         up = [x for x in items if x["status"] == "upload"]
@@ -1036,15 +1056,15 @@ def meeting(D, now):
         now_late = [r for r in late if r["late_by"] <= 7]
         resting = [r for r in late if r["late_by"] > 7]
         for r in now_late[:3]:
-            say("scheduler:late", f"**{r['name']}**{jo(r['name'], '은/는')} 평소 {r['target']:g}일마다 올렸는데 마지막 업로드가 **{r['since']:.0f}일 전**이에요.", "bad", "#insight/cadence", 1, {"ch": r["name"]})
+            say("scheduler:late", f"**{r['name']}**{jo(r['name'], '은/는')} 평소 {r['target']:g}일마다 올렸는데 마지막 업로드가 **{r['since']:.0f}일 전**이에요.", "bad", "#insight/cadence", 1, {"ch": r["name"], "target": r["target"], "since": r["since"]})
             do("scheduler", f"{r['name']} 새 영상 올리기 (평소 {r['target']:g}일 간격, {r['since']:.0f}일째)", "#insight/cadence", f"{r['name']} 새 영상")
         if resting:
             names_ = "·".join(f"{r['name']}({r['since']:.0f}일째)" for r in resting)
             say("scheduler:rest", f"{names_}{jo(resting[-1]['name'], '은/는')} 한동안 쉬는 중이에요. 일부러 멈춘 게 아니면 다시 시작할 때예요.",
-                "info", "#insight/cadence", 2.5)
+                "info", "#insight/cadence", 2.5, {"items": [[r["name"], r["since"]] for r in resting]})
         ok = [r["name"] for r in rows if r["n"] >= 3 and not r["late"] and r["target"] and r["target"] <= 1.5]
         if ok:
-            say("scheduler:daily", f"{'·'.join(ok)}{jo(ok[-1], '은/는')} 매일 꾸준히 올라가고 있어요.", "good", "#insight/cadence", 3)
+            say("scheduler:daily", f"{'·'.join(ok)}{jo(ok[-1], '은/는')} 매일 꾸준히 올라가고 있어요.", "good", "#insight/cadence", 3, {"names": ok})
         soon = [r for r in rows if not r["late"] and r["n"] >= 3 and r["target"] and r["target"] >= 2 and r["due"]]
         today = now.astimezone(KST).strftime("%Y-%m-%d")
 
@@ -1057,7 +1077,8 @@ def meeting(D, now):
             by = f" **{when(r['late_at'])}** 전에 올리면 '늦음'으로 넘어가지 않아요." if r.get("late_at") else ""
             if r["due"] <= today:
                 say("scheduler:due", f"**{n}**{jo(n, '은/는')} " + (f"다음 편 차례({d})가 지났어요." if r["due"] < today else "오늘이 다음 편 차례예요.")
-                    + f" 평소 {r['target']:g}일 간격이라{by or ' 오늘 올리면 좋아요.'}", "idea", "#insight/cadence", 2.8, {"ch": n})
+                    + f" 평소 {r['target']:g}일 간격이라{by or ' 오늘 올리면 좋아요.'}", "idea", "#insight/cadence", 2.8,
+                    {"ch": n, "past": r["due"] < today, "target": r["target"], "by": when(r["late_at"]) if r.get("late_at") else None})
                 if r.get("late_at"):
                     do("scheduler", f"{n} 다음 편 올리기 ({when(r['late_at'])} 전, 평소 {r['target']:g}일 간격)", "#insight/cadence",
                        f"{n} 다음 편({when(r['late_at'])} 전)")
@@ -1091,7 +1112,8 @@ def meeting(D, now):
             txt = f"광고 수익 조건은 **{c['name']}**{jo(c['name'], '이/가')} {pc}로 가장 가까워요."
             if blk and blk.get("left"):
                 txt += f" 막힌 건 {blk['label'].split(' · ')[0]} — {fmt(blk['left'])}{blk['unit']} 남았어요" + (f"(지금 속도면 약 {blk['eta']}일)" if blk.get("eta") else "") + "."
-            say("money:ads", txt, "info", "#money/" + q(c["name"]), 1, {"ch": c["name"]})
+            say("money:ads", txt, "info", "#money/" + q(c["name"]), 1, {"ch": c["name"], "pct": pc, "blk": blk["label"].split(" · ")[0] if blk else None,
+                "left": blk.get("left") if blk else None, "unit": blk.get("unit") if blk else "", "eta": blk.get("eta") if blk else None})
             if ads["overall"] >= 75 and blk and blk.get("left"):
                 do("money", f"{c['name']} 수익 조건 {pc} — {blk['label'].split(' · ')[0]} {fmt(blk['left'])}{blk['unit']} 남음", "#money/" + q(c["name"]),
                    f"{c['name']} 수익 조건 챙기기")
@@ -1099,7 +1121,8 @@ def meeting(D, now):
         if len(rows) >= 2:
             lo, hi = min(rows, key=lambda r: r["천회당krw"]), max(rows, key=lambda r: r["천회당krw"])
             say("money:cost", f"조회 1천 회당 제작비는 **{lo['name']}** {lo['천회당krw']:,}원으로 가장 싸고, {hi['name']}{jo(hi['name'], '은/는')} {hi['천회당krw']:,}원이에요.",
-                "bad" if hi["천회당krw"] > lo["천회당krw"] * 10 else "info", "#cost", 2, {"lo": lo["name"], "hi": hi["name"], "x": hi["천회당krw"] / lo["천회당krw"]})
+                "bad" if hi["천회당krw"] > lo["천회당krw"] * 10 else "info", "#cost", 2, {"lo": lo["name"], "hi": hi["name"], "x": hi["천회당krw"] / lo["천회당krw"],
+                 "lo_v": lo["천회당krw"], "hi_v": hi["천회당krw"]})
         tc = D.get("costs") or {}
         if tc.get("합계krw"):
             say("money:total", f"지금까지 제작비는 {tc.get('편수')}편에 {tc['합계krw']:,}원이에요.", "info", "#cost", 3)
@@ -1110,7 +1133,7 @@ def meeting(D, now):
         R[who].sort(key=lambda x: x["pri"])
     todo = todo[:6]
     try:
-        lines = meeting_talk(R, F, todo, kind, focus, now)
+        lines = meeting_talk(R, F, todo, kind, focus, now, D)
     except Exception as e:   # 대본이 막히면 예전처럼 보고를 차례로 읽는다(회의가 비지 않게)
         print(f"! 회의 대본 오류: {type(e).__name__} {e}")
         lines = list(R["lead"])
@@ -1118,176 +1141,257 @@ def meeting(D, now):
             lines += R[who][:2]
     strip = lambda xs: [{k: v for k, v in x.items() if k not in ("pri", "data")} for x in xs]
     return {"at": now.strftime("%Y-%m-%d %H:%M"), "kind": kind, "focus": E.get("focus"), "lines": strip(lines),
-            "staff": {k: dict(v, **({"img": f"staff/{k}.webp"} if (ROOT / "staff" / f"{k}.webp").exists() else {})) for k, v in STAFF.items()},   # 사진이 있으면 사진(직원사진_만들기.py)
+            "staff": {k: dict(v, **staff_media(k)) for k, v in STAFF.items()},
             "todo": [{k: v for k, v in t.items() if k != "brief"} for t in todo],
             "reports": {k: strip(v) for k, v in R.items()},
             "mood": {k: {"good": sum(1 for x in v if x["tone"] == "good"), "bad": sum(1 for x in v if x["tone"] == "bad")} for k, v in R.items()}}
 
 
-TALK = {   # 회의 말투 변형 — 날짜+회의 종류로 하나를 고른다(10분마다 말이 바뀌지 않게)
-    "아침 회의": ["좋은 아침이에요. 아침 회의 시작할게요.", "다들 모이셨죠? 아침 회의 시작하죠. ☕", "아침부터 수고 많아요. 회의 시작할게요."],
-    "오후 회의": ["다들 모이셨죠? 오후 회의 시작할게요.", "점심 잘 드셨어요? 오후 회의 시작하죠.", "오후 회의 시작할게요. 짧고 굵게 가 볼게요."],
-    "저녁 회의": ["저녁 회의 시작할게요. 오늘 하루 정리해 보죠.", "늦게까지 수고 많아요. 저녁 회의 시작할게요."],
-    "to_analyst_up": ["{n} 님, 어디서 이렇게 늘었어요?", "{n} 님, 어느 채널이 끌었어요?"],
-    "to_analyst_down": ["{n} 님, 어디서 줄었는지 볼까요?", "{n} 님, 왜 줄었는지 짚어 주세요."],
-    "to_analyst": ["{n} 님, 채널별로 짚어 주세요.", "{n} 님, 채널별로는 어때요?"],
-    "to_reviewer": ["{n} 님, 새 영상들은 어땠어요?", "새 영상 성적은요, {n} 님?"],
-    "best_in": ["제일 눈에 띄는 건 ", "먼저 좋은 거요. "],
-    "wow": ["와, {x}요? 🔥", "{x}요? 대박이네요 🔥"],
-    "ask_bad": ["아쉬운 건요?", "반대로 아쉬운 건 없었어요?"],
-    "assign_bad": ["그건 {n} 님이 오늘 한번 봐 주세요.", "그건 오늘 꼭 다시 보죠. {n} 님이 맡아 주세요."],
-    "to_trend": ["다음은 뭘 만들지요. {n} 님, 밖에서 뜨는 거 있어요?", "소재로 넘어가죠. {n} 님, 요즘 뜨는 거 있어요?"],
-    "trend_in": ["네! ", "있어요! "],
-    "focus_in": ["숫자로 봐도 이번 주는 **{c}**에 힘을 싣는 게 맞아요.", "효율로 봐도 이번 주 집중할 채널은 **{c}**{j}."],
-    "to_sched": ["일정 볼게요. {n} 님?", "{n} 님, 업로드 일정은 괜찮아요?"],
-    "sched_ok": ["일정은 문제없어요. ", "일정은 괜찮아요. "],
+TALK = {   # 회의 말투 — 날짜+회의 종류로 하나를 고른다(10분마다 말이 바뀌지 않게). 사람처럼 짧게 주고받는다
+    "open": {"아침 회의": ["좋은 아침이에요! 아침 회의 시작할게요.", "다들 들어오셨죠? 아침 회의 시작하죠. ☕"],
+             "오후 회의": ["자, 다들 들어오셨죠? 오후 회의 시작할게요.", "오후 회의 시작할게요. 짧게 가 볼게요."],
+             "저녁 회의": ["늦게까지 수고 많아요. 저녁 회의 시작할게요.", "저녁 회의 시작하죠. 오늘 하루 정리해 봐요."]},
+    "news_in": ["시작 전에 좋은 소식부터요!", "먼저 좋은 소식 하나요!"],
+    "cheer": ["와, 드디어요! 🎉", "축하해요! 🎉"],
+    "to_analyst": ["어제 숫자부터 볼게요. {n} 님?", "먼저 어제 성적이요. {n} 님?"],
+    "boom": ["{x}요? 어디서 터진 거예요?", "와, {x}요? 뭐가 터졌어요?"],
+    "up_ask": ["오, 어디서 늘었어요?", "좋네요. 어디서 늘었어요?"],
+    "down_ask": ["음… 어디서 빠졌어요?"],
+    "flat_ask": ["채널별로는요?"],
+    "to_reviewer": ["새 영상은요, {n} 님?", "{n} 님, 새 영상 성적은 어때요?"],
+    "wow": ["{x}면 알고리즘 제대로 탔네요 🔥", "와, {x}요? 대박 🔥"],
+    "ask_bad": ["좋네요. 반대로 아쉬운 건요?", "아쉬운 것도 있었어요?"],
+    "fix_bad": ["제목 앞부분이랑 첫 장면을 다시 볼게요.", "제목 첫 두세 단어랑 첫 장면부터 다시 볼게요."],
+    "assign_bad": ["좋아요, 그건 오늘 안에 부탁해요.", "네, 오늘 한번 봐 주세요."],
+    "to_trend": ["다음은 뭘 만들지 보죠. {n} 님, 요즘 뜨는 거 있어요?", "소재로 넘어가죠. {n} 님, 밖에서 뜨는 거 있어요?"],
+    "pick": ["그럼 {c} {r}위 '{t}'부터 가죠.", "저는 {c} {r}위 '{t}'부터 가고 싶어요."],
+    "to_sched": ["일정은요, {n} 님?", "{n} 님, 업로드 일정 괜찮아요?"],
+    "late_re": ["음… {d}일째면 길죠.", "그건 오늘 꼭 챙겨야겠네요."],
     "to_money": ["마지막으로 돈 얘기요. {n} 님?", "{n} 님, 수익이랑 비용은요?"],
-    "cheer": ["드디어요! 축하해요 🎉", "와, 축하해요! 🎉"],
-    "bye": ["수고하셨습니다! 👋", "수고하셨어요! 👋"],
+    "close": ["정리할게요.", "자, 정리하죠."],
+    "bye": ["네! 수고하셨습니다 👋", "수고하셨어요! 👋"],
 }
 TALK_SEC = {"perf": "📈 어제 성적", "topic": "💡 다음에 만들 것", "sched": "📅 업로드 일정", "money": "💰 수익·비용"}
 
 
-def meeting_talk(R, F, todo, kind, focus, now):
-    """회의 대본: 팀장이 안건을 열고 사람을 불러 넘기고, 직원끼리 이어받고, 짧게 맞장구치고, 사장님께 묻고, 정리한다.
-    숫자는 R(직원별 보고)·F 그대로 쓰고 여기서는 순서·이어 주는 말·반응(react: [이모지, 직원])만 붙인다. aside=짧은 맞장구."""
+def num_say(n):
+    """말로 읽는 숫자: 336,912 → '33만 7천', 9,199,000 → '920만', 2,935 → '2,900', 792 → '792'"""
+    a = abs(float(n or 0))
+    if a >= 1e8:
+        e, m = int(a // 1e8), round(a % 1e8 / 1e7)
+        e, m = (e + 1, 0) if m == 10 else (e, m)
+        return f"{e}억" + (f" {m}천만" if m else "")
+    if a >= 1e4:
+        man = round(a / 1e4, 1)
+        if man >= 100:
+            return f"{round(man):,}만"
+        e, m = int(man), round((man - int(man)) * 10)
+        return f"{e}만" + (f" {m}천" if m else "")
+    if a >= 1000:
+        return f"{int(round(a, -2)):,}"   # 2,935 → '2,900'
+    return f"{int(round(a)):,}"
+
+
+def nsay(n, unit):   # '33만 회', '792회', '1만 5천 원'
+    s = num_say(n)
+    return s + ("" if s[-1].isdigit() else " ") + unit
+
+
+def hm_say(s):   # '내일 13시' → '내일 오후 1시'
+    return re.sub(r"(\d{1,2})시", lambda m: ("오전 " if int(m.group(1)) < 12 else "오후 ") + f"{int(m.group(1)) % 12 or 12}시", s or "")
+
+
+def meeting_talk(R, F, todo, kind, focus, now, D):
+    """회의 대본: 사람처럼 짧게 주고받는다(한 마디 = 한두 문장). 팀장이 부르고, 묻고, 되묻고, 맡기고, 직원끼리 맞장구·반론한다.
+    숫자는 R(직원 보고)·F·D 에서 그대로 가져와 말로 읽는 꼴(33만 7천 회)로만 바꾼다. react=[이모지, 직원], aside=짧은 맞장구."""
     seed = now.strftime("%Y-%m-%d ") + kind
-    pick = lambda k: random.Random(seed + k).choice(TALK[k])   # 말마다 따로 고정(다른 말이 늘거나 줄어도 안 바뀜)
+    pick = lambda k, **kw: random.Random(seed + k).choice(TALK[k]).format(**kw)
     N = {k: v["name"] for k, v in STAFF.items()}
     get = lambda who, key: next((x for x in R[who] if x["key"] == key), None)
     every = lambda who, key: [x for x in R[who] if x["key"] == key]
+    q = urllib.parse.quote
+    subs = {c["name"]: c.get("subs") or 0 for c in D.get("channels") or []}
     S = {}
 
     def add(sec, who, text, tone="info", link=None, react=None, aside=False):
         S.setdefault(sec, []).append({"who": who, "text": text, "tone": tone, "link": link, "react": react or [], "aside": aside})
 
-    def rep(sec, x, text=None, react=None):   # 직원 보고 한 줄을 대사로(text 로 앞말을 바꿔 쓸 수 있다)
-        add(sec, x["who"], x["text"] if text is None else text, x["tone"], x["link"], react)
-
-    # 📈 어제 성적: 팀장 → 분석가(어디서 늘었나) → 리뷰어(새 영상 잘된 것·아쉬운 것)
+    # 📈 어제 성적 ─ 팀장 → 서윤(전체·어디서) → 도현(잘된 영상·아쉬운 영상) → 하린 맞장구
     sh, ups, dns = get("analyst", "share"), every("analyst", "jump"), every("analyst", "drop")
-    if sh or ups or dns:
-        r = F.get("ratio")
-        ask = pick("to_analyst_up" if r and r >= 1.3 else "to_analyst_down" if r and r <= 0.7 else "to_analyst").format(n=N["analyst"])
-        add("perf", "lead", "먼저 성적부터요. " + (F.get("nums", "") + " " if F.get("nums") else "") + ask)
+    y, r = F.get("y"), F.get("ratio")
+    if y is not None and (sh or ups or dns):
+        add("perf", "lead", pick("to_analyst", n=N["analyst"]))
+        cmp_ = "예요."
+        if r:
+            cmp_ = (f", 그제의 **{bae(r)}**예요." if r >= 3 else f"로 그제보다 {round((r - 1) * 100)}% 늘었어요." if r >= 1.05
+                    else f"로 그제보다 {round((1 - r) * 100)}% 줄었어요." if r <= 0.95 else "로 그제랑 비슷해요.")
+        ys = F.get("ys") or 0
+        sub_ = f" 구독은 {abs(ys):,}명 {'늘었어요' if ys > 0 else '줄었어요'}." if ys else " 구독은 그대로예요."
+        add("perf", "analyst", f"어제 전체 조회는 **{nsay(y, '회')}**{cmp_}{sub_}",
+            "good" if r and r >= 1.3 else "bad" if r and r <= 0.7 else "info", "#insight/weekly")
+        add("perf", "lead", pick("boom", x=bae(r)) if r and r >= 3 else pick("up_ask") if r and r >= 1.3 else pick("down_ask") if r and r <= 0.7 else pick("flat_ask"),
+            aside=True)
         if sh:
             c, share, g = sh["data"]["ch"], sh["data"]["share"], sh["data"]["g"]
+            add("perf", "analyst", (f"거의 다 **{c}**{jo(c, '이에요/예요')}. 혼자 {nsay(g, '회')}, 전체의 {share}%요." if share >= 70
+                                     else f"**{c}**{jo(c, '이/가')} 제일 많이 끌었어요. {nsay(g, '회')}, 전체의 {share}%예요."), "good", sh["link"])
             j = next((x for x in ups if x["data"]["ch"] == c), None)
-            t = (f"거의 다 **{c}**{jo(c, '이에요/예요')}. 어제 **+{fmt(g)}**, 전체의 **{share}%**예요." if share >= 70
-                 else f"**{c}**{jo(c, '이/가')} 제일 많이 끌었어요. 어제 +{fmt(g)}{jo(fmt(g), '으로/로')} 전체의 {share}%예요.")
             if j:
-                t += f" 평소(하루 {fmt(j['data']['avg'])}회)의 **{bae(j['data']['x'])}**예요."
+                d = j["data"]
+                add("perf", "analyst", f"평소엔 하루 {nsay(d['avg'], '회')} 나오던 채널인데, 어제는 **{bae(d['x'])}**가 나왔어요.", "good", j["link"],
+                    [["😮", "reviewer"], ["😮", "trend"]] if d["x"] >= 10 else [["👀", "lead"]])
                 ups = [x for x in ups if x is not j]
-            rep("perf", sh, t, [["😮", "reviewer"]] if j and j["data"]["x"] >= 10 else None)
         for x in ups[:1]:
-            d = x["data"]
-            rep("perf", x, f"**{d['ch']}**도 평소의 {bae(d['x'])}로 같이 올랐어요(보통 하루 {fmt(d['avg'])}회, 어제 +{fmt(d['yv'])}).")
+            add("perf", "analyst", f"**{x['data']['ch']}**도 평소의 {bae(x['data']['x'])}로 같이 올랐어요.", "good", x["link"])
         for x in dns[:1]:
-            rep("perf", x, "반면 " + x["text"])
-    best, worst, n24 = get("reviewer", "best"), get("reviewer", "worst"), get("reviewer", "new24")
-    pat, sg = get("reviewer", "pattern"), get("reviewer", "surge")
+            add("perf", "analyst", f"반면 **{x['data']['ch']}**{jo(x['data']['ch'], '은/는')} 어제 조회가 {x['data']['how']}.", "bad", x["link"])
+    best, worst, n24, pat = get("reviewer", "best"), get("reviewer", "worst"), get("reviewer", "new24"), get("reviewer", "pattern")
     if best or worst or pat:
-        add("perf", "lead", pick("to_reviewer").format(n=N["reviewer"]), aside=True)
-        pre = f"지난 24시간에 새 영상이 {n24['data']['n']}편 올라갔어요(쇼츠 {n24['data']['s']} · 본편 {n24['data']['l']}). " if n24 else ""
+        add("perf", "lead", pick("to_reviewer", n=N["reviewer"]), aside=True)
         if best:
-            x = best["data"]["ratio"]
-            rep("perf", best, pre + pick("best_in") + best["text"], [["🔥", "trend"], ["👏", "lead"]] if x >= 3 else [["👍", "lead"]])
-            if x >= 10:
-                add("perf", "trend", pick("wow").format(x=bae(x)), aside=True)
-        elif pre:
-            add("perf", "reviewer", pre.strip(), "info", "#videos")
+            d = best["data"]
+            if n24:
+                add("perf", "reviewer", f"24시간 안에 새 영상이 {n24['data']['n']}편 올라갔어요.", "info", "#videos")
+            add("perf", "reviewer", f"제일 잘 된 건 {d['ch']} {d['kind']} **'{d['title']}'**{jo(d['title'], '이에요/예요')}.", "good", best["link"])
+            add("perf", "reviewer", f"{d['h']}시간 만에 {nsay(d['views'], '회')}, 평소의 **{bae(d['ratio'])}**예요.", "good", None,
+                [["👏", "lead"]] + ([["🔥", "trend"]] if d["ratio"] >= 3 else []))
+            if d["ratio"] >= 10:
+                add("perf", "trend", pick("wow", x=bae(d["ratio"])), aside=True)
+        elif n24:
+            add("perf", "reviewer", f"24시간 안에 새 영상이 {n24['data']['n']}편 올라갔어요. 성적은 아직 모이는 중이에요.", "info", "#insight/early")
         if worst:
+            d = worst["data"]
             add("perf", "lead", pick("ask_bad"), aside=True)
-            rep("perf", worst, worst["text"].replace("반대로 ", "", 1))
-            add("perf", "lead", pick("assign_bad").format(n=N["reviewer"]), react=[["👌", "reviewer"]])
+            add("perf", "reviewer", f"{d['ch']} **'{d['title']}'**{jo(d['title'], '은/는')} {d['h']}시간 성적이 평소의 {bae(d['ratio'])}예요.", "bad", worst["link"])
+            add("perf", "reviewer", pick("fix_bad"), "idea")
+            add("perf", "lead", pick("assign_bad"), react=[["👌", "reviewer"]], aside=True)
         if pat:
-            rep("perf", pat, "하나 더요. " + pat["text"])
-    elif sg:
-        rep("perf", sg)
+            d = pat["data"]
+            add("perf", "reviewer", f"패턴도 하나 보여요. {d['ch']} {d['kind']}는 {d['label']} 제목이 **{d['k']:.1f}배 {'더 잘 돼요' if d['better'] else '덜 돼요'}**"
+                f"(24시간 조회 중앙값, {d['na']}편 대 {d['nb']}편).", "idea", "#videos")
+            add("perf", "lead", "좋은 발견이네요. 다음 제목에 써 보죠." if d["better"] else "그럼 그런 제목은 줄여 보죠.", react=[["👍", "planner"]], aside=True)
 
-    # 💡 다음에 만들 것: 팀장 → 트렌드(지금 크는 근거) → 분석가(집중 채널) → 기획자(뭐부터) → 사장님께 부탁
+    # 💡 다음에 만들 것 ─ 하린(지금 뜨는 것) ↔ 서윤(반론·집중 채널) → 지우(뭐부터) → 사장님께
     evs = every("trend", "ev")
     ev = next((x for x in evs if x["data"]["ch"] == focus), None) or (max(evs, key=lambda x: x["data"]["mult"]) if evs else None)
-    extra = None if ev else (next((x for x in every("trend", "genre") if x["data"]["ch"] == focus), None) or get("trend", "bench"))
+    gen = None if ev else next((x for x in every("trend", "genre") if x["data"]["ch"] == focus), None)
+    bench = None if ev or gen else next((x for x in every("trend", "bench") if x["data"]["for"] == focus), None)   # 집중 채널 얘기가 아니면 꺼내지 않는다
     fo, pk, nop, pipe, hits = get("analyst", "focus"), get("planner", "pick"), get("planner", "nopick"), get("planner", "pipe"), get("planner", "hits")
-    if ev or extra or pk or fo:
-        if ev or extra:
-            add("topic", "lead", pick("to_trend").format(n=N["trend"]))
-            rep("topic", ev or extra, pick("trend_in") + (ev or extra)["text"], [["👀", "planner"]])
-        else:
-            add("topic", "lead", "다음은 뭘 만들지요.")
+    if ev or gen or bench or pk or fo:
+        add("topic", "lead", pick("to_trend", n=N["trend"]) if (ev or gen or bench) else f"다음은 뭘 만들지 보죠. {N['planner']} 님?")
+        if ev:
+            d = ev["data"]
+            add("topic", "trend", f"있어요! **'{d['title']}'** 영상이 지금 평소의 **{bae(d['mult'])}**로 크고 있어요.", "idea", ev["link"], [["👀", "planner"]])
+            tp = short(d["topic"], 18)
+            add("topic", "trend", f"우리 {d['ch']} 추천 {d['rank']}위 '{tp}'{jo(tp, '이랑/랑')} 딱 맞는 주제예요.", "idea", "#topics/" + q(d["ch"]))
+            ours = subs.get(d["ch"]) or 0
+            if d["subs"] >= 20 * max(ours, 1):
+                add("topic", "analyst", f"근데 그 채널은 구독자가 {nsay(d['subs'], '명')}이에요. 우리랑 체급이 달라서 조회수는 참고만 하죠.", "info")
+                add("topic", "trend", "맞아요. 그래도 주제 자체는 지금 뜨는 거예요!", aside=True)
+        elif gen:
+            d = gen["data"]
+            add("topic", "trend", f"같은 장르에선 {d['src']}의 **'{d['title']}'**{jo(d['title'], '이/가')} 평소의 {bae(d['x'])}로 크고 있어요.", "idea", gen["link"])
+        elif bench:
+            d = bench["data"]
+            add("topic", "trend", f"{d['for']} 참고 채널 {d['ch']}의 '{d['title']}'{jo(d['title'], '이/가')} 하루 {nsay(d['per_day'], '회')}씩 크고 있어요.", "info", bench["link"])
         if fo:
             d = fo["data"]
-            add("topic", "analyst", pick("focus_in").format(c=d["ch"], j=jo(d["ch"], "이에요/예요")) + f" {d['why']}예요.", "idea", fo["link"])
+            lead_in = "주제는 좋아요. 그리고 " if ev and d["ch"] == ev["data"]["ch"] else ""
+            add("topic", "analyst", lead_in + f"이번 주는 숫자로 봐도 **{d['ch']}**에 집중하는 게 맞아요."
+                + (f" 새 영상 1편당 {nsay(d['per_ep'], '회')}, {d['n']}개 채널 중 1위예요." if d.get("per_ep") else ""), "idea", fo["link"])
         if pk:
-            t = pk["text"]
-            if ev and ev["data"]["ch"] == pk["data"]["ch"] and ev["data"]["rank"] != pk["data"]["rank"]:
-                t += f" {N['trend']} 님이 말한 {ev['data']['rank']}위 '{short(ev['data']['topic'], 16)}'도 후보로 둘게요."
-            rep("topic", pk, t, [["👍", "lead"]])
+            d = pk["data"]
+            tp = short(d["topic"], 24)
+            t = pick("pick", c=d["ch"], r=d["rank"], t=tp)
+            fr = str(d.get("fresh") or "")
+            if fr:
+                t += " 오늘 나온 기사가 근거예요." if fr[:10] == now.strftime("%Y-%m-%d") else f" {int(fr[5:7])}월 {int(fr[8:10])}일 기사가 근거예요."
+            add("topic", "planner", t, "idea", pk["link"])
+            if ev and ev["data"]["ch"] == d["ch"] and ev["data"]["rank"] != d["rank"]:
+                add("topic", "planner", f"{N['trend']} 님이 말한 {ev['data']['rank']}위는 바로 다음 차례로 둘게요.", "idea", aside=True, react=[["🙌", "trend"]])
+            add("topic", "lead", "좋아요, 그렇게 가죠.", react=[["👍", "analyst"]], aside=True)
         if nop:
-            add("topic", "planner", f"사장님, 만들기로 하시면 **'{nop['data']['ch']} 1위 만들어 줘'**라고만 말씀해 주세요. 바로 제작 현황에 올릴게요.",
-                "info", "#topics/제작")
+            d = nop["data"]
+            add("topic", "planner", f"사장님, 만들까요? **'{d['ch']} 1위 만들어 줘'**라고만 해 주시면 바로 제작 현황에 올릴게요.", "info", "#topics/제작")
         elif pipe:
-            rep("topic", pipe)
-            for w in (pipe["data"].get("wait") or [])[:1]:
-                if w["days"] >= 1:
-                    ti = short(w["topic"], 16)
-                    add("topic", "planner", f"사장님, {w['id']} '{ti}'{jo(ti, '은/는')} 고른 지 {w['days']}일 됐어요. 언제 시작할지 알려 주세요.", "info", "#topics/제작")
+            w = next((w for w in (pipe["data"].get("wait") or []) if w["days"] >= 1), None)
+            add("topic", "planner", pipe["text"].split(" — ")[0].replace("만들기로 한 소재는", "지금 만들기로 한 건") + ".", "info", "#topics/제작")
+            if w:
+                tp = short(w["topic"], 16)
+                add("topic", "planner", f"사장님, {w['id']} '{tp}'{jo(tp, '은/는')} 고른 지 {w['days']}일 됐어요. 언제 시작할까요?", "info", "#topics/제작")
         if hits and hits["tone"] == "good":
-            rep("topic", hits)
+            add("topic", "planner", hits["text"], "good", hits["link"])
 
-    # 📅 업로드 일정: 늦은 채널 → 차례가 된 채널 → 쉬는 채널 → 꾸준한 채널
+    # 📅 업로드 일정 ─ 민재(늦은 채널 → 차례 → 꾸준한 채널)
     lates, dues = every("scheduler", "late")[:2], every("scheduler", "due")[:1]
     rest, daily = get("scheduler", "rest"), get("scheduler", "daily")
     if lates or dues or rest or daily:
-        add("sched", "lead", pick("to_sched").format(n=N["scheduler"]))
+        add("sched", "lead", pick("to_sched", n=N["scheduler"]))
         for i, x in enumerate(lates):
-            t = ("늦은 채널부터 말씀드릴게요. " if i == 0 and len(lates) + len(dues) > 1 else "") + x["text"]
-            if rest and i == len(lates) - 1:   # 쉬는 채널은 늦은 채널 말에 붙인다(대사를 줄이려고)
-                t += " " + rest["text"]
-            rep("sched", x, t, [["👀", "lead"]])
+            d = x["data"]
+            add("sched", "scheduler", f"**{d['ch']}**{jo(d['ch'], '이/가')} 늦었어요. 보통 {d['target']:g}일마다 올렸는데 벌써 **{d['since']:.0f}일째**예요.", "bad", x["link"],
+                [["😟", "lead"]])
+            if i == 0:
+                add("sched", "lead", pick("late_re", d=round(d["since"])), aside=True)
+        if rest:
+            it = rest["data"]["items"]
+            add("sched", "scheduler", "·".join(f"{n}({s:.0f}일째)" for n, s in it) + f"{jo(it[-1][0], '은/는')} 한동안 쉬는 중이고요.", "info", rest["link"])
         for x in dues:
-            rep("sched", x)
-        if rest and not lates:
-            rep("sched", rest)
+            d = x["data"]
+            add("sched", "scheduler", f"**{d['ch']}**{jo(d['ch'], '은/는')} 다음 편 차례가 {'지났어요' if d['past'] else '오늘이에요'}."
+                + (f" **{hm_say(d['by'])}** 전엔 올려야 해요." if d.get("by") else ""), "idea", x["link"])
         if daily:
-            rep("sched", daily, ("" if lates or dues else pick("sched_ok")) + daily["text"], [["👍", "lead"]])
+            ns = daily["data"]["names"]
+            add("sched", "scheduler", f"{'·'.join(ns)}{jo(ns[-1], '은/는')} 매일 잘 올라가고 있어요.", "good", daily["link"], [["👍", "lead"]])
 
-    # 💰 수익·비용
+    # 💰 수익·비용 ─ 유나
     ads, cost = get("money", "ads"), get("money", "cost")
     if ads or cost:
-        add("money", "lead", pick("to_money").format(n=N["money"]))
+        add("money", "lead", pick("to_money", n=N["money"]))
         if ads:
-            rep("money", ads)
+            d = ads["data"]
+            add("money", "money", f"광고 수익 조건은 **{d['ch']}**{jo(d['ch'], '이/가')} {d['pct']}로 제일 가까워요.", "info", ads["link"])
+            if d.get("blk") and d.get("left"):
+                add("money", "money", f"{d['blk']}{jo(d['blk'], '이/가')} {nsay(d['left'], d.get('unit') or '')} 더 필요해요." + (f" 지금 속도면 {d['eta']}일쯤이요." if d.get("eta") else ""))
+                if d.get("eta") and d["eta"] <= 90:
+                    add("money", "trend", f"{['한', '두', '석'][max(0, -(-d['eta'] // 30) - 1)]} 달 안이네요! 💪", aside=True)
         if cost:
-            d, t = cost["data"], cost["text"]
-            if d["lo"] == focus:
-                t += " 이번 주 집중 채널이 조회 대비 비용도 제일 적어요."
-            rep("money", cost, t)
-            if d["x"] >= 20:
-                add("money", "lead", f"{round(d['x'])}배 차이면 크네요. {d['hi']} 제작비는 한번 들여다보죠.", "info", "#cost", [["👌", "money"]])
+            d = cost["data"]
+            if d["x"] >= 10:
+                add("money", "money", f"비용은 **{d['hi']}**{jo(d['hi'], '이/가')} 걸려요. 조회 1천 회당 {nsay(d['hi_v'], '원')}, {d['lo']}의 {round(d['x'])}배예요.", "bad", "#cost")
+                add("money", "lead", f"{round(d['x'])}배요? {d['hi']} 제작비는 한번 들여다보죠.", "info", "#cost", [["👌", "money"]], aside=True)
+            else:
+                lo = nsay(d["lo_v"], "원")
+                add("money", "money", f"조회 1천 회당 제작비는 {d['lo']}{jo(d['lo'], '이/가')} {lo}{jo(lo, '으로/로')} 제일 싸요.", "info", "#cost")
 
-    # 여는 말(안건 소개 + 좋은 소식) → 안건들 → 정리 → 끝인사
+    # 여는 말 → 좋은 소식 → 순서 안내 → 안건 → 정리 → 끝인사
     order = [k for k in TALK_SEC if S.get(k)]
-    L = [{"who": "lead", "text": pick(kind) + (f" 오늘 안건은 {len(order)}가지예요 — "
-          + ", ".join(TALK_SEC[k].split(" ", 1)[1] for k in order) + "." if order else ""), "tone": "info", "link": None, "react": [], "aside": False}]
-    news, first, last_ch = [], get("scheduler", "first"), None
+    L = [{"who": "lead", "text": random.Random(seed + "open").choice(TALK["open"][kind]), "tone": "info", "link": None, "react": [], "aside": False}]
+    news, first = [], get("scheduler", "first")
     if first:
-        news.append(f"**{first['data']['ch']}** {first['data']['what']} {first['data']['day']} 올라갔어요")
-        last_ch = first["data"]["ch"]
-    for a in F.get("goals") or []:
-        g = re.sub(r"\s*🎉", "", a.get("title", "")).strip()
-        same = a.get("ch") == last_ch   # 같은 채널이 이어지면 이름을 다시 부르지 않는다
+        d = first["data"]
+        what = re.sub(r"\s*\(.*?\)", "", d["what"]).strip()   # '첫 영상 2편(본편 1 · 쇼츠 1)이' → '첫 영상 2편이'
+        news.append(f"**{d['ch']}** {what} {d['day']} 올라갔어요")
+    goals = sorted(F.get("goals") or [], key=lambda a: (0 if "구독자" in a.get("title", "") else 1 if "채널" in a.get("title", "") else 2))
+    for a in goals[: 2 - len(news)]:
+        g = re.sub(r"\s*돌파.*$", "", a.get("title", "")).strip()
+        m = re.search(r"([\d,.]+[만억]?)\s*(회|명)", g)
+        amt = m.group(1) + m.group(2) if m else g
         if a.get("detail"):
-            ti = short(a["detail"], 18)
-            news.append(("" if same else f"**{a['ch']}**의 ") + f"'{ti}'{'도' if same else jo(ti, '이/가')} {re.sub(r'^(쇼츠|본편) ', '', g)}했어요")
+            ti = short(a["detail"], 16)
+            news.append(f"{a['ch']} '{ti}'{jo(ti, '이/가')} 조회수 {amt}{jo(amt, '을/를')} 넘었어요")
+        elif "구독자" in g:
+            news.append(f"**{a['ch']}** 구독자가 {amt}{jo(amt, '을/를')} 넘었어요")
         else:
-            news.append(f"{g}도 했어요" if same else f"**{a['ch']}**{jo(a['ch'], '은/는')} {g}했어요")
-        last_ch = a.get("ch")
+            news.append(f"**{a['ch']}** 채널 전체 조회수가 {amt}{jo(amt, '을/를')} 넘었어요")
     if news:
-        L.append({"who": "lead", "text": "시작 전에 좋은 소식부터요. " + "! ".join(news) + "! 🎉", "tone": "good", "link": first["link"] if first else "#insight/alerts",
-                  "react": [["🎉", w] for w in ("trend", "planner", "scheduler", "money")], "aside": False})
-        L.append({"who": "trend", "text": pick("cheer"), "tone": "info", "link": None, "react": [], "aside": True})
+        L.append({"who": "lead", "text": ("시작 전에 좋은 소식부터요!" if len(news) > 1 else pick("news_in")) + " " + "! ".join(news) + "! 🎉", "tone": "good", "link": first["link"] if first else "#insight/alerts",
+                  "react": [["🎉", w] for w in ("trend", "planner", "scheduler", "money")] + [["👏", "analyst"]], "aside": False})
+        L.append({"who": "trend", "text": pick("cheer"), "tone": "good", "link": None, "react": [], "aside": True})
+    if order:
+        names = [TALK_SEC[k].split(" ", 1)[1] for k in order]
+        L.append({"who": "lead", "text": "오늘은 " + ", ".join(names[:-1]) + (" 그리고 " if len(names) > 1 else "") + names[-1] + " 순서로 볼게요.",
+                  "tone": "info", "link": None, "react": [], "aside": False})
     for k in order:
         S[k][0]["sec"] = TALK_SEC[k]
         L += S[k]
@@ -1295,9 +1399,16 @@ def meeting_talk(R, F, todo, kind, focus, now):
     for t in todo:
         by.setdefault(t["who"], []).append(t.get("brief") or t["text"])
     parts = [f"{N[w]} 님은 {'·'.join(bs)}" for w, bs in by.items() if w in N]
-    close = "정리할게요. " + (f"이번 주 집중은 **{focus}**{jo(focus, '이에요/예요')}. " if focus else "")
-    close += (", ".join(parts) + f" 부탁해요. 오늘 할 일 {len(todo)}가지는 아래에 적어 뒀어요.") if parts else "오늘은 급한 일 없이 추천 소재를 골라 보면 돼요."
-    L.append({"who": "lead", "text": close, "tone": "idea", "link": None, "react": [], "aside": False, "sec": "✅ 정리"})
+    L.append({"who": "lead", "text": pick("close") + (f" 이번 주는 **{focus}**에 집중해요." if focus else ""), "tone": "idea", "link": None, "react": [], "aside": False, "sec": "✅ 정리"})
+    if parts:
+        ws = [w for w in by if w in N]
+        for k in range(0, len(parts), 2):   # 두 사람씩 끊어 말한다
+            last = k + 2 >= len(parts)
+            L.append({"who": "lead", "text": hm_say(", ".join(parts[k:k + 2])) + (" 부탁해요." if last else ","), "tone": "idea", "link": None,
+                      "react": [["👌", w] for w in ws[k:k + 2]], "aside": False})
+        L.append({"who": "lead", "text": f"사장님, 오늘 할 일 {len(todo)}가지는 아래에 적어 뒀어요.", "tone": "info", "link": None, "react": [], "aside": False})
+    else:
+        L.append({"who": "lead", "text": "오늘은 급한 일이 없어요. 사장님, 추천 소재만 한번 골라 주세요.", "tone": "info", "link": "#topics", "react": [], "aside": False})
     L.append({"who": "all", "text": pick("bye"), "tone": "info", "link": None, "react": [], "aside": True})
     return L
 
