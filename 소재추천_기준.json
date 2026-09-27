@@ -40,7 +40,7 @@
       "weights": {"korea": 3, "paradox": 2, "proof": 2, "visual": 1}
     },
     {
-      "name": "The Korea Paradox",
+      "name": "The Paradox Desk",
       "lang": "en",
       "episodes": ["../영어채널/영상", "../영어채널/샘플"],
       "news": ["출산율 통계", "출생아 수 인구동향", "사교육비 조사", "청년 고용 쉬었음", "전세 사기 전세가", "삼성전자 반도체 실적", "재벌 총수 지배구조", "고령화 인구 감소",
@@ -57,7 +57,7 @@
         "비율: 역설·어두운 훅 70% + 경외감(메가프로젝트·세계가 쓰는 한국 것) 30%. 벤치마크: 어두운 제목 중앙값 38만 회 vs 밝은 제목 10만 회.",
         "제목 = 40~55자·6~9단어, 'South Korea'를 앞 절반에, 어두운 단어는 하나만(Over/Broken/Impossible/Dark Side/Destroying). 우리 판정이 아니라 역설의 한쪽으로. 실제로 터진 틀: 'South Korea Was Supposed to Be ___. Then ___', 'Why South Korea's ___ Is Suddenly ___', 'The Dark Side of South Korea's ___', 'How South Korea Built a $___ ___', 'What No One Tells You About ___'.",
         "쇼츠 1편이 나와야 한다: 9:16 전용 소재, 45~60초, 가장 강한 숫자 대비 하나.",
-        "확정 채널명 The Korea Paradox(@TheKoreaParadox). 첫 편은 출산율 반등(이미 만듦), 수능 편은 11월 계절 기획(11월 10~15일 게시). 첫 12편 후보: 성씨 절반 김이박·전세·한강의 기적·학원·아파트·편의점·재벌·병역·때밀이·빨리빨리 배달.",
+        "확정 채널명 The Paradox Desk(@TheParadoxDesk). 첫 편은 출산율 반등(이미 만듦), 수능 편은 11월 계절 기획(11월 10~15일 게시). 첫 12편 후보: 성씨 절반 김이박·전세·한강의 기적·학원·아파트·편의점·재벌·병역·때밀이·빨리빨리 배달.",
         "금지: 'My Country…'·'…by a Korean' 틀(AI 목소리가 한국인인 척), AI 티 나는 말투, 최상급 남발(출처 원문에 있을 때만), 마무리 질문·다음 편 예고. 이미 만든 편·최근 추천 반복 금지."
       ],
       "scores": {"korea": "한국 얘기의 힘·미국 시청자와 이어지는 고리 0~5", "paradox": "나라 전체의 역설·어두운 훅의 강도 0~5", "proof": "2026년 새 한국 통계·뉴스 근거 + 지금 영어권에서 비슷한 영상이 뜨는데 같은 각도 공급은 적은가 0~5", "visual": "지도·차트·스톡·공공사진으로 화면 70%를 채울 수 있는가 0~5"},
