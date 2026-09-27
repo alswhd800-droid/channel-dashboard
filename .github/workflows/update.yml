@@ -56,6 +56,7 @@ jobs:
         run: |
           rm -rf site && mkdir site
           cp -R data site/data && cp docs/index.html site/index.html && touch site/.nojekyll
+          if [ -d staff ]; then cp -R staff site/staff; fi   # 직원 사진(있을 때만)
           cd site
           git init -q -b gh-pages
           git config user.name "dashboard-bot"

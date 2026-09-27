@@ -233,13 +233,6 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .bub{flex:1;min-width:0;background:var(--tip);color:var(--tip-ink);border-radius:4px 14px 14px 14px;padding:9px 12px 10px;font-size:13px;line-height:1.62}
 .bub b{color:var(--ink);font-weight:700}
 .nm2{font-size:11.5px;color:var(--sub);margin-bottom:2px}.nm2 b{color:var(--ink);font-size:12.5px;margin-right:5px}
-.meet{padding:4px 16px 8px}
-.meet .mhead{display:flex;align-items:center;gap:10px;padding:10px 0 9px;border-bottom:1px solid var(--line)}
-.meet .faces{display:flex}.meet .faces .face{margin-left:-7px;border-color:var(--card)}.meet .faces .face:first-child{margin-left:0}
-.meet .ln{display:flex;gap:10px;align-items:flex-start;padding:10px 0}
-.meet .ln+.ln{border-top:1px dashed var(--line)}
-.meet .ln .bub{background:var(--soft);color:var(--ink)}
-.meet .ln.lead .bub{background:color-mix(in srgb,#6c5ce7 13%,var(--card))}
 .tone{display:inline-block;font-size:10.5px;font-weight:800;border-radius:5px;padding:0 6px;vertical-align:1px}
 .tone.good{background:color-mix(in srgb,#1f9d6b 17%,transparent);color:#1f9d6b}
 .tone.bad{background:color-mix(in srgb,#e0392b 15%,transparent);color:#e0392b}
@@ -295,6 +288,73 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--sub);margin:10px 0 0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 @media (max-width:860px){.team{grid-template-columns:minmax(0,1fr)}.egrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* ───── 화상회의 회의실 (2026-09-27 "진짜 사람이 나와서 회의하는 느낌") ───── */
+.face{position:relative;overflow:hidden;background:var(--soft)}
+.face>svg,.face>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.face.xs{display:inline-grid;width:22px;height:22px;border-width:1.5px;vertical-align:middle;margin-right:3px}
+.tile.me.ask{box-shadow:0 0 0 2.5px #ffc83d,0 0 18px rgba(255,200,61,.45)}
+.avs .mg,.avs .mb,.avs .mt{opacity:0}
+.m-good .avs .mn,.m-bad .avs .mn{opacity:0}.m-good .avs .mg,.m-bad .avs .mb{opacity:1}
+.avs .bl,.avs .bR,.avs .ey{transform-box:fill-box;transform-origin:center;transition:transform .25s}
+.m-good .avs .bl,.m-good .avs .bR{transform:translateY(-.9px)}.m-idea .avs .bR{transform:translateY(-1.6px)}
+.m-bad .avs .bl{transform:rotate(-10deg)}.m-bad .avs .bR{transform:rotate(10deg)}
+.avs .ey{animation:blink 4.6s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.1)}}
+.talk .avs .mt{animation:mouth .46s infinite steps(1,end)}
+@keyframes mouth{0%{opacity:1}22%{opacity:0}38%{opacity:.9}58%{opacity:0}72%{opacity:1}88%{opacity:.35}}
+.call{background:#0f1117;color:#e9ebf1;border-radius:18px;padding:12px;margin:6px 0 12px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.callhd{display:flex;align-items:center;gap:8px;font-size:13px;margin:0 2px 10px;flex-wrap:wrap}
+.callhd b{font-size:14.5px}.callhd .cm{margin-left:auto;color:#9aa0ad;font-size:11.5px}
+.live{display:inline-flex;align-items:center;background:#e0392b;color:#fff;font-weight:800;font-size:11px;border-radius:6px;padding:2px 7px;animation:livepulse 1.6s ease-in-out infinite}
+.live.end{background:#3a3f4b;animation:none}
+@keyframes livepulse{50%{opacity:.62}}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tile{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1/1;background:#1b1e27;box-shadow:0 0 0 1px rgba(255,255,255,.07);transition:box-shadow .2s,transform .2s}
+.tile .cam{position:absolute;inset:0}
+.tile .cam>svg,.tile .cam>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.tile .tn{position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.58);color:#fff;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 6px;max-width:calc(100% - 10px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.talk{box-shadow:0 0 0 2.5px #3ddc84,0 0 18px rgba(61,220,132,.5);transform:translateY(-1px)}
+.tile .cam>svg{transform:scale(1.02);animation:idle 7s ease-in-out infinite}
+.tile:nth-child(2n) .cam>svg{animation-duration:8.3s;animation-delay:-2s}.tile:nth-child(3n) .cam>svg{animation-duration:6.1s;animation-delay:-4s}
+@keyframes idle{0%,100%{transform:scale(1.02) translate(0,0)}50%{transform:scale(1.03) translate(.4%,-.5%)}}
+.tile.talk .cam>svg{animation:nod 1.15s ease-in-out infinite}
+@keyframes nod{0%,100%{transform:scale(1.03) translate(0,0) rotate(0)}30%{transform:scale(1.03) translate(0,-.8%) rotate(-.6deg)}65%{transform:scale(1.03) translate(.3%,.3%) rotate(.5deg)}}
+.tile .bars{position:absolute;right:5px;top:5px;display:none;gap:2px;align-items:flex-end;height:14px;background:rgba(0,0,0,.5);border-radius:6px;padding:2px 4px}
+.tile.talk .bars{display:flex}
+.tile .bars i{display:block;width:2.5px;height:4px;background:#3ddc84;border-radius:2px;animation:bar .5s ease-in-out infinite}
+.tile .bars i:nth-child(2){animation-delay:-.2s}.tile .bars i:nth-child(3){animation-delay:-.35s}
+@keyframes bar{0%,100%{height:3px}50%{height:10px}}
+.tile .pop{position:absolute;left:50%;top:38%;font-size:26px;opacity:0;pointer-events:none;transform:translateX(-50%)}
+.tile .pop.go{animation:pop 1.4s ease-out}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,12px) scale(.5)}15%{opacity:1;transform:translate(-50%,0) scale(1.2)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-28px) scale(1)}}
+.tile.me .cam{display:grid;place-items:center;background:linear-gradient(160deg,#2a2f3b,#161920)}
+.meav{width:62%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:#454c5c;color:#fff;font-weight:800;font-size:12px}
+.tile .off{position:absolute;right:5px;top:5px;font-size:10px;background:rgba(0,0,0,.5);border-radius:6px;padding:1px 4px}
+.cap{margin-top:10px;background:rgba(255,255,255,.06);border-radius:12px;padding:9px 12px;min-height:74px;font-size:14px;line-height:1.55}
+.cap .cw{display:block;font-size:11.5px;color:#3ddc84;font-weight:700;margin-bottom:2px}
+.cap.typing .ct{color:#9aa0ad;letter-spacing:1px}
+.ctrl{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.ctrl button{flex:1 1 auto;min-height:40px;border:0;border-radius:10px;background:#252a36;color:#e9ebf1;font:inherit;font-size:12.5px;font-weight:700;padding:8px 10px;cursor:pointer}
+.ctrl button[aria-pressed="true"]{background:#3ddc84;color:#0b2a17}
+.ctrl button:focus-visible{outline:2px solid #3ddc84;outline-offset:2px}
+.minutes{padding:4px 14px 10px}
+.minutes .mhd{display:flex;align-items:center;gap:8px;padding:9px 0 4px}.minutes .mhd h3{margin:0;font-size:15px}.minutes .mhd .more{margin-left:auto}
+.log{list-style:none;margin:0;padding:0}.log [hidden]{display:none!important}
+.log .div{display:flex;align-items:center;gap:8px;margin:12px 0 2px;font-size:12px;font-weight:800;color:var(--sub)}
+.log .div::before,.log .div::after{content:"";flex:1;height:1px;background:var(--line)}
+.msg{display:flex;gap:9px;align-items:flex-start;padding:6px 0;animation:msgin .35s ease-out}
+@keyframes msgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg .mb{flex:1;min-width:0}
+.msg .mh{font-size:11.5px;color:var(--sub);margin-bottom:2px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}.msg .mh b{color:var(--ink);font-size:12.5px}
+.msg .bub{display:inline-block;max-width:100%;background:var(--soft);color:var(--ink);border-radius:4px 14px 14px 14px;padding:8px 11px;font-size:13.5px;line-height:1.6}
+.msg.lead .bub{background:color-mix(in srgb,#6c5ce7 14%,var(--card))}
+.msg.aside .face{width:30px;height:30px;margin:0 4px}.msg.aside .bub{padding:5px 10px;font-size:13px}
+.msg .mf{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;align-items:center}.msg .mf .go{margin:0}
+.rx{font-size:11.5px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--sub);white-space:nowrap}
+.msg.all .stack{display:flex;flex:none;padding-top:2px}.msg.all .stack .face{margin-left:-8px;border-color:var(--card)}.msg.all .stack .face:first-child{margin-left:0}
+.staff .motto{font-size:12.5px;color:var(--sub);font-style:italic;margin:-2px 0 6px}
+@media(min-width:900px){.tiles{grid-template-columns:repeat(8,minmax(0,1fr))}.cap{font-size:15px}}
+@media (prefers-reduced-motion:reduce){.avs .ey,.talk .avs .mt,.tile .bars i,.live,.msg,.tile .pop.go,.tile .cam>svg{animation:none!important}.tile,.avs .bl,.avs .bR{transition:none}}
 </style>
 </head>
 <body>
@@ -344,7 +404,76 @@ const M = (D && D.meeting) || null;
 const STAFF = (M && M.staff) || {};
 const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 const jo2 = (w, a, b) => { const c = String(w).trim().slice(-1), k = c.charCodeAt(0) - 0xAC00; return (k >= 0 && k <= 11171 ? k % 28 !== 0 : /[lmn0136780]$/i.test(c)) ? a : b; };
-const face = (who, cls = "") => { const x = STAFF[who] || {}; return `<span class="face ${cls}" style="border-color:${x.color || "var(--line)"};background:color-mix(in srgb,${x.color || "#888"} 14%,var(--card))" aria-hidden="true">${x.emoji || "🙂"}</span>`; };
+/* 직원 얼굴: 사진(staff/키.webp, 직원사진_만들기.py)이 있으면 사진, 없으면 그림. 그림은 표정(m-good·m-bad·m-idea)·눈 깜빡임·말할 때 입 움직임이 있다 */
+const LOOK = {
+  lead: { skin: "#f0c6a4", hair: "#1e1a18", hs: "short", top: "#27354f", neck: "v", inner: "#ffffff", bg: ["#e2e9f4", "#b7c6de"], prop: "glass" },
+  analyst: { skin: "#f5cfb3", hair: "#191616", hs: "bob", top: "#d6bf9b", neck: "round", inner: "#fbfaf7", gl: "thin", bg: ["#e4edf6", "#c1d3e6"], prop: "chart" },
+  reviewer: { skin: "#e8b793", hair: "#3b2a20", hs: "messy", top: "#26262c", neck: "crew", phones: 1, bg: ["#454b5c", "#1c1f28"], prop: "monitor" },
+  trend: { skin: "#f6d3b9", hair: "#4a2e22", hs: "long", top: "#ff8a2c", neck: "round", ear: 1, bg: ["#fdebd8", "#f5c7a2"], prop: "plant" },
+  planner: { skin: "#eec3a0", hair: "#1c1918", hs: "curly", top: "#5d7337", neck: "crew", gl: "round", bg: ["#f3f1e8", "#dad6c6"], prop: "notes" },
+  scheduler: { skin: "#ecbf9c", hair: "#1a1817", hs: "side", top: "#a9c8ec", neck: "collar", bg: ["#e9eff4", "#ccd9e4"], prop: "cal" },
+  money: { skin: "#f3cbae", hair: "#1d1a1a", hs: "pony", top: "#3a3f48", neck: "v", inner: "#ffffff", bg: ["#f0eae1", "#d8cebf"], prop: "shelf" },
+};
+const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16), f = c => Math.max(0, Math.min(255, Math.round(c * (1 + k)))); return "#" + [n >> 16, (n >> 8) & 255, n & 255].map(c => f(c).toString(16).padStart(2, "0")).join(""); };
+const HAIR = {   // [뒷머리(몸 뒤), 앞머리, 앞으로 내려온 머리(몸 앞)]
+  short: ["", "M33.5 47C31.5 30 40 22.5 50 22.5C60.5 22.5 68.5 30 66.5 47C65.5 40.5 63.5 36.5 60 34.8C54.5 32.8 45.5 32.8 40.5 34.8C36.8 36.6 34.6 41 33.5 47Z", ""],
+  side: ["", "M33.5 48C31 30 40.5 21.5 51 22C62 22.5 69.5 30.5 66.5 48C65.8 42 63.8 38 60.5 35.5C56 32 47 31.5 41 36.5C37.5 39.5 35 43.5 33.5 48ZM39.5 37.5C44 29 56 25.5 64.5 33.5C57 31 48.5 31.8 39.5 37.5Z", ""],
+  messy: ["", "M32 50C29 33 37.5 20.5 50 20.5C62.5 20.5 71 32 68 50C67.2 45 66 41.5 64.5 39.5L62 43L59.5 36.5L55.5 41.5L51.5 35.5L47.5 41.5L43.5 36L40 42L37 38.5C35 41.5 33 45.5 32 50Z", ""],
+  curly: ["", "M33 47C31 31 40 23 50 23C60 23 69 31 67 47C64 39 57 35 50 35C43 35 36 39 33 47Z", ""],
+  bob: ["M30 48C28 29 39 20.5 50 20.5C61 20.5 72 29 70 48L71 70C71 74 67 76 63 75L37 75C33 76 29 74 29 70Z", "M33 45C32.5 30 41 23.5 50 23.5C59 23.5 67.5 30 67 45C63.5 38.5 57.5 36.5 50 37C42.5 36.5 36.5 38.5 33 45Z",
+    "M31.5 47C30.5 60 31 70 32.5 80L38.5 80C36.8 70 36.2 60 36.5 49ZM68.5 47C69.5 60 69 70 67.5 80L61.5 80C63.2 70 63.8 60 63.5 49Z"],
+  long: ["M29 48C27 28 39 19.5 50 19.5C61 19.5 73 28 71 48C73 62 75 76 73 90L27 90C25 76 27 62 29 48Z", "M33 46C32 30 42 23 52 23C62 23 69 31 67 46C63.5 37 55.5 33 47 34.5C41 36 36 40 33 46Z",
+    "M31 48C27 60 33 67 29 79C27 87 30 93 35 97L41 97C37.5 90 40 82 38 72C36.5 63 38 55 36.8 49ZM69 48C73 60 67 67 71 79C73 87 70 93 65 97L59 97C62.5 90 60 82 62 72C63.5 63 62 55 63.2 49Z"],
+  pony: ["M63 54C71 58 72.5 68 67.5 79C65.5 71 63.5 63 60.5 58Z", "M33.5 46C32.5 31 41 24 50 24C59 24 67.5 31 66.5 46C64.5 38.5 58 34.5 50 34.5C42 34.5 35.5 38.5 33.5 46Z", ""],
+};
+const PROPS = {   // 화상회의 뒤 배경(흐리게)
+  glass: '<rect x="3" y="8" width="21" height="62" fill="#fff" opacity=".5"/><rect x="28" y="8" width="17" height="62" fill="#fff" opacity=".28"/><rect x="77" y="8" width="21" height="62" fill="#fff" opacity=".45"/><rect y="68" width="100" height="3" fill="#7d8eab" opacity=".5"/>',
+  chart: '<rect x="3" y="14" width="31" height="23" rx="2" fill="#253041"/><rect x="66" y="14" width="31" height="23" rx="2" fill="#253041"/><rect x="8" y="27" width="4" height="7" fill="#4c8dff"/><rect x="14" y="23" width="4" height="11" fill="#1f9d6b"/><rect x="20" y="20" width="4" height="14" fill="#ff7a00"/><rect x="26" y="25" width="4" height="9" fill="#e0392b"/><path d="M69 32L75 26L81 29L87 20L93 23" stroke="#ff3d55" stroke-width="1.8" fill="none"/>',
+  monitor: '<circle cx="14" cy="20" r="11" fill="#ffb86b" opacity=".35"/><rect x="58" y="12" width="38" height="25" rx="2" fill="#6d8fe8" opacity=".8"/><rect x="61" y="29" width="10" height="3" fill="#ffcf5c"/><rect x="73" y="29" width="14" height="3" fill="#ff5c8a"/><rect x="61" y="33" width="21" height="2" fill="#7cf0c0"/>',
+  plant: '<rect x="62" y="6" width="34" height="40" rx="2" fill="#fff" opacity=".55"/><path d="M70 22q7-8 14 0q7 8 0 15" stroke="#ff5fa2" stroke-width="2.6" fill="none"/><circle cx="12" cy="70" r="12" fill="#3f9a57"/><circle cx="21" cy="59" r="8" fill="#4fb56a"/><circle cx="7" cy="55" r="7" fill="#2f8048"/>',
+  notes: '<rect x="3" y="7" width="94" height="56" rx="2" fill="#fff" opacity=".9"/><rect x="7" y="12" width="9" height="9" fill="#ffd54f"/><rect x="19" y="15" width="9" height="9" fill="#ff8fb1"/><rect x="8" y="36" width="9" height="9" fill="#8fd3ff"/><rect x="72" y="11" width="9" height="9" fill="#b4f08a"/><rect x="84" y="18" width="9" height="9" fill="#ffd54f"/><rect x="80" y="37" width="9" height="9" fill="#ff8fb1"/>',
+  cal: '<rect x="61" y="9" width="33" height="31" rx="1.5" fill="#fff" opacity=".95"/><rect x="61" y="9" width="33" height="6" fill="#e0392b"/><path d="M61 21H94M61 27H94M61 33H94M66 15V40M71 15V40M76 15V40M81 15V40M86 15V40M90 15V40" stroke="#c9d1db" stroke-width=".6"/><circle cx="17" cy="22" r="9" fill="#fff" stroke="#44505c" stroke-width="1.3"/><path d="M17 22V16.5M17 22L21 23.6" stroke="#44505c" stroke-width="1.2" stroke-linecap="round"/>',
+  shelf: '<rect x="2" y="6" width="27" height="66" fill="#7a5a3c" opacity=".55"/><rect x="71" y="6" width="27" height="66" fill="#7a5a3c" opacity=".55"/><g opacity=".9"><rect x="4" y="11" width="4" height="17" fill="#c94f4f"/><rect x="9" y="13" width="4" height="15" fill="#3f6fb5"/><rect x="14" y="10" width="4" height="18" fill="#e8c35a"/><rect x="19" y="14" width="4" height="14" fill="#4f9a6a"/><rect x="5" y="36" width="4" height="16" fill="#7b5ea7"/><rect x="10" y="38" width="4" height="14" fill="#e8c35a"/><rect x="74" y="12" width="4" height="16" fill="#4f9a6a"/><rect x="79" y="10" width="4" height="18" fill="#c94f4f"/><rect x="84" y="13" width="4" height="15" fill="#3f6fb5"/><rect x="76" y="37" width="4" height="15" fill="#e8c35a"/></g>',
+};
+let AVN = 0;
+function avatarSvg(who, crop) {   // crop: 동그란 얼굴용(머리·어깨만 크게), 아니면 화상회의 칸(배경까지)
+  const L = LOOK[who];
+  if (!L) return "";
+  const id = "av" + (AVN++), H = HAIR[L.hs] || HAIR.short, sk = L.skin, dk = shade(sk, -0.12), hr = L.hair, tp = L.top;
+  const curls = L.hs === "curly" ? [[36, 39, 5], [40.5, 32, 5.6], [47, 28.3, 6.2], [54.5, 28, 6.2], [61, 31.2, 5.8], [65.5, 38, 4.8], [34, 45, 3.2], [66.2, 45, 3.2]]
+    .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("") : "";
+  const neck = {
+    v: `<path d="M42 73.2L50 87L58 73.2Z" fill="${L.inner}"/><path d="M41.5 73.5L47.8 89M58.5 73.5L52.2 89" stroke="${shade(tp, -0.4)}" stroke-width="1.5"/>`,
+    round: `<path d="M41 73.8Q50 81 59 73.8" stroke="${shade(tp, -0.22)}" stroke-width="1.6" fill="none"/>`,
+    crew: `<path d="M42.5 73.4Q50 78.8 57.5 73.4" stroke="${shade(tp, -0.35)}" stroke-width="2.2" fill="none"/>`,
+    collar: `<path d="M43.2 71.6L48.6 80L50 74.6ZM56.8 71.6L51.4 80L50 74.6Z" fill="${shade(tp, 0.18)}"/><path d="M50 76V101" stroke="${shade(tp, -0.2)}" stroke-width=".8"/><circle cx="50" cy="84" r=".9" fill="${shade(tp, -0.3)}"/><circle cx="50" cy="92" r=".9" fill="${shade(tp, -0.3)}"/>`,
+  }[L.neck] || "";
+  const phones = L.phones ? '<path d="M35 73Q50 85 65 73" stroke="#141418" stroke-width="3.4" fill="none"/><ellipse cx="34.5" cy="72.5" rx="4.6" ry="5.6" fill="#1c1c22" stroke="#4a4a55" stroke-width="1"/><ellipse cx="65.5" cy="72.5" rx="4.6" ry="5.6" fill="#1c1c22" stroke="#4a4a55" stroke-width="1"/>' : "";
+  const ear = L.ear ? '<circle cx="33.6" cy="56.2" r="1.7" fill="none" stroke="#e1b24a" stroke-width=".9"/><circle cx="66.4" cy="56.2" r="1.7" fill="none" stroke="#e1b24a" stroke-width=".9"/>' : "";
+  const gl = L.gl === "thin" ? '<g fill="none" stroke="#a7afb9" stroke-width="1"><rect x="38.3" y="46.3" width="10.4" height="7.6" rx="3.2"/><rect x="51.3" y="46.3" width="10.4" height="7.6" rx="3.2"/><path d="M48.7 49.4Q50 48.5 51.3 49.4"/></g>'
+    : L.gl === "round" ? '<g fill="none" stroke="#6b4526" stroke-width="1.5"><circle cx="43.5" cy="50" r="4.9"/><circle cx="56.5" cy="50" r="4.9"/><path d="M48.4 49.3Q50 48.3 51.6 49.3"/></g>' : "";
+  return `<svg class="avs" viewBox="${crop ? "22 19 56 56" : "0 0 100 100"}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${L.bg[0]}"/><stop offset="1" stop-color="${L.bg[1]}"/></linearGradient><filter id="${id}b"><feGaussianBlur stdDeviation="1.2"/></filter></defs>
+    <rect x="-5" y="-5" width="110" height="110" fill="url(#${id})"/>${crop ? "" : `<g filter="url(#${id}b)">${PROPS[L.prop] || ""}</g>`}
+    ${H[0] ? `<path d="${H[0]}" fill="${hr}"/>` : ""}<path d="M14 101C14 83 28 73.5 50 73.5C72 73.5 86 83 86 101Z" fill="${tp}"/>
+    <path d="M44.2 60H55.8V74.5Q50 78.5 44.2 74.5Z" fill="${dk}"/>${neck}${phones}
+    <ellipse cx="33.8" cy="50.5" rx="2.7" ry="4.2" fill="${dk}"/><ellipse cx="66.2" cy="50.5" rx="2.7" ry="4.2" fill="${dk}"/>${ear}
+    <ellipse cx="50" cy="48" rx="16.5" ry="19.2" fill="${sk}"/>
+    <ellipse cx="40.3" cy="56.8" rx="3.1" ry="1.8" fill="#ff7b6b" opacity=".2"/><ellipse cx="59.7" cy="56.8" rx="3.1" ry="1.8" fill="#ff7b6b" opacity=".2"/>
+    <g stroke="${shade(hr, 0.12)}" stroke-width="1.7" stroke-linecap="round" fill="none"><path class="bl" d="M39.8 44.6Q43.4 42.9 47 44.2"/><path class="bR" d="M53 44.2Q56.6 42.9 60.2 44.6"/></g>
+    <g class="ey" style="animation-delay:-${(AVN * 1.37) % 4.6}s"><ellipse cx="43.5" cy="50" rx="1.75" ry="2.15" fill="#2b2220"/><ellipse cx="56.5" cy="50" rx="1.75" ry="2.15" fill="#2b2220"/><circle cx="44.1" cy="49.3" r=".55" fill="#fff"/><circle cx="57.1" cy="49.3" r=".55" fill="#fff"/></g>
+    <path d="M50.2 51.5Q48.7 55.6 50.9 56.3" stroke="${shade(sk, -0.3)}" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <path class="mn" d="M45.2 60.6Q50 63.6 54.8 60.6" stroke="#8b3a33" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <g class="mg"><path d="M44.6 59.9Q50 66.8 55.4 59.9Z" fill="#7b2d29"/><path d="M45.6 60.3Q50 62.2 54.4 60.3L54 61.3Q50 62.9 46 61.3Z" fill="#fff"/></g>
+    <path class="mb" d="M45.6 62.4Q50 60.2 54.4 62.4" stroke="#8b3a33" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <ellipse class="mt" cx="50" cy="61.4" rx="3.3" ry="2.7" fill="#7b2d29"/>${gl}
+    <path d="${H[1]}" fill="${hr}"/>${curls ? `<g fill="${hr}">${curls}</g>` : ""}${H[2] ? `<path d="${H[2]}" fill="${hr}"/>` : ""}
+  </svg>`;
+}
+const face = (who, cls = "") => {
+  const x = STAFF[who] || {}, pic = x.img ? `<img src="${esc(x.img)}" alt="" loading="lazy" onerror="this.remove()">` : "";
+  return `<span class="face ${cls}" style="border-color:${x.color || "var(--line)"}" aria-hidden="true">${LOOK[who] ? avatarSvg(who, true) + pic : esc(x.emoji || "🙂")}</span>`;
+};
 const TONE = { good: "좋았던 점", bad: "아쉬운 점", idea: "제안" };
 const toneTag = t => TONE[t] ? `<span class="tone ${t}">${TONE[t]}</span>` : "";
 const nameRow = (who, tone) => { const x = STAFF[who] || {}; return `<div class="nm2"><b>${esc(x.name || "")}</b>${esc(x.role || "")} ${toneTag(tone)}</div>`; };
@@ -354,18 +483,44 @@ const say = (who, html) => STAFF[who] ? `<div class="say">${face(who)}<div class
 const TODO_KEY = "dash_todo";
 const todoDone = () => { try { return JSON.parse(localStorage.getItem(TODO_KEY) || "{}"); } catch (e) { return {}; } };
 const todoKey = t => (M ? M.at.slice(0, 10) : "") + "|" + t.text;
+const SPK = w => w === "all" ? "모두" : (STAFF[w] || {}).name || "";
+const LINKNAME = { "#insight/efficiency": "채널 효율", "#insight/cadence": "업로드 달력", "#topics/제작": "제작 현황", "#topics": "소재 추천", "#cost": "제작비",
+  "#videos": "영상", "#insight/early": "새 영상 성적", "#insight/weekly": "주간 리포트", "#insight/alerts": "알림", "#hunt": "발굴" };
+const linkName = l => l.startsWith("http") ? "▶ 영상 보기" : (LINKNAME[l] || (l.startsWith("#channel/") ? decodeURIComponent(l.split("/")[1]) + " 채널"
+  : l.startsWith("#money/") ? "수익 조건" : l.startsWith("#topics/") ? decodeURIComponent(l.split("/")[1]) + " 소재" : "자세히")) + " ›";
+function msgHtml(l, i) {   // 회의록 한 줄(안건 구분선 + 말풍선 + 반응 + 바로 가기)
+  const x = STAFF[l.who] || {}, sec = l.sec ? `<li class="div" data-i="${i}"><span>${esc(l.sec)}</span></li>` : "";
+  const rx = (l.react || []).map(([e, w]) => `<span class="rx">${e} ${esc(SPK(w))}</span>`).join("");
+  const foot = rx || l.link ? `<div class="mf">${rx}${l.link ? golink(l.link, linkName(l.link)) : ""}</div>` : "";
+  if (l.who === "all") return `${sec}<li class="msg all" data-i="${i}"><span class="stack">${Object.keys(STAFF).map(w => face(w, "xs m-good")).join("")}</span>
+    <div class="mb"><div class="mh"><b>모두</b></div><div class="bub">${md(l.text)}</div></div></li>`;
+  return `${sec}<li class="msg${l.who === "lead" ? " lead" : ""}${l.aside ? " aside" : ""}" data-i="${i}">${face(l.who, l.tone && l.tone !== "info" ? "m-" + l.tone : "")}<div class="mb">
+    <div class="mh"><b>${esc(x.name || "")}</b><span>${esc(x.role || "")}</span>${l.aside ? "" : toneTag(l.tone)}</div><div class="bub">${md(l.text)}</div>${foot}</div></li>`;
+}
+function stageHtml() {   // 화상회의 화면: 직원 7명 + 사장님(나, 카메라 꺼짐)
+  const who = Object.keys(STAFF);
+  const tiles = who.map(w => { const x = STAFF[w]; return `<div class="tile" data-who="${w}" role="img" aria-label="${esc(x.name)} · ${esc(x.role)}">
+      <div class="cam">${avatarSvg(w, false)}${x.img ? `<img src="${esc(x.img)}" alt="" onerror="this.remove()">` : ""}</div>
+      <span class="tn">${esc(x.name)}</span><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="pop" aria-hidden="true"></span></div>`; }).join("");
+  return `<section class="call" id="call" aria-label="마케팅팀 화상회의">
+    <div class="callhd"><span class="live" id="mlive">● 회의 중</span><b>마케팅팀 ${esc(M.kind)}</b><span class="cm">${esc(M.at.slice(5).replace("-", "/"))} 숫자 · ${who.length + 1}명 참석</span></div>
+    <div class="tiles">${tiles}<div class="tile me" role="img" aria-label="사장님(나) · 카메라 꺼짐"><div class="cam"><span class="meav">사장님</span></div><span class="tn">나</span><span class="off" aria-hidden="true">🔇</span></div></div>
+    <div class="cap" id="mcap" aria-hidden="true"><span class="cw"></span><span class="ct"></span></div>
+    <div class="ctrl"><button type="button" data-mp="play">⏸ 잠깐 멈춤</button><button type="button" data-mp="end">⏭ 끝까지 보기</button>
+      <button type="button" data-mp="fast" aria-pressed="false">⚡ 2배속</button><button type="button" data-mp="sound" aria-pressed="false" hidden>🔈 소리로 듣기</button></div>
+  </section>`;
+}
 function meetingHtml() {
   if (!M || !(M.lines || []).length) return "";
-  const who = Object.keys(STAFF), done = todoDone();
-  const lines = M.lines.map(l => `<div class="ln ${l.who === "lead" ? "lead" : ""}">${face(l.who)}<div class="bub">${nameRow(l.who, l.tone)}${md(l.text)}${l.link ? `<div>${golink(l.link)}</div>` : ""}</div></div>`).join("");
+  const done = todoDone();
   const todo = (M.todo || []).map(t => {
     const k = todoKey(t), ok = !!done[k], x = STAFF[t.who] || {};
     return `<li class="${ok ? "done" : ""}"><input type="checkbox" data-todo="${esc(k)}" ${ok ? "checked" : ""} aria-label="${esc(t.text)} 끝냄">
-      <div style="min-width:0"><div class="tx">${esc(t.text)}</div><span class="by">담당 ${esc(x.name || "")} · ${esc(x.role || "")}${t.link ? " · " + golink(t.link, "바로 가기 ›") : ""}</span></div></li>`;
+      <div style="min-width:0"><div class="tx">${esc(t.text)}</div><span class="by">${face(t.who, "xs")} 담당 ${esc(x.name || "")} · ${esc(x.role || "")}${t.link ? " · " + golink(t.link, "바로 가기 ›") : ""}</span></div></li>`;
   }).join("");
-  return `<div class="sec"><span>🏢 마케팅팀 ${esc(M.kind)}</span><a class="more" href="#team">팀 소개 ›</a></div>
-  <section class="card meet"><div class="mhead"><div class="faces">${who.map(w => face(w, "sm")).join("")}</div>
-    <div class="muted" style="font-size:12.5px">${who.length}명 참석 · ${esc(M.at.slice(5).replace("-", "/"))} 기준 · 숫자는 대시보드 그대로</div></div>${lines}</section>
+  return `${stageHtml()}
+  <section class="card minutes"><div class="mhd"><h3>📝 회의록</h3><span class="muted" id="mprog"></span><a class="more" href="#team">팀 소개 ›</a></div>
+    <ol class="log" id="mlog" aria-live="polite">${M.lines.map(msgHtml).join("")}</ol></section>
   ${todo ? `<section class="card todo"><h3>✅ 오늘 할 일</h3><div class="muted" style="font-size:12px">회의에서 나온 일이에요 · 체크는 이 기기에만 저장돼요</div><ul>${todo}</ul></section>` : ""}`;
 }
 function bindTodo() {
@@ -376,14 +531,142 @@ function bindTodo() {
     cb.closest("li").classList.toggle("done", cb.checked);
   });
 }
+/* 회의 재생: 말하는 사람 칸이 초록으로 켜지고 입이 움직이며 자막이 흐른다. 회의(날짜+아침·오후·저녁)마다 이 기기에서 한 번만 저절로 튼다 */
+const MP = { i: 0, on: false, t: 0, fast: false, sound: false, gen: 0, ended: false };
+const MEET_SEEN = "dash_meet_seen", meetSlot = () => M ? M.at.slice(0, 10) + "|" + M.kind : "";
+const calm = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const sp = ms => ms / (MP.fast ? 2 : 1);
+function mpStop() { MP.on = false; MP.gen++; clearTimeout(MP.t); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
+function mpBtn() { const b = $("[data-mp=play]"); if (b) b.textContent = MP.ended ? "↺ 처음부터 다시 보기" : MP.on ? "⏸ 잠깐 멈춤" : "▶ 이어 보기"; }
+function mpProg() { const p = $("#mprog"), n = (M.lines || []).length; if (p) p.textContent = MP.ended ? `${n}마디 · 회의 끝` : `${Math.min(MP.i, n)} / ${n}마디`; }
+function mpFace(who, tone, talk) {
+  document.querySelectorAll("#call .tile[data-who]").forEach(t => {
+    if (who !== "all" && t.dataset.who !== who) { t.classList.remove("talk"); return; }
+    t.classList.toggle("talk", talk);
+    if (tone) { t.classList.remove("m-good", "m-bad", "m-idea"); if (tone !== "info") t.classList.add("m-" + tone); }   // 표정은 다음에 말할 때까지 남는다
+  });
+}
+function mpPop(l) {   // 반응 이모지가 그 사람 칸에서 떠오른다
+  (l.react || []).forEach(([e, w], k) => setTimeout(() => {
+    const p = $(`#call .tile[data-who="${w}"] .pop`);
+    if (!p) return;
+    const t = p.closest(".tile"); t.classList.remove("m-good", "m-bad", "m-idea"); t.classList.add(/😮|👀|🤔/.test(e) ? "m-idea" : "m-good");
+    p.textContent = e; p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
+  }, k * 220));
+}
+function mpShow(i, on) { document.querySelectorAll(i === "all" ? "#mlog [data-i]" : `#mlog [data-i="${i}"]`).forEach(e => { e.hidden = !on; }); }
+function mpCap(who, text, typing) { const c = $("#mcap"); if (!c) return; c.querySelector(".cw").textContent = who; c.querySelector(".ct").textContent = text; c.classList.toggle("typing", !!typing); }
+function mpEnd() {
+  mpStop(); MP.ended = true; const me = $("#call .tile.me"); if (me) me.classList.remove("ask"); MP.i = (M.lines || []).length; mpShow("all", true);
+  document.querySelectorAll("#call .tile").forEach(t => t.classList.remove("talk"));
+  const lv = $("#mlive"); if (lv) { lv.textContent = "회의 끝"; lv.classList.add("end"); }
+  const n = (M.todo || []).length;
+  mpCap("회의 끝", n ? `오늘 할 일 ${n}가지를 아래에 적어 뒀어요. 회의록에서 전부 다시 볼 수 있어요.` : "오늘은 급한 일이 없어요. 회의록에서 전부 다시 볼 수 있어요.");
+  mpBtn(); mpProg();
+}
+function mpStep() {
+  const L = M.lines || [], g = MP.gen;
+  if (!MP.on) return;
+  if (MP.i >= L.length) return mpEnd();
+  const l = L[MP.i], i = MP.i, x = STAFF[l.who] || {}, words = l.text.replace(/\*\*/g, "").split(" ");
+  const name = SPK(l.who) + (x.role ? " · " + x.role : "");
+  const finish = () => { if (g !== MP.gen) return; mpShow(i, true); mpFace(l.who, null, false); mpPop(l); MP.i++; mpProg(); MP.t = setTimeout(mpStep, sp(l.aside ? 260 : 420)); };
+  mpFace(l.who, l.who === "all" ? "good" : l.tone, true);
+  const me = $("#call .tile.me"); if (me) me.classList.toggle("ask", /사장님/.test(l.text));   // 사장님께 묻는 말이면 내 칸이 노랗게
+  const talk = MP.sound ? ttsSay(l) : null;
+  if (talk) {
+    mpCap(name, words.join(" "));
+    const t0 = Date.now(), need = sp(Math.min(3900, Math.max(700, 260 + l.text.length * 33)));
+    talk.then(() => { if (g === MP.gen) MP.t = setTimeout(finish, Math.max(0, need - (Date.now() - t0))); });
+    return;
+  }
+  mpCap(name, "• • •", true);
+  MP.t = setTimeout(() => {   // 말하는 속도로 자막을 한 낱말씩
+    if (g !== MP.gen) return;
+    let k = 0;
+    const per = sp(Math.min(3900, Math.max(700, 260 + words.join(" ").length * 33))) / words.length;
+    const tick = () => { if (g !== MP.gen) return; mpCap(name, words.slice(0, ++k).join(" ")); MP.t = setTimeout(k < words.length ? tick : finish, k < words.length ? per : sp(240)); };
+    tick();
+  }, sp(l.aside ? 220 : 380));
+}
+function mpPlay(fromStart) {
+  mpStop();
+  if (fromStart || MP.ended) {
+    MP.i = 0; MP.ended = false; mpShow("all", false);
+    const lv = $("#mlive"); if (lv) { lv.textContent = "● 회의 중"; lv.classList.remove("end"); }
+  }
+  MP.on = true; mpBtn(); mpProg(); mpStep();
+}
+/* 소리로 듣기: 브라우저에 든 한국어 음성으로 읽는다(무료·토큰 0). 남자 음성이 없으면 같은 음성의 높낮이로 사람을 나눈다 */
+const TTS = { ok: typeof window !== "undefined" && "speechSynthesis" in window, voices: [] };
+const MALE = /injoon|hyunsu|bongjin|gookmin|minsu|jinho|male|남성/i;
+function ttsLoad() {
+  if (!TTS.ok) return;
+  try { TTS.voices = speechSynthesis.getVoices().filter(v => /^ko/i.test(v.lang)).sort((x, y) => (y.localService ? 1 : 0) - (x.localService ? 1 : 0)); } catch (e) { TTS.voices = []; }   // 기기 안 음성 먼저(인터넷 음성은 끊기기 쉬움)
+  const b = $("[data-mp=sound]"); if (b) b.hidden = !TTS.voices.length;
+}
+if (TTS.ok) try { speechSynthesis.addEventListener("voiceschanged", ttsLoad); } catch (e) {}
+function ttsVoice(who) {
+  const g = ((STAFF[who] || {}).voice || {}).g, m = TTS.voices.filter(v => MALE.test(v.name)), f = TTS.voices.filter(v => !MALE.test(v.name));
+  const pool = g === "m" ? (m.length ? m : f) : (f.length ? f : m);
+  return pool.length ? pool[Math.max(0, Object.keys(STAFF).indexOf(who)) % pool.length] : null;
+}
+const ttsText = s => s.replace(/\*\*/g, "").replace(/(\d{1,2})\/(\d{1,2})/g, (_, a, b) => `${+a}월 ${+b}일`).replace(/[·—|]/g, ", ")
+  .replace(/\+(?=\d)/g, "").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "").replace(/['‘’"“”]/g, "");
+function ttsUnlock() { try { if (TTS.ok) speechSynthesis.speak(new SpeechSynthesisUtterance(" ")); } catch (e) {} }   // 아이폰은 첫 소리를 버튼 누를 때 내야 한다
+function ttsSay(l) {
+  if (!TTS.ok || !TTS.voices.length) return null;
+  return new Promise(res => {
+    let done = false;
+    const end = () => { if (!done) { done = true; res(); } };
+    try {
+      const who = l.who === "all" ? "lead" : l.who, vv = (STAFF[who] || {}).voice || {}, voice = ttsVoice(who);
+      const text = ttsText(l.text), parts = (text.match(/[^.!?]+[.!?]*/g) || [text]).map(x => x.trim()).filter(Boolean);
+      parts.forEach((t, k) => {
+        const u = new SpeechSynthesisUtterance(t);
+        if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = "ko-KR";
+        u.pitch = vv.g === "m" && !(voice && MALE.test(voice.name)) ? Math.min(vv.pitch || 1, 0.78) : (vv.pitch || 1);
+        u.rate = (vv.rate || 1) * (MP.fast ? 1.4 : 1.08);
+        u.onerror = end;
+        if (k === parts.length - 1) u.onend = end;
+        speechSynthesis.speak(u);
+      });
+      setTimeout(end, 3000 + text.length * 170);   // 끝났다는 신호가 안 와도 멈추지 않게
+    } catch (e) { end(); }
+  });
+}
+function bindMeeting() {
+  const call = $("#call");
+  if (!call || !M) return;
+  MP.i = 0; MP.ended = false;
+  call.querySelectorAll("[data-mp]").forEach(b => b.onclick = () => {
+    const k = b.dataset.mp;
+    if (k === "play") { if (MP.on) { mpStop(); mpBtn(); } else mpPlay(MP.ended); }
+    if (k === "end") mpEnd();
+    if (k === "fast") { MP.fast = !MP.fast; b.setAttribute("aria-pressed", String(MP.fast)); }
+    if (k === "sound") {
+      MP.sound = !MP.sound; b.setAttribute("aria-pressed", String(MP.sound)); b.textContent = MP.sound ? "🔊 소리 켜짐" : "🔈 소리로 듣기";
+      if (MP.sound) { ttsUnlock(); if (!MP.on) mpPlay(MP.ended); } else try { speechSynthesis.cancel(); } catch (e) {}
+    }
+  });
+  const fb = call.querySelector("[data-mp=fast]"); if (fb) fb.setAttribute("aria-pressed", String(MP.fast));
+  const sb = call.querySelector("[data-mp=sound]"); if (sb && MP.sound) { sb.setAttribute("aria-pressed", "true"); sb.textContent = "🔊 소리 켜짐"; }
+  ttsLoad(); setTimeout(ttsLoad, 900); setTimeout(ttsLoad, 2500);   // 아이폰 사파리는 음성 목록이 늦게 온다
+  let seen = "";
+  try { seen = localStorage.getItem(MEET_SEEN) || ""; } catch (e) {}
+  if (calm() || seen === meetSlot()) { mpEnd(); return; }   // 이미 본 회의·움직임 줄이기 설정이면 회의록을 바로 다 보여 준다
+  try { localStorage.setItem(MEET_SEEN, meetSlot()); } catch (e) {}
+  mpShow("all", false); mpProg();
+  MP.t = setTimeout(() => mpPlay(true), 700);
+}
 function pageTeam() {
   if (!M) return `<h2 class="pt">👥 우리 마케팅팀</h2><div class="card"><div class="empty">다음 수집 때 팀이 채워져요</div></div>`;
   return `<h2 class="pt">👥 우리 마케팅팀</h2><p class="pd">${Object.keys(STAFF).length}명이 대시보드 숫자를 나눠 맡아요. 말은 10분마다 새 숫자로 바뀌고, AI를 부르지 않아 토큰을 쓰지 않아요.</p>
   <div class="team">${Object.entries(STAFF).map(([k, x]) => {
     const rp = (M.reports || {})[k] || [], mood = (M.mood || {})[k] || {};
-    return `<section class="card staff"><div class="ptop">${face(k, "lg")}<div><div class="t1">${esc(x.name)} <span class="t2">${esc(x.role)}</span></div>
+    return `<section class="card staff"><div class="ptop">${face(k, "lg m-good")}<div><div class="t1">${esc(x.name)} <span class="t2">${esc(x.role)}</span></div>
       <div class="t2">오늘 보고 ${rp.length}건${mood.good ? ` · 좋았던 점 ${mood.good}` : ""}${mood.bad ? ` · 아쉬운 점 ${mood.bad}` : ""}</div></div></div>
-      <p class="desc">${esc(x.desc)}</p>
+      ${x.motto ? `<div class="motto">“${esc(x.motto)}”</div>` : ""}<p class="desc">${esc(x.desc)}</p>
       ${rp.map(l => `<div class="rp">${toneTag(l.tone)} ${md(l.text)} ${golink(l.link, "›")}</div>`).join("") || '<div class="rp muted">오늘은 따로 보고할 게 없어요</div>'}
       <div class="tabs2">${(x.tabs || []).filter(([, h]) => h !== "#team").map(([l, h]) => `<a class="chip" href="${esc(h)}">${esc(l)}</a>`).join("")}</div></section>`;
   }).join("")}</div>`;
@@ -448,7 +731,7 @@ function pageSummary() {
   const stat = (k, d, s) => `<div class="card stat"><div class="k">${k}</div><div class="v">${plus(d)}</div><div class="s">${s}</div></div>`;
   const hot = D.videos.filter(v => v.gain).sort((a, b) => b.gain - a.gain).slice(0, 5);
   const al = D.alerts.slice(0, 3);
-  return `<h2 class="pt">🏢 회의실</h2><p class="pd">마케팅팀 7명이 대시보드 숫자를 보고 회의해요 · ${esc(D.updated.slice(5).replace("-", "/"))} 기준, 10분마다 새로</p>
+  return `<h2 class="pt">🏢 회의실</h2><p class="pd">마케팅팀 7명이 대시보드 숫자로 화상회의를 해요 · ${esc(D.updated.slice(5).replace("-", "/"))} 기준 · 새 회의(아침·오후·저녁)는 처음 열 때 한 번 틀어 드려요</p>
   ${meetingHtml()}
   <div class="sec"><span>오늘 숫자</span><span class="more">모든 채널 합계</span></div>
   <div class="grid4">
@@ -478,6 +761,7 @@ function pageSummary() {
 }
 function afterSummary() {
   bindTodo();
+  bindMeeting();
   const draw = () => {
     charts.forEach(c => c.destroy()); charts = [];
     chart($("#c1"), { type: "bar", data: { labels: labels(), datasets: D.channels.map(c => ({ label: c.name, data: D.series.by_channel[c.name][state.kind], backgroundColor: color(c.name), borderRadius: 3, stack: "s" })) },
@@ -1090,6 +1374,7 @@ function route() {
   const cur = MENU.some(m => m[0] === page) ? page : (page === "team" ? "team" : "summary");
   const nav = short => MENU.map(([k, ic, l, s]) => `<a href="#${k}" class="${k === cur || (cur === "team" && k === "summary") ? "on" : ""}"><span class="ic">${ic}</span>${short && s ? s : l}</a>`).join("");
   $("#tabs").innerHTML = nav(false); $("#bottom").innerHTML = nav(true);
+  mpStop();   // 다른 화면으로 가면 회의 재생·소리를 멈춘다
   charts.forEach(c => c.destroy()); charts = [];
   const pages = { team: [pageTeam, () => {}], summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
     money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(a), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)] };
