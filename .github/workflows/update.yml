@@ -31,6 +31,8 @@ jobs:
             git fetch -q --depth=1 origin gh-pages
             rm -rf data && git archive FETCH_HEAD data | tar -x
           fi
+      - name: 뜨는 채널 순위 다시 매기기 (API 안 씀 — 순위 규칙을 고치면 다음 발굴을 기다리지 않고 반영)
+        run: python 발굴.py --rank || echo "순위 다시 매기기 실패(이전 순위 그대로)"
       - name: 수집 + 알림 + 대시보드 생성
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}

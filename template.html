@@ -75,6 +75,7 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .item .g b{display:block;font-size:14px}
 .tag{display:inline-block;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:5px;margin-right:5px;vertical-align:1px}
 .tag.s{background:var(--shorts);color:#fff}.tag.l{background:var(--soft);color:var(--ink)}
+.tag.kl{background:var(--long);color:var(--card)}.tag.km{background:var(--soft);color:var(--sub)}
 .empty{color:var(--sub);font-size:13.5px;padding:18px 0;text-align:center}
 .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
 .filters .line{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
@@ -1171,7 +1172,7 @@ function teamNotes(name) {   // 채널 화면: 그 채널 얘기만 모아서
     `<div class="ln">${face(l.who, "sm")}<div style="min-width:0"><span class="muted" style="font-size:12px">${esc((STAFF[l.who] || {}).name || "")}</span> ${toneTag(l.tone)}<div>${md(l.text)}</div></div></div>`).join("")}</div>` : "";
 }
 let charts = [];
-const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", tch: "", tf: "all", tsort: "score" };
+const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", hkind: "all", tch: "", tf: "all", tsort: "score" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
 const remember = () => { try { localStorage.setItem("dash", JSON.stringify(state)); } catch (e) {} };
 
@@ -1501,13 +1502,17 @@ function huntRow(r, i) {
     </div></a>`;
 }
 const CSORT = [["score", "종합"], ["per_day", "하루증가"], ["pct_day", "증가율"], ["subs", "구독자"]];
+// 채널 종류 = 최근 영상 구성(발굴.py fmt_kind). 예전 기록엔 kind가 없어 기준선으로 가른다.
+const HKIND = [["all", "전체"], ["long", "롱폼만"], ["short", "쇼츠만"]];
+const chanKind = r => { if (r.kind !== undefined) return r.kind; const b = r.base || {}, s = b.s != null, l = b.l != null; return s && l ? "mix" : s ? "short" : l ? "long" : null; };
+const KTAG = { long: '<span class="tag kl">롱폼만</span>', short: '<span class="tag s">쇼츠만</span>', mix: '<span class="tag km">롱폼+쇼츠</span>' };
 function chanRow(r, i) {
   const b = r.base || {};
   const usual = [b.s ? `쇼츠 ${man(b.s)}` : null, b.l ? `본편 ${man(b.l)}` : null].filter(Boolean).join(" · ");
   return `<a class="item hunt" href="${esc(r.url)}" target="_blank" rel="noopener">
     <span class="rank">${i + 1}</span>
     <div style="min-width:0">
-      <div class="t">${esc(r.title)}</div>
+      <div class="t">${KTAG[chanKind(r)] || ""}${esc(r.title)}</div>
       <div class="m">구독 ${man(r.subs)} · 영상 ${man(r.video_count)}개${r.started ? " · " + r.started + " 개설" : ""}${usual ? " · 평소 " + usual : ""}</div>
       <div class="m hm"><b class="mult">+${man(r.per_day)}/일</b> · ${r.pct_day}%/일 · ${r.days}일간 +${man(r.gain)}</div>
     </div>
@@ -1523,21 +1528,32 @@ function pageHunt() {
   const seg = (key, opts, cur) => `<div class="seg">` + opts.map(([v, l]) =>
     `<button data-${key}="${v}" class="${cur === v ? "on" : ""}">${l}</button>`).join("") + `</div>`;
   const isCh = state.htype === "chan";
-  const list = (isCh ? o.channels : state.htype === "short" ? o.shorts : o.long) || [];
+  const kind = HKIND.some(x => x[0] === state.hkind) ? state.hkind : "all";
+  // 종류마다 종합 점수 상위 50곳(발굴.py가 종류별로 따로 남김)을 고른 뒤 고른 기준으로 정렬한다
+  const chans = k => (o.channels || []).filter(r => k === "all" || chanKind(r) === k).sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 50);
+  const list = (isCh ? chans(kind) : state.htype === "short" ? o.shorts : o.long) || [];
   const sortKey = isCh ? (CSORT.some(x => x[0] === state.csort) ? state.csort : "score") : state.hsort;
   const sorted = [...list].sort((a, b) => (b[sortKey] || 0) - (a[sortKey] || 0));
-  const head = isCh
-    ? say("trend", "<b>구독자가 갑자기 빠르게 느는 국내 일반인 채널</b>이에요. 지금 먹히는 소재를 가장 빨리 알려주는 신호입니다. 방송사·기업·언론 채널은 빼고, 영상 3천 개 넘는 클립 채널도 제외했어요. <b>이력이 쌓여야 계산되니 하루 이틀 지나야 채워집니다.</b>")
-    : say("trend", "<b>구독자 수가 아니라 '그 채널 평소보다 몇 배'</b>를 봅니다. 구독 3천 채널의 30만이 구독 100만 채널의 100만보다 훨씬 중요한 신호예요. 배수 기준은 그 채널 최근 영상의 <b>중간값</b>, 속도는 올라온 뒤 시간당 조회수입니다.");
-  const empty = isCh
-    ? '<div class="empty">아직 이력이 부족해요. 구독자 변화는 두 번째 수집부터 계산됩니다 (한국시간 06·14·21시).</div>'
-    : '<div class="empty">조건에 맞는 후보가 없어요. 다음 수집 때 다시 확인해 주세요.</div>';
+  const head = !isCh
+    ? say("trend", "<b>구독자 수가 아니라 '그 채널 평소보다 몇 배'</b>를 봅니다. 구독 3천 채널의 30만이 구독 100만 채널의 100만보다 훨씬 중요한 신호예요. 배수 기준은 그 채널 최근 영상의 <b>중간값</b>, 속도는 올라온 뒤 시간당 조회수입니다.")
+    : kind === "long"
+    ? say("trend", "<b>쇼츠 없이 롱폼만 올리는데 구독자가 빠르게 느는 채널</b>이에요. 최근 올린 영상에 쇼츠(3분 이하)가 하나도 없는 곳만 모았어요. 전체 순위에선 쇼츠 채널에 밀려 잘 안 보이던 곳들이라 따로 순위를 매겼습니다.")
+    : kind === "short"
+    ? say("trend", "<b>쇼츠만 올리는데 구독자가 빠르게 느는 채널</b>이에요. 최근 올린 영상이 전부 쇼츠(3분 이하)인 곳만 모았어요.")
+    : say("trend", "<b>구독자가 갑자기 빠르게 느는 국내 일반인 채널</b>이에요. 지금 먹히는 소재를 가장 빨리 알려주는 신호입니다. 방송사·기업·언론 채널은 빼고, 영상 3천 개 넘는 클립 채널도 제외했어요. <b>롱폼으로만 큰 채널은 '롱폼만'</b>에서 따로 볼 수 있어요.");
+  const empty = !isCh
+    ? '<div class="empty">조건에 맞는 후보가 없어요. 다음 수집 때 다시 확인해 주세요.</div>'
+    : (o.channels || []).length
+    ? '<div class="empty">이 종류는 아직 조건에 맞는 채널이 없어요. 다음 수집 때 다시 확인해 주세요 (한국시간 06·14·21시).</div>'
+    : '<div class="empty">아직 이력이 부족해요. 구독자 변화는 두 번째 수집부터 계산됩니다 (한국시간 06·14·21시).</div>';
   const cut = o.cut ? ` · 제외 외국 ${o.cut["외국"] || 0}·회사 ${o.cut["회사"] || 0}` : "";
+  const nch = k => chans(k).length;
   return `<section class="card"><h2>🔥 ${isCh ? "뜨는 채널" : "지금 터지는 중"} <span class="when">${esc(o.at)} 기준</span></h2>
     ${head}
     <div class="segs">${seg("htype", [["short", "쇼츠"], ["long", "본편"], ["chan", "채널"]], state.htype)}
+      ${isCh ? seg("hkind", HKIND, kind) : ""}
       ${seg(isCh ? "csort" : "hsort", isCh ? CSORT : HSORT, sortKey)}</div>
-    <div class="huntmeta">쇼츠 ${(o.shorts || []).length} · 본편 ${(o.long || []).length} · 채널 ${(o.channels || []).length} · 채널풀 ${man(o.pool)}곳${cut}</div>
+    <div class="huntmeta">쇼츠 ${(o.shorts || []).length} · 본편 ${(o.long || []).length} · 채널 ${nch("all")}(롱폼만 ${nch("long")}) · 채널풀 ${man(o.pool)}곳${cut}</div>
     <div class="list">${sorted.length ? sorted.map(isCh ? chanRow : huntRow).join("") : empty}</div>
   </section>`;
 }
@@ -1550,6 +1566,9 @@ function afterHunt() {
   });
   document.querySelectorAll("[data-csort]").forEach(b => b.onclick = () => {
     state.csort = b.dataset.csort; remember(); $("#app").innerHTML = pageHunt(); afterHunt();
+  });
+  document.querySelectorAll("[data-hkind]").forEach(b => b.onclick = () => {
+    state.hkind = b.dataset.hkind; remember(); $("#app").innerHTML = pageHunt(); afterHunt();
   });
 }
 

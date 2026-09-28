@@ -18,6 +18,7 @@
   python3 발굴.py               # 기본 예산(3,000유닛)으로 수집 → outliers.json
   python3 발굴.py --budget 1500 # 예산 지정
   python3 발굴.py --pool        # 채널 풀 현황만 보기
+  python3 발굴.py --rank        # API 없이 채널 풀로 '뜨는 채널' 순위만 다시 매김(깃허브 액션이 매 실행 부른다)
 키: 같은 폴더 .env 의 YOUTUBE_API_KEY (값은 절대 출력하지 않음)
 """
 import json
@@ -234,8 +235,18 @@ def track_subs(pool, now):
             del hist[:-60]
 
 
+def fmt_kind(base):
+    """최근 영상 구성으로 채널을 가른다: long(롱폼만)·short(쇼츠만)·mix(둘 다). 기준선이 없으면 None."""
+    s, l = (base or {}).get("s"), (base or {}).get("l")
+    if s is None and l is None:
+        return None
+    return "mix" if s is not None and l is not None else "short" if s is not None else "long"
+
+
 def growing(pool, now):
-    """구독자가 빨리 느는 일반인 국내 채널. 이력이 2개 이상 쌓여야 계산된다."""
+    """구독자가 빨리 느는 일반인 국내 채널. 이력이 2개 이상 쌓여야 계산된다.
+    전체 순위만 자르면 쇼츠 채널이 자리를 다 차지한다(2026-09-28 전체 50곳 중 롱폼만 6곳) →
+    롱폼만·쇼츠만 채널도 각자 순위 GROWTH_TOP_N 곳까지 함께 남긴다. 목록은 종합 점수순이라 앞 50곳이 곧 전체 순위다."""
     out = []
     for c in pool.values():
         hist = c.get("subs_hist") or []
@@ -259,7 +270,12 @@ def growing(pool, now):
                     "url": f"https://www.youtube.com/channel/{c['id']}"})
     for r in out:
         r["score"] = round(r["per_day"] ** 0.5 * max(r["pct_day"], 0.01) ** 0.5, 1)
-    return sorted(out, key=lambda r: -r["score"])[:GROWTH_TOP_N]
+        r["kind"] = fmt_kind(r["base"])
+    out.sort(key=lambda r: -r["score"])
+    keep = {r["id"] for r in out[:GROWTH_TOP_N]}
+    for kind in ("long", "short"):
+        keep.update([r["id"] for r in out if r["kind"] == kind][:GROWTH_TOP_N])
+    return [r for r in out if r["id"] in keep]
 
 
 def discover(budget, pool):
@@ -291,10 +307,14 @@ def discover(budget, pool):
     state = load("hunt_state.json", {"seed": 0})
     used_seeds = []
     while USED + 100 <= budget * 0.40:                        # 검색은 40% 선까지
-        kw = SEEDS[state["seed"] % len(SEEDS)]
+        n = state["seed"]
+        kw = SEEDS[n % len(SEEDS)]
         state["seed"] += 1
-        used_seeds.append(kw)
-        r = get("search", cost=100, part="id", type="video", q=kw, order="viewCount",
+        # 두 번에 한 번은 4~20분 영상만 찾는다 — 조회수순 검색은 쇼츠가 거의 다 차지해 롱폼 채널이 풀에 잘 안 들어온다(2026-09-28).
+        # 한 바퀴(SEEDS 전체)마다 짝이 바뀌어 같은 키워드도 두 방식으로 번갈아 찾는다.
+        dur = "medium" if (n + n // len(SEEDS)) % 2 else "any"
+        used_seeds.append(kw + ("(롱폼)" if dur == "medium" else ""))
+        r = get("search", cost=100, part="id", type="video", q=kw, order="viewCount", videoDuration=dur,
                 publishedAfter=after, regionCode="KR", relevanceLanguage="ko", maxResults=50)
         found.update(i["id"]["videoId"] for i in r.get("items", []) if i.get("id", {}).get("videoId"))
         if len(used_seeds) >= 6:
@@ -399,7 +419,28 @@ def hunt(budget):
         print(f"   {r['mult']:>5.1f}배 {r['vph']:>7,}/h  {r['ch'][:12]:<12} 구독 {(r['subs'] or 0):>9,}  {r['title'][:34]}")
 
 
+def rerank():
+    """API 없이 채널 풀만으로 '뜨는 채널' 순위를 다시 매긴다. 순위 규칙을 고치면 다음 발굴(하루 3번)을 기다리지 않고 반영된다."""
+    global BLOCK_WORDS, BLOCK_IDS, BLOCK_NAMES
+    BLOCK_WORDS, BLOCK_IDS, BLOCK_NAMES = blocklist()
+    out, pool = load("outliers.json", None), load("hunt_channels.json", {})
+    if not out or not pool:
+        print("· 뜨는 채널 순위: 발굴 기록이 없어 건너뜀")
+        return
+    chans = growing(pool, datetime.now(timezone.utc))
+    if chans == out.get("channels"):
+        print("· 뜨는 채널 순위: 바뀐 것 없음")
+        return
+    out["channels"] = chans
+    save("outliers.json", out)
+    n = {k: sum(r["kind"] == k for r in chans) for k in ("long", "short", "mix")}
+    print(f"✔ 뜨는 채널 순위 다시 매김: {len(chans)}곳 (롱폼만 {n['long']} · 쇼츠만 {n['short']} · 둘 다 {n['mix']})")
+
+
 if __name__ == "__main__":
+    if "--rank" in sys.argv:
+        rerank()
+        raise SystemExit
     if "--pool" in sys.argv:
         pool = load("hunt_channels.json", {})
         print(f"채널 풀 {len(pool)}곳")
