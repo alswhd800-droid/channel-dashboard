@@ -782,17 +782,29 @@ STAFF = {   # 화면(template)도 이 명단을 그대로 쓴다
 
 
 def staff_media(k):
-    """직원 얼굴(staff/ 폴더 — 이 맥의 ~/.cache/dashboard-staff/make_staff_media.py 가 만든다): 작은 얼굴 <키>.webp, 큰 화면 정지 사진 <키>.jpg,
-    말하기·듣기·웃음 영상 <키>_talk/idle/laugh.mp4. AI로 만든 가상의 인물(RealVisXL 사진 + LivePortrait 움직임, 이 맥에서 무료로 만듦).
-    파일이 있는 것만 알려 준다(없으면 화면이 그림 얼굴로 대신한다). ?v= 는 파일을 바꾸면 휴대폰이 옛 파일을 안 쓰게(내용 해시)."""
+    """직원 얼굴(staff/ 폴더 — 채널대시보드/직원그림/make_office.py 가 만든다): 픽셀 캐릭터 머리 face_<키>.png.
+    2026-09-27 사용자 "실사이미지로 했는데.2d 캐릭터로 바꾸고" → 실사 사진·영상(<키>.webp·_talk.mp4)은 더 쓰지 않는다.
+    파일이 있는 것만 알려 준다. ?v= 는 파일을 바꾸면 휴대폰이 옛 파일을 안 쓰게(내용 해시)."""
     d, m = ROOT / "staff", {}
-    ver = lambda f: f"staff/{f}?v={hashlib.md5((d / f).read_bytes()).hexdigest()[:8]}"   # 내용이 바뀔 때만 바뀐다(깃허브는 받을 때마다 파일 시각이 바뀜)
-    if (d / f"{k}.webp").exists():
-        m["img"] = ver(f"{k}.webp")
-    vid = {n: ver(f"{k}_{n}.mp4") for n in ("talk", "idle", "laugh") if (d / f"{k}_{n}.mp4").exists()}
-    if "talk" in vid and (d / f"{k}.jpg").exists():
-        m["vid"] = dict(vid, poster=ver(f"{k}.jpg"))
+    if (d / f"face_{k}.png").exists():
+        m["img"] = _staff_ver(f"face_{k}.png")
     return m
+
+
+def _staff_ver(f):
+    return f"staff/{f}?v={hashlib.md5((ROOT / 'staff' / f).read_bytes()).hexdigest()[:8]}"   # 내용이 바뀔 때만 바뀐다(깃허브는 받을 때마다 파일 시각이 바뀜)
+
+
+def office_media():
+    """2D 픽셀 사무실(직원그림/make_office.py 가 만든 staff/office.json·office.png·office_bg.png). 없으면 None → 화면은 회의록만."""
+    d = ROOT / "staff"
+    try:
+        o = json.loads((d / "office.json").read_text(encoding="utf-8"))
+        o["atlas"], o["bg"] = _staff_ver("office.png"), _staff_ver("office_bg.png")
+        return o
+    except Exception as e:
+        print(f"! 사무실 그림 없음: {type(e).__name__} {e}")
+        return None
 
 
 def _batchim(w):
@@ -1142,6 +1154,7 @@ def meeting(D, now):
     strip = lambda xs: [{k: v for k, v in x.items() if k not in ("pri", "data")} for x in xs]
     return {"at": now.strftime("%Y-%m-%d %H:%M"), "kind": kind, "focus": E.get("focus"), "lines": strip(lines),
             "staff": {k: dict(v, **staff_media(k)) for k, v in STAFF.items()},
+            "office": office_media(),
             "todo": [{k: v for k, v in t.items() if k != "brief"} for t in todo],
             "reports": {k: strip(v) for k, v in R.items()},
             "mood": {k: {"good": sum(1 for x in v if x["tone"] == "good"), "bad": sum(1 for x in v if x["tone"] == "bad")} for k, v in R.items()}}

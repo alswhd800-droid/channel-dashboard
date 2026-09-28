@@ -288,69 +288,42 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--sub);margin:10px 0 0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 @media (max-width:860px){.team{grid-template-columns:minmax(0,1fr)}.egrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-/* ───── 화상회의 회의실 (2026-09-27 "진짜 사람이 나와서 회의하는 느낌") ───── */
-.face{position:relative;overflow:hidden;background:var(--soft)}
-.face>svg,.face>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* ───── 2D 픽셀 사무실 (2026-09-27 "2d 캐릭터로 바꾸고.. 막움직이면서 진짜 사무실돌아다니는느낌으로") ───── */
+.face{position:relative;overflow:hidden;background:color-mix(in srgb,var(--soft) 72%,#8fb5e8 28%)}
+.face>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;image-rendering:pixelated}
+.face>i{font-style:normal}
 .face.xs{display:inline-grid;width:22px;height:22px;border-width:1.5px;vertical-align:middle;margin-right:3px}
-.tile.me.ask{box-shadow:0 0 0 2.5px #ffc83d,0 0 18px rgba(255,200,61,.45)}
-.avs .mg,.avs .mb,.avs .mt{opacity:0}
-.m-good .avs .mn,.m-bad .avs .mn{opacity:0}.m-good .avs .mg,.m-bad .avs .mb{opacity:1}
-.avs .bl,.avs .bR,.avs .ey{transform-box:fill-box;transform-origin:center;transition:transform .25s}
-.m-good .avs .bl,.m-good .avs .bR{transform:translateY(-.9px)}.m-idea .avs .bR{transform:translateY(-1.6px)}
-.m-bad .avs .bl{transform:rotate(-10deg)}.m-bad .avs .bR{transform:rotate(10deg)}
-.avs .ey{animation:blink 4.6s infinite}
-@keyframes blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.1)}}
-.talk .avs .mt{animation:mouth .46s infinite steps(1,end)}
-@keyframes mouth{0%{opacity:1}22%{opacity:0}38%{opacity:.9}58%{opacity:0}72%{opacity:1}88%{opacity:.35}}
 .call{background:#0f1117;color:#e9ebf1;border-radius:18px;padding:12px;margin:6px 0 12px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
 .callhd{display:flex;align-items:center;gap:8px;font-size:13px;margin:0 2px 10px;flex-wrap:wrap}
 .callhd b{font-size:14.5px}.callhd .cm{margin-left:auto;color:#9aa0ad;font-size:11.5px}
 .live{display:inline-flex;align-items:center;background:#e0392b;color:#fff;font-weight:800;font-size:11px;border-radius:6px;padding:2px 7px;animation:livepulse 1.6s ease-in-out infinite}
-.live.end{background:#3a3f4b;animation:none}
+.live.end{background:#3a3f4b;animation:none}.live.work{background:#1f9d6b;animation:none}
 @keyframes livepulse{50%{opacity:.62}}
-.stage{display:grid;gap:8px}
-.spk{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/3;background:#1b1e27;box-shadow:0 0 0 1px rgba(255,255,255,.08);transition:box-shadow .2s}
-.spk .pv{position:absolute;inset:0;opacity:0;transition:opacity .28s ease}.spk .pv.on{opacity:1}
-.spk .pv>svg,.spk .pv>img,.spk .pv>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 36%;display:block}
-.spk .pv>video{opacity:0;transition:opacity .15s}.spk .pv.vid>video{opacity:1}
-.spk .pv.on{animation:breathe 9s ease-in-out infinite}.spk .pv.talk>svg{animation:nod 1.15s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1.01)}50%{transform:scale(1.03) translateY(-.4%)}}
-.spk.talking{box-shadow:0 0 0 3px #3ddc84,0 0 22px rgba(61,220,132,.35)}
-.spk::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 58%,rgba(0,0,0,.3))}
-.spk .lt{position:absolute;z-index:2;left:10px;bottom:10px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.58);color:#fff;border-radius:8px;padding:4px 9px;font-size:13px}
-.spk .lt b{font-size:13.5px}.spk .lt span:last-child{color:#c9ced8;font-size:11.5px}.spk .lt b:empty+span:empty{display:none}
-.spk .mic{display:inline-flex;gap:2px;align-items:flex-end;height:12px}.spk .mic i{display:block;width:2.5px;height:3px;background:#9aa0ad;border-radius:2px}
-.spk.talking .mic i{background:#3ddc84;animation:bar .5s ease-in-out infinite}.spk.talking .mic i:nth-child(2){animation-delay:-.2s}.spk.talking .mic i:nth-child(3){animation-delay:-.35s}
-.strip{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
-.strip .tile{border-radius:9px}.strip .tile .tn{font-size:9.5px;left:3px;bottom:3px;padding:0 4px}
-.tile .cam>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s}
-.tile.vid .cam>.iv{opacity:1}.tile.laugh .cam>.lv{opacity:1}
-.strip .tile .bars{right:3px;top:3px;height:11px;padding:1px 3px}.strip .tile .pop{font-size:20px}.strip .meav{font-size:0;width:58%}.strip .meav::before{content:"👤";font-size:13px}.strip .tile.me .tn{display:none}
 .callhd .tm{font-variant-numeric:tabular-nums;color:#c9ced8;font-size:12px}
-.call.joining .spk .pv{opacity:0!important}.call.joining .strip .tile{animation:join .45s ease-out both}
-.call.joining .strip .tile:nth-child(1){animation-delay:0.00s}.call.joining .strip .tile:nth-child(2){animation-delay:0.15s}.call.joining .strip .tile:nth-child(3){animation-delay:0.30s}.call.joining .strip .tile:nth-child(4){animation-delay:0.45s}.call.joining .strip .tile:nth-child(5){animation-delay:0.60s}.call.joining .strip .tile:nth-child(6){animation-delay:0.75s}.call.joining .strip .tile:nth-child(7){animation-delay:0.90s}.call.joining .strip .tile:nth-child(8){animation-delay:1.05s}
-@keyframes join{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
-.tile{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1/1;background:#1b1e27;box-shadow:0 0 0 1px rgba(255,255,255,.07);transition:box-shadow .2s,transform .2s}
-.tile .cam{position:absolute;inset:0}
-.tile .cam>svg,.tile .cam>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.tile .tn{position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.58);color:#fff;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 6px;max-width:calc(100% - 10px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile.talk{box-shadow:0 0 0 2.5px #3ddc84,0 0 18px rgba(61,220,132,.5);transform:translateY(-1px)}
-.tile .cam>svg{transform:scale(1.02);animation:idle 7s ease-in-out infinite}
-.tile:nth-child(2n) .cam>svg{animation-duration:8.3s;animation-delay:-2s}.tile:nth-child(3n) .cam>svg{animation-duration:6.1s;animation-delay:-4s}
-@keyframes idle{0%,100%{transform:scale(1.02) translate(0,0)}50%{transform:scale(1.03) translate(.4%,-.5%)}}
-.tile.talk .cam>svg{animation:nod 1.15s ease-in-out infinite}
-@keyframes nod{0%,100%{transform:scale(1.03) translate(0,0) rotate(0)}30%{transform:scale(1.03) translate(0,-.8%) rotate(-.6deg)}65%{transform:scale(1.03) translate(.3%,.3%) rotate(.5deg)}}
-.tile .bars{position:absolute;right:5px;top:5px;display:none;gap:2px;align-items:flex-end;height:14px;background:rgba(0,0,0,.5);border-radius:6px;padding:2px 4px}
-.tile.talk .bars{display:flex}
-.tile .bars i{display:block;width:2.5px;height:4px;background:#3ddc84;border-radius:2px;animation:bar .5s ease-in-out infinite}
-.tile .bars i:nth-child(2){animation-delay:-.2s}.tile .bars i:nth-child(3){animation-delay:-.35s}
-@keyframes bar{0%,100%{height:3px}50%{height:10px}}
-.tile .pop{position:absolute;left:50%;top:38%;font-size:26px;opacity:0;pointer-events:none;transform:translateX(-50%)}
-.tile .pop.go{animation:pop 1.4s ease-out}
-@keyframes pop{0%{opacity:0;transform:translate(-50%,12px) scale(.5)}15%{opacity:1;transform:translate(-50%,0) scale(1.2)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-28px) scale(1)}}
-.tile.me .cam{display:grid;place-items:center;background:linear-gradient(160deg,#2a2f3b,#161920)}
-.meav{width:62%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:#454c5c;color:#fff;font-weight:800;font-size:12px}
-.tile .off{position:absolute;right:5px;top:5px;font-size:10px;background:rgba(0,0,0,.5);border-radius:6px;padding:1px 4px}
+.ostage{display:flex;justify-content:center;background:#12141c;border-radius:12px;overflow:hidden}
+.office{position:relative;line-height:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+.office canvas{display:block;image-rendering:pixelated;cursor:pointer}
+.office.off{min-height:120px;width:100%!important}.office.off::after{content:"사무실 그림을 불러오지 못했어요 — 회의록은 아래에 있어요";display:block;padding:40px 12px;color:#9aa0ad;font-size:13px;line-height:1.5;text-align:center}
+.olay{position:absolute;inset:0;pointer-events:none;overflow:hidden;line-height:1.35}
+.otag{position:absolute;left:0;top:0;font-size:var(--ft,10px);font-weight:700;color:#fff;background:rgba(10,12,20,.66);border-radius:4px;padding:0 4px;white-space:nowrap;box-shadow:inset 0 -2px 0 var(--c);will-change:transform}
+.obub{position:absolute;left:0;top:0;width:max-content;max-width:min(64%,250px);font-size:var(--fs,12px);font-weight:600;color:#1b1d26;background:#fff;border:2px solid #1b1d26;border-radius:8px;padding:3px 7px 4px;opacity:0;transition:opacity .18s;box-shadow:0 2px 0 rgba(0,0,0,.28);will-change:transform;z-index:2}
+.obub.on{opacity:1}.obub.spk{border-color:#3ddc84;box-shadow:0 0 0 2px rgba(61,220,132,.35),0 2px 0 rgba(0,0,0,.28);z-index:3}
+.obub.dots{letter-spacing:2px;font-weight:800}
+.obub::after{content:"";position:absolute;left:var(--tx,50%);bottom:-8px;margin-left:-5px;border:5px solid transparent;border-top:6px solid #1b1d26}
+.obub.spk::after{border-top-color:#3ddc84}
+.oemo{position:absolute;left:0;top:0;font-size:calc(var(--fs,12px) + 1px);line-height:1}
+.opop{position:absolute;font-size:calc(var(--fs,12px) + 5px);line-height:1;transform:translate(-50%,-50%);animation:opop 1.6s ease-out forwards;pointer-events:none;z-index:4}
+.opop.desk{font-size:calc(var(--fs,12px) + 1px)}
+@keyframes opop{0%{opacity:0;transform:translate(-50%,0) scale(.5)}14%{opacity:1;transform:translate(-50%,-7px) scale(1.18)}72%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px) scale(1)}}
+.oboss{position:absolute;left:0;top:0;font-size:var(--ft,10px);font-weight:800;color:#1b1d26;background:#ffc83d;border-radius:6px;padding:1px 6px;animation:livepulse 1s ease-in-out infinite}
+.ocard{margin-top:10px;background:#1b1e27;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.55;position:relative}
+.ocard .oh{display:flex;gap:10px;align-items:center;margin-bottom:4px}.ocard .oh b{font-size:14.5px}.ocard .oh span{color:#9aa0ad;font-size:12px}
+.ocard .om{color:#9aa0ad;font-size:12px;font-style:italic}.ocard .orp{padding:6px 0;border-top:1px solid rgba(255,255,255,.08)}.ocard .orp b{color:#fff}
+.ocard .go{color:#c9ced8}.ocard .otb{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.ocard .chip{background:#252a36;border-color:#343a48;color:#e9ebf1}
+.ocard .ox{position:absolute;right:6px;top:6px;border:0;background:#252a36;color:#e9ebf1;border-radius:8px;width:28px;height:28px;cursor:pointer}
+.walker{flex:none;width:48px;height:96px;margin:-18px 0 -6px;background-repeat:no-repeat;image-rendering:pixelated;animation:owalk .6s steps(1,end) infinite}
+@keyframes owalk{0%{background-position:calc(var(--x) * -3px) calc(var(--y) * -3px)}25%,75%{background-position:calc((var(--x) + 16) * -3px) calc(var(--y) * -3px)}50%{background-position:calc((var(--x) + 32) * -3px) calc(var(--y) * -3px)}}
+@media(max-width:520px){.call{margin:6px -16px 12px;border-radius:0;padding:10px 0 12px}.call>.callhd,.call>.cap,.call>.ctrl,.call>.ocard{margin-left:12px;margin-right:12px}.ostage{border-radius:0}}
 .cap{margin-top:10px;background:rgba(255,255,255,.06);border-radius:12px;padding:9px 12px;min-height:74px;font-size:14px;line-height:1.55}
 .cap .cw{display:block;font-size:11.5px;color:#3ddc84;font-weight:700;margin-bottom:2px}
 .cap.typing .ct{color:#9aa0ad;letter-spacing:1px}
@@ -376,8 +349,8 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .rx{font-size:11.5px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--sub);white-space:nowrap}
 .msg.all .stack{display:flex;flex:none;padding-top:2px}.msg.all .stack .face{margin-left:-8px;border-color:var(--card)}.msg.all .stack .face:first-child{margin-left:0}
 .staff .motto{font-size:12.5px;color:var(--sub);font-style:italic;margin:-2px 0 6px}
-@media(min-width:900px){.stage{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);align-items:start}.strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.strip .tile .tn{font-size:11px}.strip .meav{font-size:12px;width:62%}.strip .meav::before{content:none}.strip .tile.me .tn{display:block}.cap{font-size:15px}}
-@media (prefers-reduced-motion:reduce){.avs .ey,.talk .avs .mt,.tile .bars i,.live,.msg,.tile .pop.go,.tile .cam>svg,.spk .pv,.spk .pv>svg,.spk .mic i{animation:none!important}.tile,.avs .bl,.avs .bR{transition:none}}
+@media(min-width:900px){.cap{font-size:15px}}
+@media (prefers-reduced-motion:reduce){.live,.msg,.opop,.oboss,.walker{animation:none!important}.obub{transition:none}}
 </style>
 </head>
 <body>
@@ -427,75 +400,10 @@ const M = (D && D.meeting) || null;
 const STAFF = (M && M.staff) || {};
 const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 const jo2 = (w, a, b) => { const c = String(w).trim().slice(-1), k = c.charCodeAt(0) - 0xAC00; return (k >= 0 && k <= 11171 ? k % 28 !== 0 : /[lmn0136780]$/i.test(c)) ? a : b; };
-/* 직원 얼굴: 사진(staff/키.webp, 직원사진_만들기.py)이 있으면 사진, 없으면 그림. 그림은 표정(m-good·m-bad·m-idea)·눈 깜빡임·말할 때 입 움직임이 있다 */
-const LOOK = {
-  lead: { skin: "#f0c6a4", hair: "#1e1a18", hs: "short", top: "#27354f", neck: "v", inner: "#ffffff", bg: ["#e2e9f4", "#b7c6de"], prop: "glass" },
-  analyst: { skin: "#f5cfb3", hair: "#191616", hs: "bob", top: "#d6bf9b", neck: "round", inner: "#fbfaf7", gl: "thin", bg: ["#e4edf6", "#c1d3e6"], prop: "chart" },
-  reviewer: { skin: "#e8b793", hair: "#3b2a20", hs: "messy", top: "#26262c", neck: "crew", phones: 1, bg: ["#454b5c", "#1c1f28"], prop: "monitor" },
-  trend: { skin: "#f6d3b9", hair: "#4a2e22", hs: "long", top: "#ff8a2c", neck: "round", ear: 1, bg: ["#fdebd8", "#f5c7a2"], prop: "plant" },
-  planner: { skin: "#eec3a0", hair: "#1c1918", hs: "curly", top: "#5d7337", neck: "crew", gl: "round", bg: ["#f3f1e8", "#dad6c6"], prop: "notes" },
-  scheduler: { skin: "#ecbf9c", hair: "#1a1817", hs: "side", top: "#a9c8ec", neck: "collar", bg: ["#e9eff4", "#ccd9e4"], prop: "cal" },
-  money: { skin: "#f3cbae", hair: "#1d1a1a", hs: "pony", top: "#3a3f48", neck: "v", inner: "#ffffff", bg: ["#f0eae1", "#d8cebf"], prop: "shelf" },
-};
-const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16), f = c => Math.max(0, Math.min(255, Math.round(c * (1 + k)))); return "#" + [n >> 16, (n >> 8) & 255, n & 255].map(c => f(c).toString(16).padStart(2, "0")).join(""); };
-const HAIR = {   // [뒷머리(몸 뒤), 앞머리, 앞으로 내려온 머리(몸 앞)]
-  short: ["", "M33.5 47C31.5 30 40 22.5 50 22.5C60.5 22.5 68.5 30 66.5 47C65.5 40.5 63.5 36.5 60 34.8C54.5 32.8 45.5 32.8 40.5 34.8C36.8 36.6 34.6 41 33.5 47Z", ""],
-  side: ["", "M33.5 48C31 30 40.5 21.5 51 22C62 22.5 69.5 30.5 66.5 48C65.8 42 63.8 38 60.5 35.5C56 32 47 31.5 41 36.5C37.5 39.5 35 43.5 33.5 48ZM39.5 37.5C44 29 56 25.5 64.5 33.5C57 31 48.5 31.8 39.5 37.5Z", ""],
-  messy: ["", "M32 50C29 33 37.5 20.5 50 20.5C62.5 20.5 71 32 68 50C67.2 45 66 41.5 64.5 39.5L62 43L59.5 36.5L55.5 41.5L51.5 35.5L47.5 41.5L43.5 36L40 42L37 38.5C35 41.5 33 45.5 32 50Z", ""],
-  curly: ["", "M33 47C31 31 40 23 50 23C60 23 69 31 67 47C64 39 57 35 50 35C43 35 36 39 33 47Z", ""],
-  bob: ["M30 48C28 29 39 20.5 50 20.5C61 20.5 72 29 70 48L71 70C71 74 67 76 63 75L37 75C33 76 29 74 29 70Z", "M33 45C32.5 30 41 23.5 50 23.5C59 23.5 67.5 30 67 45C63.5 38.5 57.5 36.5 50 37C42.5 36.5 36.5 38.5 33 45Z",
-    "M31.5 47C30.5 60 31 70 32.5 80L38.5 80C36.8 70 36.2 60 36.5 49ZM68.5 47C69.5 60 69 70 67.5 80L61.5 80C63.2 70 63.8 60 63.5 49Z"],
-  long: ["M29 48C27 28 39 19.5 50 19.5C61 19.5 73 28 71 48C73 62 75 76 73 90L27 90C25 76 27 62 29 48Z", "M33 46C32 30 42 23 52 23C62 23 69 31 67 46C63.5 37 55.5 33 47 34.5C41 36 36 40 33 46Z",
-    "M31 48C27 60 33 67 29 79C27 87 30 93 35 97L41 97C37.5 90 40 82 38 72C36.5 63 38 55 36.8 49ZM69 48C73 60 67 67 71 79C73 87 70 93 65 97L59 97C62.5 90 60 82 62 72C63.5 63 62 55 63.2 49Z"],
-  pony: ["M63 54C71 58 72.5 68 67.5 79C65.5 71 63.5 63 60.5 58Z", "M33.5 46C32.5 31 41 24 50 24C59 24 67.5 31 66.5 46C64.5 38.5 58 34.5 50 34.5C42 34.5 35.5 38.5 33.5 46Z", ""],
-};
-const PROPS = {   // 화상회의 뒤 배경(흐리게)
-  glass: '<rect x="3" y="8" width="21" height="62" fill="#fff" opacity=".5"/><rect x="28" y="8" width="17" height="62" fill="#fff" opacity=".28"/><rect x="77" y="8" width="21" height="62" fill="#fff" opacity=".45"/><rect y="68" width="100" height="3" fill="#7d8eab" opacity=".5"/>',
-  chart: '<rect x="3" y="14" width="31" height="23" rx="2" fill="#253041"/><rect x="66" y="14" width="31" height="23" rx="2" fill="#253041"/><rect x="8" y="27" width="4" height="7" fill="#4c8dff"/><rect x="14" y="23" width="4" height="11" fill="#1f9d6b"/><rect x="20" y="20" width="4" height="14" fill="#ff7a00"/><rect x="26" y="25" width="4" height="9" fill="#e0392b"/><path d="M69 32L75 26L81 29L87 20L93 23" stroke="#ff3d55" stroke-width="1.8" fill="none"/>',
-  monitor: '<circle cx="14" cy="20" r="11" fill="#ffb86b" opacity=".35"/><rect x="58" y="12" width="38" height="25" rx="2" fill="#6d8fe8" opacity=".8"/><rect x="61" y="29" width="10" height="3" fill="#ffcf5c"/><rect x="73" y="29" width="14" height="3" fill="#ff5c8a"/><rect x="61" y="33" width="21" height="2" fill="#7cf0c0"/>',
-  plant: '<rect x="62" y="6" width="34" height="40" rx="2" fill="#fff" opacity=".55"/><path d="M70 22q7-8 14 0q7 8 0 15" stroke="#ff5fa2" stroke-width="2.6" fill="none"/><circle cx="12" cy="70" r="12" fill="#3f9a57"/><circle cx="21" cy="59" r="8" fill="#4fb56a"/><circle cx="7" cy="55" r="7" fill="#2f8048"/>',
-  notes: '<rect x="3" y="7" width="94" height="56" rx="2" fill="#fff" opacity=".9"/><rect x="7" y="12" width="9" height="9" fill="#ffd54f"/><rect x="19" y="15" width="9" height="9" fill="#ff8fb1"/><rect x="8" y="36" width="9" height="9" fill="#8fd3ff"/><rect x="72" y="11" width="9" height="9" fill="#b4f08a"/><rect x="84" y="18" width="9" height="9" fill="#ffd54f"/><rect x="80" y="37" width="9" height="9" fill="#ff8fb1"/>',
-  cal: '<rect x="61" y="9" width="33" height="31" rx="1.5" fill="#fff" opacity=".95"/><rect x="61" y="9" width="33" height="6" fill="#e0392b"/><path d="M61 21H94M61 27H94M61 33H94M66 15V40M71 15V40M76 15V40M81 15V40M86 15V40M90 15V40" stroke="#c9d1db" stroke-width=".6"/><circle cx="17" cy="22" r="9" fill="#fff" stroke="#44505c" stroke-width="1.3"/><path d="M17 22V16.5M17 22L21 23.6" stroke="#44505c" stroke-width="1.2" stroke-linecap="round"/>',
-  shelf: '<rect x="2" y="6" width="27" height="66" fill="#7a5a3c" opacity=".55"/><rect x="71" y="6" width="27" height="66" fill="#7a5a3c" opacity=".55"/><g opacity=".9"><rect x="4" y="11" width="4" height="17" fill="#c94f4f"/><rect x="9" y="13" width="4" height="15" fill="#3f6fb5"/><rect x="14" y="10" width="4" height="18" fill="#e8c35a"/><rect x="19" y="14" width="4" height="14" fill="#4f9a6a"/><rect x="5" y="36" width="4" height="16" fill="#7b5ea7"/><rect x="10" y="38" width="4" height="14" fill="#e8c35a"/><rect x="74" y="12" width="4" height="16" fill="#4f9a6a"/><rect x="79" y="10" width="4" height="18" fill="#c94f4f"/><rect x="84" y="13" width="4" height="15" fill="#3f6fb5"/><rect x="76" y="37" width="4" height="15" fill="#e8c35a"/></g>',
-};
-let AVN = 0;
-function avatarSvg(who, crop) {   // crop: 동그란 얼굴용(머리·어깨만 크게), 아니면 화상회의 칸(배경까지)
-  const L = LOOK[who];
-  if (!L) return "";
-  const id = "av" + (AVN++), H = HAIR[L.hs] || HAIR.short, sk = L.skin, dk = shade(sk, -0.12), hr = L.hair, tp = L.top;
-  const curls = L.hs === "curly" ? [[36, 39, 5], [40.5, 32, 5.6], [47, 28.3, 6.2], [54.5, 28, 6.2], [61, 31.2, 5.8], [65.5, 38, 4.8], [34, 45, 3.2], [66.2, 45, 3.2]]
-    .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("") : "";
-  const neck = {
-    v: `<path d="M42 73.2L50 87L58 73.2Z" fill="${L.inner}"/><path d="M41.5 73.5L47.8 89M58.5 73.5L52.2 89" stroke="${shade(tp, -0.4)}" stroke-width="1.5"/>`,
-    round: `<path d="M41 73.8Q50 81 59 73.8" stroke="${shade(tp, -0.22)}" stroke-width="1.6" fill="none"/>`,
-    crew: `<path d="M42.5 73.4Q50 78.8 57.5 73.4" stroke="${shade(tp, -0.35)}" stroke-width="2.2" fill="none"/>`,
-    collar: `<path d="M43.2 71.6L48.6 80L50 74.6ZM56.8 71.6L51.4 80L50 74.6Z" fill="${shade(tp, 0.18)}"/><path d="M50 76V101" stroke="${shade(tp, -0.2)}" stroke-width=".8"/><circle cx="50" cy="84" r=".9" fill="${shade(tp, -0.3)}"/><circle cx="50" cy="92" r=".9" fill="${shade(tp, -0.3)}"/>`,
-  }[L.neck] || "";
-  const phones = L.phones ? '<path d="M35 73Q50 85 65 73" stroke="#141418" stroke-width="3.4" fill="none"/><ellipse cx="34.5" cy="72.5" rx="4.6" ry="5.6" fill="#1c1c22" stroke="#4a4a55" stroke-width="1"/><ellipse cx="65.5" cy="72.5" rx="4.6" ry="5.6" fill="#1c1c22" stroke="#4a4a55" stroke-width="1"/>' : "";
-  const ear = L.ear ? '<circle cx="33.6" cy="56.2" r="1.7" fill="none" stroke="#e1b24a" stroke-width=".9"/><circle cx="66.4" cy="56.2" r="1.7" fill="none" stroke="#e1b24a" stroke-width=".9"/>' : "";
-  const gl = L.gl === "thin" ? '<g fill="none" stroke="#a7afb9" stroke-width="1"><rect x="38.3" y="46.3" width="10.4" height="7.6" rx="3.2"/><rect x="51.3" y="46.3" width="10.4" height="7.6" rx="3.2"/><path d="M48.7 49.4Q50 48.5 51.3 49.4"/></g>'
-    : L.gl === "round" ? '<g fill="none" stroke="#6b4526" stroke-width="1.5"><circle cx="43.5" cy="50" r="4.9"/><circle cx="56.5" cy="50" r="4.9"/><path d="M48.4 49.3Q50 48.3 51.6 49.3"/></g>' : "";
-  return `<svg class="avs" viewBox="${crop ? "22 19 56 56" : "0 0 100 100"}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${L.bg[0]}"/><stop offset="1" stop-color="${L.bg[1]}"/></linearGradient><filter id="${id}b"><feGaussianBlur stdDeviation="1.2"/></filter></defs>
-    <rect x="-5" y="-5" width="110" height="110" fill="url(#${id})"/>${crop ? "" : `<g filter="url(#${id}b)">${PROPS[L.prop] || ""}</g>`}
-    ${H[0] ? `<path d="${H[0]}" fill="${hr}"/>` : ""}<path d="M14 101C14 83 28 73.5 50 73.5C72 73.5 86 83 86 101Z" fill="${tp}"/>
-    <path d="M44.2 60H55.8V74.5Q50 78.5 44.2 74.5Z" fill="${dk}"/>${neck}${phones}
-    <ellipse cx="33.8" cy="50.5" rx="2.7" ry="4.2" fill="${dk}"/><ellipse cx="66.2" cy="50.5" rx="2.7" ry="4.2" fill="${dk}"/>${ear}
-    <ellipse cx="50" cy="48" rx="16.5" ry="19.2" fill="${sk}"/>
-    <ellipse cx="40.3" cy="56.8" rx="3.1" ry="1.8" fill="#ff7b6b" opacity=".2"/><ellipse cx="59.7" cy="56.8" rx="3.1" ry="1.8" fill="#ff7b6b" opacity=".2"/>
-    <g stroke="${shade(hr, 0.12)}" stroke-width="1.7" stroke-linecap="round" fill="none"><path class="bl" d="M39.8 44.6Q43.4 42.9 47 44.2"/><path class="bR" d="M53 44.2Q56.6 42.9 60.2 44.6"/></g>
-    <g class="ey" style="animation-delay:-${(AVN * 1.37) % 4.6}s"><ellipse cx="43.5" cy="50" rx="1.75" ry="2.15" fill="#2b2220"/><ellipse cx="56.5" cy="50" rx="1.75" ry="2.15" fill="#2b2220"/><circle cx="44.1" cy="49.3" r=".55" fill="#fff"/><circle cx="57.1" cy="49.3" r=".55" fill="#fff"/></g>
-    <path d="M50.2 51.5Q48.7 55.6 50.9 56.3" stroke="${shade(sk, -0.3)}" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-    <path class="mn" d="M45.2 60.6Q50 63.6 54.8 60.6" stroke="#8b3a33" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <g class="mg"><path d="M44.6 59.9Q50 66.8 55.4 59.9Z" fill="#7b2d29"/><path d="M45.6 60.3Q50 62.2 54.4 60.3L54 61.3Q50 62.9 46 61.3Z" fill="#fff"/></g>
-    <path class="mb" d="M45.6 62.4Q50 60.2 54.4 62.4" stroke="#8b3a33" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <ellipse class="mt" cx="50" cy="61.4" rx="3.3" ry="2.7" fill="#7b2d29"/>${gl}
-    <path d="${H[1]}" fill="${hr}"/>${curls ? `<g fill="${hr}">${curls}</g>` : ""}${H[2] ? `<path d="${H[2]}" fill="${hr}"/>` : ""}
-  </svg>`;
-}
+/* 직원 얼굴: 2D 픽셀 캐릭터 머리(staff/face_키.png — 직원그림/make_office.py). 그림이 없으면 이모지 */
 const face = (who, cls = "") => {
-  const x = STAFF[who] || {}, pic = x.img ? `<img src="${esc(x.img)}" alt="" loading="lazy" onerror="this.remove()">` : "";
-  return `<span class="face ${cls}" style="border-color:${x.color || "var(--line)"}" aria-hidden="true">${LOOK[who] ? avatarSvg(who, true) + pic : esc(x.emoji || "🙂")}</span>`;
+  const x = STAFF[who] || {};
+  return `<span class="face ${cls}" style="border-color:${x.color || "var(--line)"}" aria-hidden="true"><i>${esc(x.emoji || "🙂")}</i>${x.img ? `<img src="${esc(x.img)}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span>`;
 };
 const TONE = { good: "좋았던 점", bad: "아쉬운 점", idea: "제안" };
 const toneTag = t => TONE[t] ? `<span class="tone ${t}">${TONE[t]}</span>` : "";
@@ -520,19 +428,14 @@ function msgHtml(l, i) {   // 회의록 한 줄(안건 구분선 + 말풍선 + �
   return `${sec}<li class="msg${l.who === "lead" ? " lead" : ""}${l.aside ? " aside" : ""}" data-i="${i}">${face(l.who, l.tone && l.tone !== "info" ? "m-" + l.tone : "")}<div class="mb">
     <div class="mh"><b>${esc(x.name || "")}</b><span>${esc(x.role || "")}</span>${l.aside ? "" : toneTag(l.tone)}</div><div class="bub">${md(l.text)}</div>${foot}</div></li>`;
 }
-function stageHtml() {   // 화상회의 화면(발표자 보기): 말하는 사람이 크게, 나머지는 아래 줄에. 사진·영상(staff/)이 없으면 그림 얼굴
+function stageHtml() {   // 사무실 화면: 캔버스(픽셀 그림) + 이름표·말풍선(HTML이라 글자가 또렷) + 자막 + 버튼
   const who = Object.keys(STAFF);
-  const big = who.map(w => { const x = STAFF[w], v = x.vid;
-    return `<div class="pv" data-who="${w}">${v ? `<img class="po" src="${esc(v.poster)}" alt="" decoding="async"><video class="tv" muted playsinline loop preload="none" data-src="${esc(v.talk)}"></video>`
-      : avatarSvg(w, false)}</div>`; }).join("");
-  const strip = who.map(w => { const x = STAFF[w], v = x.vid;
-    return `<div class="tile" data-who="${w}" role="img" aria-label="${esc(x.name)} · ${esc(x.role)}"><div class="cam">${v
-      ? `<img class="po" src="${esc(x.img || v.poster)}" alt="" loading="lazy">${v.idle ? `<video class="iv" muted playsinline loop preload="none" data-src="${esc(v.idle)}"></video>` : ""}${v.laugh ? `<video class="lv" muted playsinline preload="none" data-src="${esc(v.laugh)}"></video>` : ""}`
-      : avatarSvg(w, false)}</div><span class="tn">${esc(x.name)}</span><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="pop" aria-hidden="true"></span></div>`; }).join("");
-  return `<section class="call${who.some(w => STAFF[w].vid) ? " real" : ""}" id="call" aria-label="마케팅팀 화상회의">
-    <div class="callhd"><span class="live" id="mlive">● 회의 중</span><b>마케팅팀 ${esc(M.kind)}</b><span class="tm" id="mtime">00:00</span><span class="cm">${who.length + 1}명 참석</span></div>
-    <div class="stage"><div class="spk" id="spk">${big}<div class="lt"><span class="mic" aria-hidden="true"><i></i><i></i><i></i></span><b id="spkn"></b><span id="spkr"></span></div></div>
-      <div class="strip">${strip}<div class="tile me" role="img" aria-label="사장님(나) · 카메라 꺼짐"><div class="cam"><span class="meav">사장님</span></div><span class="tn">나</span><span class="off" aria-hidden="true">🔇</span></div></div></div>
+  const lay = OF ? who.map(w => { const x = STAFF[w];
+    return `<span class="otag" data-w="${w}" style="--c:${esc(x.color || "#888")}">${esc(x.name)}</span><div class="obub" data-w="${w}"></div><span class="oemo" data-w="${w}"></span>`; }).join("") + '<span class="oboss" hidden>사장님?</span>' : "";
+  return `<section class="call" id="call" aria-label="마케팅팀 사무실">
+    <div class="callhd"><span class="live work" id="mlive">● 근무 중</span><b>마케팅팀 사무실</b><span class="tm" id="mtime"></span><span class="cm" id="ocm">${who.length}명 출근</span></div>
+    ${OF ? `<div class="ostage"><div class="office" id="ofw"><canvas id="ofc" role="img" aria-label="직원 ${who.length}명이 일하는 픽셀 사무실. 캐릭터를 누르면 그 사람 오늘 보고가 보여요"></canvas><div class="olay" id="ofl">${lay}</div></div></div>
+    <div class="ocard" id="ofpop" hidden></div>` : ""}
     <div class="cap" id="mcap" aria-hidden="true"><span class="cw"></span><span class="ct"></span></div>
     <div class="ctrl"><button type="button" data-mp="play">⏸ 잠깐 멈춤</button><button type="button" data-mp="end">⏭ 끝까지 보기</button>
       <button type="button" data-mp="fast" aria-pressed="false">⚡ 2배속</button><button type="button" data-mp="sound" aria-pressed="false" hidden>🔈 소리로 듣기</button></div>
@@ -559,58 +462,30 @@ function bindTodo() {
     cb.closest("li").classList.toggle("done", cb.checked);
   });
 }
-/* 회의 재생: 말하는 사람 칸이 초록으로 켜지고 입이 움직이며 자막이 흐른다. 회의(날짜+아침·오후·저녁)마다 이 기기에서 한 번만 저절로 튼다 */
-const MP = { i: 0, on: false, t: 0, fast: false, sound: false, gen: 0, ended: false, ck: 0, sec: 0, lv: 0 };
+/* 회의 재생: 사무실 캐릭터들이 회의실로 걸어가 모이고, 말하는 사람 머리 위에 말풍선이 뜬다. 회의(날짜+아침·오후·저녁)마다 이 기기에서 한 번만 저절로 튼다 */
+const MP = { i: 0, on: false, t: 0, fast: false, sound: false, gen: 0, ended: false, ck: 0, sec: 0 };
 const MEET_SEEN = "dash_meet_seen", meetSlot = () => M ? M.at.slice(0, 10) + "|" + M.kind : "";
 const calm = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 const sp = ms => ms / (MP.fast ? 2 : 1);
 function mpStop() { MP.on = false; MP.gen++; clearTimeout(MP.t); mpClock(false); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
-function mpBtn() { const b = $("[data-mp=play]"); if (b) b.textContent = MP.ended ? "↺ 처음부터 다시 보기" : MP.on ? "⏸ 잠깐 멈춤" : "▶ 이어 보기"; }
+function mpBtn() { const b = $("[data-mp=play]"); if (b) b.textContent = MP.ended ? "▶ 회의 다시 보기" : MP.on ? "⏸ 잠깐 멈춤" : "▶ 이어 보기"; }
 function mpProg() { const p = $("#mprog"), n = (M.lines || []).length; if (p) p.textContent = MP.ended ? `${n}마디 · 회의 끝` : `${Math.min(MP.i, n)} / ${n}마디`; }
-const vplay = v => { if (!v) return; if (!v.getAttribute("src") && v.dataset.src) v.src = v.dataset.src; const p = v.play(); if (p && p.catch) p.catch(() => {}); };
-function mpFace(who, tone, talk) {   // 말하는 사람: 큰 화면에 띄우고(영상이면 말하는 영상 재생) 아래 줄 칸에 초록 테두리
-  const call = $("#call"); if (!call) return;
-  const setMood = el => { if (!tone) return; el.classList.remove("m-good", "m-bad", "m-idea"); if (tone !== "info") el.classList.add("m-" + tone); };   // 표정은 다음에 말할 때까지 남는다
-  call.querySelectorAll(".strip .tile[data-who]").forEach(t => { const me = who === "all" || t.dataset.who === who; t.classList.toggle("talk", talk && me); if (me) setMood(t); });
-  const w = who === "all" ? "lead" : who;
-  call.querySelectorAll(".spk .pv").forEach(p => {
-    const on = p.dataset.who === w, v = p.querySelector("video");
-    p.classList.toggle("on", on); p.classList.toggle("talk", on && talk); if (on) setMood(p);
-    if (!v) return;
-    if (on && talk && !calm()) { if (!p.classList.contains("vid")) try { v.currentTime = 0; } catch (e) {} v.onplaying = () => p.classList.add("vid"); vplay(v); }   // 매번 입 다문 첫 장면부터
-    else { v.pause(); p.classList.remove("vid"); }
-  });
-  const x = STAFF[w] || {}, n = $("#spkn"), r = $("#spkr"), s = $("#spk");
-  if (n) n.textContent = who === "all" ? "모두" : x.name || ""; if (r) r.textContent = who === "all" ? "" : x.role || ""; if (s) s.classList.toggle("talking", !!talk);
-}
-function mpPop(l) {   // 반응: 그 사람 칸에 이모지가 떠오르고 표정이 바뀐다(영상이면 웃는 영상 한 번)
-  const react = l.who === "all" ? Object.keys(STAFF).map(w => ["👋", w]) : (l.react || []);
-  react.forEach(([e, w], k) => setTimeout(() => {
-    const t = $(`#call .strip .tile[data-who="${w}"]`); if (!t) return;
-    const p = t.querySelector(".pop"), lv = t.querySelector(".lv");
-    t.classList.remove("m-good", "m-bad", "m-idea"); t.classList.add(/😮|👀|🤔|😟/.test(e) ? "m-idea" : "m-good");
-    p.textContent = e; p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
-    if (lv && /🎉|👏|🔥|🙌|💪|😄|👋/.test(e) && !calm()) { lv.currentTime = 0; lv.onended = () => t.classList.remove("laugh"); lv.onplaying = () => t.classList.add("laugh"); vplay(lv); }
-  }, k * 200));
-}
-function mpClock(on) {   // 회의 시간(진짜 통화처럼 흘러간다)
+function mpFace(who, tone, talk) { ofSpeak(who, tone, talk); }   // 말하는 사람: 머리 위 말풍선(초록 테두리), 나머지는 그쪽을 본다
+function mpPop(l) { ofReact(l); }                               // 반응: 그 사람 머리 위로 이모지, 신나는 반응이면 폴짝
+function mpClock(on) {   // 회의 시간(진짜 회의처럼 흘러간다)
   clearInterval(MP.ck);
   if (!on) return;
   MP.ck = setInterval(() => { MP.sec = (MP.sec || 0) + 1; const t = $("#mtime"); if (t) t.textContent = String(Math.floor(MP.sec / 60)).padStart(2, "0") + ":" + String(MP.sec % 60).padStart(2, "0"); }, 1000);
 }
-function stripLive(on) {   // 아래 줄 사람들: 듣는 영상(눈 깜빡임·고개 조금)을 화면에 보일 때만 튼다
-  document.querySelectorAll("#call .strip .iv").forEach(v => { if (on && !calm()) { v.onplaying = () => v.closest(".tile").classList.add("vid"); vplay(v); } else v.pause(); });
-}
 function mpShow(i, on) { document.querySelectorAll(i === "all" ? "#mlog [data-i]" : `#mlog [data-i="${i}"]`).forEach(e => { e.hidden = !on; }); }
 function mpCap(who, text, typing) { const c = $("#mcap"); if (!c) return; c.querySelector(".cw").textContent = who; c.querySelector(".ct").textContent = text; c.classList.toggle("typing", !!typing); }
 function mpEnd() {
-  mpStop(); MP.ended = true; const cj = $("#call"); if (cj) cj.classList.remove("joining"); const me = $("#call .tile.me"); if (me) me.classList.remove("ask"); MP.i = (M.lines || []).length; mpShow("all", true);
-  document.querySelectorAll("#call .tile").forEach(t => t.classList.remove("talk"));
-  mpFace("lead", null, false);
-  clearTimeout(MP.lv); MP.lv = setTimeout(() => stripLive(false), 30000);   // 끝나고 30초 뒤엔 아래 줄 영상도 쉰다
-  const lv = $("#mlive"); if (lv) { lv.textContent = "회의 끝"; lv.classList.add("end"); }
+  mpStop(); MP.ended = true; MP.i = (M.lines || []).length; mpShow("all", true);
+  ofAsk(false); ofEndMeet();
+  const lv = $("#mlive"); if (lv) { lv.textContent = "● 근무 중"; lv.classList.remove("end"); lv.classList.add("work"); }
+  const tm = $("#mtime"); if (tm) tm.textContent = "";
   const n = (M.todo || []).length;
-  mpCap("회의 끝", n ? `오늘 할 일 ${n}가지를 아래에 적어 뒀어요. 회의록에서 전부 다시 볼 수 있어요.` : "오늘은 급한 일이 없어요. 회의록에서 전부 다시 볼 수 있어요.");
+  mpCap("회의 끝", (n ? `오늘 할 일 ${n}가지를 아래에 적어 뒀어요.` : "오늘은 급한 일이 없어요.") + (OF ? " 캐릭터를 누르면 그 사람 오늘 보고가 보여요." : " 회의록에서 전부 다시 볼 수 있어요."));
   mpBtn(); mpProg();
 }
 function mpStep() {
@@ -622,20 +497,20 @@ function mpStep() {
   const same = i > 0 && L[i - 1].who === l.who, dur = sp(Math.min(4200, Math.max(600, 220 + l.text.replace(/\*\*/g, "").length * 30)));
   const finish = () => { if (g !== MP.gen) return; mpShow(i, true); if (!(L[i + 1] && L[i + 1].who === l.who)) mpFace(l.who, null, false); mpPop(l); MP.i++; mpProg(); MP.t = setTimeout(mpStep, sp(l.aside ? 200 : 300)); };
   mpFace(l.who, l.who === "all" ? "good" : l.tone, true);
-  const me = $("#call .tile.me"); if (me) me.classList.toggle("ask", /사장님/.test(l.text));   // 사장님께 묻는 말이면 내 칸이 노랗게
+  ofAsk(/사장님/.test(l.text));   // 사장님께 묻는 말이면 회의실 사장님 의자가 노랗게
   const talk = MP.sound ? ttsSay(l) : null;
   if (talk) {
-    mpCap(name, words.join(" "));
+    mpCap(name, words.join(" ")); ofLine(l.who, words.join(" "));
     const t0 = Date.now(), need = dur;
     talk.then(() => { if (g === MP.gen) MP.t = setTimeout(finish, Math.max(0, need - (Date.now() - t0))); });
     return;
   }
-  if (!same) mpCap(name, "🎙️", true);
-  MP.t = setTimeout(() => {   // 말하는 속도로 자막을 한 낱말씩
+  if (!same) { mpCap(name, "🎙️", true); ofLine(l.who, "", true); }
+  MP.t = setTimeout(() => {   // 말하는 속도로 자막·말풍선을 한 낱말씩
     if (g !== MP.gen) return;
     let k = 0;
     const per = dur / words.length;
-    const tick = () => { if (g !== MP.gen) return; mpCap(name, words.slice(0, ++k).join(" ")); MP.t = setTimeout(k < words.length ? tick : finish, k < words.length ? per : sp(240)); };
+    const tick = () => { if (g !== MP.gen) return; const said = words.slice(0, ++k).join(" "); mpCap(name, said); ofLine(l.who, said); MP.t = setTimeout(k < words.length ? tick : finish, k < words.length ? per : sp(240)); };
     tick();
   }, sp(same ? 90 : l.aside ? 180 : 280));
 }
@@ -643,17 +518,571 @@ function mpPlay(fromStart) {
   mpStop();
   if (fromStart || MP.ended) {
     MP.i = 0; MP.ended = false; MP.sec = 0; mpShow("all", false);
-    const lv = $("#mlive"); if (lv) { lv.textContent = "● 회의 중"; lv.classList.remove("end"); }
     const tm = $("#mtime"); if (tm) tm.textContent = "00:00";
   }
-  clearTimeout(MP.lv);
-  MP.on = true; mpBtn(); mpProg(); mpClock(true); stripLive(true);
-  const call = $("#call"), g = MP.gen;
-  if (fromStart && call && !calm()) {
-    call.classList.add("joining"); mpCap("회의 연결 중", "🔗 팀원들이 들어오고 있어요…", true);
-    MP.t = setTimeout(() => { if (g !== MP.gen) return; call.classList.remove("joining"); mpCap("회의 연결됨", `${Object.keys(STAFF).length + 1}명 모두 들어왔어요`); MP.t = setTimeout(mpStep, sp(500)); }, 1500);
+  MP.on = true; mpBtn(); mpProg(); mpClock(true);
+  const lv = $("#mlive"); if (lv) { lv.textContent = "● 회의 중"; lv.classList.remove("end", "work"); }
+  const g = MP.gen;
+  if (OF && OFC.ch && OFC.mode !== "meet" && !calm()) {   // 자리에서 일어나 회의실로 걸어간다
+    mpCap("회의 시작", "🚶 모두 회의실로 모이는 중…", true);
+    ofGather(() => { if (g !== MP.gen) return; mpCap("회의 시작", `${Object.keys(STAFF).length}명 모두 모였어요 · 사장님 자리도 비워 뒀어요`); MP.t = setTimeout(mpStep, sp(600)); });
   } else mpStep();
 }
+/* ───────── 2D 픽셀 사무실 (2026-09-27 사용자 "2d 캐릭터로 바꾸고.. 막움직이면서 진짜 사무실돌아다니는느낌으로") ─────────
+   그림: Pixel Agents(MIT) + Metro City 캐릭터(CC0) → 채널대시보드/직원그림/make_office.py 가 staff/office.* 로 만든다.
+   평소: 자리에서 타이핑(모니터 켜짐·책상 위 아이콘) → 일어나 커피·정수기·복합기·책장·창가·TV·동료 자리로 → 잡담 → 자리로.
+   회의: 모두 회의실로 걸어가 앉음 → 말하는 사람 머리 위 말풍선, 나머지는 그쪽을 봄 → 반응 이모지 → 끝나면 흩어짐. */
+const OF = (M && M.office) || null;
+const OFC = { els: {}, tvv: null, vm: null, fx: [], raf: 0, run: false, last: 0, t: 0, img: null, bg: null, ready: false, ch: null, cat: null, conv: [], mode: "life", ask: false, spk: null,
+  gcb: null, gt: 0, nd: 0, z: 1, f: 1, cv: null, cx: null, wrap: null, lay: null, io: null, vis: null, ro: null, sel: null, pops: 0, grid: null, res: {}, tmin: -1 };
+const OSPD = 48;   // 걷는 속도(픽셀/초) — Pixel Agents 값
+const OROW = { down: 0, up: 1, right: 2, left: 2 };
+const OICON = { lead: ["📋", "👀", "✅"], analyst: ["📊", "📈", "🔍"], reviewer: ["🎬", "▶️", "⭐"], trend: ["🔥", "📱", "✨"], planner: ["💡", "📝", "🎯"], scheduler: ["📅", "⏰", "🗓️"], money: ["💰", "🧾", "💵"] };
+const OPREF = {   // 담당별로 잘 가는 곳(가중치)
+  lead: { chat: 6, board: 2, window: 1, coffee: 2, printer: 1, pair: 2 }, analyst: { board: 2, printer: 2, coffee: 2, water: 1, books: 1, chat: 3, pair: 1 },
+  reviewer: { tv: 3, coffee: 2, chat: 3, vending: 1, sofa: 1, window: 1 }, trend: { window: 2, tv: 2, sofa: 2, vending: 1, chat: 3, plant: 1 },
+  planner: { books: 3, board: 2, chat: 2, pair: 2, coffee: 1, window: 1 }, scheduler: { clock: 2, printer: 2, water: 2, chat: 2, books: 1 },
+  money: { coffee: 2, vending: 2, printer: 1, chat: 2, plant: 1, sofa: 1 } };
+const orand = (a, b) => a + Math.random() * (b - a), opick = a => a[Math.floor(Math.random() * a.length)];
+const oclean = s => String(s || "").replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
+const ocut = (s, n) => { s = oclean(s); return s.length > n ? s.slice(0, n - 1).trim() + "…" : s; };
+function ofTime() { const h = new Date().getHours(); return h >= 6 && h < 11 ? "morning" : h < 17 && h >= 11 ? "day" : h >= 17 && h < 20 ? "evening" : "night"; }
+function ofFocus() { const f = M && M.focus; return !f ? "" : typeof f === "string" ? f : f.name || f.channel || ""; }
+function ofSayAt(kind) {
+  const tm = ofTime(), T = D.totals || {};
+  const hhmm = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+  return ({
+    window: { morning: ["☀️ 날씨 좋다~", "☀️ 상쾌한 아침!"], day: ["🌤️ 하늘 맑네", "🌤️ 잠깐 바람 쐬기"], evening: ["🌇 노을 예쁘다", "🌇 벌써 저녁이네"], night: ["🌙 별 보인다", "🌙 야근 중…"] }[tm],
+    books: ["📚 자료 찾는 중", "📖 이거다!", "📚 참고 채널 공부"], board: [ofFocus() ? `✏️ 이번 주 집중: ${ofFocus()}` : "✏️ 아이디어 정리", "✏️ 할 일 적는 중"],
+    printer: ["🖨️ 리포트 뽑는 중", "🖨️ 주간 리포트 출력"], water: ["💧 물 한 잔", "💧 목 축이기"], coffee: ["☕ 커피 한 잔!", "☕ 샷 추가요", "☕ 오늘 두 잔째"],
+    vending: ["🥤 음료 뽑기", "🍫 당 충전"], plant: ["🪴 물 주기", "🌱 잘 자라라"], clock: [`⏰ 벌써 ${hhmm()}`],
+    tv: [T.d_views != null ? `📺 오늘 조회 ${plus(T.d_views)}` : "📺 뉴스 보는 중", T.d_subs != null ? `📺 구독자 ${plus(T.d_subs)}` : "📺 트렌드 체크"],
+    sofa: ["😌 5분만 쉴게요", "😌 잠깐 휴식"],
+  }[kind]) || ["🙂"];
+}
+function ofReport(k) {   // 그 직원의 오늘 보고 한 줄(잡담 재료)
+  const rp = ((M && M.reports) || {})[k] || [];
+  if (rp.length && Math.random() < 0.8) { const l = opick(rp); return { text: ocut(l.text, 40), tone: l.tone }; }
+  return { text: opick(["점심 뭐 먹을까요?", "오늘 커피 몇 잔째예요?", "이 영상 봤어요?", "주말에 뭐 했어요?", "오늘 컨디션 좋네요!", "요즘 이거 뜬대요!"]), tone: "info" };
+}
+const OREPLY = { good: ["오 좋네요! 👍", "역시! 🎉", "대박이다"], bad: ["헉… 같이 봐요", "음, 아쉽네요", "제가 도울게요"], idea: ["좋은 생각! 💡", "오 그거 해 봐요", "메모할게요 📝"], info: ["아하, 알겠어요", "확인했어요!", "고마워요 🙂", "ㅋㅋ 그러게요"] };
+
+function ofTile(c, r) { return { x: c * 16 + 8, y: r * 16 + 8 }; }
+function ofFree(c, r) { return OFC.grid && OFC.grid[r] && OFC.grid[r][c] === 0; }
+function ofPath(sc, sr, tc, tr) {   // 칸 격자 BFS(도착 칸은 의자처럼 막힌 칸이어도 됨)
+  if (sc === tc && sr === tr) return [];
+  const W = OF.cols, H = OF.rows, prev = new Int32Array(W * H).fill(-1), s = sr * W + sc, t = tr * W + tc, q = [s];
+  prev[s] = s;
+  const dirs = Math.random() < 0.5 ? [[1, 0], [-1, 0], [0, 1], [0, -1]] : [[0, 1], [0, -1], [1, 0], [-1, 0]];
+  for (let i = 0; i < q.length && prev[t] === -1; i++) {
+    const cur = q[i], c = cur % W, r = (cur / W) | 0;
+    for (const [dc, dr] of dirs) {
+      const nc = c + dc, nr = r + dr;
+      if (nc < 0 || nr < 0 || nc >= W || nr >= H) continue;
+      const ni = nr * W + nc;
+      if (prev[ni] !== -1 || (!ofFree(nc, nr) && ni !== t)) continue;
+      prev[ni] = cur; q.push(ni);
+    }
+  }
+  if (prev[t] === -1) return null;
+  const p = [];
+  for (let cur = t; cur !== s; cur = prev[cur]) p.push([cur % W, (cur / W) | 0]);
+  return p.reverse();
+}
+function ofFace(a, b) { const dx = b.x - a.x, dy = b.y - a.y; return Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up"); }
+function ofInit() {
+  OFC.grid = OF.grid.map(r => [...r].map(Number));
+  OFC.ch = {};
+  Object.keys(STAFF).forEach((k, i) => {
+    const s = OF.seats[k]; if (!s || !OF.sprites["char_" + k]) return;
+    const p = ofTile(s.c, s.r);
+    OFC.ch[k] = { k, c: s.c, r: s.r, x: p.x, y: p.y, dir: s.d, st: "sit", pose: Math.random() < 0.75 ? "type" : "read", path: [], prog: 0, fr: 0, ft: Math.random(),
+      job: { kind: "desk" }, until: orand(0.6, 9) + i * 0.4, hop: 0, bub: "", bubUntil: 0, busy: false, fast: false, emo: "", emoUntil: 0, nextPop: orand(1, 6), since: 0, meet: false };
+  });
+  const cs = OF.cat && OF.cat.start;
+  if (cs && OF.sprites.cat) { const p = ofTile(cs[0], cs[1]); OFC.cat = { c: cs[0], r: cs[1], x: p.x, y: p.y, dir: "down", st: "idle", path: [], prog: 0, fr: 0, ft: 0, until: 2, bub: "", bubUntil: 0 }; }
+}
+function ofGo(h, c, r, job) {   // 걸어가기 시작
+  const p = ofPath(h.c, h.r, c, r);
+  if (p === null) return false;
+  if (h.job && h.job.res) delete OFC.res[h.job.res];
+  h.job = job; if (job.res) OFC.res[job.res] = h.k;
+  h.path = p; h.prog = 0; h.fr = 0; h.ft = 0; h.busy = false;
+  if (!p.length) { ofArrive(h); return true; }
+  h.st = "walk";
+  return true;
+}
+function ofArrive(h) {
+  const j = h.job || { kind: "desk" }, now = OFC.t;
+  h.path = []; h.prog = 0; h.fr = 0; h.ft = 0; h.since = now;
+  if (j.kind === "desk") {
+    const s = OF.seats[h.k]; h.st = "sit"; h.dir = s.d; h.pose = Math.random() < 0.72 ? "type" : "read";
+    h.until = now + orand(6, 17); h.nextPop = now + orand(1.2, 4);
+    if (j.carry) { h.emo = j.carry; h.emoUntil = now + 3.5; }
+    return;
+  }
+  if (j.kind === "meet") {
+    const s = OF.meet[h.k]; h.dir = s.d; h.meet = true;
+    if (h.k === "lead") { h.st = "stand"; } else { h.st = "sit"; h.pose = "idle"; }
+    return;
+  }
+  if (j.kind === "poi") {
+    h.st = "stand"; h.dir = j.d; h.until = now + orand(3.2, 6.5);
+    ofBub(h, opick(ofSayAt(j.k)), 3.2);
+    return;
+  }
+  if (j.kind === "sofa") { h.st = "sit"; h.pose = "idle"; h.dir = j.d; h.until = now + orand(6, 11); ofBub(h, opick(ofSayAt(j.tv ? "tv" : "sofa")), 3.2); return; }
+  if (j.kind === "pair") {
+    h.st = "sit"; h.pose = "idle"; h.dir = j.d; h.until = now + 12;
+    const o = OFC.ch[j.with];
+    if (o && o.job && o.job.kind === "pair" && o.st === "sit") ofTalk(h, o, 2);
+    return;
+  }
+  if (j.kind === "chat") {
+    const o = OFC.ch[j.with];
+    h.st = "stand"; h.until = now + 12;
+    if (!o || o.st !== "sit" || !o.job || o.job.kind !== "desk" || o.busy) { h.until = now + 0.5; return; }
+    h.dir = ofFace(h, o); o.busy = true; o.dir = ofFace(o, h); o.pose = "idle";
+    ofTalk(h, o, 1);
+  }
+}
+function ofTalk(a, b, rounds) {   // 두 사람이 번갈아 말한다
+  const L = [];
+  for (let i = 0; i < rounds; i++) {
+    const r1 = ofReport(a.k); L.push([a, r1.text, 2.8]); L.push([b, opick(OREPLY[r1.tone] || OREPLY.info), 1.9]);
+    if (rounds > 1) { const r2 = ofReport(b.k); L.push([b, r2.text, 2.8]); L.push([a, opick(OREPLY[r2.tone] || OREPLY.info), 1.9]); }
+  }
+  OFC.conv.push({ a, b, L, i: -1, t: 0 });
+}
+function ofConvUpdate(dt) {
+  OFC.conv = OFC.conv.filter(cv => {
+    if (OFC.mode !== "life") { ofEndConv(cv); return false; }
+    cv.t -= dt;
+    if (cv.t > 0) return true;
+    cv.i++;
+    if (cv.i >= cv.L.length) { ofEndConv(cv); return false; }
+    const [who, text, dur] = cv.L[cv.i];
+    ofBub(who, text, dur + 0.2); cv.t = dur;
+    return true;
+  });
+}
+function ofEndConv(cv) {
+  const { a, b } = cv, now = OFC.t;
+  if (b.busy) { b.busy = false; if (b.job && b.job.kind === "desk") { b.dir = OF.seats[b.k].d; b.pose = "type"; b.until = Math.max(b.until, now + orand(3, 8)); } }
+  for (const h of [a, b]) if (h.job && (h.job.kind === "chat" || h.job.kind === "pair")) h.until = now + orand(0.3, 1.2);
+}
+function ofErrand(h, away = 0) {   // 자리에서 일어나 어디로 갈지
+  const pref = OPREF[h.k] || { chat: 1 }, kinds = Object.keys(pref), tot = kinds.reduce((s, k) => s + pref[k], 0);
+  for (let tries = 0; tries < 4; tries++) {
+    let x = Math.random() * tot, kind = kinds[0];
+    for (const k of kinds) { x -= pref[k]; if (x <= 0) { kind = k; break; } }
+    if (kind === "chat") {
+      const cand = Object.values(OFC.ch).filter(o => o !== h && !o.busy && o.st === "sit" && o.job && o.job.kind === "desk" && !OFC.conv.some(c => c.a === o || c.b === o));
+      if (!cand.length) continue;
+      const o = opick(cand), s = OF.seats[o.k];
+      const spots = [[s.c - 1, s.r], [s.c + 1, s.r]].filter(([c, r]) => ofFree(c, r) && !OFC.res["t" + c + "," + r]);
+      if (!spots.length) continue;
+      const [c, r] = opick(spots);
+      if (ofGo(h, c, r, { kind: "chat", with: o.k, res: "t" + c + "," + r })) return;
+    } else if (kind === "pair") {
+      if (away >= 2) continue;   // 둘이 한꺼번에 자리를 뜨니 한가할 때만
+      const cand = Object.values(OFC.ch).filter(o => o !== h && !o.busy && o.st === "sit" && o.job && o.job.kind === "desk");
+      if (!cand.length || OFC.res.pair0 || OFC.res.pair1) continue;
+      const o = opick(cand), [p0, p1] = OF.pairs;
+      if (ofGo(h, p0.c, p0.r, { kind: "pair", with: o.k, d: p0.d, res: "pair0" })) { ofGo(o, p1.c, p1.r, { kind: "pair", with: h.k, d: p1.d, res: "pair1" }); return; }
+    } else if (kind === "sofa" || kind === "tv") {
+      const seats = OF.sofa.map((s, i) => [s, i]).filter(([s, i]) => !OFC.res["sofa" + i] && (kind === "sofa" || s.d === "up"));
+      if (!seats.length) continue;
+      const [s, i] = opick(seats);
+      if (ofGo(h, s.c, s.r, { kind: "sofa", d: s.d, tv: kind === "tv" || s.d === "up", res: "sofa" + i })) return;
+    } else {
+      const ps = OF.pois.filter(p => p.k === kind && !OFC.res[p.id]);
+      if (!ps.length) continue;
+      const p = opick(ps);
+      if (ofGo(h, p.c, p.r, { kind: "poi", k: p.k, d: p.d, id: p.id, res: p.id, carry: kind === "coffee" ? "☕" : kind === "vending" ? "🥤" : kind === "water" ? "💧" : "" })) return;
+    }
+  }
+  h.until = OFC.t + orand(2, 4);
+}
+function ofDirector() {
+  if (OFC.mode !== "life" || OFC.t < OFC.nd) return;
+  OFC.nd = OFC.t + 0.35;
+  const hs = Object.values(OFC.ch), now = OFC.t;
+  let away = hs.filter(h => !(h.job && h.job.kind === "desk") || h.st === "walk").length;
+  for (const h of hs) {
+    if (h.busy || h.st === "walk" || now < h.until) continue;
+    const j = h.job || {};
+    if (j.kind === "desk") {
+      if (away >= (Math.random() < 0.35 ? 4 : 3)) { h.until = now + orand(2, 5); continue; }   // 자리를 비운 사람은 보통 3명까지(가끔 4명)
+      ofErrand(h, away);
+      if (!(h.job && h.job.kind === "desk")) away += h.job && h.job.kind === "pair" ? 2 : 1;   // 이번 차례에 자리 뜬 사람도 센다
+    } else if (j.kind === "chat" || j.kind === "pair") {
+      if (OFC.conv.some(c => c.a === h || c.b === h)) continue;
+      ofGo(h, OF.seats[h.k].c, OF.seats[h.k].r, { kind: "desk" });
+    } else {
+      if (away < 3 && Math.random() < 0.22) ofErrand(h, away); else ofGo(h, OF.seats[h.k].c, OF.seats[h.k].r, { kind: "desk", carry: j.carry });
+    }
+  }
+  if (away < 2) {   // 늘 두 명쯤은 움직이게
+    const idle = hs.filter(h => !h.busy && h.st === "sit" && h.job && h.job.kind === "desk" && now - h.since > 3);
+    if (idle.length) ofErrand(opick(idle));
+  }
+}
+function ofCat(dt) {
+  const k = OFC.cat; if (!k) return;
+  k.ft += dt;
+  if (k.st === "walk") {
+    if (k.ft >= 0.16) { k.ft -= 0.16; k.fr = (k.fr + 1) % 3; }
+    if (!k.path.length) { k.st = "idle"; k.until = OFC.t + orand(3, 9); k.fr = 0; return; }
+    const [nc, nr] = k.path[0];
+    k.dir = nc > k.c ? "right" : nc < k.c ? "left" : nr > k.r ? "down" : "up";
+    k.prog += (30 / 16) * dt;
+    const a = ofTile(k.c, k.r), b = ofTile(nc, nr), p = Math.min(1, k.prog);
+    k.x = a.x + (b.x - a.x) * p; k.y = a.y + (b.y - a.y) * p;
+    if (k.prog >= 1) { k.c = nc; k.r = nr; k.path.shift(); k.prog -= 1; }
+  } else {
+    if (k.ft >= 0.45) { k.ft -= 0.45; k.fr = (k.fr + 1) % 3; }
+    if (OFC.t > k.until) {
+      const hs = Object.values(OFC.ch), near = Math.random() < 0.45 && hs.length ? opick(hs) : null;
+      let c, r, n = 0;
+      do { c = near ? near.c + Math.round(orand(-2, 2)) : 1 + Math.floor(Math.random() * (OF.cols - 2)); r = near ? near.r + Math.round(orand(-1, 2)) : 2 + Math.floor(Math.random() * (OF.rows - 2)); n++; }
+      while (!ofFree(c, r) && n < 30);
+      const p = ofFree(c, r) ? ofPath(k.c, k.r, c, r) : null;
+      if (p && p.length) { k.path = p; k.prog = 0; k.st = "walk"; } else k.until = OFC.t + 2;
+    }
+  }
+}
+function ofUpdate(dt) {
+  OFC.t += dt;
+  const now = OFC.t;
+  for (const h of Object.values(OFC.ch)) {
+    h.ft += dt;
+    if (h.st === "walk") {
+      if (h.ft >= 0.15) { h.ft -= 0.15; h.fr = (h.fr + 1) % 4; }
+      if (!h.path.length) { ofArrive(h); continue; }
+      const [nc, nr] = h.path[0];
+      h.dir = nc > h.c ? "right" : nc < h.c ? "left" : nr > h.r ? "down" : "up";
+      h.prog += (OSPD * (h.fast ? 1.7 : 1) / 16) * dt;
+      const a = ofTile(h.c, h.r), b = ofTile(nc, nr), p = Math.min(1, h.prog);
+      h.x = a.x + (b.x - a.x) * p; h.y = a.y + (b.y - a.y) * p;
+      if (h.prog >= 1) { h.c = nc; h.r = nr; h.x = b.x; h.y = b.y; h.path.shift(); h.prog -= 1; if (!h.path.length) ofArrive(h); }
+    } else if (h.st === "sit") {
+      const talking = OFC.spk === h.k, per = talking ? 0.22 : h.pose === "read" ? 0.6 : 0.3;
+      if (h.ft >= per) { h.ft -= per; h.fr = (h.fr + 1) % 2; }
+      if (OFC.mode === "life" && h.job && h.job.kind === "desk" && !h.busy && now > (h.fid || 0)) {   // 일하다가 자세를 바꾸거나 혼잣말
+        h.fid = now + orand(4, 9);
+        if (h.fid0) { h.pose = h.pose === "type" ? (Math.random() < 0.6 ? "read" : "type") : "type"; if (Math.random() < 0.18 && !h.emo) { h.emo = opick(ofTime() === "night" ? ["😪", "🥱", "☕"] : ["💭", "🤔", "🎵", "💡"]); h.emoUntil = now + 2.2; } }
+        h.fid0 = 1;
+      }
+    } else if (h.st === "stand" && OFC.mode === "life" && h.job && h.job.kind === "poi" && now > (h.look || 0)) {   // 서서 두리번
+      h.look = now + orand(1.6, 3.2);
+      if (h.lookBack) { h.dir = h.job.d; h.lookBack = 0; } else if (Math.random() < 0.45) { h.dir = opick(["left", "right", "down"].filter(d => d !== h.job.d)); h.lookBack = 1; }
+    }
+    if (h.hop > 0) h.hop = Math.max(0, h.hop - dt);
+    if (h.bub && now > h.bubUntil) ofBub(h, "");
+    if (h.emo && now > h.emoUntil) h.emo = "";
+    if (OFC.mode === "life" && h.st === "sit" && h.job && h.job.kind === "desk" && !h.busy && now > h.nextPop) {
+      h.nextPop = now + orand(3.2, 7.5);
+      if (OFC.pops < 3) { const md = ((M && M.mood) || {})[h.k] || {}; ofPop(h, md.bad && Math.random() < 0.25 ? "💦" : md.good && Math.random() < 0.3 ? "✨" : opick(OICON[h.k] || ["✨"]), true); }
+    }
+  }
+  if (OFC.mode === "meet" && OFC.gcb) {
+    const all = Object.values(OFC.ch).every(h => h.meet);
+    if (all || now - OFC.gt > 7) { const cb = OFC.gcb; OFC.gcb = null; cb(); }
+  }
+  ofConvUpdate(dt);
+  ofDirector();
+  ofCat(dt);
+  if (OFC.fx.length) OFC.fx = OFC.fx.filter(p => { p.t += dt; p.vy += 120 * dt; p.x += p.vx * dt; p.y += p.vy * dt; return p.t < p.life; });
+}
+
+function ofTvVals() {   // TV: 최근 7일 전체 채널 조회 증가(막대)
+  const S = (D.series || {}).by_channel || {}, n = ((D.series || {}).dates || []).length, sum = new Array(n).fill(0);
+  Object.values(S).forEach(c => (c.views || []).forEach((v, i) => { if (i < n) sum[i] += v || 0; }));
+  return sum.slice(-7).length ? sum.slice(-7) : [1, 2, 3, 2, 4, 3, 5];
+}
+/* ── 그리기 ── */
+function ofSky(tm) { return { morning: ["#9fd4f7", "#d9f0ff"], day: ["#79bdf2", "#bfe3ff"], evening: ["#f08a5d", "#f9c784"], night: ["#0b1633", "#1c2c55"] }[tm]; }
+function ofDraw() {
+  const cx = OFC.cx, Z = OFC.z, S = OF.sprites, A = OFC.img, tm = ofTime(), now = OFC.t;
+  cx.imageSmoothingEnabled = false;
+  cx.fillStyle = "#12141c"; cx.fillRect(0, 0, OFC.cv.width, OFC.cv.height);
+  const [s0, s1] = ofSky(tm);
+  for (const [gx, gy, gw, gh] of OF.glass) {
+    const g = cx.createLinearGradient(0, gy * Z, 0, (gy + gh) * Z); g.addColorStop(0, s0); g.addColorStop(1, s1);
+    cx.fillStyle = g; cx.fillRect(gx * Z, gy * Z, gw * Z, gh * Z);
+    cx.fillStyle = tm === "night" ? "#ffd86b" : tm === "evening" ? "rgba(255,240,200,.8)" : "rgba(255,255,255,.85)";
+    const seed = gx * 7 + gy;
+    if (tm === "night") { for (let i = 0; i < 5; i++) { const x = gx + 2 + ((seed * (i + 3) * 13) % (gw - 4)), y = gy + gh - 2 - ((seed * (i + 5)) % 5); cx.fillRect(x * Z, y * Z, Z, Z); } }
+    else { const cxp = gx + 3 + ((seed + Math.floor(now * 1.5)) % (gw + 6)) - 6; for (const [dx, dy, w] of [[0, 3, 5], [1, 2, 3], [-1, 4, 7]]) { const x0 = Math.max(gx, cxp + dx), x1 = Math.min(gx + gw, cxp + dx + w); if (x1 > x0) cx.fillRect(x0 * Z, (gy + dy) * Z, (x1 - x0) * Z, Z); } }
+  }
+  cx.drawImage(OFC.bg, 0, 0, OF.w * Z, OF.h * Z);
+  const dr = [];
+  const busyPc = {};
+  for (const h of Object.values(OFC.ch)) if (h.st === "sit" && h.job && h.job.kind === "desk") busyPc[h.k] = 1;
+  const pcIdx = {}; for (const k in OF.pcs) pcIdx[OF.pcs[k]] = k;
+  const printing = Object.values(OFC.ch).some(h => h.st === "stand" && h.job && h.job.k === "printer");
+  OF.furniture.forEach((f, i) => {
+    let s = f.s;
+    if (pcIdx[i] !== undefined && busyPc[pcIdx[i]]) s = "PC_FRONT_ON_" + (1 + (Math.floor(now / 0.2) + i) % 3);
+    if (i === OF.printer && printing) s = "PRINTER_" + (1 + Math.floor(now / 0.35) % 2);
+    dr.push([f.z, 0, f, s]);
+  });
+  for (const h of Object.values(OFC.ch)) dr.push([h.y + 8.5, 1, h]);
+  if (OFC.cat) dr.push([OFC.cat.y + 8.2, 2, OFC.cat]);
+  dr.sort((a, b) => a[0] - b[0]);
+  const blit = (name, sx, sy, sw, sh, x, y, flip) => {
+    const r = S[name]; if (!r) return;
+    const dx = Math.round(x * Z), dy = Math.round(y * Z);
+    if (flip) { cx.save(); cx.translate(dx + sw * Z, dy); cx.scale(-1, 1); cx.drawImage(A, r[0] + sx, r[1] + sy, sw, sh, 0, 0, sw * Z, sh * Z); cx.restore(); }
+    else cx.drawImage(A, r[0] + sx, r[1] + sy, sw, sh, dx, dy, sw * Z, sh * Z);
+  };
+  for (const d of dr) {
+    if (d[1] === 0) { const f = d[2], r = S[d[3]]; if (r) blit(d[3], 0, 0, r[2], r[3], f.x, f.y, !!f.m); continue; }
+    if (d[1] === 2) {
+      const k = d[2], horiz = k.dir === "left" || k.dir === "right";
+      const col = k.st === "walk" ? k.fr : 3 + k.fr, row = k.dir === "up" ? 1 : horiz ? 2 : 0;
+      cx.fillStyle = "rgba(0,0,0,.18)"; cx.fillRect(Math.round((k.x - 4) * Z), Math.round((k.y + 5) * Z), 8 * Z, 2 * Z);
+      if (horiz) blit("cat", (k.st === "walk" ? k.fr : 0) * 32, 64, 32, 32, k.x - 16, k.y + 8 - 32, k.dir === "left");
+      else blit("cat", (k.st === "walk" ? k.fr : Math.min(col, 5)) * 16, row * 32, 16, 32, k.x - 8, k.y + 8 - 32, false);
+      continue;
+    }
+    const h = d[2], sit = h.st === "sit", row = OROW[h.dir];
+    let col = 1;
+    if (h.st === "walk") col = [0, 1, 2, 1][h.fr];
+    else if (sit) col = h.pose === "read" ? 5 + h.fr : (h.pose === "type" || OFC.spk === h.k) ? 3 + h.fr : 3;
+    const hop = h.hop > 0 ? Math.round(Math.sin((h.hop / 0.5) * Math.PI) * 4) : (OFC.spk === h.k && !sit ? (Math.floor(now / 0.28) % 2) : 0);
+    const bob = h.st === "walk" && (h.fr === 1 || h.fr === 3) ? 0 : 0;
+    if (!sit) { cx.fillStyle = "rgba(0,0,0,.2)"; cx.fillRect(Math.round((h.x - 5) * Z), Math.round((h.y + 6) * Z), 10 * Z, 2 * Z); cx.fillRect(Math.round((h.x - 4) * Z), Math.round((h.y + 5) * Z), 8 * Z, 4 * Z); }
+    if (OFC.sel === h.k) { cx.fillStyle = "rgba(255,255,255,.9)"; const ty = h.y - 27 + (sit ? OF.char.sit : 0) - hop - 3 - (Math.floor(now * 3) % 2); cx.fillRect(Math.round((h.x - 1) * Z), Math.round(ty * Z), 3 * Z, Z); cx.fillRect(Math.round(h.x * Z), Math.round((ty + 1) * Z), Z, Z); }
+    blit("char_" + h.k, col * 16, row * 32, 16, 32, h.x - 8, h.y + (sit ? OF.char.sit : 0) - 32 - hop - bob, h.dir === "left");
+  }
+  for (const p of OFC.fx) { cx.fillStyle = p.c; cx.globalAlpha = Math.max(0, 1 - p.t / p.life); cx.fillRect(Math.round(p.x) * Z, Math.round(p.y) * Z, Z * 2, Z); }
+  cx.globalAlpha = 1;
+  // 사장님 의자 불빛(회의 중 사장님을 부를 때)
+  if (OFC.ask && OF.meet.boss) {
+    const b = OF.meet.boss, a = 0.35 + 0.25 * Math.sin(now * 6);
+    cx.strokeStyle = `rgba(255,200,61,${a + 0.3})`; cx.lineWidth = Math.max(2, Z);
+    cx.strokeRect((b.c * 16 - 1) * Z, (b.r * 16 - 6) * Z, 18 * Z, 22 * Z);
+  }
+  // 시계 바늘
+  if (OF.clock) {
+    const d = new Date(), [ccx, ccy] = OF.clock, hA = ((d.getHours() % 12) + d.getMinutes() / 60) / 12 * Math.PI * 2, mA = d.getMinutes() / 60 * Math.PI * 2;
+    cx.fillStyle = "#2b2d3a";
+    for (const [ang, len] of [[hA, 2.6], [mA, 3.8]]) for (let t = 0; t <= len; t += 0.5) cx.fillRect(Math.round(ccx + Math.sin(ang) * t - 0.5) * Z, Math.round(ccy - Math.cos(ang) * t - 0.5) * Z, Z, Z);
+  }
+  // TV 화면: 최근 조회 막대(전체 채널 합계)
+  if (OF.tv) {
+    const [tx, ty, tw, th] = OF.tv, vals = OFC.tvv || (OFC.tvv = ofTvVals()), mx = Math.max(1, ...vals);
+    const ph = Math.floor(now / 6) % 2;
+    cx.fillStyle = ph ? "#1b3a6b" : "#16325c"; cx.fillRect(tx * Z, ty * Z, tw * Z, th * Z);
+    const n = vals.length || 1, bw = Math.max(1, Math.floor((tw - 4) / n) - 1);
+    vals.forEach((v, i) => { const hh = Math.max(1, Math.round((th - 5) * v / mx * Math.min(1, (now % 6) / 1.2))); cx.fillStyle = i === n - 1 ? "#ffd166" : ["#5d95f3", "#3ddc84", "#ff7a00", "#ff5c8a"][i % 4]; cx.fillRect((tx + 2 + i * (bw + 1)) * Z, (ty + th - 2 - hh) * Z, bw * Z, hh * Z); });
+  }
+  // 밤·저녁 조명
+  if (tm === "night" || tm === "evening") {
+    cx.fillStyle = tm === "night" ? "rgba(8,14,40,.22)" : "rgba(255,120,40,.07)"; cx.fillRect(0, 0, OFC.cv.width, OFC.cv.height);
+    if (tm === "night") {
+      cx.globalCompositeOperation = "lighter";
+      for (const k in busyPc) {   // 켜진 모니터 불빛(동그랗게 번짐)
+        const f = OF.furniture[OF.pcs[k]], gx = (f.x + 8) * Z, gy = (f.y + 13) * Z, g = cx.createRadialGradient(gx, gy, Z, gx, gy, 17 * Z);
+        g.addColorStop(0, "rgba(120,210,255,.30)"); g.addColorStop(1, "rgba(120,210,255,0)");
+        cx.fillStyle = g; cx.fillRect(gx - 17 * Z, gy - 17 * Z, 34 * Z, 34 * Z);
+      }
+      cx.globalCompositeOperation = "source-over";
+    }
+  }
+}
+function ofOverlay() {   // 이름표·말풍선 위치(HTML — 글자가 흐려지지 않게)
+  const L = OFC.lay; if (!L) return;
+  const f = OFC.f;
+  for (const h of Object.values(OFC.ch)) {
+    const sit = h.st === "sit", hop = h.hop > 0 ? Math.sin((h.hop / 0.5) * Math.PI) * 4 : 0;
+    const E = OFC.els[h.k] || {}, tag = E.tag, bub = E.bub, emo = E.emo;
+    if (tag) {   // 이름표: 보통은 발밑, 회의실 옆자리에 앉으면 바깥쪽 옆(아래 사람을 가리지 않게). 말하는 쪽으로 고개를 돌려도 자리 방향 기준이라 안 움직인다
+      const sd = h.meet && sit && OF.meet[h.k] ? OF.meet[h.k].d : "", side = sd === "right" || sd === "left";
+      tag.style.transform = side ? `translate(${Math.round((h.x + (sd === "right" ? -8 : 8)) * f)}px,${Math.round((h.y - 4) * f)}px) translate(${sd === "right" ? "-100%" : "0"},-50%)`
+        : `translate(${Math.round(h.x * f)}px,${Math.round((h.y + 9) * f)}px) translateX(-50%)`;
+    }
+    const headY = h.y - 26 + (sit ? OF.char.sit : 0) - hop;
+    if (bub) {
+      if (h.bub) {
+        const w = h.bw || 80, hh = h.bh || 20, W = OF.w * f;
+        let left = h.x * f - w / 2; left = Math.max(2, Math.min(W - w - 2, left));
+        let top = headY * f - hh - 5; if (top < 1) top = 1;
+        bub.style.transform = `translate(${Math.round(left)}px,${Math.round(top)}px)`;
+        bub.style.setProperty("--tx", Math.round(Math.max(8, Math.min(w - 8, h.x * f - left))) + "px");
+      }
+    }
+    if (emo) { if (emo.textContent !== h.emo) emo.textContent = h.emo; if (h.emo) emo.style.transform = `translate(${Math.round((h.x + 6) * f)}px,${Math.round((headY + 2) * f)}px) translate(-50%,-100%)`; }
+  }
+  const b = L.querySelector(".oboss");
+  if (b && OF.meet.boss) { b.hidden = !OFC.ask; if (OFC.ask) b.style.transform = `translate(${Math.round((OF.meet.boss.c * 16 + 8) * f)}px,${Math.round((OF.meet.boss.r * 16 - 8) * f)}px) translate(-50%,-100%)`; }
+}
+function ofBub(h, text, dur) {
+  if (!h) return;
+  h.bub = text || ""; h.bubUntil = OFC.t + (dur || 3);
+  const el = (OFC.els[h.k] || {}).bub;
+  if (!el || !OFC.lay) return;
+  el.classList.toggle("spk", OFC.mode === "meet" && OFC.spk === h.k);
+  el.classList.toggle("dots", text === "…");
+  if (text) { if (el.textContent !== text) { el.textContent = text; h.bw = el.offsetWidth; h.bh = el.offsetHeight; } el.classList.add("on"); } else el.classList.remove("on");
+}
+function ofPop(h, emo, desk) {   // 머리 위(또는 책상 위)로 톡 떠오르는 아이콘
+  const L = OFC.lay; if (!L || !emo) return;
+  const f = OFC.f, el = document.createElement("div");
+  el.className = "opop" + (desk ? " desk" : ""); el.textContent = emo;
+  const x = desk ? h.x + 7 : h.x, y = desk ? h.y - 20 : h.y - 28 + (h.st === "sit" ? OF.char.sit : 0);
+  el.style.left = Math.round(x * f) + "px"; el.style.top = Math.round(y * f) + "px";
+  L.appendChild(el); OFC.pops++;
+  setTimeout(() => { el.remove(); OFC.pops = Math.max(0, OFC.pops - 1); }, 1700);
+}
+function ofSize() {   // 정수 배율(픽셀이 고르게): 기기 픽셀 기준으로 가장 큰 정수 배율, 화면 높이 72% 이하
+  const w = OFC.wrap, cv = OFC.cv; if (!w || !cv) return;
+  const dpr = window.devicePixelRatio || 1, avail = Math.max(200, w.parentElement.clientWidth);
+  const zw = Math.floor(avail * dpr / OF.w + 0.12), zh = Math.floor(window.innerHeight * 0.72 * dpr / OF.h + 0.12);
+  const Z = Math.max(1, Math.min(zw, Math.max(2, zh)));
+  let cssW = OF.w * Z / dpr; const k = cssW > avail ? avail / cssW : 1; cssW *= k;
+  OFC.z = Z; OFC.f = cssW / OF.w;
+  cv.width = OF.w * Z; cv.height = OF.h * Z;
+  cv.style.width = cssW + "px"; cv.style.height = OF.h * OFC.f + "px";
+  w.style.width = cssW + "px";
+  w.style.setProperty("--fs", Math.max(10.5, Math.min(14, 7 + 3.2 * OFC.f)) + "px");
+  w.style.setProperty("--ft", Math.max(9, Math.min(12, 6.5 + 2.4 * OFC.f)) + "px");
+  OFC.cx = cv.getContext("2d");
+}
+function ofFrame(ts) {
+  if (!OFC.run) return;
+  const dt = Math.min(0.1, Math.max(0, (ts - (OFC.last || ts)) / 1000)); OFC.last = ts;
+  ofUpdate(dt); ofDraw(); ofOverlay(); ofClock();
+  OFC.raf = requestAnimationFrame(ofFrame);
+}
+function ofClock() {
+  const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+  if (m === OFC.tmin) return; OFC.tmin = m;
+  const e = $("#ocm"); if (e) e.textContent = `${Object.keys(OFC.ch || {}).length}명 출근 · 🕒 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+function ofRun(on) {
+  if (!OF || !OFC.ready || !OFC.cv) return;
+  if (on && !OFC.run && !document.hidden) {
+    if (calm()) { ofDraw(); ofOverlay(); ofClock(); return; }   // 움직임 줄이기: 한 장만
+    OFC.run = true; OFC.last = 0; OFC.raf = requestAnimationFrame(ofFrame);
+  } else if (!on && OFC.run) { OFC.run = false; cancelAnimationFrame(OFC.raf); }
+}
+function ofStop() {
+  ofRun(false);
+  if (OFC.io) { OFC.io.disconnect(); OFC.io = null; }
+  if (OFC.vis) { document.removeEventListener("visibilitychange", OFC.vis); OFC.vis = null; }
+  if (OFC.ro) { window.removeEventListener("resize", OFC.ro); OFC.ro = null; }
+  OFC.cv = OFC.cx = OFC.wrap = OFC.lay = null; OFC.sel = null; OFC.els = {}; OFC.pops = 0;
+}
+function ofMount(onReady) {   // 회의실 화면이 그려진 뒤: 그림을 불러오고 캔버스를 붙인다
+  if (!OF) { if (onReady) onReady(); return; }
+  OFC.wrap = $("#ofw"); OFC.cv = $("#ofc"); OFC.lay = $("#ofl");
+  if (!OFC.wrap || !OFC.cv) { if (onReady) onReady(); return; }
+  OFC.els = {};
+  OFC.lay.querySelectorAll("[data-w]").forEach(e => { const E = OFC.els[e.dataset.w] || (OFC.els[e.dataset.w] = {}); E[e.classList.contains("otag") ? "tag" : e.classList.contains("obub") ? "bub" : "emo"] = e; });
+  const start = () => {
+    if (!OFC.cv) return;
+    if (!OFC.ch) ofInit();
+    OFC.ready = true; ofSize();
+    Object.values(OFC.ch).forEach(h => { if (h.bub) ofBub(h, h.bub, Math.max(0.5, h.bubUntil - OFC.t)); });
+    OFC.ro = () => { ofSize(); if (!OFC.run) { ofDraw(); ofOverlay(); } }; window.addEventListener("resize", OFC.ro);
+    OFC.vis = () => ofRun(!document.hidden); document.addEventListener("visibilitychange", OFC.vis);
+    if ("IntersectionObserver" in window) { OFC.io = new IntersectionObserver(es => es.forEach(e => ofRun(e.isIntersecting)), { threshold: 0.05 }); OFC.io.observe(OFC.wrap); }
+    ofRun(true); if (!OFC.run) { ofDraw(); ofOverlay(); }
+    OFC.cv.onclick = ofClick;
+    if (onReady) onReady();
+  };
+  if (OFC.img && OFC.bg && OFC.img.complete && OFC.bg.complete) return start();
+  let n = 0; const done = () => { if (++n === 2) start(); };
+  OFC.img = new Image(); OFC.bg = new Image();
+  OFC.img.onload = OFC.bg.onload = done;
+  OFC.img.onerror = OFC.bg.onerror = () => { const w = $("#ofw"); if (w) w.classList.add("off"); if (onReady) onReady(); };
+  OFC.img.src = OF.atlas; OFC.bg.src = OF.bg;
+}
+function ofClick(e) {   // 캐릭터를 누르면 그 사람 오늘 보고·담당 화면
+  const r = OFC.cv.getBoundingClientRect(), x = (e.clientX - r.left) / OFC.f, y = (e.clientY - r.top) / OFC.f;
+  let hit = null, best = -1;
+  for (const h of Object.values(OFC.ch)) {
+    const sit = h.st === "sit" ? OF.char.sit : 0;
+    if (x >= h.x - 7 && x <= h.x + 7 && y >= h.y + sit - 28 && y <= h.y + sit + 2 && h.y > best) { hit = h; best = h.y; }
+  }
+  if (!hit && OFC.cat && Math.abs(x - OFC.cat.x) < 8 && y > OFC.cat.y - 14 && y < OFC.cat.y + 6) { ofPop(OFC.cat, "❤️"); return; }
+  if (!hit) { const s = Object.entries(OF.seats).find(([k, s]) => x >= (s.c - 1) * 16 && x < (s.c + 2) * 16 && y >= (s.r - 2) * 16 && y < s.r * 16); if (s) hit = OFC.ch[s[0]]; }
+  ofCard(hit ? hit.k : null);
+}
+function ofCard(k) {
+  const c = $("#ofpop"); if (!c) return;
+  OFC.sel = k;
+  if (!k) { c.hidden = true; return; }
+  const x = STAFF[k] || {}, rp = ((M && M.reports) || {})[k] || [], h = OFC.ch[k];
+  c.innerHTML = `<button type="button" class="ox" aria-label="닫기">✕</button><div class="oh">${face(k)}<div><b>${esc(x.name || "")}</b> <span>${esc(x.role || "")}</span>${x.motto ? `<div class="om">“${esc(x.motto)}”</div>` : ""}</div></div>
+    ${rp.slice(0, 3).map(l => `<div class="orp">${toneTag(l.tone)} ${md(l.text)} ${golink(l.link, "›")}</div>`).join("") || '<div class="orp muted">오늘은 따로 보고할 게 없어요</div>'}
+    <div class="otb">${(x.tabs || []).filter(([, hh]) => hh !== "#team").map(([l, hh]) => `<a class="chip" href="${esc(hh)}">${esc(l)}</a>`).join("")}</div>`;
+  c.hidden = false;
+  c.querySelector(".ox").onclick = () => ofCard(null);
+  if (h && OFC.mode === "life" && !h.bub) ofBub(h, x.motto ? ocut(x.motto, 24) : "안녕하세요! 🙂", 2.6);
+}
+/* 회의 ↔ 사무실 */
+function ofGather(cb) {   // 회의 시작: 모두 회의실 자리로 걸어간다
+  if (!OF || !OFC.ch || calm()) { if (cb) cb(); return; }
+  OFC.mode = "meet"; OFC.spk = null; OFC.conv.forEach(ofEndConv); OFC.conv = []; OFC.res = {};
+  ofCard(null);
+  Object.values(OFC.ch).forEach((h, i) => {
+    h.busy = false; h.meet = false; ofBub(h, "");
+    const s = OF.meet[h.k]; if (!s) { h.meet = true; return; }
+    h.fast = true;
+    setTimeout(() => { if (OFC.mode === "meet" && !h.meet) ofGo(h, s.c, s.r, { kind: "meet" }); }, i * 180);
+  });
+  OFC.gt = OFC.t; OFC.gcb = cb || null;
+  if (cb) setTimeout(() => { if (OFC.gcb === cb) { OFC.gcb = null; cb(); } }, 8500);
+  const lv = $("#mlive"); if (lv) { lv.textContent = "● 회의 중"; lv.classList.remove("end", "work"); }
+}
+function ofSpeak(who, tone, talk) {
+  if (!OF || !OFC.ch) return;
+  OFC.spk = talk ? (who === "all" ? "lead" : who) : null;
+  const sp = OFC.ch[who === "all" ? "lead" : who];
+  for (const h of Object.values(OFC.ch)) {
+    if (!h.meet || h.st === "walk") continue;
+    if (sp && h !== sp) h.dir = ofFace(h, sp);
+    else if (h === sp && h.k === "lead") h.dir = "down";
+  }
+  if (!talk) for (const h of Object.values(OFC.ch)) { const el = (OFC.els[h.k] || {}).bub; if (el) el.classList.remove("spk"); }
+  if (talk && who === "all") Object.values(OFC.ch).forEach((h, i) => setTimeout(() => { h.hop = 0.5; }, i * 90));
+}
+function ofLine(who, text, typing) {   // 말하는 사람 머리 위 말풍선(자막과 같은 글)
+  if (!OF || !OFC.ch) return;
+  const h = OFC.ch[who === "all" ? "lead" : who]; if (!h) return;
+  for (const o of Object.values(OFC.ch)) if (o !== h && o.bub && OFC.mode === "meet") ofBub(o, "");
+  ofBub(h, typing ? "…" : ocut(text, OFC.f < 1.4 ? 34 : 60), 30);
+}
+function ofConfetti(cx0, cy0, n) {   // 색종이(캔버스 픽셀)
+  if (calm()) return;
+  const cols = ["#ff5c8a", "#ffd166", "#3ddc84", "#5d95f3", "#ff7a00", "#b28dff"];
+  for (let i = 0; i < n; i++) OFC.fx.push({ x: cx0 + orand(-20, 20), y: cy0 + orand(-6, 6), vx: orand(-38, 38), vy: orand(-70, -25), c: opick(cols), t: 0, life: orand(1.1, 1.9) });
+}
+function ofReact(l) {
+  if (!OF || !OFC.ch) return;
+  const react = l.who === "all" ? Object.keys(STAFF).map(w => ["👋", w]) : (l.react || []);
+  if (react.filter(([e]) => /🎉|👏|🙌/.test(e)).length >= 3) { const sp0 = OFC.ch[l.who] || OFC.ch.lead; if (sp0) ofConfetti(sp0.x, sp0.y - 24, 46); }
+  react.forEach(([e, w], k) => setTimeout(() => { const h = OFC.ch[w]; if (!h) return; ofPop(h, e); if (/🎉|👏|🔥|🙌|💪|😄|👋/.test(e)) h.hop = 0.5; }, k * 200));
+}
+function ofAsk(on) { OFC.ask = !!on && !!OF; }
+function ofEndMeet() {   // 회의 끝: 흩어져 자리로
+  if (!OF || !OFC.ch) return;
+  const was = OFC.mode === "meet";
+  OFC.mode = "life"; OFC.spk = null; OFC.ask = false; OFC.gcb = null; OFC.res = {};
+  const lv = $("#mlive"); if (lv) { lv.textContent = "● 근무 중"; lv.classList.remove("end"); lv.classList.add("work"); }
+  Object.values(OFC.ch).forEach((h, i) => {
+    h.fast = false; h.meet = false; ofBub(h, "");
+    if (!was) return;
+    const s = OF.seats[h.k];
+    if (h.k === "lead") ofBub(h, "수고했어요! 👏", 2.4);
+    setTimeout(() => { if (OFC.mode === "life") ofGo(h, s.c, s.r, { kind: "desk" }); }, 500 + i * 260);
+  });
+}
+
 /* 소리로 듣기: 브라우저에 든 한국어 음성으로 읽는다(무료·토큰 0). 남자 음성이 없으면 같은 음성의 높낮이로 사람을 나눈다 */
 const TTS = { ok: typeof window !== "undefined" && "speechSynthesis" in window, voices: [] };
 const MALE = /injoon|hyunsu|bongjin|gookmin|minsu|jinho|male|남성/i;
@@ -709,24 +1138,26 @@ function bindMeeting() {
   const fb = call.querySelector("[data-mp=fast]"); if (fb) fb.setAttribute("aria-pressed", String(MP.fast));
   const sb = call.querySelector("[data-mp=sound]"); if (sb && MP.sound) { sb.setAttribute("aria-pressed", "true"); sb.textContent = "🔊 소리 켜짐"; }
   ttsLoad(); setTimeout(ttsLoad, 900); setTimeout(ttsLoad, 2500);   // 아이폰 사파리는 음성 목록이 늦게 온다
+  if (!OFC.vm) { OFC.vm = () => { if (document.hidden && MP.on) { mpStop(); mpBtn(); } }; document.addEventListener("visibilitychange", OFC.vm); }   // 한 번만 붙인다
   let seen = "";
   try { seen = localStorage.getItem(MEET_SEEN) || ""; } catch (e) {}
-  if ("IntersectionObserver" in window) {
-    const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) stripLive(false); else if (MP.on || !MP.ended) stripLive(true); }), { threshold: 0.2 });
-    io.observe(call);
-  }
-  document.addEventListener("visibilitychange", () => { if (document.hidden) { stripLive(false); if (MP.on) { mpStop(); mpBtn(); } } });
-  if (calm() || seen === meetSlot()) { mpEnd(); const mm = $("#mmin"); if (mm) mm.open = false; return; }   // 이미 본 회의면 회의록은 접어 둔다   // 이미 본 회의·움직임 줄이기 설정이면 회의록을 바로 다 보여 준다
-  try { localStorage.setItem(MEET_SEEN, meetSlot()); } catch (e) {}
   mpShow("all", false); mpProg();
-  MP.t = setTimeout(() => mpPlay(true), 700);
+  ofMount(() => {   // 사무실 그림이 준비되면
+    if (!$("#call")) return;
+    if (calm() || seen === meetSlot()) { mpEnd(); const mm = $("#mmin"); if (mm) mm.open = false; return; }   // 이미 본 회의·움직임 줄이기 설정이면 회의록을 접어 두고 사무실만
+    const go = () => { try { localStorage.setItem(MEET_SEEN, meetSlot()); } catch (e) {} MP.t = setTimeout(() => mpPlay(true), 1600); };   // 1초쯤 사무실을 보여 주고 회의 시작
+    if (!document.hidden) return go();
+    const v = () => { if (document.hidden) return; document.removeEventListener("visibilitychange", v); if ($("#call") && !MP.on && !MP.ended && !MP.i) go(); };
+    document.addEventListener("visibilitychange", v);   // 뒤 탭에서 열렸으면 화면을 볼 때 시작(안 보는 사이 회의가 흘러가지 않게)
+  });
 }
 function pageTeam() {
   if (!M) return `<h2 class="pt">👥 우리 마케팅팀</h2><div class="card"><div class="empty">다음 수집 때 팀이 채워져요</div></div>`;
-  return `<h2 class="pt">👥 우리 마케팅팀</h2><p class="pd">${Object.keys(STAFF).length}명이 대시보드 숫자를 나눠 맡아요. 말은 10분마다 새 숫자로 바뀌고, AI를 부르지 않아 토큰을 쓰지 않아요.${Object.values(STAFF).some(x => x.img || x.vid) ? " 얼굴은 AI로 만든 가상의 인물이에요." : ""}</p>
+  const walker = k => { const r = OF && OF.sprites["char_" + k]; return r ? `<span class="walker" style="--x:${r[0]};--y:${r[1]};background-image:url('${esc(OF.atlas)}');background-size:${OF.aw * 3}px ${OF.ah * 3}px" aria-hidden="true"></span>` : face(k, "lg m-good"); };
+  return `<h2 class="pt">👥 우리 마케팅팀</h2><p class="pd">${Object.keys(STAFF).length}명이 대시보드 숫자를 나눠 맡아요. 말은 10분마다 새 숫자로 바뀌고, AI를 부르지 않아 토큰을 쓰지 않아요. <a class="go" href="#summary">사무실에서 일하는 모습 보기 ›</a>${OF ? `<br><span style="font-size:11.5px">${esc(OF.credit)}</span>` : ""}</p>
   <div class="team">${Object.entries(STAFF).map(([k, x]) => {
     const rp = (M.reports || {})[k] || [], mood = (M.mood || {})[k] || {};
-    return `<section class="card staff"><div class="ptop">${face(k, "lg m-good")}<div><div class="t1">${esc(x.name)} <span class="t2">${esc(x.role)}</span></div>
+    return `<section class="card staff"><div class="ptop">${walker(k)}<div><div class="t1">${esc(x.name)} <span class="t2">${esc(x.role)}</span></div>
       <div class="t2">오늘 보고 ${rp.length}건${mood.good ? ` · 좋았던 점 ${mood.good}` : ""}${mood.bad ? ` · 아쉬운 점 ${mood.bad}` : ""}</div></div></div>
       ${x.motto ? `<div class="motto">“${esc(x.motto)}”</div>` : ""}<p class="desc">${esc(x.desc)}</p>
       ${rp.map(l => `<div class="rp">${toneTag(l.tone)} ${md(l.text)} ${golink(l.link, "›")}</div>`).join("") || '<div class="rp muted">오늘은 따로 보고할 게 없어요</div>'}
@@ -793,7 +1224,7 @@ function pageSummary() {
   const stat = (k, d, s) => `<div class="card stat"><div class="k">${k}</div><div class="v">${plus(d)}</div><div class="s">${s}</div></div>`;
   const hot = D.videos.filter(v => v.gain).sort((a, b) => b.gain - a.gain).slice(0, 5);
   const al = D.alerts.slice(0, 3);
-  return `<h2 class="pt">🏢 회의실</h2><p class="pd">마케팅팀 7명이 대시보드 숫자로 화상회의를 해요 · ${esc(D.updated.slice(5).replace("-", "/"))} 기준 · 새 회의(아침·오후·저녁)는 처음 열 때 한 번 틀어 드려요</p>
+  return `<h2 class="pt">🏢 회의실</h2><p class="pd">마케팅팀 ${Object.keys(STAFF).length || 7}명이 픽셀 사무실에서 일하다 회의실에 모여 회의해요 · 캐릭터를 누르면 오늘 보고 · ${esc(D.updated.slice(5).replace("-", "/"))} 기준 · 새 회의(아침·오후·저녁)는 처음 열 때 한 번 틀어 드려요</p>
   ${meetingHtml()}
   <div class="sec"><span>오늘 숫자</span><span class="more">모든 채널 합계</span></div>
   <div class="grid4">
@@ -1436,7 +1867,7 @@ function route() {
   const cur = MENU.some(m => m[0] === page) ? page : (page === "team" ? "team" : "summary");
   const nav = short => MENU.map(([k, ic, l, s]) => `<a href="#${k}" class="${k === cur || (cur === "team" && k === "summary") ? "on" : ""}"><span class="ic">${ic}</span>${short && s ? s : l}</a>`).join("");
   $("#tabs").innerHTML = nav(false); $("#bottom").innerHTML = nav(true);
-  mpStop();   // 다른 화면으로 가면 회의 재생·소리를 멈춘다
+  mpStop(); ofStop();   // 다른 화면으로 가면 회의 재생·소리·사무실 움직임을 멈춘다
   charts.forEach(c => c.destroy()); charts = [];
   const pages = { team: [pageTeam, () => {}], summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
     money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(a), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)] };
