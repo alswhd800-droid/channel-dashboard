@@ -20,3 +20,5 @@ staff/_원본/
 일정_자동갱신.log
 .일정.lock/
 .일정.pending
+topics/_demand_cache.json
+topics/_demand_block.json

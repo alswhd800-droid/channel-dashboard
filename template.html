@@ -186,7 +186,10 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .topic .ttl .ko{display:block;font-size:12.5px;font-weight:500;color:var(--sub);margin-top:2px}
 .copy{flex:none;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:8px;padding:3px 9px;font-size:11.5px;font-weight:600;cursor:pointer;min-height:28px}
 .copy.ok{color:var(--ok);border-color:var(--ok)}
-.sbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:9px}
+.sbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:8px;margin-top:9px}
+.topic .dm{margin-top:7px;font-size:12px;color:var(--sub);line-height:1.5}
+.topic .dm b{color:var(--ink)}
+.topic .dm a{color:var(--sub);text-decoration:underline;text-underline-offset:2px;margin-left:4px}
 .sbar div{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sbar b{color:var(--ink)}
 .sbar i{display:block;height:4px;border-radius:2px;background:var(--soft);margin-top:3px;overflow:hidden}
@@ -1612,7 +1615,14 @@ function afterHunt() {
 }
 
 /* ───────── 소재 추천 (소재추천.py, 맥에서 하루 2번) ───────── */
-const TLABEL = { korea: "한국 인지도", paradox: "역설", proof: "근거", visual: "화면" };
+const TLABEL = { hook: "자극", demand: "수요", korea: "한국 인지도", paradox: "역설", visual: "화면", proof: "근거" };
+// 점수 칸 순서: 추천 결과의 labels(총점 가중치 순서), 없으면 TLABEL
+const tkeys = (lab, obj) => Object.keys(lab).filter(k => obj && k in obj);
+const OLDW = { korea: 3, paradox: 2, proof: 2, visual: 1 };
+// 수요(유튜브 검색 실측): "최대 55.6만 · 상위 3개 중앙 12만 · 10만+ 4편"
+const demandLine = d => !d ? "" : d["측정"] === "실패" ? `<div class="dm">🔎 수요: 유튜브 검색 실패 — 측정 못 함(총점에서 뺐어요) · '${esc(d["검색어"] || "")}'</div>`
+  : d["측정"] === "생략" ? `<div class="dm">🔎 수요: 이번엔 검색 안 함(유튜브 막힘 방지 한도·쉬는 중) — 수요 1점으로 계산 · '${esc(d["검색어"] || "")}'</div>`
+  : `<div class="dm">🔎 유튜브 '${esc(d["검색어"] || "")}' 최대 <b>${man(d["최대"])}</b> · 상위 3개 중앙 ${man(d["중앙"])} · 10만+ ${d["10만+"] || 0}편${(d["예시"] || []).map((u, j) => `<a href="${esc(u)}" target="_blank" rel="noopener">예시${j + 1}</a>`).join("")}</div>`;
 const TFILTER = [["all", "전체"], ["new", "📰 최신 근거"], ["fu", "대박 편 후속"], ["memo", "제작 메모"], ["star", "⭐ 찜"]];
 // 찜: 이 브라우저에만 저장(새 추천이 나와도 남는다). 키 = 채널|소재
 const STAR_KEY = "dash_stars";
@@ -1628,19 +1638,21 @@ const splitKo = s => { const m = String(s || "").match(/^(.*\S)\s*\(([^()]*[가-
 function topicCard(t, i, lab, open, ch) {
   const s = t["점수"] || {};
   const [ti, ko] = splitKo(t["제목"]), [fs, fsKo] = splitKo(t["첫문장"]);
-  const bars = Object.keys(TLABEL).filter(k => k in s).map(k => `<div><span>${esc(lab[k])}</span> <b>${s[k]}</b><i><u style="width:${s[k] * 20}%"></u></i></div>`).join("");
+  const bars = tkeys(lab, s).map(k => s[k] === null ? `<div title="유튜브 검색 실패 — 총점에서 뺐어요"><span>${esc(lab[k])}</span> <b>–</b><i></i></div>`
+    : `<div><span>${esc(lab[k])}</span> <b>${s[k]}</b><i><u style="width:${s[k] * 20}%"></u></i></div>`).join("");
   const ev = (t["근거"] || []).map(e => `<a href="${esc(e.url)}" target="_blank" rel="noopener">↗ ${esc(e["메모"] || e.url)}</a>`).join("");
   const facts = (t["확인할_사실"] || []).map(x => `<li>${esc(x)}</li>`).join("");
   const memo = t["첫문장"] || t["보여줄_장면"] || facts || t["위험"];
   return `<article class="topic">
     <div class="hd"><div class="sc ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}<small>점</small></div>
       <div style="min-width:0;flex:1"><div class="nm">${i + 1}. ${esc(t["소재"])}</div>
-        <div class="tags">${kindTag(ch, t)}${pipeTag(ch, t)}${t["최신"] ? `<span class="tg new">📰 ${esc(String(t["최신"]).slice(5).replace("-", "/"))} 기사</span>` : ""}${t["후속"] ? '<span class="tg fu">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="tg">${esc(t["대상"])}</span>` : ""}</div></div></div>
+        <div class="tags">${kindTag(ch, t)}${pipeTag(ch, t)}${t["최신"] ? `<span class="tg new">📰 ${esc(String(t["최신"]).slice(5).replace("-", "/"))} 기사</span>` : ""}${t["후속"] ? '<span class="tg fu">대박 편 후속</span>' : ""}${t["만든_편"] ? `<span class="tg" title="예전에 만든 편과 같은 대상 — 자극·수요가 커서 남겼어요">↺ ${esc(String(t["만든_편"]).slice(0, 14))}</span>` : ""}${t["대상"] ? `<span class="tg">${esc(t["대상"])}</span>` : ""}</div></div></div>
     <div class="ttl"><div class="tx">${esc(ti)}${ko ? `<span class="ko">${esc(ko)}</span>` : ""}</div>
       <div class="acts"><button class="copy" type="button" data-copy="${esc(t["제목"] || "")}" aria-label="제목 복사">복사</button>
       <button class="star ${stars()[starKey(ch, t)] ? "on" : ""}" type="button" data-star="${esc(starKey(ch, t))}" data-ti="${i}" aria-label="찜" aria-pressed="${stars()[starKey(ch, t)] ? "true" : "false"}">${stars()[starKey(ch, t)] ? "★" : "☆"}</button></div></div>
     <p class="why">${esc(t["왜_터질까"])}</p>
     <div class="sbar">${bars}</div>
+    ${demandLine(t["수요"])}
     ${ev ? `<div class="ev">${ev}</div>` : ""}
     ${memo ? `<details class="memo"${open ? " open" : ""}><summary>제작 메모 · 첫 문장 · 장면 · 확인할 것</summary><div class="dl">
       ${t["첫문장"] ? `<div><div class="k">첫 문장</div>${esc(fs)}${fsKo ? `<div class="muted">${esc(fsKo)}</div>` : ""}</div>` : ""}
@@ -1713,9 +1725,11 @@ function pageTopics(want) {
     tk ? `<span class="pill">토큰 입력 <b>${man(tk.in)}</b> · 출력 <b>${man(tk.out)}</b></span>` : "",
     `<span class="pill">판단 <b>${esc(c.model || "-")}</b></span>`].join("");
   const seg = (key, opts, curv, cnt) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" data-${key}="${v}" class="${curv === v ? "on" : ""}">${l}${cnt ? ` <span class="muted">${n(v)}</span>` : ""}</button>`).join("")}</div>`;
-  const how = `<details class="how"><summary>ⓘ 어떻게 고르나</summary><p>${c.genre_n ? "<b>같은 장르 채널에서 지금 빨리 크는 영상</b>, " : ""}발굴 탭의 <b>평소보다 몇 배 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 30일 뉴스</b>(구글·빙), <b>구글 급상승 검색어</b>를 채널 공식으로 채점해요.
-    같은 대상은 2개까지, 최근 추천에 3번 넘게 나온 대상은 1개까지만 넣어요. 📰는 최근 14일 기사·검색어에 근거한 소재예요.${kinds.length ? ` 이 채널은 ${kinds.map(k => kindIcon(cur, k) + " " + esc(k) + " 최소 " + ((c.kinds[k] || {}).min || 0) + "개").join(" · ")}씩 자리를 남기고 나머지는 점수순으로 섞어요.` : ""}
-    총점 가중치: ${Object.keys(TLABEL).map(k => esc(lab[k]) + " ×" + (+(((c.calib || {}).weights || { korea: 3, paradox: 2, proof: 2, visual: 1 })[k])).toFixed(1).replace(".0", "")).join(" · ")} (우리 영상 성적으로 자동 보정). <b>숫자는 만들기 전에 꼭 확인</b>하세요.</p></details>`;
+  const W = (c.calib || {}).weights || OLDW;
+  const how = `<details class="how"><summary>ⓘ 어떻게 고르나</summary><p>${c.genre_n ? "<b>같은 장르 채널에서 지금 빨리 크는 영상</b>, " : ""}발굴 탭의 <b>평소보다 몇 배 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>을 보고 AI가 후보 ${c.candidates || 30}개를 골라요.
+    <b>자극</b>은 우리 채널에서 실제로 터진 편·안 된 편을 기준점으로 AI가 매기고(5점은 3개까지), <b>수요</b>는 AI가 아니라 소재마다 유튜브를 검색해 실제 조회수로 재요. 뉴스(최근 30일)·급상승 검색어는 '지금 다시 화제'라는 타이밍으로만 써요.
+    공정률·실적 발표 같은 금지 유형, 최근 7일 안에 만든 편의 대상·후속은 빼고, 같은 대상은 2개까지, 최근 추천에 3번 넘게 나온 대상은 1개까지만 넣어요. 📰는 최근 14일 기사·검색어에 근거한 소재예요.${c.dropped ? ` 이번에 뺀 것: ${Object.entries(c.dropped).map(([k, v]) => esc(k) + " " + v.length).join(" · ")}.` : ""}${kinds.length ? ` 이 채널은 ${kinds.map(k => kindIcon(cur, k) + " " + esc(k) + " 최소 " + ((c.kinds[k] || {}).min || 0) + "개").join(" · ")}씩 자리를 남기고 나머지는 점수순으로 섞어요.` : ""}
+    총점 가중치: ${tkeys(lab, W).map(k => esc(lab[k]) + " ×" + (+W[k]).toFixed(1).replace(".0", "")).join(" · ")} (수요 말고는 우리 영상 성적으로 자동 보정). <b>숫자는 만들기 전에 꼭 확인</b>하세요.</p></details>`;
   return `<h2 class="pt">🎯 소재 추천</h2><p class="pd">채널마다 ${all.length}개 · 매일 오전 7시·오후 3시에 새로 골라요</p>
     ${say("planner", `채널마다 소재 20개를 골라 뒀어요.${kinds.length ? ` ${esc(cur)}${jo2(cur, "은", "는")} ${kinds.map((k, j) => `<b>${kindIcon(cur, k)} ${esc(k)}</b>${j < kinds.length - 1 ? jo2(k, "과", "와") : jo2(k, "을", "를")}`).join(" ")} 섞었어요(위 칩으로 따로 보기).` : ""} <b>📰</b>는 최근 2주 기사·검색어가 근거, <b>☆</b>를 누르면 이 기기에 찜돼요. 만들 소재는 번호로 말씀해 주세요(예: <b>'${esc(cur)} 3위 만들어 줘'</b>) — <a href="#topics/제작">📋 제작 현황</a>에 올려서 끝까지 챙길게요.`)}
     ${chipRow(cur)}
@@ -1737,7 +1751,7 @@ function histBox(H) {
 }
 function calibCard(cal, lab = TLABEL) {
   if (!cal) return "";
-  const rows = Object.keys(TLABEL).map(k => {
+  const rows = tkeys(lab, cal.weights || OLDW).map(k => {
     const b = (cal.base || {})[k], w = (cal.weights || {})[k], r = (cal.corr || {})[k];
     const arrow = w > b ? '<span class="up">▲</span>' : w < b ? '<span class="down">▼</span>' : "";
     return `<div class="crow" style="grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr))"><span>${esc(lab[k])}</span><span>×${b}</span><span>×${(+w).toFixed(1).replace(".0", "")} ${arrow}</span><span class="muted">${r === undefined ? "고정" : (r >= 0 ? "+" : "") + r.toFixed(2)}</span></div>`;
