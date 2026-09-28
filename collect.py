@@ -456,8 +456,8 @@ def collect():
     # ⏰ 업로드 주기(2026-09-27): 평소 간격보다 늦어지기 시작하면 채널마다 한 번. 이미 오래 쉬는 채널(늦어진 지 이틀 넘음)은 조용히.
     for r in data["cadence"]["rows"]:
         if r["late"] and r["n"] >= 3 and r["late_by"] <= 2:
-            alert("cadence", r["name"], f"업로드가 늦어요: 마지막 업로드 {r['since']:.0f}일 전", f"평소 {r['target']:g}일마다 올렸어요 · 업로드 달력에서 확인",
-                  DASHBOARD_URL + "#insight/cadence", key=f"late|{r['name']}|{r['last']}")
+            alert("cadence", r["name"], f"업로드가 늦어요: 마지막 업로드 {r['since']:.0f}일 전", f"평소 {r['target']:g}일마다 올렸어요 · 업로드 일정에서 확인",
+                  DASHBOARD_URL + "#schedule", key=f"late|{r['name']}|{r['last']}")
 
     alerts["items"] = [a for a in alerts["items"] if a["t"] >= (now - timedelta(days=60)).isoformat()][:300]
     alerts["seen"] = sorted(seen)
@@ -720,10 +720,44 @@ def efficiency(chans, vids, hist, costs, weekly, now):
     return {"rows": rows, "focus": focus}
 
 
-def cadence(videos, now):
+def schedule(videos, now):
+    """📅 업로드 일정(2026-09-28): 일정.py(맥)가 편 폴더 업로드 기록에서 모은 schedule.json 중 아직 공개로 안 잡힌 것.
+    예약 영상은 비공개라 API 키로는 안 보여서 기록을 쓴다. 공개된 영상은 화면이 videos 에서 바로 그린다.
+    st: 예약(ID 있음·시각 전) · 공개중(시각이 막 지남 — 다음 수집 때 잡힘) · 계획(ID 없음 = 기록상 아직 안 올림) · 확인(시각이 지났는데 공개로 안 잡힘)"""
+    S = read_json(ROOT / "schedule.json", {})
+    pub = {}
+    for v in videos.values():
+        if v.get("public", True):
+            pub.setdefault((v["ch"], bool(v["short"])), []).append(parse_time(v["published"]))
+    items = []
+    for x in S.get("items") or []:
+        try:
+            t = datetime.strptime(x["t"], "%Y-%m-%d %H:%M").replace(tzinfo=KST)
+        except (KeyError, ValueError):
+            continue
+        v = videos.get(x.get("id") or "")
+        if v and v.get("public", True):
+            continue                                   # 공개됨 → videos 쪽에 있다
+        if not x.get("id") and any(abs((p - t).total_seconds()) <= 900 for p in pub.get((x["ch"], x.get("kind") == "쇼츠"), [])):
+            continue                                   # 계획한 시각에 같은 종류 영상이 공개됨
+        gone = (now - t).total_seconds() / 60
+        if gone > 3 * 1440:
+            continue                                   # 사흘 넘게 확인 안 된 기록은 접는다
+        st = ("예약" if x.get("id") else "계획") if gone < 0 else "공개중" if x.get("id") and gone <= 40 else "확인"
+        items.append({"ch": x["ch"], "t": x["t"], "kind": x.get("kind", "본편"), "ep": x.get("ep", ""), "id": x.get("id", ""), "st": st})
+    items.sort(key=lambda x: (x["t"], x["ch"]))
+    return {"at": S.get("at"), "items": items}
+
+
+def cadence(videos, now, sched=None):
     """업로드 주기: 채널마다 평소 간격(올린 날짜끼리 최근 10번 간격의 중앙값 — channels.json 의 every_days 가 있으면 그 값),
-    마지막 업로드, 늦어짐(평소의 1.5배 + 반나절을 넘김), 최근 28일 달력(날마다 [쇼츠, 본편] 편수)."""
+    마지막 업로드, 늦어짐(평소의 1.5배 + 반나절을 넘김 — 공개 예약이 걸려 있으면 늦음 아님), 최근 28일 달력(날마다 [쇼츠, 본편] 편수),
+    예약(next 가장 빠른 공개 예약 · until 가장 늦은 예약 · booked 개수)."""
     cfg = [e for e in read_json(ROOT / "channels.json", []) if e.get("name")]
+    booked = {}
+    for x in (sched or {}).get("items") or []:
+        if x["st"] in ("예약", "공개중"):
+            booked.setdefault(x["ch"], []).append(x["t"])
     dates = [(now - timedelta(days=27 - i)).astimezone(KST).strftime("%Y-%m-%d") for i in range(28)]
     by = {}
     for v in videos.values():
@@ -740,7 +774,8 @@ def cadence(videos, now):
         last = vs[-1][0] if vs else None
         since = round((now - last).total_seconds() / 86400, 1) if last else None
         limit = round(target * 1.5 + 0.5, 1) if target else None
-        late = bool(since is not None and limit and since > limit)
+        nb = sorted(booked.get(name, []))
+        late = bool(since is not None and limit and since > limit) and not nb
         count = {}
         for t, short in vs:
             d = t.astimezone(KST).strftime("%Y-%m-%d")
@@ -751,7 +786,8 @@ def cadence(videos, now):
                      "late": late, "late_by": round(since - limit, 1) if late else 0,
                      "due": (last + timedelta(days=target)).astimezone(KST).strftime("%Y-%m-%d") if last and target else None,
                      "late_at": (last + timedelta(days=limit)).astimezone(KST).strftime("%Y-%m-%d %H:%M") if last and limit else None,
-                     "n28": sum(sum(x) for x in count.values()), "cal": [count.get(d, [0, 0]) for d in dates]})
+                     "n28": sum(sum(x) for x in count.values()), "cal": [count.get(d, [0, 0]) for d in dates],
+                     "next": nb[0] if nb else None, "until": nb[-1] if nb else None, "booked": len(nb)})
     return {"dates": dates, "rows": rows}
 
 
@@ -775,7 +811,7 @@ STAFF = {   # 화면(template)도 이 명단을 그대로 쓴다
                 "tabs": [["소재 추천", "#topics"], ["제작 현황", "#topics/제작"]]},
     "scheduler": {"name": "민재", "role": "편성 매니저", "emoji": "📅", "color": "#00a3a3", "voice": {"g": "m", "pitch": 0.85, "rate": 0.98}, "motto": "꾸준함이 알고리즘을 이겨요.",
                   "desc": "채널마다 올리는 간격을 지키는지, 늦어진 채널이 없는지 봐요.",
-                  "tabs": [["업로드 달력", "#insight/cadence"], ["업로드 시간", "#insight/timing"]]},
+                  "tabs": [["업로드 일정", "#schedule"], ["업로드 시간", "#insight/timing"]]},
     "money": {"name": "유나", "role": "수익·비용 담당", "emoji": "💰", "color": "#d4a106", "voice": {"g": "f", "pitch": 1.1, "rate": 1.0}, "motto": "아낀 돈이 번 돈이에요.",
               "desc": "광고 수익 조건까지 얼마나 남았는지, 편당 제작비가 알맞은지 봐요.", "tabs": [["수익", "#money"], ["제작비", "#cost"]]},
 }
@@ -1077,13 +1113,18 @@ def meeting(D, now):
         ok = [r["name"] for r in rows if r["n"] >= 3 and not r["late"] and r["target"] and r["target"] <= 1.5]
         if ok:
             say("scheduler:daily", f"{'·'.join(ok)}{jo(ok[-1], '은/는')} 매일 꾸준히 올라가고 있어요.", "good", "#insight/cadence", 3, {"names": ok})
-        soon = [r for r in rows if not r["late"] and r["n"] >= 3 and r["target"] and r["target"] >= 2 and r["due"]]
+        soon = [r for r in rows if not r["late"] and r["n"] >= 3 and r["target"] and r["target"] >= 2 and r["due"] and not r.get("next")]
         today = now.astimezone(KST).strftime("%Y-%m-%d")
 
         def when(s):   # '2026-09-28 12:15' → '내일 12시'
             t = datetime.strptime(s, "%Y-%m-%d %H:%M")
             d = (t.date() - now.astimezone(KST).date()).days
             return ("오늘" if d == 0 else "내일" if d == 1 else f"{t:%m/%d}") + f" {t.hour}시"
+        for r in sorted([r for r in rows if r.get("next")], key=lambda r: r["next"])[:3]:   # 공개 예약이 걸린 채널(📅 업로드 일정)
+            n = r["name"]
+            more = f" {when(r['until'])}까지 {r['booked']}개가 줄 서 있어요." if r["booked"] > 1 and r["until"] != r["next"] else ""
+            say("scheduler:booked", f"**{n}**{jo(n, '은/는')} 다음 영상이 **{when(r['next'])}** 공개로 예약돼 있어요.{more}", "good", "#schedule", 3.2,
+                {"ch": n, "next": r["next"], "booked": r["booked"]})
         for r in soon[:2]:
             d, n = r["due"][5:].replace("-", "/"), r["name"]
             by = f" **{when(r['late_at'])}** 전에 올리면 '늦음'으로 넘어가지 않아요." if r.get("late_at") else ""
@@ -1481,11 +1522,11 @@ def build(ctx):
                      "gain": (v["views"] - h[before]) if before else None,
                      "gain7": (v["views"] - h[min(week)]) if week else None,
                      "per_day": round(v["views"] / max(1.0, age), 1), "age": round(age, 2),
-                     "published": pub_kst.strftime("%Y-%m-%d"), "pub_wd": pub_kst.weekday(), "pub_hour": pub_kst.hour,
+                     "published": pub_kst.strftime("%Y-%m-%d"), "hm": pub_kst.strftime("%H:%M"), "pub_wd": pub_kst.weekday(), "pub_hour": pub_kst.hour,
                      "dur": v["dur"], "thumb": v["thumb"], "likes": v["likes"], "comments": v["comments"],
                      "like_rate": round(v["likes"] / v["views"] * 100, 2) if v["views"] else None,
                      "comment_rate": round(v["comments"] / v["views"] * 100, 2) if v["views"] else None,
-                     "early": checks, "tracked": bool(e) or age <= 2,
+                     "early": checks, "tracked": bool(e) or age <= 2, **({} if v.get("public", True) else {"public": False}),
                      "url": f"https://www.youtube.com/{'shorts/' if v['short'] else 'watch?v='}{vid}"})
 
     # 주간 리포트
@@ -1541,6 +1582,7 @@ def build(ctx):
 
     costs, topics = load_costs(chans), load_topics()
     med3 = median3(videos, vhist, now)
+    sched = schedule(videos, now)
     data = {"updated": now.strftime("%Y-%m-%d %H:%M"), "prev_day": prev_day, "channels": chans,
             "totals": {k: total(k) for k in ("subs", "views", "shorts_views", "long_views", "d_subs", "d_views", "d_shorts", "d_long")},
             "series": {"dates": series_days[1:], "by_channel": by_ch}, "videos": vids,
@@ -1548,7 +1590,7 @@ def build(ctx):
             "bench": {"at": bench.get("at"), "channels": bench.get("channels", []), "videos": bvids[:40]},
             "costs": costs, "outliers": load_outliers(), "topics": topics,
             "pipeline": pipeline(videos, vhist, med3, topics, now), "efficiency": efficiency(chans, vids, hist, costs, weekly, now),
-            "cadence": cadence(videos, now),
+            "schedule": sched, "cadence": cadence(videos, now, sched),
             "telegram": bool(env_value("TELEGRAM_BOT_TOKEN") and env_value("TELEGRAM_CHAT_ID")) or bool(os.environ.get("TELEGRAM_ON")),
             "settings": {"surge_min": SURGE_MIN_PER_HOUR, "surge_ratio": SURGE_RATIO, "retention": RETENTION}}
     try:

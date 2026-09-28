@@ -144,7 +144,7 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
   .top nav.tabs{display:none}
   .top .in{height:52px}
   .bottom{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-  .bottom a{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 0 6px;color:var(--sub);font-size:11px;font-weight:600}
+  .bottom a{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 0 6px;color:var(--sub);font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:-.04em}
   .bottom a .ic{font-size:19px;line-height:1.2;filter:grayscale(1);opacity:.7}
   .bottom a.on{color:var(--ink)}
   .bottom a.on .ic{filter:none;opacity:1}
@@ -288,6 +288,44 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .cells i.today{box-shadow:0 0 0 1.5px var(--ink) inset}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--sub);margin:10px 0 0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+/* ───── 📅 업로드 일정 (2026-09-28) — 칠함=공개됨 · 테두리=예약됨 · 점선=계획(아직 안 올림) · 빨강=확인 필요 ───── */
+.srow2{padding:11px 0;border-top:1px solid var(--line)}
+.srow2:first-child{border-top:0;padding-top:4px}
+.srow2 .ctop{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px;font-weight:700}
+.srow2 .ctop>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow2 .sum{flex:none;font-size:12px;font-weight:700;color:var(--sub)}
+.srow2 .sum.ok{color:var(--ok)}.srow2 .sum.wn{color:#d08700}.srow2 .sum .bad{color:#e0392b}
+.srow2 .sub{font-size:12px;color:var(--sub);margin:3px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip,.striphd{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:2px}
+.striphd{font-size:10px;color:var(--sub);text-align:center;margin:2px 0 2px}
+.striphd .today{color:var(--ink);font-weight:800}
+.strip i{display:flex;align-items:center;justify-content:center;height:18px;border-radius:4px;background:var(--soft);font-size:10px;font-style:normal;font-weight:800;color:var(--sub)}
+.strip i.today{outline:1.5px solid var(--ink);outline-offset:1px}
+.strip i.pub,.cd .pips b{background:var(--c);color:var(--t,#fff)}
+.strip i.rsv,.cd .pips b.rsv{background:transparent;box-shadow:0 0 0 1.5px var(--c) inset;color:var(--c)}
+.strip i.plan,.cd .pips b.plan{background:transparent;box-shadow:none;border:1.5px dashed var(--c);color:var(--sub)}
+.strip i.chk,.cd .pips b.chk{background:transparent;box-shadow:0 0 0 1.5px #e0392b inset;color:#e0392b}
+.calnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.calnav b{font-size:15px}
+.calnav button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;width:36px;height:30px;font-size:17px;line-height:1;cursor:pointer}
+.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.calgrid .wd{text-align:center;font-size:11px;color:var(--sub);padding:0 0 3px}
+.calgrid .wd:first-child{color:#e0392b}
+.cd{display:flex;flex-direction:column;gap:3px;min-width:0;min-height:58px;padding:4px 3px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.cd.blank{border:0;background:none;cursor:default}
+.cd .dn{font-size:11.5px;font-weight:700;padding-left:2px}
+.cd.past .dn{color:var(--sub);font-weight:500}
+.cd.today{box-shadow:0 0 0 1.5px var(--ink) inset}
+.cd.sel{background:var(--soft);border-color:var(--sub)}
+.cd .pips{display:flex;flex-wrap:wrap;gap:2px}
+.cd .pips b{min-width:15px;height:15px;padding:0 3px;border-radius:5px;font-size:9.5px;line-height:15px;text-align:center}
+.cd .pips b.plan{line-height:12px}
+.srow .hm{flex:none;width:42px;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+.sst{flex:none;margin-left:auto;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--sub);white-space:nowrap}
+.sst.pub{color:var(--ok)}.sst.rsv{background:color-mix(in srgb,var(--down) 13%,transparent);color:var(--down)}
+.sst.plan{background:var(--warnbg);color:var(--warnink)}.sst.chk{background:color-mix(in srgb,#e0392b 14%,transparent);color:#e0392b}
+.legend i.pub{background:var(--sub)}.legend i.rsv{background:transparent;box-shadow:0 0 0 1.5px var(--sub) inset}
+.legend i.plan{background:transparent;border:1.5px dashed var(--sub)}.legend i.chk{background:transparent;box-shadow:0 0 0 1.5px #e0392b inset}
 @media (max-width:860px){.team{grid-template-columns:minmax(0,1fr)}.egrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* ───── 2D 픽셀 사무실 (2026-09-27 "2d 캐릭터로 바꾸고.. 막움직이면서 진짜 사무실돌아다니는느낌으로") ───── */
 .face{position:relative;overflow:hidden;background:color-mix(in srgb,var(--soft) 72%,#8fb5e8 28%)}
@@ -365,8 +403,8 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 <script>
 const D = /*__DATA__*/null;
 const PALETTE = ["#f2b705", "#e0392b", "#2b6de0", "#1f9d6b", "#8e44ad", "#ff7a00", "#00a3a3", "#d6336c", "#5c7cfa", "#66a80f", "#a47148", "#94a3b8"];
-const MENU = [["summary", "🏢", "회의실", "회의"], ["topics", "🎯", "소재 추천", "소재"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["hunt", "🔥", "발굴"], ["insight", "💡", "인사이트"], ["money", "💰", "수익"], ["cost", "🧾", "제작비"]];
-const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["efficiency", "📊", "채널 효율"], ["cadence", "📅", "업로드 달력"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
+const MENU = [["summary", "🏢", "회의실", "회의"], ["topics", "🎯", "소재 추천", "소재"], ["schedule", "📅", "업로드 일정", "일정"], ["channel", "📺", "채널"], ["videos", "🎬", "영상"], ["hunt", "🔥", "발굴"], ["insight", "💡", "인사이트"], ["money", "💰", "수익"], ["cost", "🧾", "제작비"]];
+const INSIGHTS = [["alerts", "🔔", "알림"], ["early", "📈", "새 영상 성적"], ["weekly", "🗓️", "주간 리포트"], ["efficiency", "📊", "채널 효율"], ["engage", "❤️", "반응률"], ["timing", "⏰", "업로드 시간"], ["bench", "🔭", "벤치마크"]];
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -416,7 +454,7 @@ const TODO_KEY = "dash_todo";
 const todoDone = () => { try { return JSON.parse(localStorage.getItem(TODO_KEY) || "{}"); } catch (e) { return {}; } };
 const todoKey = t => (M ? M.at.slice(0, 10) : "") + "|" + t.text;
 const SPK = w => w === "all" ? "모두" : (STAFF[w] || {}).name || "";
-const LINKNAME = { "#insight/efficiency": "채널 효율", "#insight/cadence": "업로드 달력", "#topics/제작": "제작 현황", "#topics": "소재 추천", "#cost": "제작비",
+const LINKNAME = { "#insight/efficiency": "채널 효율", "#insight/cadence": "업로드 일정", "#schedule": "업로드 일정", "#topics/제작": "제작 현황", "#topics": "소재 추천", "#cost": "제작비",
   "#videos": "영상", "#insight/early": "새 영상 성적", "#insight/weekly": "주간 리포트", "#insight/alerts": "알림", "#hunt": "발굴" };
 const linkName = l => l.startsWith("http") ? "▶ 영상 보기" : (LINKNAME[l] || (l.startsWith("#channel/") ? decodeURIComponent(l.split("/")[1]) + " 채널"
   : l.startsWith("#money/") ? "수익 조건" : l.startsWith("#topics/") ? decodeURIComponent(l.split("/")[1]) + " 소재" : "자세히")) + " ›";
@@ -1172,7 +1210,7 @@ function teamNotes(name) {   // 채널 화면: 그 채널 얘기만 모아서
     `<div class="ln">${face(l.who, "sm")}<div style="min-width:0"><span class="muted" style="font-size:12px">${esc((STAFF[l.who] || {}).name || "")}</span> ${toneTag(l.tone)}<div>${md(l.text)}</div></div></div>`).join("")}</div>` : "";
 }
 let charts = [];
-const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", hkind: "all", tch: "", tf: "all", tsort: "score" };
+const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", hkind: "all", tch: "", tf: "all", tsort: "score", sch: "all" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
 const remember = () => { try { localStorage.setItem("dash", JSON.stringify(state)); } catch (e) {} };
 
@@ -1728,7 +1766,7 @@ function afterTopics() {
 function pageInsight(sub) {
   const cur = INSIGHTS.some(x => x[0] === sub) ? sub : "alerts";
   const chips = `<div class="chips" style="margin-top:16px">${INSIGHTS.map(([k, ic, l]) => `<a class="chip ${k === cur ? "on" : ""}" href="#insight/${k}">${ic} ${l}</a>`).join("")}</div>`;
-  return chips + { alerts: insAlerts, early: insEarly, weekly: insWeekly, efficiency: insEfficiency, cadence: insCadence, engage: insEngage, timing: insTiming, bench: insBench }[cur]();
+  return chips + { alerts: insAlerts, early: insEarly, weekly: insWeekly, efficiency: insEfficiency, engage: insEngage, timing: insTiming, bench: insBench }[cur]();
 }
 function channelFilter(key) {
   return `<div class="chips" id="flt" style="margin-bottom:12px">${[["all", "전체 채널"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) =>
@@ -1801,26 +1839,6 @@ function insEfficiency() {
   </div>`).join("") || '<div class="empty">아직 계산할 기록이 없어요</div>'}</section>
   <div class="note">7일 증가율은 기록이 14일 넘게 쌓이면 나와요. 제작비는 제작비 탭과 같은 값이에요(요금표 기준, 실제보다 적을 수 있음).</div>`;
 }
-function insCadence() {
-  const C = D.cadence || { rows: [], dates: [] }, ds = C.dates || [];
-  const hd = ds.length === 28 ? `<div class="calhd">${[0, 7, 14, 21].map(i => `<span>${esc(ds[i].slice(5).replace("-", "/"))}~</span>`).join("")}</div>` : "";
-  const today = ds[27] || "", tmr = (() => { const d = new Date(today + "T12:00:00"); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })();
-  const hm = s => { const [d, t] = String(s).split(" "); return (d === today ? "오늘" : d === tmr ? "내일" : d.slice(5).replace("-", "/")) + " " + parseInt(t, 10) + "시"; };
-  const next = r => !r.due || r.target < 2 ? "" : r.due < today ? ` · <span class="due">${r.late_at ? esc(hm(r.late_at)) + "까지 " : ""}올릴 차례</span>`
-    : r.due === today ? ` · <span class="due">오늘 올릴 차례</span>` : ` · 다음 ${esc(r.due.slice(5).replace("-", "/"))}`;
-  const st = r => r.n === 0 ? '<span class="st">공개 영상 기록 없음</span>'
-    : r.late ? `<span class="st bad">⚠ ${Math.round(r.since)}일째 (평소 ${r.target}일마다)</span>`
-    : `<span class="st">마지막 ${r.since < 1 ? Math.max(1, Math.round(r.since * 24)) + "시간" : Math.round(r.since) + "일"} 전${r.target ? ` · 평소 ${r.target}일마다` : ""}${next(r)}</span>`;
-  const cell = (x, i) => { const [a, b] = x, c = a && b ? "b" : a ? "s" : b ? "l" : ""; return `<i class="${c}${i === 27 ? " today" : ""}" title="${esc((ds[i] || "").slice(5).replace("-", "/"))} 쇼츠 ${a} · 본편 ${b}"></i>`; };
-  const late = (C.rows || []).filter(r => r.late);
-  const lateTxt = late.length ? ` 지금 늦은 채널은 <b>${late.map(r => esc(r.name)).join(", ")}</b>${jo2(late[late.length - 1].name, "이에요", "예요")}.` : " 지금 늦은 채널은 없어요.";
-  return `<h2 class="pt">📅 업로드 달력</h2>
-  ${say("scheduler", `채널마다 평소 올리는 간격을 재서, 그보다 많이 늦어지면(평소의 1.5배를 넘기면) 알려 드려요. 텔레그램으로도 한 번 보내요. 칸 하나가 하루예요.${lateTxt}`)}
-  <section class="card">${hd}${(C.rows || []).map(r => `<div class="crow2"><div class="ctop"><span><span class="dot" style="background:${color(r.name)}"></span> ${esc(r.name)}${r.set ? ` <span class="muted" style="font-size:11px">· 목표 ${r.target}일마다</span>` : ""}</span>${st(r)}</div>
-    <div class="cells">${(r.cal || []).map(cell).join("")}</div></div>`).join("")}
-    <div class="legend"><span><i style="background:var(--shorts)"></i>쇼츠</span><span><i style="background:var(--long)"></i>본편</span><span><i style="background:linear-gradient(135deg,var(--shorts) 50%,var(--long) 50%)"></i>둘 다</span><span><i style="background:var(--soft);box-shadow:0 0 0 1.5px var(--ink) inset"></i>오늘</span></div></section>
-  <div class="note">평소 간격은 올린 날짜끼리 최근 10번 간격의 중앙값이에요. 채널마다 목표 간격을 정하고 싶으면 알려 주세요(예: '거인의무덤은 이틀에 한 편').</div>`;
-}
 function insEngage() {
   const rows = D.channels.map(c => {
     const views = c.shorts_views + c.long_views;
@@ -1878,18 +1896,132 @@ function afterInsight(sub) {
   document.querySelectorAll("#bfor [data-k]").forEach(b => b.onclick = () => { state.bfor = b.dataset.k; remember(); rerender(); });
 }
 
+/* ───────── 📅 업로드 일정 (2026-09-28 사용자 "각 채널별 예약발행 시간이랑 업로드일정 달력이나 표 같은 걸로… 어떤게 어디까지 올라갔는지") ─────────
+   공개된 영상 = D.videos(유튜브 기록). 아직 공개 전 = D.schedule.items(편 폴더 업로드 기록을 일정.py 가 모은 것 — 예약 영상은 비공개라 API 로 안 보임).
+   예전 인사이트 '업로드 달력'(#insight/cadence)은 여기로 합쳤다. */
+const SST = { 공개: "공개됨", 공개중: "공개 중", 예약: "예약됨", 계획: "계획 · 아직 안 올림", 확인: "⚠ 확인 필요" };
+const SCLS = { 공개: "pub", 공개중: "rsv", 예약: "rsv", 계획: "plan", 확인: "chk" };
+const SRANK = { 공개: 0, 공개중: 1, 예약: 1, 계획: 2, 확인: 3 };
+const WDAY = "일월화수목금토";
+const kstNow = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 16).replace("T", " ");   // 'YYYY-MM-DD HH:MM'(한국 시각)
+const addDay = (d, n) => new Date(Date.parse(d + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
+const wday = d => WDAY[new Date(d + "T12:00:00Z").getUTCDay()];
+const dayName = d => {
+  const n = Math.round((Date.parse(d) - Date.parse(kstNow().slice(0, 10))) / 864e5);
+  return n === 0 ? "오늘" : n === 1 ? "내일" : n === -1 ? "어제" : `${+d.slice(5, 7)}/${+d.slice(8)}(${wday(d)})`;
+};
+const inkOn = c => { const n = parseInt(c.slice(1), 16); return ((n >> 16) * 299 + (n >> 8 & 255) * 587 + (n & 255) * 114) / 1000 > 150 ? "#16161a" : "#fff"; };
+const cvar = ch => { const c = color(ch); return `--c:${c};--t:${inkOn(c)}`; };
+let schMon = null, schDay = null;   // 보고 있는 달·날(화면을 새로 열면 이번 달·오늘)
+
+function schItems() {
+  const pub = (D.videos || []).filter(v => v.published && v.public !== false)
+    .map(v => ({ ch: v.ch, d: v.published, hm: v.hm || "", st: "공개", short: v.short, title: v.title, url: v.url }));
+  const rest = ((D.schedule && D.schedule.items) || []).map(x => ({ ch: x.ch, d: x.t.slice(0, 10), hm: x.t.slice(11), st: x.st, short: x.kind === "쇼츠",
+    title: x.ep, url: x.id ? `https://studio.youtube.com/video/${x.id}/edit` : "" }));
+  return pub.concat(rest).sort((a, b) => (a.d + a.hm).localeCompare(b.d + b.hm));
+}
+function schTable(all) {
+  const today = kstNow().slice(0, 10), days = Array.from({ length: 14 }, (_, i) => addDay(today, i - 6));
+  const cad = Object.fromEntries(((D.cadence && D.cadence.rows) || []).map(r => [r.name, r]));
+  const at = x => `${dayName(x.d)} ${x.hm}`;
+  const rows = D.channels.map(c => {
+    const mine = all.filter(x => x.ch === c.name);
+    const ahead = mine.filter(x => x.st === "예약" || x.st === "공개중" || x.st === "계획");
+    return { c, mine, ahead, booked: ahead.filter(x => x.st !== "계획"), last: mine.filter(x => x.st === "공개").pop(),
+      chk: mine.filter(x => x.st === "확인").length, r: cad[c.name] };
+  });
+  const tier = x => x.ahead.length || x.chk ? 0 : x.mine.some(v => v.d >= days[0]) ? 1 : 2;
+  rows.sort((a, b) => tier(a) - tier(b));   // 예약·계획이 있는 채널 → 최근 2주에 올린 채널 → 나머지(같은 칸 안에서는 원래 순서)
+  const hd = `<div class="striphd">${days.map(d => `<span class="${d === today ? "today" : ""}">${d === today ? "오늘" : +d.slice(8)}</span>`).join("")}</div>`;
+  const row = x => {
+    const cell = d => {
+      const xs = x.mine.filter(v => v.d === d);
+      const st = xs.reduce((m, v) => SRANK[v.st] > SRANK[m] ? v.st : m, "공개");
+      return `<i class="${xs.length ? SCLS[st] : ""}${d === today ? " today" : ""}" style="${cvar(x.c.name)}" title="${esc(dayName(d))} ${xs.length}개">${xs.length || ""}</i>`;
+    };
+    const b = x.booked, plans = x.ahead.length - b.length, nx = x.ahead[0], r = x.r;
+    const sum = b.length ? `<span class="sum ok">✓ ${esc(at(b[b.length - 1]))}까지 예약 · ${b.length}개</span>`
+      : plans ? `<span class="sum wn">계획 ${plans}개 · 아직 안 올림</span>` : `<span class="sum${r && r.late ? " wn" : ""}">예약 없음</span>`;
+    const sub = [nx ? `다음 ${at(nx)} ${nx.title}` : "", x.last ? `최근 공개 ${at(x.last)}` : "공개 영상 없음", r && r.target ? `평소 ${r.target}일마다` : ""]
+      .filter(Boolean).join(" · ");
+    return `<div class="srow2"><div class="ctop"><span><span class="dot" style="background:${color(x.c.name)}"></span> ${esc(x.c.name)}</span>
+      ${sum}${x.chk ? `<span class="sum"><span class="bad">⚠ ${x.chk}</span></span>` : ""}</div>
+      <div class="sub">${esc(sub)}</div><div class="strip">${days.map(cell).join("")}</div></div>`;
+  };
+  return `<section class="card">${hd}${rows.map(row).join("")}</section>`;
+}
+function schCal(all) {
+  const today = kstNow().slice(0, 10), mon = schMon || today.slice(0, 7), y = +mon.slice(0, 4), m = +mon.slice(5, 7);
+  const lead = new Date(Date.UTC(y, m - 1, 1)).getUTCDay(), n = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const xs = all.filter(x => x.d.startsWith(mon) && (state.sch === "all" || x.ch === state.sch));
+  let cells = '<span class="cd blank"></span>'.repeat(lead);
+  for (let k = 1; k <= n; k++) {
+    const d = `${mon}-${String(k).padStart(2, "0")}`, by = {};
+    xs.filter(x => x.d === d).forEach(x => { const b = by[x.ch] || (by[x.ch] = [0, "공개"]); b[0]++; if (SRANK[x.st] > SRANK[b[1]]) b[1] = x.st; });
+    const pips = Object.entries(by).map(([ch, [c, st]]) => `<b class="${SCLS[st]}" style="${cvar(ch)}">${c}</b>`).join("");
+    cells += `<button class="cd${d < today ? " past" : ""}${d === today ? " today" : ""}${d === schDay ? " sel" : ""}" data-d="${d}"><span class="dn">${k}</span><span class="pips">${pips}</span></button>`;
+  }
+  return `<section class="card"><div class="calnav"><button data-m="-1" aria-label="이전 달">‹</button><b>${y}년 ${m}월</b><button data-m="1" aria-label="다음 달">›</button></div>
+    <div class="calgrid">${[...WDAY].map(w => `<span class="wd">${w}</span>`).join("")}${cells}</div>
+    <div class="legend"><span><i class="pub"></i>공개됨</span><span><i class="rsv"></i>예약됨</span><span><i class="plan"></i>계획(아직 안 올림)</span><span><i class="chk"></i>확인 필요</span></div></section>`;
+}
+function schList(all) {
+  const d = schDay, xs = all.filter(x => x.d === d && (state.sch === "all" || x.ch === state.sch)), rel = dayName(d);
+  const row = x => {
+    const inner = `<span class="hm">${esc(x.hm)}</span><div style="min-width:0"><div class="t">${esc(x.title)}</div>
+      <div class="m">${typeTag(x)}<span class="dot" style="background:${color(x.ch)}"></span> ${esc(x.ch)}</div></div><span class="sst ${SCLS[x.st]}">${SST[x.st]}</span>`;
+    return x.url ? `<a class="item srow" href="${esc(x.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item srow">${inner}</div>`;
+  };
+  return `<div class="sec"><span>${rel.includes("(") ? "" : rel + " · "}${+d.slice(5, 7)}월 ${+d.slice(8)}일 (${wday(d)}) <span class="muted" style="font-size:12.5px;font-weight:500">${xs.length}개</span></span></div>
+    <div class="card list">${xs.length ? xs.map(row).join("") : '<div class="empty">이날은 공개된 영상도 예약도 없어요</div>'}</div>`;
+}
+function pageSchedule() {
+  const all = schItems(), S = D.schedule || {}, chk = (S.items || []).filter(x => x.st === "확인").length;
+  schMon = null; schDay = kstNow().slice(0, 10);
+  const names = D.channels.map(c => c.name);
+  if (state.sch !== "all" && !names.includes(state.sch)) state.sch = "all";
+  const chips = `<div class="chips" id="sch" style="margin-bottom:10px">${["all", ...names].map(k => `<button class="chip ${state.sch === k ? "on" : ""}" data-k="${esc(k)}">${k === "all" ? "전체" : `<span class="dot" style="background:${color(k)}"></span>${esc(k)}`}</button>`).join("")}</div>`;
+  return `<h2 class="pt">📅 업로드 일정</h2>
+  ${say("scheduler", `채널마다 <b>이미 공개된 영상</b>과 <b>예약해 둔 영상</b>을 모았어요. 칸을 <b>칠한 건 공개됨</b>, <b>테두리만 있는 건 예약됨</b>, <b>점선은 계획만 있고 아직 안 올린 것</b>이에요. 숫자는 그날 올라가는 개수예요.${chk ? " <b>⚠</b>는 공개 시각이 지났는데 유튜브에서 안 보이는 영상이라, 예약을 바꿨거나 지웠는지 확인해 보세요." : ""}`)}
+  <div class="sec"><span>채널별 · 어디까지 올라갔나</span><span class="muted" style="font-size:12px;font-weight:500">지난 6일 ~ 앞으로 7일</span></div>
+  ${schTable(all)}
+  <div class="sec"><span>달력</span></div>
+  ${chips}
+  <div id="schcal">${schCal(all)}</div>
+  <div id="schlist">${schList(all)}</div>
+  <div class="note">예약 영상은 공개 전이라 유튜브 데이터에 안 보여서, 각 편 폴더의 업로드 기록(업로드정보·업로드 결과)에서 읽어요${S.at ? ` · 기록 기준 ${esc(S.at.slice(5).replace("-", "/"))}` : ""}. 공개되면 유튜브 기록으로 바뀌어요. 예약 줄을 누르면 스튜디오 편집 화면이 열려요.</div>`;
+}
+function afterSchedule() {
+  const all = schItems();
+  const bind = () => {
+    document.querySelectorAll("#schcal .cd[data-d]").forEach(b => b.onclick = () => { schDay = b.dataset.d; redraw(); });
+    document.querySelectorAll("#schcal [data-m]").forEach(b => b.onclick = () => {
+      const [y, m] = (schMon || kstNow().slice(0, 7)).split("-").map(Number);
+      schMon = new Date(Date.UTC(y, m - 1 + +b.dataset.m, 1)).toISOString().slice(0, 7); redraw();
+    });
+  };
+  const redraw = () => { $("#schcal").innerHTML = schCal(all); $("#schlist").innerHTML = schList(all); bind(); };
+  document.querySelectorAll("#sch [data-k]").forEach(b => b.onclick = () => {
+    state.sch = b.dataset.k; remember();
+    document.querySelectorAll("#sch [data-k]").forEach(x => x.classList.toggle("on", x === b)); redraw();
+  });
+  bind();
+}
+
 /* ───────── 라우팅 ───────── */
 function route() {
   if (!D) { $("#app").innerHTML = '<div class="empty">아직 수집 전이에요</div>'; return; }
   const [page, arg] = (location.hash.slice(1) || "summary").split("/");
   const a = arg ? decodeURIComponent(arg) : null;
+  if (page === "insight" && arg === "cadence") { location.replace("#schedule"); return; }   // 옛 업로드 달력 → 업로드 일정
   const cur = MENU.some(m => m[0] === page) ? page : (page === "team" ? "team" : "summary");
   const nav = short => MENU.map(([k, ic, l, s]) => `<a href="#${k}" class="${k === cur || (cur === "team" && k === "summary") ? "on" : ""}"><span class="ic">${ic}</span>${short && s ? s : l}</a>`).join("");
   $("#tabs").innerHTML = nav(false); $("#bottom").innerHTML = nav(true);
   mpStop(); ofStop();   // 다른 화면으로 가면 회의 재생·소리·사무실 움직임을 멈춘다
   charts.forEach(c => c.destroy()); charts = [];
   const pages = { team: [pageTeam, () => {}], summary: [pageSummary, afterSummary], channel: [() => pageChannel(a), () => afterChannel(a)], videos: [pageVideos, afterVideos],
-    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(a), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)] };
+    money: [() => pageMoney(a), () => {}], cost: [() => pageCost(a), () => {}], hunt: [() => pageHunt(), () => afterHunt()], topics: [() => pageTopics(a), () => afterTopics()], insight: [() => pageInsight(a), () => afterInsight(a)], schedule: [pageSchedule, afterSchedule] };
   $("#app").innerHTML = pages[cur][0]();
   pages[cur][1]();
   window.scrollTo(0, 0);
