@@ -180,6 +180,7 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .tg{font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;background:var(--soft);color:var(--sub);white-space:nowrap}
 .tg.new{background:color-mix(in srgb,#2b6de0 15%,transparent);color:#2b6de0}
 .tg.fu{background:color-mix(in srgb,#e0392b 13%,transparent);color:#e0392b}
+.tg.gd{background:color-mix(in srgb,#8a4fd8 16%,transparent);color:#8a4fd8}
 .topic .ttl{display:flex;gap:8px;align-items:flex-start;margin-top:9px;background:var(--soft);border-radius:10px;padding:8px 10px}
 .topic .ttl .tx{flex:1;min-width:0;font-size:14px;font-weight:650;line-height:1.45}
 .topic .ttl .ko{display:block;font-size:12.5px;font-weight:500;color:var(--sub);margin-top:2px}
@@ -1210,7 +1211,7 @@ function teamNotes(name) {   // 채널 화면: 그 채널 얘기만 모아서
     `<div class="ln">${face(l.who, "sm")}<div style="min-width:0"><span class="muted" style="font-size:12px">${esc((STAFF[l.who] || {}).name || "")}</span> ${toneTag(l.tone)}<div>${md(l.text)}</div></div></div>`).join("")}</div>` : "";
 }
 let charts = [];
-const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", hkind: "all", tch: "", tf: "all", tsort: "score", sch: "all" };
+const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", hkind: "all", tch: "", tf: "all", tsort: "score", tkind: "all", sch: "all" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
 const remember = () => { try { localStorage.setItem("dash", JSON.stringify(state)); } catch (e) {} };
 
@@ -1618,6 +1619,10 @@ const STAR_KEY = "dash_stars";
 const stars = () => { try { return JSON.parse(localStorage.getItem(STAR_KEY) || "{}"); } catch (e) { return {}; } };
 const starKey = (ch, t) => ch + "|" + (t["소재"] || t["제목"] || "");
 const TSORT = [["score", "점수순"], ["date", "최신 기사순"]];
+// 갈래(2026-09-28 논스킵 사건·괴담 믹스) — 소재추천_기준.json 채널 "kinds". 아이콘은 추천 결과(kinds)에 있고, 없으면 기본값
+const KICON = { "사건": "🔎", "괴담": "👻" };
+const kindIcon = (ch, k) => ((((D.topics || {}).channels || {})[ch] || {}).kinds || {})[k]?.icon || KICON[k] || "";
+const kindTag = (ch, t) => t["갈래"] ? `<span class="tg${t["갈래"] === "괴담" ? " gd" : ""}">${kindIcon(ch, t["갈래"])} ${esc(t["갈래"])}</span>` : "";
 // "English title (한글 뜻)" → [영어, 한글]. 한글 뜻이 없으면 그대로.
 const splitKo = s => { const m = String(s || "").match(/^(.*\S)\s*\(([^()]*[가-힣][^()]*)\)\s*$/); return m && /[A-Za-z]/.test(m[1]) ? [m[1], m[2]] : [String(s || ""), ""]; };
 function topicCard(t, i, lab, open, ch) {
@@ -1630,7 +1635,7 @@ function topicCard(t, i, lab, open, ch) {
   return `<article class="topic">
     <div class="hd"><div class="sc ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}<small>점</small></div>
       <div style="min-width:0;flex:1"><div class="nm">${i + 1}. ${esc(t["소재"])}</div>
-        <div class="tags">${pipeTag(ch, t)}${t["최신"] ? `<span class="tg new">📰 ${esc(String(t["최신"]).slice(5).replace("-", "/"))} 기사</span>` : ""}${t["후속"] ? '<span class="tg fu">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="tg">${esc(t["대상"])}</span>` : ""}</div></div></div>
+        <div class="tags">${kindTag(ch, t)}${pipeTag(ch, t)}${t["최신"] ? `<span class="tg new">📰 ${esc(String(t["최신"]).slice(5).replace("-", "/"))} 기사</span>` : ""}${t["후속"] ? '<span class="tg fu">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="tg">${esc(t["대상"])}</span>` : ""}</div></div></div>
     <div class="ttl"><div class="tx">${esc(ti)}${ko ? `<span class="ko">${esc(ko)}</span>` : ""}</div>
       <div class="acts"><button class="copy" type="button" data-copy="${esc(t["제목"] || "")}" aria-label="제목 복사">복사</button>
       <button class="star ${stars()[starKey(ch, t)] ? "on" : ""}" type="button" data-star="${esc(starKey(ch, t))}" data-ti="${i}" aria-label="찜" aria-pressed="${stars()[starKey(ch, t)] ? "true" : "false"}">${stars()[starKey(ch, t)] ? "★" : "☆"}</button></div></div>
@@ -1694,8 +1699,13 @@ function pageTopics(want) {
   const S = stars(), mine = Object.values(S).filter(x => x.ch === cur);
   const pick = { all: () => true, new: t => t["최신"], fu: t => t["후속"], memo: t => t["첫문장"], star: t => S[starKey(cur, t)] };
   let list = f === "star" ? mine.map((x, i) => ({ t: x.t, i })) : all.map((t, i) => ({ t, i })).filter(x => pick[f](x.t));
+  const kinds = Object.keys(c.kinds || {}).filter(k => all.some(t => t["갈래"] === k));
+  const kf = kinds.includes(state.tkind) ? state.tkind : "all";
+  if (kf !== "all") list = list.filter(x => x.t["갈래"] === kf);
   if (state.tsort === "date") list.sort((a, b) => String(b.t["최신"] || "").localeCompare(String(a.t["최신"] || "")) || a.i - b.i);
   const n = k => k === "star" ? mine.length : all.filter(pick[k]).length;
+  const kseg = kinds.length ? `<div class="seg">${[["all", "전체", all.length], ...kinds.map(k => [k, kindIcon(cur, k) + " " + k, all.filter(t => t["갈래"] === k).length])].map(([v, l, m]) =>
+    `<button type="button" data-tkind="${esc(v)}" class="${kf === v ? "on" : ""}">${esc(l)} <span class="muted">${m}</span></button>`).join("")}</div>` : "";
   const tk = c.tokens;
   const pills = [`<span class="pill">📰 최신 근거 <b>${n("new")}</b>/${all.length}</span>`, `<span class="pill">뉴스 <b>${c.news_n || 0}</b>건</span>`,
     c.trend_n ? `<span class="pill">급상승 검색어 <b>${c.trend_n}</b></span>` : "",
@@ -1704,15 +1714,15 @@ function pageTopics(want) {
     `<span class="pill">판단 <b>${esc(c.model || "-")}</b></span>`].join("");
   const seg = (key, opts, curv, cnt) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" data-${key}="${v}" class="${curv === v ? "on" : ""}">${l}${cnt ? ` <span class="muted">${n(v)}</span>` : ""}</button>`).join("")}</div>`;
   const how = `<details class="how"><summary>ⓘ 어떻게 고르나</summary><p>${c.genre_n ? "<b>같은 장르 채널에서 지금 빨리 크는 영상</b>, " : ""}발굴 탭의 <b>평소보다 몇 배 빨리 크는 영상</b>, 우리 채널의 <b>잘된·안된 영상</b>, <b>최근 30일 뉴스</b>(구글·빙), <b>구글 급상승 검색어</b>를 채널 공식으로 채점해요.
-    같은 대상은 2개까지, 최근 추천에 3번 넘게 나온 대상은 1개까지만 넣어요. 📰는 최근 14일 기사·검색어에 근거한 소재예요.
+    같은 대상은 2개까지, 최근 추천에 3번 넘게 나온 대상은 1개까지만 넣어요. 📰는 최근 14일 기사·검색어에 근거한 소재예요.${kinds.length ? ` 이 채널은 ${kinds.map(k => kindIcon(cur, k) + " " + esc(k) + " 최소 " + ((c.kinds[k] || {}).min || 0) + "개").join(" · ")}씩 자리를 남기고 나머지는 점수순으로 섞어요.` : ""}
     총점 가중치: ${Object.keys(TLABEL).map(k => esc(lab[k]) + " ×" + (+(((c.calib || {}).weights || { korea: 3, paradox: 2, proof: 2, visual: 1 })[k])).toFixed(1).replace(".0", "")).join(" · ")} (우리 영상 성적으로 자동 보정). <b>숫자는 만들기 전에 꼭 확인</b>하세요.</p></details>`;
   return `<h2 class="pt">🎯 소재 추천</h2><p class="pd">채널마다 ${all.length}개 · 매일 오전 7시·오후 3시에 새로 골라요</p>
-    ${say("planner", `채널마다 소재 20개를 골라 뒀어요. <b>📰</b>는 최근 2주 기사·검색어가 근거, <b>☆</b>를 누르면 이 기기에 찜돼요. 만들 소재는 번호로 말씀해 주세요(예: <b>'${esc(cur)} 3위 만들어 줘'</b>) — <a href="#topics/제작">📋 제작 현황</a>에 올려서 끝까지 챙길게요.`)}
+    ${say("planner", `채널마다 소재 20개를 골라 뒀어요.${kinds.length ? ` ${esc(cur)}${jo2(cur, "은", "는")} ${kinds.map((k, j) => `<b>${kindIcon(cur, k)} ${esc(k)}</b>${j < kinds.length - 1 ? jo2(k, "과", "와") : jo2(k, "을", "를")}`).join(" ")} 섞었어요(위 칩으로 따로 보기).` : ""} <b>📰</b>는 최근 2주 기사·검색어가 근거, <b>☆</b>를 누르면 이 기기에 찜돼요. 만들 소재는 번호로 말씀해 주세요(예: <b>'${esc(cur)} 3위 만들어 줘'</b>) — <a href="#topics/제작">📋 제작 현황</a>에 올려서 끝까지 챙길게요.`)}
     ${chipRow(cur)}
     <section class="card"><h2 class="ch2"><span class="dot" style="background:${color(cur)}"></span>${esc(cur)} <span class="when">${esc(c.at)} 기준</span></h2>
     <div class="tbar">${pills}</div>${how}
     ${c.stale ? `<div class="warn" style="margin:0 0 10px">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
-    <div class="segs">${seg("tf", TFILTER, f, true)}${seg("tsort", TSORT, state.tsort === "date" ? "date" : "score")}</div>
+    <div class="segs">${kseg}${seg("tf", TFILTER, f, true)}${seg("tsort", TSORT, state.tsort === "date" ? "date" : "score")}</div>
     <div class="tlist">${list.map((x, k) => topicCard(x.t, x.i, lab, k === 0 && f === "all" && state.tsort !== "date", cur)).join("") || `<div class="empty">${f === "star" ? "찜한 소재가 없어요. 소재 오른쪽 ☆를 누르면 새 추천이 나와도 여기 남아요 (이 기기에 저장)" : "조건에 맞는 소재가 없어요"}</div>`}</div>
     ${histBox(((T.history || {})[cur]) || [])}
     <div class="huntmeta" style="margin-top:10px">발굴 기준 ${esc(c.outliers_at || "-")}${c.prompt_chars ? ` · 판단 재료 ${man(c.prompt_chars)}자` : ""}</div>
@@ -1722,7 +1732,7 @@ function histBox(H) {
   if (!H.length) return "";
   return `<details class="hist"><summary>지난 추천 다시 보기 · 최근 ${H.length}번</summary>${H.map(h => `<div class="hrun"><div class="k">${esc(h.at)} 추천</div>
     ${(h.topics || []).map(t => `<div class="hrow"><span class="tsc sm ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}</span>
-      <div style="min-width:0;flex:1"><div class="t">${t["최신"] ? "📰 " : ""}${esc(t["소재"])}</div><div class="m">${esc(splitKo(t["제목"])[0])}</div></div>
+      <div style="min-width:0;flex:1"><div class="t">${t["최신"] ? "📰 " : ""}${t["갈래"] === "괴담" ? "👻 " : ""}${esc(t["소재"])}</div><div class="m">${esc(splitKo(t["제목"])[0])}</div></div>
       <button class="copy" type="button" data-copy="${esc(t["제목"] || "")}" aria-label="제목 복사">복사</button></div>`).join("")}</div>`).join("")}</details>`;
 }
 function calibCard(cal, lab = TLABEL) {
@@ -1745,6 +1755,7 @@ function afterTopics() {
   const re = () => { $("#app").innerHTML = pageTopics(); afterTopics(); };
   document.querySelectorAll("[data-tch]").forEach(b => b.onclick = () => { state.tch = b.dataset.tch; remember(); re(); });
   document.querySelectorAll("[data-tf]").forEach(b => b.onclick = () => { state.tf = b.dataset.tf; remember(); re(); });
+  document.querySelectorAll("[data-tkind]").forEach(b => b.onclick = () => { state.tkind = b.dataset.tkind; remember(); re(); });
   document.querySelectorAll("[data-tsort]").forEach(b => b.onclick = () => { state.tsort = b.dataset.tsort; remember(); re(); });
   document.querySelectorAll("[data-star]").forEach(b => b.onclick = () => {
     const S = stars(), k = b.dataset.star, cur = k.split("|")[0], c = D.topics.channels[cur];

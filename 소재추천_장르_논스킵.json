@@ -1,29 +1,172 @@
 {
- "updated": "2026-09-27",
- "note": "논스킵(미스터리·사건 이야기) 소재 추천용 같은 장르 채널. 2026-09-27 yt-dlp 검색(미제사건·실종사건 미스터리·대한민국 미스터리 사건·탈옥수 신창원·개구리소년 사건·소름돋는 실화 사건)에서 조회수 합이 큰 개인 채널을 골랐다(방송사·언론·예능·스트리머 제외). 유튜브 RSS(할당량 0)로 최근 15편을 훑어 평소 대비 배수·하루 조회수를 잰다. 채널을 더하거나 빼려면 이 파일만 고친다.",
- "reference": {"name": "당신이 몰랐던 이야기", "handle": "@dangmolee", "subs": 1330000, "long_median_views": 376500, "long_median_min": 13.3, "upload_every_days": 4.7, "hits_1m": 30, "quote_title_share": 0.59},
+ "updated": "2026-09-28",
+ "note": "논스킵(미스터리·사건 이야기) 소재 추천용 같은 장르 채널. 2026-09-27 yt-dlp 검색(미제사건·실종사건 미스터리·대한민국 미스터리 사건·탈옥수 신창원·개구리소년 사건·소름돋는 실화 사건)에서 조회수 합이 큰 개인 채널을 골랐다(방송사·언론·예능·스트리머 제외). 유튜브 RSS(할당량 0)로 최근 15편을 훑어 평소 대비 배수·하루 조회수를 잰다. 채널을 더하거나 빼려면 이 파일만 고친다. 2026-09-28 괴담 갈래 추가(사용자: '기묘한밤처럼 심야 괴담 미스테리 소재도 추가해서 완벽하게 믹스'): yt-dlp 검색 40개(심야 괴담·실화 괴담·공포 실화·도시전설·무서운 이야기·아날로그 호러·규칙 괴담·SCP·조선 괴담·미확인 생물 등)에서 조회수 합이 큰 개인 괴담·미스터리 채널을 RSS로 확인해(최근 20일 안에 올림·본편 중앙 4만+) 8곳을 더했다. 방송사·예능·스트리머·흉가 체험·웹툰 애니 제외. kind(사건/괴담)는 채널 제목 말로 나눴다 — 같은 장르 뜨는 영상을 갈래마다 자리를 남겨 AI에게 준다(kind_min). 실측: 논스킵/시장조사/괴담_기묘한밤_실측_2026-09-28.md 같은 날 뺌: 교양 Voyage(JTBC 방송 강연 몰아보기 — 방송사 제외 원칙), 타임스낵(게임·애니 잡학 쇼츠 — 장르 밖).",
+ "reference": {
+  "name": "당신이 몰랐던 이야기",
+  "handle": "@dangmolee",
+  "subs": 1330000,
+  "long_median_views": 376500,
+  "long_median_min": 13.3,
+  "upload_every_days": 4.7,
+  "hits_1m": 30,
+  "quote_title_share": 0.59
+ },
+ "reference_gd": {
+  "name": "기묘한 밤",
+  "handle": "@기묘한밤",
+  "subs": 1140000,
+  "long_n": 986,
+  "long_median_views": 347000,
+  "long_median_min": 10.1,
+  "tag_median": {
+   "괴담": 410000,
+   "사건사고": 373000,
+   "미스터리": 337000,
+   "역사": 267000
+  },
+  "hits_1m": 107
+ },
+ "kind_min": 8,
  "rss_channels": [
-  {"name": "당신이 몰랐던 이야기", "id": "UC5Znk83wpDdporFLdDWHARQ"},
-  {"name": "디바제시카", "id": "UCh6O-aBKR-99dg4rPy69CXg"},
-  {"name": "괴인협회", "id": "UC9zf6ouMhTKgGhTLrbfG1wg"},
-  {"name": "미스스한 이야기", "id": "UC11A8CPmI7QboPTwF270Www"},
-  {"name": "기묘한 밤", "id": "UC_SgaM1zbb1Mibnsp6J0fJA"},
-  {"name": "안협소", "id": "UCYYqb06Ym3aeubtHFwA4ECg"},
-  {"name": "사건의뢰", "id": "UCGsLaVFoPgTuJUDYW1ygcAg"},
-  {"name": "kimwontv김원", "id": "UCRSEOIfPNgUYY8xkEzxqfVg"},
-  {"name": "[팟빵] CRIME", "id": "UCPfxQojZxhPUl7cFnfu_svQ"},
-  {"name": "교양 Voyage", "id": "UCe8HrlhMkYlQ_61EjrrQlHw"},
-  {"name": "숫노루 TV", "id": "UCmgKzCmRtNBOMJrzybUQLXg"},
-  {"name": "철멍뭉", "id": "UCh9Hs6LCnksZbSs2SqSdfqg"},
-  {"name": "붉은실", "id": "UCPWru8rZz5rEi1YWhQQSvPA"},
-  {"name": "타임스낵", "id": "UCvi7EYzMlfSB0ZkX55i5LlA"},
-  {"name": "캬랑Kyaryang", "id": "UCKlwaOCK1FqXMTKv0RlCmfg"},
-  {"name": "엑스톨(Extol)", "id": "UCHRG_xhaJj-5TsYnAjhJXVQ"},
-  {"name": "잡학게티", "id": "UCa5c474zwav6yij1MCB8dQg"},
-  {"name": "형사들의 수다", "id": "UCnyPqaHE9-QdBmlJ8O_DKhA"},
-  {"name": "전세계비극사", "id": "UCKCmqa4Dy-W8YT8vT5n_lrg"},
-  {"name": "시선너머", "id": "UCuffPygXAe4oPvqFMjWmjfA"},
-  {"name": "미스터리큐브", "id": "UC3IADSkxnThwXLW5f8TZb7w"},
-  {"name": "김복준의 사건속으로", "id": "UCIgwNwkp_zGvMoZ23L8HgAQ"}
+  {
+   "name": "당신이 몰랐던 이야기",
+   "id": "UC5Znk83wpDdporFLdDWHARQ",
+   "kind": "사건"
+  },
+  {
+   "name": "디바제시카",
+   "id": "UCh6O-aBKR-99dg4rPy69CXg",
+   "kind": "사건"
+  },
+  {
+   "name": "괴인협회",
+   "id": "UC9zf6ouMhTKgGhTLrbfG1wg",
+   "kind": "사건"
+  },
+  {
+   "name": "미스스한 이야기",
+   "id": "UC11A8CPmI7QboPTwF270Www",
+   "kind": "사건"
+  },
+  {
+   "name": "기묘한 밤",
+   "id": "UC_SgaM1zbb1Mibnsp6J0fJA",
+   "kind": "괴담"
+  },
+  {
+   "name": "안협소",
+   "id": "UCYYqb06Ym3aeubtHFwA4ECg",
+   "kind": "사건"
+  },
+  {
+   "name": "사건의뢰",
+   "id": "UCGsLaVFoPgTuJUDYW1ygcAg",
+   "kind": "사건"
+  },
+  {
+   "name": "kimwontv김원",
+   "id": "UCRSEOIfPNgUYY8xkEzxqfVg",
+   "kind": "사건"
+  },
+  {
+   "name": "[팟빵] CRIME",
+   "id": "UCPfxQojZxhPUl7cFnfu_svQ",
+   "kind": "사건"
+  },
+  {
+   "name": "숫노루 TV",
+   "id": "UCmgKzCmRtNBOMJrzybUQLXg",
+   "kind": "괴담"
+  },
+  {
+   "name": "철멍뭉",
+   "id": "UCh9Hs6LCnksZbSs2SqSdfqg",
+   "kind": "괴담"
+  },
+  {
+   "name": "붉은실",
+   "id": "UCPWru8rZz5rEi1YWhQQSvPA",
+   "kind": "사건"
+  },
+  {
+   "name": "캬랑Kyaryang",
+   "id": "UCKlwaOCK1FqXMTKv0RlCmfg",
+   "kind": "괴담"
+  },
+  {
+   "name": "엑스톨(Extol)",
+   "id": "UCHRG_xhaJj-5TsYnAjhJXVQ",
+   "kind": "사건"
+  },
+  {
+   "name": "잡학게티",
+   "id": "UCa5c474zwav6yij1MCB8dQg",
+   "kind": "괴담"
+  },
+  {
+   "name": "형사들의 수다",
+   "id": "UCnyPqaHE9-QdBmlJ8O_DKhA",
+   "kind": "사건"
+  },
+  {
+   "name": "전세계비극사",
+   "id": "UCKCmqa4Dy-W8YT8vT5n_lrg",
+   "kind": "사건"
+  },
+  {
+   "name": "시선너머",
+   "id": "UCuffPygXAe4oPvqFMjWmjfA",
+   "kind": "괴담"
+  },
+  {
+   "name": "미스터리큐브",
+   "id": "UC3IADSkxnThwXLW5f8TZb7w",
+   "kind": "사건"
+  },
+  {
+   "name": "김복준의 사건속으로",
+   "id": "UCIgwNwkp_zGvMoZ23L8HgAQ",
+   "kind": "사건"
+  },
+  {
+   "name": "돌비공포라디오",
+   "id": "UC9aUIOFL_OeARVA6MtBTZAQ",
+   "kind": "괴담"
+  },
+  {
+   "name": "미스테리 우체통",
+   "id": "UCy4ktFVSbejHfOySo6t6dCA",
+   "kind": "괴담"
+  },
+  {
+   "name": "괴물연구소",
+   "id": "UCiHJKtLc7Vu4oEv5IhFSNdA",
+   "kind": "괴담"
+  },
+  {
+   "name": "유령시티",
+   "id": "UCBUNoFJ4u6sw9Oh8e1DixNQ",
+   "kind": "괴담"
+  },
+  {
+   "name": "스케줄",
+   "id": "UCLCVqo69CIaZWoevgaUnaFg",
+   "kind": "괴담"
+  },
+  {
+   "name": "강여름",
+   "id": "UCxhRaP7gMELgT8Xkzf065Tw",
+   "kind": "괴담"
+  },
+  {
+   "name": "김반월의미스터리",
+   "id": "UCDgGmBPrLF25BBGqh8Zghfw",
+   "kind": "괴담"
+  },
+  {
+   "name": "괴들남 공포이야기",
+   "id": "UCvGO8vT_oklXTssireAiaOQ",
+   "kind": "괴담"
+  }
  ]
 }

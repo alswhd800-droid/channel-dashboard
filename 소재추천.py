@@ -9,6 +9,9 @@
 2026-09-27 사용자: "논스킵은 '당신이 몰랐던 이야기'처럼 신창원·개구리소년 같은 미스터리·사건 이야기 채널"
   → 논스킵 추가 · 같은 장르 채널 훑기를 채널 설정("genre")으로 일반화 · 발굴 재료를 채널 키워드("outlier_keywords")로 줄임
     · 채널별 점수 이름("labels")을 대시보드에 표시.
+2026-09-28 사용자: "논스킵채널에.. 이런소재도 좋지만 .기묘한밤처럼.. 심야 괴담 미스테리. .소재도 추가해서.. 완벽하게 믹스하고싶은데"
+  → 채널 설정 "kinds"(갈래) — 논스킵 사건·괴담: 갈래마다 공식·최소 개수(20개 중 8개씩), 답에 '갈래:' 줄, 뒤처리 keep_kinds
+    · 장르 파일 채널에 "kind"(괴담 채널 8곳 추가) — 뜨는 영상·공급도 갈래마다 자리를 남긴다 · 대시보드 갈래 딱지·[전체·사건·괴담] 칩.
 
 입력(판단 재료 — 전부 프로그램이 모은다, AI 토큰 0):
   · 발굴 결과(한국어 채널): gh-pages 의 data/outliers.json (발굴.py 가 06·14·21시에 찾은 '채널 평소보다 몇 배 빨리 크는 영상')
@@ -27,7 +30,8 @@
   · 재료는 JSON 대신 표 줄로, 긴 주소는 R번호로 보낸다(답의 R번호는 프로그램이 주소로 되돌린다).
   · 답도 JSON 대신 줄 형식. 위에서 detail_top 개만 제작 메모(첫문장·장면·확인·위험)까지, 나머지는 제목·이유·근거만.
   · 토큰 사용량을 로그와 latest.json(tokens)에 남긴다.
-뒤처리(프로그램): 지어낸 근거 주소 버림 · 같은 대상 2개까지(최근 3번 이상 나온 대상은 1개) · 근거 기사 날짜로 '최신' 표시.
+뒤처리(프로그램): 지어낸 근거 주소 버림 · 같은 대상 2개까지(최근 3번 이상 나온 대상은 1개) · 근거 기사 날짜로 '최신' 표시
+  · 갈래가 있는 채널은 갈래마다 최소 개수 자리를 남기고 나머지는 총점순.
 출력: topics/latest.json (대시보드), topics/history.jsonl (나중에 추천 vs 실제 조회수 맞춰 보기)
 
 쓰기:
@@ -147,10 +151,12 @@ def sec_outliers(ob, R):
 
 
 def sec_genre(eo, R):
-    L = [f"기준 {eo['at']} · 훑은 채널 {eo['scanned']} · 칸: 번호|종류|평소대비(배)|하루조회|경과일|채널|제목"]
-    L += [f"{R(r['url'])}|{r['종류']}|{r['평소대비']}|{r['하루조회']}|{r['경과일']}|{r['채널']}|{r['제목']}" for r in eo["hot"]] or ["(없음)"]
-    L.append("최근 60일 같은 장르 본편(공급 — 같은 소재·각도가 이미 있나) · 칸: 번호|경과일|조회|채널|제목")
-    L += [f"{R(r.get('url'))}|{r['경과일']}|{r['조회']}|{r['채널']}|{r['제목']}" for r in eo["supply"]]
+    kd = any(r.get("갈래") for r in eo["hot"] + eo["supply"])   # 갈래가 있는 장르(논스킵 사건·괴담)는 채널 갈래 칸을 더한다
+    g = lambda r: f"{r.get('갈래', '')}|" if kd else ""
+    L = [f"기준 {eo['at']} · 훑은 채널 {eo['scanned']} · 칸: 번호|{'갈래|' if kd else ''}종류|평소대비(배)|하루조회|경과일|채널|제목"]
+    L += [f"{R(r['url'])}|{g(r)}{r['종류']}|{r['평소대비']}|{r['하루조회']}|{r['경과일']}|{r['채널']}|{r['제목']}" for r in eo["hot"]] or ["(없음)"]
+    L.append(f"최근 60일 같은 장르 본편(공급 — 같은 소재·각도가 이미 있나) · 칸: 번호|{'갈래|' if kd else ''}경과일|조회|채널|제목")
+    L += [f"{R(r.get('url'))}|{g(r)}{r['경과일']}|{r['조회']}|{r['채널']}|{r['제목']}" for r in eo["supply"]]
     if eo.get("table"):
         L.append("주제별 수요·공급(조사표) · 칸: 주제|최근12개월 편수|그중 10만+|100만+|최근24개월 최고")
         L += [f"{r['주제']}|{r['최근12개월_편수']}|{r['그중_10만이상']}|{r['최근12개월_100만이상']}|{r['최근24개월_최고']}" for r in eo["table"]]
@@ -243,6 +249,7 @@ def genre_outliers(conf, flt=None, days=30, top=25):
             return ch, None
 
     chans = conf.get("rss_channels", [])
+    kinds = list(dict.fromkeys(ch["kind"] for ch in chans if ch.get("kind"))) if conf.get("kind_min") else []
     with ThreadPoolExecutor(4) as ex:
         got = list(ex.map(run, chans))
     # RSS 가 막힌 채널은 마지막 성공분(3일 이내)을 쓴다 — 조회수·경과일은 그때 받은 시각 기준(2026-09-27: 한 시간에 여러 번 부르면 59곳 중 19곳만 열림)
@@ -275,8 +282,11 @@ def genre_outliers(conf, flt=None, days=30, top=25):
             row = {"제목": r["title"], "채널": name or ch.get("name"), "종류": "쇼츠" if r["short"] else "본편", "조회": r["views"],
                    "평소대비": round(r["views"] / max(base, 1), 1) if base else None, "하루조회": round(r["views"] / r["age_d"]),
                    "경과일": round(r["age_d"], 1), "url": r["url"]}
+            if kinds:
+                row["갈래"] = ch.get("kind") or kinds[0]
             if not r["short"] and r["age_d"] <= 60:
-                supply.append({"제목": r["title"], "채널": row["채널"], "경과일": round(r["age_d"]), "조회": r["views"], "url": r["url"]})
+                supply.append({"제목": r["title"], "채널": row["채널"], "경과일": round(r["age_d"]), "조회": r["views"], "url": r["url"],
+                               **({"갈래": row["갈래"]} if kinds else {})})
             if r["age_d"] <= days and row["평소대비"] and row["평소대비"] >= EN_MIN_MULT:
                 cand.append(row)
     if cand:   # 배수 순위와 속도 순위를 반반(발굴.py 와 같은 방식)
@@ -287,8 +297,27 @@ def genre_outliers(conf, flt=None, days=30, top=25):
             r["점수"] = round(100 * (1 - (bm[id(r)] + bv[id(r)]) / (2 * n)), 1)
         cand.sort(key=lambda r: -r["점수"])
     supply.sort(key=lambda r: r["경과일"])
+    # 갈래(논스킵 사건·괴담)가 있으면 뜨는 영상은 갈래마다 kind_min 자리, 공급은 갈래마다 같은 몫 — 매일 올리는 채널 한 갈래가 다 차지하지 않게
+    hot = keep_kinds(cand, top, {k: conf["kind_min"] for k in kinds}) if kinds else cand[:top]
+    supply = keep_kinds(supply, 40, {k: 40 // len(kinds) for k in kinds}) if kinds else supply[:40]
     return {"at": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "scanned": f"{live}/{len(chans)}" + (f" (+지난 성공분 {old})" if old else ""),
-            "hot": cand[:top], "supply": supply[:40], "table": conf.get("supply", [])}
+            "hot": hot, "supply": supply, "table": conf.get("supply", [])}
+
+
+def keep_kinds(rows, n, mins, key="갈래"):
+    """순서대로 놓인 rows 에서 n 개를 고르되 갈래마다 최소 mins[갈래] 개 자리를 남긴다(모자라면 있는 만큼). 순서는 그대로.
+    2026-09-28 논스킵 사건·괴담 믹스 — 점수로만 자르면 한 갈래가 통째로 밀려난다."""
+    must = set()
+    for k, m in mins.items():
+        must.update(id(r) for r in [r for r in rows if r.get(key) == k][:m])
+    free, out = n - len(must), []
+    for r in rows:
+        if id(r) in must:
+            out.append(r)
+        elif free > 0:
+            out.append(r)
+            free -= 1
+    return out
 
 
 def filter_outliers(ob, c, keep=8, cap=24):
@@ -597,7 +626,7 @@ def gather(c, ob, cal, trend):
     R = Refs()
     recent, overused = recent_brief(c["name"])
     ours, done = ours_brief(c["name"]), done_topics(c)
-    kr_news = news(c["news"], per=c.get("news_per", 5))
+    kr_news = news(c["news"], per=c.get("news_per", 5), cap=c.get("news_cap", 100))
     en_news = news(c["news_en"], per=4, cap=40, sources=("google",), lang="en") if c.get("news_en") else []
     g, eo, fob, mats = c.get("genre"), None, None, []
     if g:   # 같은 장르 채널 훑기(영어채널·논스킵)
@@ -638,10 +667,18 @@ def build_prompt(c, data):
     repeat_rule = (f"- 반복 금지(가장 중요): 최근 {rec.get('살펴본_추천_횟수', 0)}번의 추천에 자주 나온 대상 — {often}. 이 대상들은 각각 1개까지만, "
                    f"그것도 최근 {FRESH_DAYS}일 안의 새 기사나 지금 새로 터지는 영상이 근거일 때만 낸다. " if often else "- 반복 금지(가장 중요): ") + \
                   "공식에 예로 든 이름은 '이만큼 유명한 대상'이라는 뜻이다 — 이미 만든 편이나 최근 추천에 있는 이름이면 되풀이하지 말고 같은 급의 다른 대상을 찾고, 아직 만든 적 없는 이름이면 추천해도 된다."
+    kinds = c.get("kinds") or {}   # 갈래(2026-09-28 논스킵 사건·괴담 믹스): 갈래마다 공식·최소 개수
+    kind_block = []
+    if kinds:
+        kind_block = ["", f"[갈래 — {ask}개 중 " + " · ".join(f"{k} 최소 {v.get('min', 0) + 2}개" for k, v in kinds.items())
+                      + f". 프로그램이 {n}개를 고를 때 갈래마다 " + " · ".join(f"{k} {v.get('min', 0)}개" for k, v in kinds.items())
+                      + " 자리를 남기고 나머지는 총점순으로 채운다]"]
+        for k, v in kinds.items():
+            kind_block += [f"■ {k} — {v['desc']}"] + [f"- {x}" for x in v.get("formula", [])]
     L = [f"너는 유튜브 채널 「{c['name']}」의 소재 기획자다. 아래 재료만 보고, 지금 만들면 조회수가 가장 크게 터질 소재 {ask}개를 골라라"
          f"(프로그램이 같은 대상 겹침을 걸러 {n}개를 쓴다).",
          "", "[채널 형식]", c["format"],
-         "", "[떡상 공식 — 사용자 확정, 반드시 따른다]"] + [f"- {x}" for x in c["formula"]] + [
+         "", "[떡상 공식 — 사용자 확정, 반드시 따른다]"] + [f"- {x}" for x in c["formula"]] + kind_block + [
          "", "[점수 기준 — 각 0~5 정수]"] + [f"- {k}: {v}" for k, v in sc.items()] + [
          "", f"[우리 채널 실측 — 올린 영상 {n_cal}편의 3일 조회수와 기준의 상관(1에 가까울수록 조회수와 잘 맞음)]", cal_line,
          "", "[규칙]",
@@ -659,7 +696,8 @@ def build_prompt(c, data):
         L.append("- " + c["output_note"])
     L += ["", "[출력 형식 — JSON·설명·머리말 없이 아래 줄 형식만. 소재마다 '## '로 시작, 총점이 높을 것 같은 순서]",
           "## 소재 한 줄 이름",
-          "대상: 핵심 대상 하나(건물·기업·인물·장소·제도의 가장 널리 쓰는 이름)",
+          "대상: 핵심 대상 하나(건물·기업·인물·장소·제도의 가장 널리 쓰는 이름)"] + (
+          [f"갈래: {' 또는 '.join(kinds)} 중 하나"] if kinds else []) + [
           f"점수: {' '.join(keys)} 순서로 0~5 정수 {len(keys)}개 (예: 5 3 2 4)",
           "제목: 유튜브 제목 초안(#shorts 빼고)",
           "왜: 왜 터질까 — 근거를 짚어 2문장 이내",
@@ -669,7 +707,8 @@ def build_prompt(c, data):
           "확인: 제작 전 확인할 숫자·사실 | …(3개 이내)",
           "위험: 틀리거나 반려될 위험(1문장)",
           "후속: 우리 대박 편의 후속이면 그 편 이름(아니면 이 줄 생략)",
-          f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·점수·제목·왜(1문장)·근거 줄만 쓴다."]
+          (f"갈래마다 가장 좋은 {max(1, detail // len(kinds))}개(모두 {max(1, detail // len(kinds)) * len(kinds)}개)는 모든 줄을 쓰고, 나머지 소재는 대상·갈래·점수·제목·왜(1문장)·근거 줄만 쓴다."
+           if kinds else f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·점수·제목·왜(1문장)·근거 줄만 쓴다.")]
     for i, (label, text) in enumerate(data["mats"], 1):
         L += ["", f"[재료 {i} — {label}]", text]
     L += ["", f"오늘은 {datetime.now(KST).strftime('%Y-%m-%d')} 이다."]
@@ -677,7 +716,7 @@ def build_prompt(c, data):
 
 
 FIELD = {"대상": "대상", "제목": "제목", "첫문장": "첫문장", "왜": "왜_터질까", "왜_터질까": "왜_터질까",
-         "장면": "보여줄_장면", "보여줄_장면": "보여줄_장면", "위험": "위험", "후속": "후속"}
+         "장면": "보여줄_장면", "보여줄_장면": "보여줄_장면", "위험": "위험", "후속": "후속", "갈래": "갈래"}
 
 
 def parse_answer(text, refs, keys):
@@ -798,6 +837,8 @@ def clean(c, got, allowed, weights=None, dates=None, overused=()):
             if isinstance(e, dict) and isinstance(e.get("메모"), str):
                 e["메모"] = strip_refs(e["메모"])
         t["총점"] = round(sum(s.get(k, 0) * w[k] for k in w) / top * 100)
+        if c.get("kinds"):
+            t["갈래"] = kind_of(c, t)
         t["근거"] = [e for e in (t.get("근거") or []) if isinstance(e, dict) and e.get("url") in allowed]   # 지어낸 주소는 버린다
         ds = sorted((dates[e["url"]] for e in t["근거"] if e["url"] in dates), reverse=True)
         t.pop("최신", None)
@@ -812,7 +853,22 @@ def clean(c, got, allowed, weights=None, dates=None, overused=()):
             continue
         seen[k] = seen.get(k, 0) + 1
         kept.append(t)
+    if c.get("kinds"):   # 갈래마다 최소 개수 자리를 남기고 나머지는 총점순(2026-09-28 논스킵 사건·괴담 믹스)
+        return keep_kinds(kept, CFG["per_channel"], {k: v.get("min", 0) for k, v in c["kinds"].items()})
     return kept[:CFG["per_channel"]]
+
+
+def kind_of(c, t):
+    """답의 '갈래:' 줄 → 설정의 갈래 이름. 없거나 엉뚱하면 갈래별 match 말(소재·제목·대상)로 짐작, 그래도 없으면 첫 갈래."""
+    kinds, g = c["kinds"], str(t.get("갈래") or "")
+    for k in kinds:
+        if k in g:
+            return k
+    text = " ".join(str(t.get(x) or "") for x in ("소재", "제목", "대상"))
+    for k, v in kinds.items():
+        if v.get("match") and re.search(v["match"], text, re.I):
+            return k
+    return next(iter(kinds))
 
 
 PICKS = OUT / "picks.json"   # 만들기로 한 소재(2026-09-27 사용자: "여기서 몇 위 몇 위 만들어 달라고 하면")
@@ -1000,13 +1056,17 @@ def main():
                 got = parse_answer(text, refs, list(c["scores"]))
             topics = clean(c, got, allowed, cal["weights"], dates, overused)
             fresh_n = sum(1 for t in topics if t.get("최신"))
+            kinds = {k: {"icon": v.get("icon", ""), "min": v.get("min", 0)} for k, v in (c.get("kinds") or {}).items()} or None
             latest["channels"][name] = {"at": at, "model": model, "outliers_at": info.get("outliers_at"), "news_n": info.get("news_n"),
                                         "trend_n": info.get("trend_n"), "fresh_n": fresh_n, "prompt_chars": info.get("prompt_chars"),
-                                        "tokens": use, "labels": c.get("labels"), "genre_n": info.get("genre_n"), "genre_hot": info.get("genre_hot"), "topics": topics, "calib": view}
+                                        "tokens": use, "labels": c.get("labels"), "kinds": kinds, "genre_n": info.get("genre_n"), "genre_hot": info.get("genre_hot"),
+                                        "topics": topics, "calib": view}
             with (OUT / "history.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": at, "channel": name, "topics": [{"소재": t.get("소재"), "대상": t.get("대상"), "제목": t.get("제목"),
-                                                                            "총점": t["총점"], "최신": t.get("최신")} for t in topics]}, ensure_ascii=False) + "\n")
+                                                                            "총점": t["총점"], "최신": t.get("최신"), **({"갈래": t["갈래"]} if t.get("갈래") else {})}
+                                                                           for t in topics]}, ensure_ascii=False) + "\n")
             log(name, "추천", len(topics), "개", tok_str(use), f"· 📰최신 {fresh_n}개 ·",
+                *([" · ".join(f"{k} {sum(t.get('갈래') == k for t in topics)}개" for k in kinds), "·"] if kinds else []),
                 " / ".join(f"{t.get('소재')} {t['총점']}" for t in topics[:6]), "…")
         except Exception as e:
             log(name, "실패 — 지난 추천 유지:", str(e)[:300])

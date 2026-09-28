@@ -564,7 +564,7 @@ def load_topics():
             except Exception:
                 continue
             hist.setdefault(r.get("channel"), []).append({"at": r.get("at"), "topics": [
-                {k: t.get(k) for k in ("소재", "제목", "총점", "최신") if t.get(k) is not None} for t in r.get("topics", [])]})
+                {k: t.get(k) for k in ("소재", "제목", "총점", "최신", "갈래") if t.get(k) is not None} for t in r.get("topics", [])]})
         for ch in list(hist):
             cur = ((d.get("channels") or {}).get(ch) or {}).get("at")
             hist[ch] = [h for h in hist[ch] if h["at"] != cur][-6:][::-1]
