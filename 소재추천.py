@@ -694,7 +694,6 @@ DEMAND_TIERS = [1000000, 300000, 100000, 30000, 10000]   # 이만큼 이상이�
 DEMAND_STOP = {"한국", "서울", "seoul", "이유", "진짜", "영상", "다큐", "이야기", "정리", "역사", "최초", "세계", "최대", "사건", "괴담", "미스터리", "실화",
                "south", "korea", "korean", "koreans", "the", "and", "why", "how", "what", "is", "are", "was", "of", "in", "on", "to", "for",
                "its", "an", "this", "that", "with", "from", "by", "as", "at", "it", "be", "just", "now", "still", "new", "one", "two"}
-_YTDLP = None
 _BLOCKED = [False]   # 이번 실행 중 유튜브가 막았는가
 
 
@@ -732,7 +731,7 @@ def _yt_page(q, n, gl):
         return None
     if "ytInitialData" not in page and "unusual traffic" in page.lower():
         raise Blocked("비정상 트래픽")
-    m = re.search(r"var ytInitialData\s*=\s*(\{.*?\});\s*</script>", page, re.S)
+    m = re.search(r"(?:var ytInitialData|window\[\"ytInitialData\"\])\s*=\s*(\{.*?\});\s*</script>", page, re.S)
     try:
         data = json.loads(m.group(1)) if m else None
     except Exception:
@@ -756,39 +755,11 @@ def _yt_page(q, n, gl):
     return out
 
 
-def ytdlp_cmd():
-    """yt-dlp 실행 명령. launchd 는 PATH 가 짧아 흔한 설치 위치를 직접 찾고, 없으면 이 파이썬의 모듈로 부른다."""
-    global _YTDLP
-    if _YTDLP is None:
-        p = shutil.which("yt-dlp") or next((x for x in ("/opt/homebrew/bin/yt-dlp", "/usr/local/bin/yt-dlp", str(Path.home() / ".local/bin/yt-dlp"))
-                                             if os.path.isfile(x) and os.access(x, os.X_OK)), None)
-        _YTDLP = [p] if p else [sys.executable, "-m", "yt_dlp"]
-    return _YTDLP
-
-
-def _yt_dlp(q, n):
-    """yt-dlp ytsearch(결과 페이지를 못 읽었을 때 한 번만 — 다시 두드리지 않는다). 403·429 면 Blocked, 그 밖의 실패는 None."""
-    try:
-        r = subprocess.run(ytdlp_cmd() + ["--flat-playlist", "-J", "--no-warnings", "--socket-timeout", "20", f"ytsearch{n}:{q}"],
-                           capture_output=True, text=True, timeout=90)
-    except Exception:
-        return None
-    if re.search(r"HTTP Error (403|429)|Sign in to confirm|unusual traffic", r.stderr or "", re.I):
-        raise Blocked("yt-dlp 403·429")
-    try:
-        es = (json.loads(r.stdout).get("entries") or []) if r.returncode == 0 and r.stdout.strip() else None
-    except Exception:
-        es = None
-    if es is not None and all(es):
-        return [[int(e.get("view_count") or 0), e.get("title") or "", e.get("url") or f"https://www.youtube.com/watch?v={e.get('id')}"] for e in es]
-    return None
-
-
 def yt_search(q, n=15, gl="KR"):
-    """유튜브 검색 상위 n개 [[조회수, 제목, 주소], …]. 둘 다 실패하면 None — '측정 못 함'(검색 결과 0개와 다르다).
-    유튜브가 막으면 Blocked 를 그대로 올려 보낸다(부른 쪽이 검색을 멈춘다)."""
-    got = _yt_page(q, n, gl)
-    return got if got is not None else _yt_dlp(q, n)
+    """유튜브 검색 결과 페이지 상위 n개 [[조회수, 제목, 주소], …]. 못 읽으면 None — '측정 못 함'(검색 결과 0개와 다르다).
+    유튜브가 막으면 Blocked 를 그대로 올려 보낸다(부른 쪽이 검색을 멈춘다).
+    2026-09-29 07시 yt-dlp ytsearch 가 403 을 내 네 채널 검색이 다 멈췄다 — yt-dlp 검색 창구는 결과 페이지보다 쉽게 막혀서 쓰지 않는다."""
+    return _yt_page(q, n, gl)
 
 
 def _on_topic(q, rows):
