@@ -80,7 +80,11 @@ jobs:
           waiting=$(gh run list -R "$GITHUB_REPOSITORY" --workflow update.yml --limit 20 --json status \
             --jq '[.[] | select(.status=="queued" or .status=="pending" or .status=="waiting" or .status=="requested")] | length')
           if [ "${waiting:-0}" -eq 0 ]; then
-            gh workflow run update.yml -R "$GITHUB_REPOSITORY" --ref main && echo "다음 실행 예약됨"
+            # 깃허브가 가끔 500을 내서 사슬이 끊김(09-30 12:58) → 30초 간격 5번까지 다시 부름
+            for i in 1 2 3 4 5; do
+              gh workflow run update.yml -R "$GITHUB_REPOSITORY" --ref main && { echo "다음 실행 예약됨"; break; }
+              echo "예약 실패 $i번째, 30초 뒤 다시"; sleep 30
+            done
           else
             echo "이미 대기 중인 실행이 있어 생략"
           fi
