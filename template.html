@@ -1355,7 +1355,9 @@ function subsRows(c) {
   const S = D.series.by_channel[c.name] || {}, dates = D.series.dates, span = D.series.span || [];
   const subs = S.subs || [], views = S.views || [];
   const gain = S.subs_gain || dates.map((d, i) => i && subs[i] != null && subs[i - 1] != null ? subs[i] - subs[i - 1] : null);
-  return dates.map((d, i) => ({ d, subs: subs[i], gain: gain[i], views: views[i], span: span[i] || 1, today: d === D.updated.slice(0, 10) }));
+  const rows = dates.map((d, i) => ({ d, subs: subs[i], gain: gain[i], views: views[i], span: span[i] || 1, today: d === D.updated.slice(0, 10) }));
+  const first = rows.findIndex(r => r.subs !== null && r.subs !== undefined);   // 새로 넣은 채널은 기록 시작 전 날짜를 숨긴다
+  return first > 0 ? rows.slice(first) : rows;
 }
 const sdDay = d => `${+d.slice(5, 7)}/${+d.slice(8)}`;
 const signN = n => n === null || n === undefined ? "-" : (n > 0 ? "+" : "") + n.toLocaleString("ko-KR");

@@ -309,6 +309,7 @@ def collect():
     seen = set(alerts["seen"])
     state = load("state.json", {})
     new_alerts = []
+    quiet = set()   # 이번에 처음 들어온 채널(2026-10-05): 이미 있던 영상·지난 목표를 '새 영상'·'돌파' 알림으로 쏟아내지 않음
 
     def alert(kind, ch, title, detail="", url="", key=None):
         if key:
@@ -317,6 +318,8 @@ def collect():
             seen.add(key)
             if first_run:  # 처음 실행 때는 이미 지난 목표로 알림을 쏟아내지 않음
                 return
+        if ch in quiet:
+            return
         item = {"t": now.isoformat(timespec="minutes"), "type": kind, "ch": ch, "title": title, "detail": detail, "url": url}
         alerts["items"].insert(0, item)
         new_alerts.append(item)
@@ -333,6 +336,9 @@ def collect():
             print(f"! {entry['name']}: 채널을 찾지 못함 ({', '.join(entry['handles'])})")
             continue
         name, st = entry["name"], ch["statistics"]
+        if not any(name in day for day in hist["daily"].values()):
+            quiet.add(name)
+            print(f"· {name}: 처음 수집하는 채널 — 이번엔 알림 없이 기록만")
         ids = fetch_uploads(ch["contentDetails"]["relatedPlaylists"]["uploads"])
         idset = set(ids)
         for k in range(0, len(ids), 50):
@@ -397,6 +403,10 @@ def collect():
                 alert("goal", name, f"채널 전체 조회수 {fmt(goal)}회 돌파 🎉", "", chan_url, key=f"chviews:{name}:{goal}")
     if not snap:
         sys.exit("수집된 채널이 없습니다")
+    # channels.json 에서 뺀 채널의 영상은 지운다(영상·일정 화면에 남지 않게). 잠깐 못 찾은 채널은 목록에 있으니 그대로 둔다
+    listed = {e["name"] for e in channels}
+    for vid in [vid for vid, v in videos.items() if v["ch"] not in listed]:
+        videos.pop(vid)
 
     hist["hourly"] = thin([h for h in hist["hourly"] if h["t"] >= (now - timedelta(days=14)).isoformat()] + [{"t": now.isoformat(), "ch": snap}],
                           now, key=lambda h: h["t"])
