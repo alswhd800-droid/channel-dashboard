@@ -1494,7 +1494,7 @@ def build(ctx):
     series_days = days[-61:]
     by_ch = {}
     for c in chans:
-        rows = {"views": [], "shorts": [], "long": [], "subs": []}
+        rows = {"views": [], "shorts": [], "long": [], "subs": [], "subs_gain": []}
         for a, b in zip(series_days, series_days[1:]):
             A, B = hist["daily"][a].get(c["name"]), hist["daily"][b].get(c["name"])
             ok = A is not None and B is not None
@@ -1502,6 +1502,8 @@ def build(ctx):
             rows["shorts"].append(B["shorts_views"] - A["shorts_views"] if ok else None)
             rows["long"].append(B["long_views"] - A["long_views"] if ok else None)
             rows["subs"].append(B["subs"] if B else None)
+            # 날짜별 구독자 증가(2026-10-05 사용자 요청) — 그날 마지막 수집값 − 전날 마지막 수집값. 숨긴 채널은 0으로 와서 비운다
+            rows["subs_gain"].append(B["subs"] - A["subs"] if ok and not (A.get("hidden") or B.get("hidden")) else None)
         by_ch[c["name"]] = rows
 
     week_start = max([d for d in days if d <= (datetime.fromisoformat(today) - timedelta(days=7)).strftime("%Y-%m-%d")], default=days[0])
@@ -1585,7 +1587,10 @@ def build(ctx):
     sched = schedule(videos, now)
     data = {"updated": now.strftime("%Y-%m-%d %H:%M"), "prev_day": prev_day, "channels": chans,
             "totals": {k: total(k) for k in ("subs", "views", "shorts_views", "long_views", "d_subs", "d_views", "d_shorts", "d_long")},
-            "series": {"dates": series_days[1:], "by_channel": by_ch}, "videos": vids,
+            "series": {"dates": series_days[1:], "by_channel": by_ch,
+                       # 기록이 빠진 날이 있으면 그 칸의 증가는 며칠치가 합쳐져 있다 → 화면에 'N일치'로 표시
+                       "span": [(datetime.fromisoformat(b) - datetime.fromisoformat(a)).days for a, b in zip(series_days, series_days[1:])]},
+            "videos": vids,
             "alerts": alerts["items"][:120], "weekly": weekly, "timing": timing,
             "bench": {"at": bench.get("at"), "channels": bench.get("channels", []), "videos": bvids[:40]},
             "costs": costs, "outliers": load_outliers(), "topics": topics,

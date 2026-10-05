@@ -133,6 +133,11 @@ h2.pt{font-size:22px;margin:24px 0 4px;letter-spacing:-.03em}
 .tbl th:first-child,.tbl td:first-child{text-align:left}
 .tbl td{padding:10px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 .tbl tr:last-child td{border-bottom:0}
+.sgbar{display:inline-block;vertical-align:middle;width:56px;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;margin-left:8px}
+.sgbar i{display:block;height:100%;border-radius:3px}
+.tbl tr.today td{background:var(--soft)}
+.stbl th{white-space:nowrap}
+@media (max-width:500px){.sgbar{width:32px;margin-left:6px}}
 .scroll{overflow-x:auto}
 .hbar{display:grid;grid-template-columns:86px minmax(0,1fr) 70px;gap:10px;align-items:center;font-size:13px;margin:8px 0}
 .hbar .bar{height:14px;background:var(--soft);border-radius:7px;overflow:hidden}
@@ -1214,7 +1219,7 @@ function teamNotes(name) {   // 채널 화면: 그 채널 얘기만 모아서
     `<div class="ln">${face(l.who, "sm")}<div style="min-width:0"><span class="muted" style="font-size:12px">${esc((STAFF[l.who] || {}).name || "")}</span> ${toneTag(l.tone)}<div>${md(l.text)}</div></div></div>`).join("")}</div>` : "";
 }
 let charts = [];
-const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", hkind: "all", tch: "", tf: "all", tsort: "score", tkind: "all", sch: "all" };
+const state = { kind: "views", vch: "all", vtype: "all", vsort: "gain", ech: "all", bfor: "all", htype: "short", hsort: "score", csort: "score", hkind: "all", tch: "", tf: "all", tsort: "score", tkind: "all", sch: "all", sdays: 14 };
 try { Object.assign(state, JSON.parse(localStorage.getItem("dash") || "{}")); } catch (e) {}
 const remember = () => { try { localStorage.setItem("dash", JSON.stringify(state)); } catch (e) {} };
 
@@ -1222,7 +1227,9 @@ function chart(el, cfg) {
   if (!window.Chart || !el) return;
   Chart.defaults.color = css("--sub"); Chart.defaults.borderColor = css("--line");
   Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
-  charts.push(new Chart(el, cfg));
+  const ch = new Chart(el, cfg);
+  charts.push(ch);
+  return ch;
 }
 const tickY = { ticks: { callback: v => man(v) }, grid: { color: css("--line") } };
 const tipCb = { callbacks: { label: x => `${x.dataset.label} ${man(x.raw)}` } };
@@ -1336,12 +1343,75 @@ function pageChannel(name) {
   </a>
   ${teamNotes(c.name)}
   ${topicsMini(c.name)}
+  ${subsDaily(c)}
   <div class="sec">날짜별 조회수 (쇼츠 · 본편)</div>
   <div class="card">${noSeries() || '<div class="chart"><canvas id="c2"></canvas></div>'}</div>
-  <div class="sec">구독자 추이</div>
-  <div class="card">${noSeries() || '<div class="chart"><canvas id="c3"></canvas></div>'}</div>
   <div class="sec">영상 ${vids.length}개 <span class="muted" style="font-size:12.5px;font-weight:500">누적 조회수 순</span></div>
   <div class="card list">${vids.length ? vids.map(v => videoItem(v, v => `<b>${man(v.views)}</b>${v.gain !== null ? dl(v.gain) : ""}`)).join("") : '<div class="empty">영상이 없어요</div>'}</div>`;
+}
+/* 날짜별 구독자(2026-10-05 사용자 요청 "날짜별 구독자가 몇 명 느는지 체크") */
+const SDAYS = [[7, "7일"], [14, "14일"], [30, "30일"], [60, "전체"]];
+function subsRows(c) {
+  const S = D.series.by_channel[c.name] || {}, dates = D.series.dates, span = D.series.span || [];
+  const subs = S.subs || [], views = S.views || [];
+  const gain = S.subs_gain || dates.map((d, i) => i && subs[i] != null && subs[i - 1] != null ? subs[i] - subs[i - 1] : null);
+  return dates.map((d, i) => ({ d, subs: subs[i], gain: gain[i], views: views[i], span: span[i] || 1, today: d === D.updated.slice(0, 10) }));
+}
+const sdDay = d => `${+d.slice(5, 7)}/${+d.slice(8)}`;
+const signN = n => n === null || n === undefined ? "-" : (n > 0 ? "+" : "") + n.toLocaleString("ko-KR");
+function subsDaily(c) {
+  const head = `<div class="sec"><span>날짜별 구독자</span>
+    <span class="seg" id="sdays">${SDAYS.map(([k, l]) => `<button data-k="${k}" class="${+state.sdays === k ? "on" : ""}">${l}</button>`).join("")}</span></div>`;
+  if (c.hidden) return head + '<div class="card"><div class="empty">구독자 수를 숨긴 채널이라 날짜별 증가를 볼 수 없어요</div></div>';
+  if (noSeries()) return head + `<div class="card">${noSeries()}</div>`;
+  const R = subsRows(c), done = R.filter(r => r.gain !== null && !r.today);
+  const last = R[R.length - 1], today = last && last.today ? last : null;
+  const yday = done[done.length - 1], before = done[done.length - 2];
+  const cut = new Date(Date.parse(D.updated.slice(0, 10) + "T00:00:00Z") - 6 * 864e5).toISOString().slice(0, 10);
+  const wk = R.filter(r => r.d >= cut && r.gain !== null), wsum = wk.reduce((a, r) => a + r.gain, 0);
+  const best = R.filter(r => r.gain !== null && r.span === 1).reduce((m, r) => !m || r.gain > m.gain ? r : m, null);
+  const stat = (k, v, sub) => `<div class="card stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`;
+  const unit = c.subs >= 1000 ? 10 ** (String(Math.floor(c.subs)).length - 3) : 1;
+  return head + `<div class="grid4">
+    ${stat("오늘", today ? signN(today.gain) : "-", today ? `${esc(D.updated.slice(11))}까지 · 집계 중` : "오늘 기록 전")}
+    ${stat("어제", yday ? signN(yday.gain) : "-", yday && before ? `그제 ${signN(before.gain)}` : yday ? `${sdDay(yday.d)} (${wday(yday.d)})` : "기록 전")}
+    ${stat("최근 7일", wk.length ? signN(wsum) : "-", wk.length ? `하루 평균 ${signN(Math.round(wsum / wk.length))}` : "기록 전")}
+    ${stat("가장 많이 는 날", best && best.gain > 0 ? signN(best.gain) : "-", best && best.gain > 0 ? `${sdDay(best.d)} (${wday(best.d)})` : "아직 없어요")}
+  </div>
+  <div class="card" style="margin-top:10px"><div class="chart"><canvas id="c3"></canvas></div></div>
+  <div class="card scroll" style="margin-top:10px" id="stbl">${subsTable(c, R)}</div>
+  <div class="note">하루 증가 = 그날 마지막 수집값 − 전날 마지막 수집값(한국 시각 0~24시)이에요. 오늘 칸은 ${esc(D.updated.slice(11))}까지 늘어난 만큼이에요.${unit > 1
+    ? ` 유튜브가 구독자 수를 앞 세 자리까지만 알려 줘서 이 채널은 <b>${unit.toLocaleString("ko-KR")}명 단위</b>로 맞아요(예: ${(c.subs + Math.floor(unit / 3)).toLocaleString("ko-KR")}명 → ${c.subs.toLocaleString("ko-KR")}명). 정확한 숫자는 유튜브 스튜디오 → 분석에서 보세요.` : ""}</div>`;
+}
+function subsTable(c, R) {
+  const rows = R.slice(-state.sdays).reverse();
+  const max = Math.max(1, ...rows.map(r => Math.abs(r.gain || 0)));
+  const col = color(c.name);
+  return `<table class="tbl stbl">
+    <tr><th>날짜</th><th>구독자</th><th>하루 증가</th><th>조회수 증가</th><th>조회 1천 회당 구독</th></tr>
+    ${rows.map(r => `<tr class="${r.today ? "today" : ""}">
+      <td><b>${sdDay(r.d)}</b> <span class="muted">(${wday(r.d)})</span>${r.today ? ' <span class="muted" style="font-size:11.5px">· 지금까지</span>' : ""}${r.span > 1 ? ` <span class="muted" style="font-size:11.5px">· ${r.span}일치</span>` : ""}</td>
+      <td>${r.subs === null || r.subs === undefined ? "-" : r.subs.toLocaleString("ko-KR")}</td>
+      <td>${r.gain === null ? '<span class="muted">-</span>' : `<b class="${r.gain > 0 ? "up" : r.gain < 0 ? "down" : "muted"}">${signN(r.gain)}</b>`}<span class="sgbar"><i style="width:${Math.round(Math.abs(r.gain || 0) / max * 100)}%;background:${r.gain < 0 ? "var(--down)" : col}"></i></span></td>
+      <td>${r.views === null || r.views === undefined ? "-" : man(r.views)}</td>
+      <td>${r.gain !== null && r.views > 0 ? (Math.round(r.gain / r.views * 10000) / 10).toLocaleString("ko-KR") + "명" : '<span class="muted">-</span>'}</td></tr>`).join("")}
+  </table>`;
+}
+let subsChart = null;
+function drawSubs(c) {
+  if (!$("#c3")) return;
+  if (subsChart) { subsChart.destroy(); charts = charts.filter(x => x !== subsChart); subsChart = null; }
+  const R = subsRows(c).slice(-state.sdays), col = color(c.name);
+  subsChart = chart($("#c3"), { type: "bar", data: { labels: R.map(r => r.d.slice(5).replace("-", "/")), datasets: [
+      { type: "bar", label: "하루 증가", data: R.map(r => r.gain), yAxisID: "y", borderRadius: 3, order: 2,
+        backgroundColor: R.map(r => r.gain < 0 ? css("--down") : r.today ? col + "80" : col) },
+      { type: "line", label: "구독자", data: R.map(r => r.subs), yAxisID: "y1", order: 1, borderColor: css("--sub"), backgroundColor: css("--sub"),
+        borderWidth: 1.5, tension: .3, pointRadius: R.length > 20 ? 0 : 2, spanGaps: true }] },
+    options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      plugins: { legend: { labels: { boxWidth: 10, boxHeight: 10 } },
+        tooltip: { callbacks: { label: x => x.raw === null ? `${x.dataset.label} -` : x.dataset.yAxisID === "y1" ? `구독자 ${x.raw.toLocaleString("ko-KR")}명` : `하루 증가 ${signN(x.raw)}명${R[x.dataIndex].today ? " (지금까지)" : ""}` } } },
+      scales: { x: { grid: { display: false } }, y: tickY,
+        y1: { position: "right", grid: { display: false }, ticks: { callback: v => man(v) } } } } });
 }
 function afterChannel(name) {
   const c = D.channels.find(x => x.name === name) || D.channels[0];
@@ -1351,8 +1421,14 @@ function afterChannel(name) {
       { label: "쇼츠", data: S.shorts, backgroundColor: css("--shorts"), borderRadius: 3, stack: "s" },
       { label: "본편", data: S.long, backgroundColor: css("--long"), borderRadius: 3, stack: "s" }] },
     options: { ...base, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ...tickY } } } });
-  chart($("#c3"), { type: "line", data: { labels: labels(), datasets: [{ label: "구독자", data: S.subs, borderColor: color(c.name), backgroundColor: color(c.name), tension: .3, pointRadius: 2, spanGaps: true }] },
-    options: { ...base, plugins: { ...base.plugins, legend: { display: false } }, scales: { x: { grid: { display: false } }, y: tickY } } });
+  subsChart = null;
+  drawSubs(c);
+  document.querySelectorAll("#sdays [data-k]").forEach(b => b.onclick = () => {
+    state.sdays = +b.dataset.k; remember();
+    document.querySelectorAll("#sdays [data-k]").forEach(x => x.classList.toggle("on", x === b));
+    if ($("#stbl")) $("#stbl").innerHTML = subsTable(c, subsRows(c));
+    drawSubs(c);
+  });
 }
 
 /* ───────── 영상 ───────── */
