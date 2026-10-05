@@ -1440,9 +1440,10 @@ function pageVideos() {
     <div class="chips" id="vch">${[["all", "전체 채널"]].concat(D.channels.map(c => [c.name, c.name])).map(([k, l]) => `<button class="chip ${state.vch === k ? "on" : ""}" data-k="${esc(k)}">${k === "all" ? "" : `<span class="dot" style="background:${color(k)}"></span>`}${esc(l)}</button>`).join("")}</div>
     <div class="line">
       <span class="seg" id="vtype">${[["all", "전체"], ["short", "쇼츠"], ["long", "본편"]].map(([k, l]) => `<button data-k="${k}" class="${state.vtype === k ? "on" : ""}">${l}</button>`).join("")}</span>
-      <span class="seg" id="vsort">${[["gain", "오늘 상승"], ["new", "최신"], ["views", "누적"]].map(([k, l]) => `<button data-k="${k}" class="${state.vsort === k ? "on" : ""}">${l}</button>`).join("")}</span>
+      <span class="seg" id="vsort">${[["gain", "오늘 상승"], ["new", "최신"], ["views", "누적"]].concat(hasEng() ? [["eng", "유효 조회수"], ["eng7", "유효 7일"]] : []).map(([k, l]) => `<button data-k="${k}" class="${state.vsort === k ? "on" : ""}">${l}</button>`).join("")}</span>
     </div>
   </div>
+  <div id="engnote"></div>
   <div class="hl" id="hl"></div>
   <div class="sec" style="margin-top:18px">전체 목록</div>
   <div class="card list" id="vlist"></div>`;
@@ -1454,20 +1455,39 @@ function highlights(base) {
   const top = [...base].sort((a, b) => b.views - a.views).filter(v => v.views > 0).slice(0, 3);
   const box = (title, sub, arr, right) => `<div class="card"><div class="hlh"><b>${title}</b><span class="muted">${sub}</span></div>
     <div class="list" style="padding:0">${arr.length ? arr.map((v, k) => videoItem({ ...v, published: "" }, right, `<span class="rank r${k}">${k + 1}</span>`)).join("") : '<div class="empty">아직 없어요</div>'}</div></div>`;
+  const engTop = base.filter(v => v.eng > 0).sort((a, b) => b.eng - a.eng).slice(0, 3);
   return box("🚀 최근 급등", byWeek ? "최근 7일 조회수 증가" : "최근 30일 업로드 · 하루 평균 조회수", hot,
       v => byWeek ? `<b class="up">▲${man(v.gain7)}</b><span class="muted">7일</span>` : `<b class="up">${man(v.per_day)}</b><span class="muted">회/일</span>`)
-    + box("🏆 조회수 TOP", "누적 조회수", top, v => `<b>${man(v.views)}</b><span class="muted">회</span>`);
+    + box("🏆 조회수 TOP", "누적 조회수", top, v => `<b>${man(v.views)}</b><span class="muted">회</span>`)
+    + (engTop.length ? box("🎯 유효 조회수 TOP", "바로 넘기지 않고 본 조회 · 유튜브 분석", engTop, engRight) : "");
+}
+/* 유효 조회수(2026-10-05): 유튜브 분석 API — 연결된 채널만 값이 있다 */
+const hasEng = () => D.videos.some(v => v.eng !== undefined);
+const engRight = v => `<b>${man(v.eng)}</b><span class="muted">유효 ${v.erate ?? "-"}% · 전체 ${man(v.eviews)}</span>`;
+function engNote() {
+  const E = D.engaged || {}, chs = E.channels || {};
+  const on = D.channels.map(c => c.name).filter(n => (chs[n] || {}).ok), off = D.channels.map(c => c.name).filter(n => !(chs[n] || {}).ok);
+  const at = E.at ? E.at.slice(5, 16).replace("T", " ").replace("-", "/") : "";
+  return `<div class="card guide" style="margin-top:12px">
+    <div class="gx"><b>유효 조회수</b>는 쇼츠를 바로 넘기지 않고 본 횟수예요(스튜디오의 '참여 조회수'). 전체 조회수는 다시 보기·잠깐 스친 재생까지 센 수라, <b>유효 %</b>가 높을수록 사람들이 멈춰서 본 영상이에요.</div>
+    <div class="gx muted">유튜브 분석 기준 · 1~2일 늦게 반영 · 3시간마다 갱신${at ? ` · 마지막 ${at}` : ""}</div>
+    <div class="gx">${on.length ? `✅ ${on.map(esc).join(", ")}` : ""}${off.length ? `${on.length ? "<br>" : ""}<span class="muted">🔌 연결 필요: ${off.map(esc).join(", ")}</span>` : ""}${E.err ? `<br><b style="color:#e0392b">${esc(E.err)}</b>` : ""}</div></div>`;
 }
 function afterVideos() {
   const draw = () => {
     let arr = D.videos.filter(v => (state.vch === "all" || v.ch === state.vch) && (state.vtype === "all" || (state.vtype === "short") === v.short));
+    const engSort = (state.vsort === "eng" || state.vsort === "eng7") && hasEng();
+    $("#engnote").innerHTML = engSort ? engNote() : "";
     $("#hl").innerHTML = highlights(arr);
     if (state.vsort === "gain") arr.sort((a, b) => (b.gain ?? -1) - (a.gain ?? -1) || b.views - a.views);
     if (state.vsort === "new") arr.sort((a, b) => b.published.localeCompare(a.published));
     if (state.vsort === "views") arr.sort((a, b) => b.views - a.views);
+    if (engSort) arr = arr.filter(v => v.eng !== undefined).sort((a, b) => b[state.vsort] - a[state.vsort] || b.eng - a.eng);
     $("#vlist").innerHTML = arr.length ? arr.map(v => videoItem(v, v => state.vsort === "gain"
       ? `${v.gain === null ? '<b class="muted">-</b>' : `<b class="${v.gain > 0 ? "up" : "muted"}">${v.gain > 0 ? "▲" : ""}${man(v.gain)}</b>`}<span class="muted">${man(v.views)}</span>`
-      : `<b>${man(v.views)}</b><span class="muted">👍 ${man(v.likes)}</span>`)).join("") : '<div class="empty">조건에 맞는 영상이 없어요</div>';
+      : engSort && state.vsort === "eng7" ? `<b class="${v.eng7 > 0 ? "up" : "muted"}">${v.eng7 > 0 ? "▲" : ""}${man(v.eng7)}</b><span class="muted">7일 유효 · 누적 ${man(v.eng)}</span>`
+      : engSort ? engRight(v)
+      : `<b>${man(v.views)}</b><span class="muted">👍 ${man(v.likes)}</span>`)).join("") : `<div class="empty">${engSort ? "이 채널은 아직 유효 조회수 연결이 안 됐어요" : "조건에 맞는 영상이 없어요"}</div>`;
   };
   const bind = (id, key) => document.querySelectorAll(`#${id} [data-k]`).forEach(b => b.onclick = () => {
     state[key] = b.dataset.k; remember();

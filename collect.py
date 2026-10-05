@@ -50,6 +50,12 @@ CHANNEL_GOALS = (10000, 100000, 1000000, 10000000)
 ADS = {"subs": 1000, "watch": 4000, "shorts90": 10_000_000}
 ADS_NEW = {"date": "2027-02-01", "watch": 8000, "shorts90": 20_000_000}
 
+# 유효 조회수(2026-10-05 사용자 요청): 공개 API엔 없어서 유튜브 분석 API를 채널 주인 OAuth(읽기 전용)로 받는다.
+#   깃허브는 비밀값 YT_OAUTH = {"client_id","client_secret","tokens":{채널ID: refresh_token}}, 맥은 ~/.channel-dashboard/ 파일.
+#   분석 수치는 하루 한두 번만 바뀌어서 3시간마다만 받는다(무료, 할당량 여유).
+ENGAGED_EVERY_HOURS = 3
+ANALYTICS_API = "https://youtubeanalytics.googleapis.com/v2/reports"
+
 
 def env_value(name):
     val = os.environ.get(name, "").strip()
@@ -292,6 +298,81 @@ def rename_channels(channels, hist, money_hist, videos, alerts):
 
 # ---------------------------------------------------------------- 수집
 
+# ---------------------------------------------------------------- 유효 조회수(유튜브 분석 API)
+def engaged_auth():
+    """유효 조회수용 OAuth 값. 없으면 None. 토큰·비밀값은 절대 출력하지 않는다"""
+    raw = os.environ.get("YT_OAUTH", "").strip()
+    if raw:
+        try:
+            return json.loads(raw)
+        except ValueError:
+            print("! YT_OAUTH 형식 오류 — 유효 조회수 건너뜀")
+            return None
+    d = Path.home() / ".channel-dashboard"
+    try:
+        cl = json.loads((d / "oauth_client.json").read_text(encoding="utf-8"))
+        tok = json.loads((d / "yt_tokens.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return {"client_id": cl["client_id"], "client_secret": cl["client_secret"], "tokens": {k: v["refresh_token"] for k, v in tok.items()}}
+
+
+def _analytics(token, cid, start, end, metrics, **extra):
+    url = ANALYTICS_API + "?" + urllib.parse.urlencode({"ids": f"channel=={cid}", "startDate": start, "endDate": end, "metrics": metrics, **extra})
+    with urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": "Bearer " + token}), timeout=60) as r:
+        return json.load(r)
+
+
+def collect_engaged(now, info):
+    """영상별 유효 조회수(engagedViews)·분석 조회수(views)·평균 시청 비율·구독 증가·최근 7일 유효 조회수.
+    채널마다 그 채널 토큰을 먼저 쓰고, 403이면 다른 토큰으로(관리자 권한이 있는 채널) 시도한다. 아무 토큰도 안 되면 '연결 안 됨'."""
+    old = load("engaged.json", {})
+    names = {c["name"] for c in info}
+    if old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=ENGAGED_EVERY_HOURS) and names <= set(old.get("channels", {})):
+        return
+    auth = engaged_auth()
+    if not auth:
+        return
+    access = {}
+    for key, rt in (auth.get("tokens") or {}).items():
+        try:
+            req = urllib.request.Request("https://oauth2.googleapis.com/token", method="POST", data=urllib.parse.urlencode(
+                {"client_id": auth["client_id"], "client_secret": auth["client_secret"], "refresh_token": rt, "grant_type": "refresh_token"}).encode())
+            with urllib.request.urlopen(req, timeout=30) as r:
+                access[key] = json.load(r)["access_token"]
+        except (urllib.error.URLError, KeyError, ValueError) as e:
+            print(f"! 유효 조회수 연결 하나 실패({getattr(e, 'code', type(e).__name__)}) — 만료됐으면 다시 연결 필요")
+    if not access:
+        old.update(at=now.isoformat(timespec="minutes"), err="연결이 모두 만료됨 — 다시 연결 필요")
+        save("engaged.json", old)
+        return
+    end, start7 = now.strftime("%Y-%m-%d"), (now - timedelta(days=7)).strftime("%Y-%m-%d")
+    out = {"at": now.isoformat(timespec="minutes"), "err": None, "channels": {}, "videos": dict(old.get("videos") or {})}
+    for c in info:
+        res = {"ok": False, "err": "연결 안 됨"}
+        for key in ([c["id"]] if c["id"] in access else []) + [k for k in access if k != c["id"]]:
+            try:
+                life = _analytics(access[key], c["id"], "2010-01-01", end, "engagedViews,views,averageViewPercentage,subscribersGained",
+                                  dimensions="video", sort="-engagedViews", maxResults=200)
+                week = _analytics(access[key], c["id"], start7, end, "engagedViews", dimensions="video", sort="-engagedViews", maxResults=200)
+            except urllib.error.HTTPError as e:
+                if e.code in (401, 403):
+                    continue
+                res = {"ok": False, "err": f"분석 API 오류 {e.code}"}
+                break
+            except urllib.error.URLError as e:
+                res = {"ok": False, "err": f"분석 API 연결 실패 {type(e).__name__}"}
+                break
+            w = {r[0]: r[1] for r in week.get("rows") or []}
+            for vid, eng, views, avp, subs in life.get("rows") or []:
+                out["videos"][vid] = {"eng": int(eng), "views": int(views), "avp": round(float(avp), 1), "subs": int(subs), "eng7": int(w.get(vid, 0))}
+            res = {"ok": True, "err": None, "n": len(life.get("rows") or [])}
+            break
+        out["channels"][c["name"]] = res
+    save("engaged.json", out)
+    print("· 유효 조회수: " + ", ".join(f"{n} {str(r['n']) + '편' if r['ok'] else r['err']}" for n, r in out["channels"].items()))
+
+
 def collect():
     now = datetime.now(KST)
     today = now.strftime("%Y-%m-%d")
@@ -437,6 +518,10 @@ def collect():
     money_hist = {d: v for d, v in money_hist.items() if d >= (now - timedelta(days=120)).strftime("%Y-%m-%d")}
 
     bench = collect_bench(now, state)
+    try:
+        collect_engaged(now, info)
+    except Exception as e:   # 유효 조회수가 막혀도 대시보드는 그대로 만든다(메시지에 토큰이 섞이지 않게 종류만 출력)
+        print(f"! 유효 조회수 실패: {type(e).__name__}")
 
     # 주간 리포트: 월요일 오전 9시 이후 첫 실행에 한 번
     ctx = dict(now=now, info=info, videos=videos, vhist=vhist, hist=hist, early=early, money_hist=money_hist, alerts=alerts, bench=bench)
@@ -1517,6 +1602,8 @@ def build(ctx):
         by_ch[c["name"]] = rows
 
     week_start = max([d for d in days if d <= (datetime.fromisoformat(today) - timedelta(days=7)).strftime("%Y-%m-%d")], default=days[0])
+    engaged = load("engaged.json", {})
+    ev = engaged.get("videos") or {}
     vids = []
     for vid, v in videos.items():
         h = vhist.get(vid, {})
@@ -1539,6 +1626,9 @@ def build(ctx):
                      "like_rate": round(v["likes"] / v["views"] * 100, 2) if v["views"] else None,
                      "comment_rate": round(v["comments"] / v["views"] * 100, 2) if v["views"] else None,
                      "early": checks, "tracked": bool(e) or age <= 2, **({} if v.get("public", True) else {"public": False}),
+                     # 유효 조회수(유튜브 분석): eng 유효 · eviews 분석 조회수(다시 보기 포함) · erate 유효 비율 · avp 평균 시청 비율 · esubs 구독 증가 · eng7 최근 7일 유효
+                     **({"eng": ev[vid]["eng"], "eviews": ev[vid]["views"], "erate": round(ev[vid]["eng"] / ev[vid]["views"] * 100, 1) if ev[vid]["views"] else None,
+                         "avp": ev[vid]["avp"], "esubs": ev[vid]["subs"], "eng7": ev[vid]["eng7"]} if vid in ev else {}),
                      "url": f"https://www.youtube.com/{'shorts/' if v['short'] else 'watch?v='}{vid}"})
 
     # 주간 리포트
@@ -1606,6 +1696,7 @@ def build(ctx):
             "costs": costs, "outliers": load_outliers(), "topics": topics,
             "pipeline": pipeline(videos, vhist, med3, topics, now), "efficiency": efficiency(chans, vids, hist, costs, weekly, now),
             "schedule": sched, "cadence": cadence(videos, now, sched),
+            "engaged": {"at": engaged.get("at"), "err": engaged.get("err"), "channels": engaged.get("channels") or {}},
             "telegram": bool(env_value("TELEGRAM_BOT_TOKEN") and env_value("TELEGRAM_CHAT_ID")) or bool(os.environ.get("TELEGRAM_ON")),
             "settings": {"surge_min": SURGE_MIN_PER_HOUR, "surge_ratio": SURGE_RATIO, "retention": RETENTION}}
     try:

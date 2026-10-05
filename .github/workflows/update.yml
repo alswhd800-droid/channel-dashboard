@@ -38,6 +38,7 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          YT_OAUTH: ${{ secrets.YT_OAUTH }}   # 유효 조회수(유튜브 분석 API, 읽기 전용 OAuth) — 3시간마다만 씀
         run: python collect.py
       - name: 떡상 후보 발굴 (하루 3번만 — API 할당량이 하루 10,000유닛이라 수집과 나눠 쓴다)
         if: always()
@@ -58,6 +59,7 @@ jobs:
         run: |
           rm -rf site && mkdir site
           cp -R data site/data && cp docs/index.html site/index.html && touch site/.nojekyll
+          cp privacy.html site/privacy.html   # 구글 OAuth 앱(유효 조회수)에 등록한 개인정보처리방침 주소
           if [ -d staff ]; then cp -R staff site/staff; fi   # 직원 사진(있을 때만)
           cd site
           git init -q -b gh-pages
