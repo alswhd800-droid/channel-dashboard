@@ -6,5 +6,5 @@
   {"name": "숨은구조", "handles": ["@숨은구조"]},
   {"name": "오름", "handles": ["@oreum_korea"]},
   {"name": "거대한비밀", "handles": ["@거대한비밀"]},
-  {"name": "역사의급소", "handles": ["@gupso_history"]}
+  {"name": "라스트 씬", "handles": ["@lastscene_drama"], "old_names": ["역사의급소"]}
 ]
