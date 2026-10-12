@@ -25,7 +25,7 @@
       "labels": {"hook": "자극", "demand": "수요", "korea": "한국 인지도", "paradox": "역설", "visual": "화면"},
       "anchor_type": "쇼츠",
       "scores": {"hook": "자극·클릭 충동 — 제목만 보고 안 누르면 못 참는가: 공포·극한·목숨 건 현장·금기·군사 비밀·'이게 된다고?'·충격 반전 0~5", "korea": "한국 인지도 — 한국인 누구나 이름만 들어도 아는 대상인가 0~5", "paradox": "물리 역설·질문의 힘 0~5", "visual": "3D로 보여줄 장면이 분명한가 0~5"},
-      "weights": {"hook": 3, "demand": 3, "korea": 3, "paradox": 1, "visual": 1},
+      "weights": {"hook": 3, "demand": 3, "korea": 3, "paradox": 1, "visual": 1, "gap": 2, "wiki": 1, "buzz": 1, "timing": 1},
       "demand": {"tiers": [1000000, 300000, 100000, 30000, 10000]}
     },
     {
@@ -48,7 +48,7 @@
               "지금 잘나가는 기업의 신사업·투자·주가 소식(몰락 이야기가 아님)"],
       "ban_words": "분기|희망퇴직|구조조정|감원|인력 감축|잠정 실적|어닝",
       "scores": {"hook": "자극·클릭 충동 — 누구나 아는 1등의 몰락·빚·돈·충격 반전('그 회사가 망했다고?')이 제목만으로 느껴져 안 누르면 못 참는가 0~5", "korea": "한국 인지도 0~5", "paradox": "'1등이 왜?' 모순·숫자 대비 0~5", "visual": "자료(기사·차트·사진)가 충분한가 0~5"},
-      "weights": {"hook": 3, "demand": 3, "korea": 2, "paradox": 1, "visual": 1},
+      "weights": {"hook": 3, "demand": 3, "korea": 2, "paradox": 1, "visual": 1, "gap": 2, "wiki": 1, "buzz": 1, "timing": 1},
       "demand": {"tiers": [1000000, 300000, 100000, 30000, 10000]}
     },
     {
@@ -75,7 +75,7 @@
       "ban": ["통계 발표만 있는 것 — 새 숫자 하나('몇 년 만에 최고·최저', 기록 경신)가 전부인 소재", "정책·예산 발표 해설", "주가·환율·수출 실적 소식"],
       "ban_words": "\\bHits? an? [\\w-]+ (High|Low)\\b|\\bRecord (High|Low)\\b|\\bBr(oke|eaks?) (a|the|Its) Record\\b|통계 발표|인구동향|잠정 집계",
       "scores": {"hook": "자극·클릭 충동 — 미국 시청자가 제목만 보고 안 누르면 못 참는가: 충격·어두운 이면·돈·극한·'한국이 이걸 했다고?' 0~5", "korea": "한국 얘기의 힘·미국 시청자와 이어지는 고리 0~5", "paradox": "나라 전체의 역설·어두운 훅의 강도 0~5", "visual": "지도·차트·스톡·공공사진으로 화면 70%를 채울 수 있는가 0~5"},
-      "weights": {"hook": 3, "demand": 3, "paradox": 2, "korea": 1, "visual": 1},
+      "weights": {"hook": 3, "demand": 3, "paradox": 2, "korea": 1, "visual": 1, "gap": 2, "wiki": 1, "buzz": 1, "timing": 1},
       "demand": {"tiers": [2000000, 700000, 250000, 80000, 25000], "gl": "US", "must": "korea"}
     },
     {
@@ -171,7 +171,11 @@
         "demand": 3,
         "korea": 2,
         "paradox": 1,
-        "visual": 1
+        "visual": 1,
+        "gap": 2,
+        "wiki": 1,
+        "buzz": 1,
+        "timing": 1
       },
       "demand": {"tiers": [3000000, 1000000, 400000, 150000, 50000]}
     },
@@ -231,7 +235,11 @@
         "demand": 2,
         "korea": 3,
         "paradox": 1,
-        "visual": 1
+        "visual": 1,
+        "gap": 2,
+        "wiki": 1,
+        "buzz": 1,
+        "timing": 1
       },
       "demand": {
         "tiers": [

@@ -22,3 +22,5 @@ staff/_원본/
 .일정.pending
 topics/_demand_cache.json
 topics/_demand_block.json
+topics/_buzz_cache.json
+topics/_wiki_cache.json

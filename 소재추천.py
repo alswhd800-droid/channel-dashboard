@@ -99,7 +99,8 @@ EXTRA = 2          # 대상 제한으로 빠질 몫까지 몇 개 더 받는다(
 MADE_DAYS = 7      # 이 안에 만든 편의 대상·후속은 추천에서 뺀다(2026-09-28 어제 만든 편의 후속이 목록 위를 채움)
 RSS_CACHE = OUT / "_rss_cache.json"
 # 점수 이름 기본값(채널 설정 "labels" 가 덮는다) — 대시보드는 latest.json 의 labels 순서대로 막대를 그린다
-DEFAULT_LABELS = {"hook": "자극", "demand": "수요", "korea": "한국 인지도", "paradox": "역설", "visual": "화면", "proof": "근거"}
+DEFAULT_LABELS = {"hook": "자극", "demand": "수요", "korea": "한국 인지도", "paradox": "역설", "visual": "화면", "proof": "근거",
+                  "gap": "빈자리", "wiki": "관심 급등", "buzz": "커뮤니티", "timing": "타이밍"}
 EN_MIN_MULT = 1.5  # 영어권 한국 영상: 그 채널 평소의 이만큼 이상이어야 '빨리 크는 영상'
 HANGUL = re.compile(r"[\uac00-\ud7a3]")
 # 뉴스에서 뺄 것: 블로그·카페·영상 주소, 도박·연재물 광고성 글(2026-09-27 최신순으로만 뽑았더니 섞여 들어옴)
@@ -855,6 +856,236 @@ def measure_demand(c, topics):
     return {"검색어": len(want), "새로_검색": fresh, "검색_실패": failed_q, "측정_못함": failed, "막힘": _BLOCKED[0]}
 
 
+# ---------------------------------------------------------------- 유튜브 밖 신호(2026-10-12 사용자 요청)
+# "너무 유튜브에 있는 것만 가져와서 순위를 매기는데.. 다른 신박하고 좋은 아이디어로 순위를 매길 수 있게" → 사용자가 고른 넷 다:
+#   gap(빈자리) = 유튜브 밖 관심(위키 평소 조회수·커뮤니티) − 유튜브 공급(검색 상위의 10만+ 관련 영상 수). 관심은 큰데 영상이 없는 블루오션.
+#   wiki(관심 급등) = 위키백과 문서 조회수 최근 7일 ÷ 그 전 60일. 사람들이 지금 막 궁금해하기 시작한 대상.
+#   buzz(커뮤니티) = 더쿠·네이트판·디시 실베·펨코 포텐·클리앙 인기글(최근 7일, 하루 2번 쌓음)에 대상이 나온 횟수. 인기글 제목은 AI 재료로도 넣는다.
+#   timing(달력) = 사건 날짜의 N주년이 3주 안이거나(10·5주년이면 더), 근거 기사가 있는 다가오는 날(개봉·선고·재판)이 3주 안.
+# 전부 프로그램이 잰다(AI 토큰 0, 무료). 못 잰 항목은 None → 총점에서 뺀다(측정 실패가 감점이 되지 않게).
+BUZZ_CACHE = OUT / "_buzz_cache.json"
+BUZZ_KEEP = 7 * 86400
+BUZZ_SITES = [   # (이름, 주소, 제목 정규식) — 2026-10-12 다섯 곳 다 열림 확인(뽐뿌 403·나무위키 404 라 뺌)
+    ("네이트판", "https://pann.nate.com/talk/ranking", r'<dt>\s*<h2>\s*<a [^>]*title="([^"]+)"'),
+    ("더쿠", "https://theqoo.net/hot", r'<td class="title">\s*(?:<[^>]+>\s*)*<a href="/hot/\d+"[^>]*>\s*(?:<span[^>]*>[^<]*</span>)?([^<]+)'),
+    ("디시", "https://gall.dcinside.com/board/lists/?id=dcbest", r'<td class="gall_tit ub-word">\s*<a\s+href="/board/view/\?id=dcbest[^>]*>(.*?)</a>'),
+    ("펨코", "https://www.fmkorea.com/best", r'<span class="ellipsis-target">([^<]+)</span>'),
+    ("클리앙", "https://www.clien.net/service/group/community?od=T31", r'<span class="subject_fixed"[^>]*title="([^"]+)"'),
+]
+OUTSIDE_KEYS = ("gap", "wiki", "buzz", "timing")
+WIKI_CACHE = OUT / "_wiki_cache.json"
+WIKI_TTL = 20 * 3600
+# 위키미디어는 연락처(주소) 없는 User-Agent 를 4번 만에 429 로 막는다(10-12 실측) — 저장소 주소를 넣으면 안 막힘
+WIKI_UA = {"User-Agent": "channel-dashboard/1.0 (https://github.com/alswhd800-droid/channel-dashboard)"}
+TIMING_DAYS = 21
+_GENERIC_TAIL = re.compile(r"(사건|사고|참사|실종|괴담|전설|미스터리|살인|붕괴|사태|논란|이야기)$")
+
+
+def community_hot():
+    """커뮤니티 인기글 제목을 모아 7일 동안 쌓는다 → [{"제목","곳","at"}]. 한 곳이 막혀도 나머지로 간다."""
+    try:
+        cache = json.loads(BUZZ_CACHE.read_text(encoding="utf-8")) if BUZZ_CACHE.exists() else {}
+    except Exception:
+        cache = {}
+    now, ok = time.time(), []
+    hdr = dict(UA, **{"Accept-Language": "ko-KR,ko;q=0.9"})
+    for name, url, rx in BUZZ_SITES:
+        try:
+            page = urllib.request.urlopen(urllib.request.Request(url, headers=hdr), timeout=15).read().decode("utf-8", "ignore")
+        except Exception as e:
+            log(f"  커뮤니티 {name} 못 읽음: {str(e)[:80]}")
+            continue
+        got = 0
+        for x in re.findall(rx, page, re.S):
+            ti = re.sub(r"^\[[^\]]{1,12}\]\s*", "", html.unescape(re.sub(r"<[^>]+>", "", x)).strip())
+            if len(ti) < 4 or "이용 안내" in ti:
+                continue
+            cache.setdefault(f"{name}|{ti}", {"제목": ti, "곳": name, "at": now})
+            got += 1
+        if got:
+            ok.append(f"{name} {got}")
+    cache = {k: v for k, v in cache.items() if now - v.get("at", 0) < BUZZ_KEEP}
+    try:
+        BUZZ_CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+    except Exception as e:
+        log("커뮤니티 캐시 저장 실패", str(e)[:120])
+    log("커뮤니티 인기글:", " · ".join(ok) or "전부 못 읽음", f"(7일 쌓인 것 {len(cache)}개)")
+    return sorted(cache.values(), key=lambda v: -v["at"])
+
+
+def sec_buzz(buzz, n=60):
+    rows = [v for v in buzz if time.time() - v["at"] < 3 * 86400][:n]
+    return "\n".join(f"- [{v['곳']}] {v['제목']}" for v in rows) or "없음"
+
+
+def _names(t):
+    """대상 이름 → 커뮤니티 제목에서 찾을 말들(붙여 쓴 것). '개구리 소년 사건' → ['개구리소년사건', '개구리소년']."""
+    out = []
+    for x in [t.get("대상") or ""] + [x for x in re.split(r"[(/·,]", t.get("대상") or "")[1:]]:
+        z = _nz(x)
+        if len(z) >= 2:
+            out.append(z)
+            short = _GENERIC_TAIL.sub("", z)
+            if short != z and len(short) >= 3:
+                out.append(short)
+    return list(dict.fromkeys(out))
+
+
+def buzz_score(n):
+    return 0 if n <= 0 else 2 if n == 1 else 3 if n <= 3 else 4 if n <= 6 else 5
+
+
+def _wiki_get(url):
+    """위키 API 한 번. 404 말고 실패(429·시간 초과·끊김)는 잠깐 쉬고 세 번 더(10-12 시험에서 절반이 한 번에 실패)."""
+    for i in range(4):
+        try:
+            return json.loads(urllib.request.urlopen(urllib.request.Request(url, headers=WIKI_UA), timeout=20).read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            if e.code in (400, 404) or i == 3:
+                raise
+        except Exception:
+            if i == 3:
+                raise
+        time.sleep(2 + 3 * i)
+
+
+def wiki_views(name, lang="ko"):
+    """대상 이름 → 위키백과 문서(넘겨주기 따라감)의 하루 평균 조회수 {"문서", "7일", "60일"}. 문서가 없으면 {"문서": None}. 실패하면 None."""
+    try:
+        q = _wiki_get(f"https://{lang}.wikipedia.org/w/api.php?" + urllib.parse.urlencode(
+            {"action": "query", "list": "search", "srsearch": name, "srlimit": 1, "format": "json"}))
+        hits = q.get("query", {}).get("search") or []
+        if not hits:
+            return {"문서": None}
+        title = hits[0]["title"]
+        end = datetime.now(timezone.utc) - timedelta(days=1)
+        start = end - timedelta(days=66)
+        art = urllib.parse.quote(title.replace(" ", "_"), safe="")
+        pv = _wiki_get(f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/{lang}.wikipedia/all-access/user/{art}/daily/"
+                       f"{start:%Y%m%d}/{end:%Y%m%d}")
+        v = [it.get("views", 0) for it in pv.get("items", [])]
+        v = [0] * (67 - len(v)) + v   # 조회 0인 날은 빠져서 온다 — 앞을 0으로 채움
+        return {"문서": title, "7일": round(sum(v[-7:]) / 7, 1), "60일": round(sum(v[:-7]) / max(1, len(v) - 7), 1)}
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return {"문서": None}
+        log(f"  위키 실패 {name}: HTTP {e.code}")
+        return None
+    except Exception as e:
+        log(f"  위키 실패 {name}: {str(e)[:80]}")
+        return None
+
+
+def wiki_surge(w):
+    """최근 7일 ÷ 그 전 60일 → 0~5. 하루 평균 10회 미만은 잡음이라 0."""
+    if not w or not w.get("문서") or w["7일"] < 10:
+        return 0
+    r = w["7일"] / max(w["60일"], 5)
+    return 5 if r >= 5 else 4 if r >= 3 else 3 if r >= 2 else 2 if r >= 1.5 else 1 if r >= 1.2 else 0
+
+
+def interest_tier(w, lang="ko"):
+    """위키 평소 하루 조회수 → 유튜브 밖 관심 0~5(한국어 위키는 영어보다 훨씬 적게 봐서 기준을 따로)."""
+    if not w or not w.get("문서"):
+        return 0
+    x = max(w["7일"], w["60일"])
+    tiers = [400, 150, 60, 25, 10] if lang == "ko" else [20000, 5000, 1500, 500, 150]   # 한국어 위키: 형제복지원 하루 30·삼풍백화점 20(10-12 실측)
+    return sum(1 for t in tiers if x >= t)
+
+
+def supply_tier(n100k):
+    return 0 if not n100k else 1 if n100k == 1 else 2 if n100k == 2 else 3 if n100k <= 4 else 4 if n100k <= 7 else 5
+
+
+def _date(s):
+    m = re.search(r"(\d{4})[-./년\s]+(\d{1,2})(?:[-./월\s]+(\d{1,2}))?", str(s or ""))
+    if not m:
+        return None
+    try:
+        return datetime(int(m.group(1)), int(m.group(2)), int(m.group(3) or 1), tzinfo=KST).date(), bool(m.group(3))
+    except ValueError:
+        return None
+
+
+def timing_score(t, today=None):
+    """사건 날짜(날짜 줄)의 N주년, 다가오는 날(다가옴 줄 — 근거 기사가 있을 때만)이 3주 안이면 가산. → (0~5, 까닭)."""
+    today = today or datetime.now(KST).date()
+    best = (0, "")
+    d = _date(t.get("날짜"))
+    if d and d[1]:
+        ev = d[0]
+        for y in (today.year, today.year + 1):
+            try:
+                ann = ev.replace(year=y)
+            except ValueError:
+                continue
+            left, n = (ann - today).days, y - ev.year
+            if 0 <= left <= TIMING_DAYS and n > 0:
+                sc = 5 if n % 10 == 0 else 4 if n % 5 == 0 else 3
+                best = max(best, (sc, f"{n}주년 {ann:%m/%d}(D-{left})"))
+    u = _date(t.get("다가옴"))
+    if u and t.get("근거"):
+        left = (u[0] - today).days
+        if 0 <= left <= TIMING_DAYS:
+            what = re.sub(r"^[\d\s\-./년월일]+", "", str(t["다가옴"])).strip()
+            best = max(best, (5 if left <= 7 else 4, f"{what or '다가오는 날'} {u[0]:%m/%d}(D-{left})"))
+    return best
+
+
+def measure_outside(c, topics, buzz):
+    """소재마다 gap·wiki·buzz·timing 점수와 대시보드 설명("밖")을 붙인다. demand 를 잰 뒤에 부른다(gap 이 유튜브 공급을 씀)."""
+    lang = "en" if c.get("lang") == "en" else "ko"
+    try:
+        cache = json.loads(WIKI_CACHE.read_text(encoding="utf-8")) if WIKI_CACHE.exists() else {}
+    except Exception:
+        cache = {}
+    now = time.time()
+    names = list(dict.fromkeys((t.get("대상") or t.get("소재") or "").strip() for t in topics))
+    todo = [x for x in names if x and now - (cache.get(f"{lang}|{x}") or {}).get("at", 0) >= WIKI_TTL]
+    for x in todo:   # 한 번에 하나씩(동시에 부르면 429 로 대부분 실패 — 10-12 시험)
+        w = wiki_views(x, lang)
+        if w is not None:
+            cache[f"{lang}|{x}"] = {"at": now, "w": w}
+        time.sleep(0.3)
+    try:
+        WIKI_CACHE.write_text(json.dumps({k: v for k, v in cache.items() if now - v["at"] < 7 * 86400}, ensure_ascii=False), encoding="utf-8")
+    except Exception:
+        pass
+    titles = [(_nz(v["제목"]), v) for v in buzz] if lang == "ko" else None
+    stat = {"위키_문서": 0, "커뮤니티_언급": 0, "빈자리_3+": 0, "타이밍": 0}
+    for t in topics:
+        s, info = t.setdefault("점수", {}), {}
+        w = (cache.get(f"{lang}|{(t.get('대상') or t.get('소재') or '').strip()}") or {}).get("w")
+        s["wiki"] = None if w is None else wiki_surge(w)
+        if w and w.get("문서"):
+            info["위키"] = {"문서": w["문서"], "7일": w["7일"], "60일": w["60일"], "lang": lang}
+            stat["위키_문서"] += 1
+        if titles is None:
+            s["buzz"] = None
+        else:
+            keys = _names(t)
+            hit = [v for z, v in titles if any(k in z for k in keys)] if keys else []
+            s["buzz"] = buzz_score(len(hit))
+            if hit:
+                info["커뮤니티"] = {"수": len(hit), "예시": [f"[{v['곳']}] {v['제목']}" for v in hit[:2]]}
+                stat["커뮤니티_언급"] += 1
+        dm = t.get("수요") or {}
+        if w is None or dm.get("측정") in ("생략", "실패"):
+            s["gap"] = None
+        else:
+            want = max(interest_tier(w, lang), s.get("buzz") or 0)
+            s["gap"] = max(0, want - supply_tier(dm.get("10만+", 0)))
+            info["빈자리"] = {"관심": want, "공급": supply_tier(dm.get("10만+", 0))}
+            stat["빈자리_3+"] += s["gap"] >= 3
+        sc, why = timing_score(t)
+        s["timing"] = sc
+        if sc:
+            info["타이밍"] = why
+            stat["타이밍"] += 1
+        t["밖"] = info
+    return stat
+
+
 # ---------------------------------------------------------------- 추천 정확도 보정(2026-09-26 사용자 요청)
 # 우리 채널에 올린 영상을 같은 기준(조회수는 안 보여 주고 제목만)으로 AI가 채점 → 올린 뒤 3일 조회수와 비교해
 # 어떤 기준이 실제 조회수와 잘 맞는지 재고, 가중치를 조금씩 옮긴다. AI가 매기는 점수만 보정하고,
@@ -984,7 +1215,7 @@ def calibrate(c, scored):
 
 # ---------------------------------------------------------------- 판단
 
-def gather(c, ob, cal, trend):
+def gather(c, ob, cal, trend, buzz=()):
     """채널 하나의 판단 재료(표 줄 + R번호). 돌려줌: (프롬프트 재료, 근거로 쓸 수 있는 주소, 주소→기사 날짜, 1개만 허용할 대상, 요약 숫자, R번호→주소)"""
     R = Refs()
     recent, overused = recent_brief(c["name"])
@@ -1003,6 +1234,8 @@ def gather(c, ob, cal, trend):
     if en_news:
         mats.append((f"영어권 언론이 지금 다루는 한국(최근 {FRESH_DAYS}일)", sec_news(en_news, R)))
     mats.append(("지금 한국에서 검색이 급상승한 말(구글 트렌드) — 채널 공식에 맞을 때만 쓴다", sec_trend(trend, R)))
+    if buzz and c.get("lang") != "en":   # 2026-10-12 유튜브 밖 재료: 사람들이 지금 떠드는 것
+        mats.append(("지금 커뮤니티 인기글(더쿠·네이트판·디시·펨코·클리앙, 최근 3일) — 유튜브에 아직 없는 화제를 찾는 재료. 채널 공식에 맞을 때만 쓴다", sec_buzz(buzz)))
     allowed, dates = set(R.by_url), {}      # 재료로 실제 보낸 주소만 근거로 인정
     for r in kr_news + en_news:
         dates.setdefault(r["url"], r["날짜"])
@@ -1053,6 +1286,8 @@ def build_prompt(c, data):
          "", "[떡상 공식 — 사용자 확정, 반드시 따른다]"] + [f"- {x}" for x in c["formula"]] + kind_block + [
          "", "[점수 기준 — 각 0~5 정수]"] + [f"- {k}: {v}" for k, v in sc.items()] + [
          "- demand(시장 수요)는 네가 매기지 않는다 — 프로그램이 '검색어' 줄로 유튜브를 검색해 상위 영상 조회수로 잰다.",
+         "- gap(빈자리)·wiki(관심 급등)·buzz(커뮤니티)·timing(타이밍)도 프로그램이 잰다: 위키백과 조회수·커뮤니티 인기글에서 관심은 큰데 "
+         "유튜브에 큰 영상이 적은 대상, 지금 막 관심이 뛰는 대상, N주년·개봉·선고가 3주 안인 대상이 올라간다. 유튜브에 이미 있는 것만 고르지 말고 이런 대상도 섞어라.",
          f"- 총점 가중치: {wline} — hook(자극)과 demand(수요)가 가장 크다."] + sec_anchors(data.get("anchors")) + [
          "", f"[우리 채널 실측 — 올린 영상 {n_cal}편의 3일 조회수와 기준의 상관(1에 가까울수록 조회수와 잘 맞음)]", cal_line]
     if c.get("ban"):
@@ -1089,8 +1324,10 @@ def build_prompt(c, data):
           "확인: 제작 전 확인할 숫자·사실 | …(3개 이내)",
           "위험: 틀리거나 반려될 위험(1문장)",
           "후속: 우리 편의 후속이면 그 편 이름(아니면 이 줄 생략)",
-          (f"갈래마다 가장 좋은 {max(1, detail // len(kinds))}개(모두 {max(1, detail // len(kinds)) * len(kinds)}개)는 모든 줄을 쓰고, 나머지 소재는 대상·갈래·점수·검색어·제목·왜(1문장)·근거 줄만 쓴다."
-           if kinds else f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·점수·검색어·제목·왜(1문장)·근거 줄만 쓴다.")]
+          "날짜: 사건·일이 일어난 날 YYYY-MM-DD(정확히 알 때만, 모르면 생략)",
+          "다가옴: 앞으로 3주 안에 이 대상이 다시 화제가 될 날 YYYY-MM-DD 무엇(개봉·선고·재판·기념일 — 근거 줄의 기사에 있을 때만, 없으면 생략)",
+          (f"갈래마다 가장 좋은 {max(1, detail // len(kinds))}개(모두 {max(1, detail // len(kinds)) * len(kinds)}개)는 모든 줄을 쓰고, 나머지 소재는 대상·갈래·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다."
+           if kinds else f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다.")]
     for i, (label, text) in enumerate(data["mats"], 1):
         L += ["", f"[재료 {i} — {label}]", text]
     L += ["", f"오늘은 {datetime.now(KST).strftime('%Y-%m-%d')} 이다."]
@@ -1098,7 +1335,8 @@ def build_prompt(c, data):
 
 
 FIELD = {"대상": "대상", "제목": "제목", "첫문장": "첫문장", "왜": "왜_터질까", "왜_터질까": "왜_터질까",
-         "장면": "보여줄_장면", "보여줄_장면": "보여줄_장면", "위험": "위험", "후속": "후속", "갈래": "갈래"}
+         "장면": "보여줄_장면", "보여줄_장면": "보여줄_장면", "위험": "위험", "후속": "후속", "갈래": "갈래",
+         "날짜": "날짜", "다가옴": "다가옴"}
 
 
 def parse_answer(text, refs, keys):
@@ -1266,9 +1504,10 @@ def finalize(c, topics, weights, overused=(), made=()):
     out = []
     for t in topics:
         s = t["점수"]
-        have = [k for k in w if s.get(k) is not None]
+        # 유튜브 밖 신호는 못 잰 것(None)도 0으로 셈 — 빼고 정규화하면 못 잰 소재가 잰 소재보다 앞선다(10-12 시험)
+        have = [k for k in w if s.get(k) is not None or k in OUTSIDE_KEYS]
         top = 5 * sum(w[k] for k in have)
-        t["총점"] = round(sum(s[k] * w[k] for k in have) / top * 100) if top else 0
+        t["총점"] = round(sum((s.get(k) or 0) * w[k] for k in have) / top * 100) if top else 0
         name = t.get("소재")
         if ban and ban.search(" ".join(str(t.get(x) or "") for x in ("제목", "대상", "소재"))):
             drop["금지 유형"].append(name)
@@ -1452,6 +1691,7 @@ def main():
     VIDEOS, VIEWS = gh_json("videos.json") or {}, gh_json("video_views.json") or {}
     ob = outliers_brief()
     trend = [] if (answers or "--score-only" in args) else trends()
+    buzz = [] if "--score-only" in args else community_hot()
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     sp = OUT / "scored.json"; scored = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
     cp = OUT / "calibration.json"; calib_all = json.loads(cp.read_text(encoding="utf-8")) if cp.exists() else {}
@@ -1480,7 +1720,7 @@ def main():
                 ap = ap if ap.exists() else Path(answers) / f"{name}.json"
                 got, use, model = parse_answer(ap.read_text(encoding="utf-8"), m.get("refs", {}), list(c["scores"])), None, label
             else:
-                data, allowed, dates, overused, info, refs = gather(c, ob, cal, trend)
+                data, allowed, dates, overused, info, refs = gather(c, ob, cal, trend, buzz)
                 prompt = build_prompt(c, data)
                 info["prompt_chars"] = len(prompt)
                 log(name, f"재료: 장르 {info['genre_n'] if info['genre_n'] is not None else '-'}·발굴 {info['outliers_n'] if info['outliers_n'] is not None else '-'}, 우리 {info['ours_n']}편, "
@@ -1500,6 +1740,7 @@ def main():
             cands = clean(c, got, allowed, dates)
             tamed = tame_hook(cands)
             dm = measure_demand(c, cands)
+            om = measure_outside(c, cands, buzz)
             topics, dropped = finalize(c, cands, cal["weights"], overused, made_items(c))
             fresh_n = sum(1 for t in topics if t.get("최신"))
             kinds = {k: {"icon": v.get("icon", ""), "min": v.get("min", 0)} for k, v in (c.get("kinds") or {}).items()} or None
@@ -1507,13 +1748,14 @@ def main():
             latest["channels"][name] = {"at": at, "model": model, "outliers_at": info.get("outliers_at"), "news_n": info.get("news_n"),
                                         "trend_n": info.get("trend_n"), "fresh_n": fresh_n, "prompt_chars": info.get("prompt_chars"),
                                         "tokens": use, "labels": labels, "kinds": kinds, "genre_n": info.get("genre_n"), "genre_hot": info.get("genre_hot"),
-                                        "candidates": len(cands), "demand": dm, "hook_cut": tamed, "anchors": info.get("anchors"),
+                                        "candidates": len(cands), "demand": dm, "outside": om, "hook_cut": tamed, "anchors": info.get("anchors"),
                                         "dropped": {k: v for k, v in dropped.items() if v}, "topics": topics, "calib": view}
             with (OUT / "history.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": at, "channel": name, "topics": [{"소재": t.get("소재"), "대상": t.get("대상"), "제목": t.get("제목"),
                                                                             "총점": t["총점"], "점수": t.get("점수"), "최신": t.get("최신"),
                                                                             **({"갈래": t["갈래"]} if t.get("갈래") else {})}
                                                                            for t in topics]}, ensure_ascii=False) + "\n")
+            log(name, f"유튜브 밖: 위키 문서 {om['위키_문서']}·커뮤니티 언급 {om['커뮤니티_언급']}·빈자리 3+ {om['빈자리_3+']}·타이밍 {om['타이밍']}")
             log(name, f"후보 {len(cands)}개 · hook 깎음 {tamed} · 수요 검색어 {dm['검색어']}(새로 {dm['새로_검색']}·실패 {dm['검색_실패']}·측정 못 함 {dm['측정_못함']}) · 뺌",
                 ", ".join(f"{k} {len(v)}" for k, v in dropped.items() if v) or "없음")
             log(name, "추천", len(topics), "개", tok_str(use), f"· 📰최신 {fresh_n}개 ·",
