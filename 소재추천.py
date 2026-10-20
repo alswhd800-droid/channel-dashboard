@@ -193,7 +193,7 @@ def sec_done(d):
     t = [re.sub(r"\s+", " ", re.sub(r"#\S+", "", x)).strip()[:45] for x in d["올린_영상_제목"]]
     rec = d.get("최근")
     return ((f"최근 {MADE_DAYS}일 안에 만든 편(이 대상·후속은 내지 마라): " + " / ".join(rec) + "\n") if rec else "") + \
-        "편 폴더: " + (" / ".join(d["편_폴더"]) or "없음") + "\n올린 영상 제목: " + (" / ".join(t) or "없음")
+        "이미 만든 편 전부(날짜 상관없이 같은 대상·후속은 내지 마라) — 편 폴더: " + (" / ".join(d["편_폴더"]) or "없음") + "\n올린 영상 제목: " + (" / ".join(t) or "없음")
 
 
 def sec_recent(rec):
@@ -488,7 +488,7 @@ def done_topics(c):
     made = [x for x in made_items(c) if x[1] >= cut]
     # 짧은 이름(편 폴더·고른 소재)으로 알린다. 폴더 날짜를 모를 때(예약 실행, 사본에 날짜 없음)만 올린 영상 제목으로
     recent = [n for n, _, k in made if k != "영상"] or [re.sub(r"\s+", " ", re.sub(r"#\S+", "", n)).strip()[:40] for n, _, k in made]
-    return {"편_폴더": folders, "올린_영상_제목": titles[:80], "최근": list(dict.fromkeys(recent))}
+    return {"편_폴더": folders, "올린_영상_제목": titles, "최근": list(dict.fromkeys(recent))}
 
 
 def made_items(c):
@@ -517,6 +517,7 @@ def made_items(c):
     return out
 
 
+HEAD_STOP = {"아파트", "빌딩", "타워", "터널", "지하철", "건물", "공장", "호텔", "공항", "고속도로", "도로", "다리", "대교", "발전소", "경기장", "지하도시"}
 MADE_STOP = {"쇼츠", "shorts", "본편", "후속", "샘플", "테스트", "최종", "수정", "대박"}
 FU_STOP = {"만에", "이유", "지금", "진짜", "최초", "최대", "세계", "한국", "우리", "이번", "다시", "처음", "마지막", "그리고", "까지", "했을까",
            "됐을까", "어떻게", "무엇", "누가", "정말", "하는", "있는", "없는", "편의", "이야기", "사건"}
@@ -536,12 +537,16 @@ def made_hit(t, made):
     text = _nz(" ".join(str(t.get(x) or "") for x in ("대상", "소재", "제목")))
     fu = _nz(t.get("후속"))
     fu_toks = [w for w in _made_toks(t.get("후속")) if not w[0].isdigit() and w not in FU_STOP]   # '5년'·'만에' 같은 흔한 조각은 빼고
+    # 대상의 끝 낱말 = 종류 이름(장보고-III '잠수함' ↔ '강릉 북한 잠수함', 10-20). 흔한 종류(아파트·빌딩…)는 빼고 3글자 이상만
+    tl = [w for w in re.findall(r"[가-힣A-Za-z0-9]{2,}", str(t.get("대상") or "")) if w not in MADE_STOP]
+    head = _nz(tl[-1]) if len(tl) >= 2 and len(tl[-1]) >= 3 and tl[-1] not in HEAD_STOP else ""
     best = None
     for name, day, kind in made:
         nn, toks = _nz(name), _made_toks(name)
         short = kind in ("폴더", "고름")
         hit = any(g in nn for g in tgts) \
-            or (short and toks and all((w in text) if len(w) >= 3 else (w in tgt) for w in toks))
+            or (short and toks and all((w in text) if len(w) >= 3 else (w in tgt) for w in toks)) \
+            or (head and head in nn)
         if not hit and fu_toks:   # 후속 줄: 그 편 이름 낱말이 후속에 다 있거나, 후속 낱말이 2개 이상(하나뿐이면 그 하나) 그 편에 있다
             hit = (short and toks and all(w in fu for w in toks)) or sum(1 for w in fu_toks if w in nn) >= min(2, len(fu_toks))
         if hit and (best is None or day > best[1]):
@@ -1268,8 +1273,9 @@ def build_prompt(c, data):
                    f"그것도 최근 {FRESH_DAYS}일 안의 새 기사나 지금 새로 터지는 영상이 근거일 때만 낸다. " if often else "- 반복 금지(가장 중요): ") + \
                   "공식에 예로 든 이름은 '이만큼 유명한 대상'이라는 뜻이다 — 이미 만든 편이나 최근 추천에 있는 이름이면 되풀이하지 말고 같은 급의 다른 대상을 찾고, 아직 만든 적 없는 이름이면 추천해도 된다."
     made = data.get("made_recent") or []
-    made_rule = (f"- 이미 만든 편: 최근 {MADE_DAYS}일 안에 만든 편({' / '.join(made) if made else '없음'})의 대상과 그 후속은 내지 마라(프로그램이 뺀다). "
-                 "그보다 오래된 만든 편과 같은 대상은 자극이 아주 클 때만 — 후속 줄에 그 편 이름(수요가 약하면 프로그램이 뺀다).")
+    # 2026-10-20 사용자 "올렸던 영상은왜자꾸 소재로 말하는지.." → 오래된 편도 같은 대상·후속은 전부 뺀다(옛 '자극 크면 남김' 폐기)
+    made_rule = (f"- 이미 만든 편: 날짜 상관없이 이미 만든 편·올린 영상(최근 {MADE_DAYS}일: {' / '.join(made) if made else '없음'})의 대상과 그 후속은 내지 마라(프로그램이 뺀다). "
+                 "같은 종류의 다른 대상(예: 북한 잠수함을 이미 했으면 한국 잠수함도)도 같은 대상으로 본다.")
     kinds = c.get("kinds") or {}   # 갈래(2026-09-28 논스킵 사건·괴담 믹스): 갈래마다 공식·최소 개수
     kind_block = []
     if kinds:
@@ -1500,7 +1506,7 @@ def finalize(c, topics, weights, overused=(), made=()):
     w = weights or c["weights"]
     ban = re.compile(c["ban_words"], re.I) if c.get("ban_words") else None
     cut = (datetime.now(KST) - timedelta(days=MADE_DAYS)).strftime("%Y-%m-%d")
-    drop = {"금지 유형": [], f"최근 {MADE_DAYS}일 만든 편": [], "만든 편(자극·수요 약함)": [], "같은 대상": []}
+    drop = {"금지 유형": [], f"최근 {MADE_DAYS}일 만든 편": [], "이미 만든 편": [], "같은 대상": []}
     out = []
     for t in topics:
         s = t["점수"]
@@ -1514,14 +1520,9 @@ def finalize(c, topics, weights, overused=(), made=()):
             continue
         hit = made_hit(t, made)
         t.pop("만든_편", None)
-        if hit:
-            if hit[1] >= cut:
-                drop[f"최근 {MADE_DAYS}일 만든 편"].append(f"{name} ← {hit[0][:30]}")
-                continue
-            if not ((s.get("hook") or 0) >= 4 and (s.get("demand") or 0) >= 3):
-                drop["만든 편(자극·수요 약함)"].append(f"{name} ← {hit[0][:30]}")
-                continue
-            t["만든_편"] = hit[0]   # 오래전에 만든 편과 같은 대상이지만 자극·수요가 커서 남김
+        if hit:   # 10-20 사용자 "올렸던 영상은왜자꾸 소재로 말하는지.." — 오래된 편도 남기지 않는다
+            drop[f"최근 {MADE_DAYS}일 만든 편" if hit[1] >= cut else "이미 만든 편"].append(f"{name} ← {hit[0][:30]}")
+            continue
         out.append(t)
     out.sort(key=lambda t: (-t["총점"], -(t["점수"].get("hook") or 0), 0 if t.get("최신") else 1))
     kept, seen = [], {}
