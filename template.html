@@ -941,7 +941,7 @@ const SRANK = { 공개: 0, 공개중: 1, 예약: 1, 계획: 2, 확인: 3 };
 let schMon = null, schDay = null;
 const cvar = ch => `--c:${colorOf(ch) === "var(--muted)" ? "var(--ink-2)" : colorOf(ch)}`;
 function schItems() {
-  const pub = (D.videos || []).filter(v => v.published && v.public !== false).map(v => ({ ch: v.ch, d: v.published, hm: v.hm || "", st: "공개", short: v.short, title: v.title, url: v.url }));
+  const pub = (D.videos || []).filter(v => v.published && v.public !== false).map(v => ({ ch: v.ch, d: v.published, hm: v.hm || "", st: "공개", short: v.short, title: v.title, url: v.url, views: v.views, thumb: v.thumb }));
   const rest = ((D.schedule && D.schedule.items) || []).map(x => ({ ch: x.ch, d: x.t.slice(0, 10), hm: x.t.slice(11), st: x.st, short: x.kind === "쇼츠", title: x.ep, url: x.id ? `https://studio.youtube.com/video/${x.id}/edit` : "" }));
   return pub.concat(rest).sort((a, b) => (a.d + a.hm).localeCompare(b.d + b.hm));
 }
@@ -984,12 +984,31 @@ function schList(all) {
     return x.url ? `<a class="item" href="${esc(x.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
   }).join("") || '<div class="empty">이날은 공개된 영상도 예약도 없어요</div>'}</div></div>`;
 }
+function schRecent(all) {   // 10-22 사용자 "예약된건만 보이지말고 업로드된것도 알려줘": 올라간 것(최근 3일) · 앞으로 올라갈 것을 나란히
+  const now = kstNow(), today = now.slice(0, 10), from = addDay(today, -2);
+  const done = all.filter(x => x.st === "공개" && x.d >= from).sort((a, b) => (b.d + b.hm).localeCompare(a.d + a.hm));
+  const next = all.filter(x => x.st !== "공개" && x.st !== "확인" && (x.d + " " + x.hm) >= now).slice(0, 14);
+  const chk = all.filter(x => x.st === "확인" && x.d >= addDay(today, -7));
+  const row = (x, right) => { const inner = `<span class="ico" style="width:58px;font-size:11.5px;font-weight:700;line-height:1.25;text-align:center">${esc(dayName(x.d))}<br>${esc(x.hm)}</span>
+    <div style="min-width:0"><div class="t">${esc(x.title)}</div><div class="m"><span class="dot" style="background:${colorOf(x.ch)}"></span>${esc(x.ch)} · ${x.short ? "쇼츠" : "본편"}</div></div><span class="r">${right}</span>`;
+    return x.url ? `<a class="item" href="${esc(x.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`; };
+  const byCh = CH.map(c => [c.name, done.filter(x => x.ch === c.name).length]);
+  return `<div class="grid g2">
+    <div class="card"><div class="card-h"><div><h2>✅ 올라간 영상</h2><div class="hint">오늘·어제·그제 공개된 것 ${done.length}개 · 누르면 유튜브</div></div></div>
+      <div class="chips" style="gap:4px;margin-bottom:6px">${byCh.map(([n, k]) => `<span class="pill ${k ? "good" : ""}"><span class="dot" style="background:${colorOf(n)}"></span> ${esc(n)} ${k}</span>`).join("")}</div>
+      <div class="list">${done.map(x => row(x, `<b>${man(x.views)}</b><span class="muted" style="font-size:12px">조회</span>`)).join("") || '<div class="empty">최근 3일 동안 공개된 영상이 없어요</div>'}</div></div>
+    <div class="card"><div class="card-h"><div><h2>⏳ 앞으로 올라갈 영상</h2><div class="hint">예약해 둔 것 · 계획만 있는 것</div></div></div>
+      <div class="list">${next.map(x => row(x, `<span class="pill ${x.st === "계획" ? "" : "blue"}">${SST[x.st]}</span>`)).join("") || '<div class="empty">예약된 업로드가 없어요</div>'}</div>
+      ${chk.length ? `<div class="warnbox">⚠ 공개 시각이 지났는데 유튜브에서 공개로 안 보이는 것 ${chk.length}개 — 비공개로 남았거나 예약을 바꿨는지 확인하세요<div style="margin-top:6px">${chk.map(x => `<div>· ${esc(x.ch)} ${esc(dayName(x.d))} ${esc(x.hm)} ${x.short ? "쇼츠" : "본편"} ${esc(x.title)}</div>`).join("")}</div></div>` : ""}</div>
+  </div>`;
+}
 function pageSchedule() {
   const all = schItems(), S0 = D.schedule || {};
   if (!schDay) schDay = kstNow().slice(0, 10);
   if (S.sch !== "all" && !CH.some(c => c.name === S.sch)) S.sch = "all";
-  return ph("업로드 일정", `칠한 칸 = 공개됨 · 테두리 = 예약됨 · 빗금 = 계획만 · 숫자 = 그날 개수${S0.at ? ` · 예약 기록 ${esc(S0.at.slice(5))} 기준` : ""}`)
-  + sec("채널별 · 지난 6일 ~ 앞으로 7일") + schStrip(all)
+  return ph("업로드 일정", `올라간 영상과 예약된 영상을 채널마다 한눈에${S0.at ? ` · 예약 기록 ${esc(S0.at.slice(5))} 기준` : ""}`)
+  + schRecent(all)
+  + sec("채널별 · 지난 6일 ~ 앞으로 7일", '<span class="more">칠한 칸 = 공개됨 · 테두리 = 예약됨 · 빗금 = 계획만 · 숫자 = 그날 개수</span>') + schStrip(all)
   + sec("달력") + `<div class="chips" style="margin-bottom:10px">${["all", ...CH.map(c => c.name)].map(k => `<button type="button" class="chip ${S.sch === k ? "on" : ""}" data-sch="${esc(k)}">${k === "all" ? "전체" : `<span class="dot" style="background:${colorOf(k)}"></span>${esc(k)}`}</button>`).join("")}</div>
   <div id="schcal">${schCal(all)}</div><div id="schlist">${schList(all)}</div>
   <div class="note">예약 영상은 공개 전이라 유튜브 데이터에 안 보여서 각 편 폴더의 업로드 기록에서 읽어요. 예약 줄을 누르면 스튜디오 편집 화면이 열려요.</div>`;
