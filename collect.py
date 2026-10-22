@@ -344,9 +344,10 @@ def collect_engaged(now, info):
     채널마다 그 채널 토큰을 먼저 쓰고, 403이면 다른 토큰으로(관리자 권한이 있는 채널) 시도한다. 아무 토큰도 안 되면 '연결 안 됨'."""
     old = load("engaged.json", {})
     names = {c["name"] for c in info}
-    if old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=ENGAGED_EVERY_HOURS) and names <= set(old.get("channels", {})):
-        return
     auth = engaged_auth()
+    if (old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=ENGAGED_EVERY_HOURS) and names <= set(old.get("channels", {}))
+            and all(r.get("ok") or c["id"] not in ((auth or {}).get("tokens") or {}) for c in info for r in [old["channels"].get(c["name"], {})])):
+        return   # 새로 연결한 채널이 '연결 안 됨'으로 남아 있으면 3시간을 기다리지 않는다
     if not auth:
         return
     access = access_tokens(auth)
@@ -390,15 +391,17 @@ def collect_audience(now, info):
     + 수익(파트너 채널, 수익 읽기 권한이 있을 때만). 분석 수치는 하루 한두 번 바뀌어서 6시간마다만 받는다."""
     old = load("audience.json", {})
     names = {c["name"] for c in info}
-    if old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=AUDIENCE_EVERY_HOURS) and names <= set(old.get("channels", {})):
-        return
     auth = engaged_auth()
+    keys = sorted((auth or {}).get("tokens") or {})
+    if (old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=AUDIENCE_EVERY_HOURS) and names <= set(old.get("channels", {}))
+            and old.get("keys") == keys):   # 새로 연결한 채널이 있으면 6시간을 기다리지 않는다
+        return
     access = access_tokens(auth) if auth else {}
     if not access:
         return
     day = lambda n: (now - timedelta(days=n)).strftime("%Y-%m-%d")
     end, s28, s90 = now.strftime("%Y-%m-%d"), day(28), day(90)
-    out = {"at": now.isoformat(timespec="minutes"), "channels": {}}
+    out = {"at": now.isoformat(timespec="minutes"), "keys": keys, "channels": {}}
     for c in info:
         prev = (old.get("channels") or {}).get(c["name"]) or {}
         tok, res = None, {"ok": False, "err": "연결 안 됨"}
@@ -521,7 +524,8 @@ def collect_insta(now):
     if not tokens:
         return
     store = load("insta.json", {"accounts": {}})
-    if store.get("at") and now - datetime.fromisoformat(store["at"]) < timedelta(minutes=50):
+    fresh = all((store.get("accounts") or {}).get(u, {}).get("profile") for u in tokens)   # 새로 연결한 계정은 바로
+    if store.get("at") and now - datetime.fromisoformat(store["at"]) < timedelta(minutes=50) and fresh:
         return
     today = now.strftime("%Y-%m-%d")
     accts = store.setdefault("accounts", {})
