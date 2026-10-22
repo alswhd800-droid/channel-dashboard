@@ -60,6 +60,7 @@ jobs:
           rm -rf site && mkdir site
           cp -R data site/data && cp docs/index.html site/index.html && touch site/.nojekyll
           cp privacy.html site/privacy.html   # 구글 OAuth 앱(유효 조회수)에 등록한 개인정보처리방침 주소
+          cp ig-callback.html site/ig-callback.html   # 인스타 연결(메타 앱) 허용 뒤 돌아오는 주소 → 맥 127.0.0.1:8766 으로 넘김
           if [ -d staff ]; then cp -R staff site/staff; fi   # 직원 사진(있을 때만)
           cd site
           git init -q -b gh-pages

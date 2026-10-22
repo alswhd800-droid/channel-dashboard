@@ -406,15 +406,21 @@ def collect():
         new_alerts.append(item)
 
     snap, info = {}, []
+    # 10-22: 채널 ID 가 있으면 ID 로 한 번에(핸들이 바뀌어도 안 빠지고, 채널 수만큼 쓰던 할당량이 1로)
+    by_id, want = {}, [e["id"] for e in channels if e.get("id")]
+    for k in range(0, len(want), 50):
+        for it in get("channels", part="snippet,statistics,contentDetails", id=",".join(want[k:k + 50])).get("items", []):
+            by_id[it["id"]] = it
     for entry in channels:
-        ch = None
-        for h in entry["handles"]:
+        ch = by_id.get(entry.get("id"))
+        handle = ch["snippet"].get("customUrl") or (entry.get("handles") or [""])[0] if ch else None
+        for h in ([] if ch else entry.get("handles", [])):
             r = get("channels", part="snippet,statistics,contentDetails", forHandle=h)
             if r.get("items"):
                 handle, ch = h, r["items"][0]
                 break
         if not ch:
-            print(f"! {entry['name']}: 채널을 찾지 못함 ({', '.join(entry['handles'])})")
+            print(f"! {entry['name']}: 채널을 찾지 못함 ({entry.get('id') or ', '.join(entry['handles'])})")
             continue
         name, st = entry["name"], ch["statistics"]
         if not any(name in day for day in hist["daily"].values()):
@@ -1728,7 +1734,7 @@ def rebuild():
 
 def check():
     for entry in json.loads((ROOT / "channels.json").read_text(encoding="utf-8")):
-        for h in entry["handles"]:
+        for h in entry.get("handles", []):
             r = get("channels", part="snippet,statistics", forHandle=h)
             if r.get("items"):
                 it = r["items"][0]

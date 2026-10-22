@@ -1,10 +1,12 @@
 [
-  {"name": "초근목피", "handles": ["@chogeunmokpi"]},
-  {"name": "논스킵", "handles": ["@논스킵"], "old_names": ["돈구"]},
-  {"name": "거인의무덤", "handles": ["@거인의무덤"]},
-  {"name": "낮달DAYMOON", "handles": ["@낮달DAYMOON"]},
-  {"name": "숨은구조", "handles": ["@숨은구조"]},
-  {"name": "오름", "handles": ["@oreum_korea"]},
-  {"name": "거대한비밀", "handles": ["@거대한비밀"]},
-  {"name": "라스트 씬", "handles": ["@lastscene_drama"], "old_names": ["역사의급소"]}
+  {"name": "거대한비밀", "id": "UCvv5gDOhB164Ao_IB2zC0nA", "handles": ["@거대한비밀"]},
+  {"name": "논스킵", "id": "UCTW1Dy2mEpRWAdZ12qVVL8A", "handles": ["@논스킵"], "old_names": ["돈구"]},
+  {"name": "거인의무덤", "id": "UCiQOGLTz89s8ZhWGxMp1JfA", "handles": ["@거인의무덤"]},
+  {"name": "라스트 씬", "id": "UCIzgGbqF2jLRcdk1DCkj2EQ", "handles": ["@lastscene_drama"], "old_names": ["역사의급소"]},
+  {"name": "몸리학", "id": "UCrjSI-EYrWrxNUOEo06tS0w", "handles": ["@momrihak"]},
+  {"name": "오름", "id": "UCbVskN7P3vwHhL2UNrfzB6A", "handles": ["@oreum_korea"]},
+  {"name": "새벽서랍", "id": "UCAy5fJTHLrG8WatQqUcJS0g", "handles": ["@새벽서랍dawn"], "old_names": ["낮달DAYMOON"]},
+  {"name": "지도 한 장", "id": "UCsTSuSVSSrRkBp9HpaBhsaQ", "handles": ["@jidohanjang"]},
+  {"name": "시술백과", "id": "UCCbtZv--gwZNVVGovQl2KBg", "handles": ["@시술백과"]},
+  {"name": "동네검증단", "id": "UCglHOESio_m6yd-kkKZ9mzg", "handles": ["@동네검증단"], "old_names": ["필요한법"]}
 ]

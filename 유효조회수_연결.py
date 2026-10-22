@@ -10,7 +10,9 @@ import base64, hashlib, http.server, json, os, secrets, shutil, subprocess, sys,
 
 D = os.path.expanduser("~/.channel-dashboard")
 CLIENT, TOKENS = os.path.join(D, "oauth_client.json"), os.path.join(D, "yt_tokens.json")
-SCOPES = "https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/youtube.readonly"
+# 10-22 수익(yt-analytics-monetary)도 읽기 전용으로 추가 — 파트너 채널의 실제 예상 수익
+SCOPES = ("https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/yt-analytics-monetary.readonly"
+          " https://www.googleapis.com/auth/youtube.readonly")
 REPO = "alswhd800-droid/channel-dashboard"
 PORT = 8765
 
@@ -50,7 +52,10 @@ def main():
     srv = http.server.HTTPServer(("127.0.0.1", PORT), H)
     srv.timeout = 1
     print("브라우저에서 구글 '허용' 화면을 열어요. 채널 주인 계정 → 채널 선택 → (확인 안 된 앱이면 고급 → 이동) → 두 항목 체크 → 계속")
-    subprocess.run(["open", url])
+    if "--no-open" in sys.argv:   # 브라우저 에이전트가 사파리에서 직접 열 때(10-22)
+        print("URL: " + url, flush=True)
+    else:
+        subprocess.run(["open", url])
     end = time.time() + 900
     while time.time() < end and not got:
         srv.handle_request()
