@@ -97,6 +97,15 @@ RECENT_RUNS = 8    # 자주 나온 대상을 셀 때 보는 최근 추천 횟수
 OFTEN_MAX = 3      # 최근 추천에서 이만큼 이상 나온 대상은 이번에 1개까지만
 EXTRA = 2          # 대상 제한으로 빠질 몫까지 몇 개 더 받는다(설정 "candidates" 가 없을 때)
 MADE_DAYS = 7      # 이 안에 만든 편의 대상·후속은 추천에서 뺀다(2026-09-28 어제 만든 편의 후속이 목록 위를 채움)
+# 2026-10-22 사용자 "소재추천도 단순하게 똑같은거만 계쏙 추천해지말고 더고도회되 더 완벽하게" — 실측: 마지막 20개 중 이미 나온 대상 거인의무덤 14·거대한비밀 11
+NOVELTY_RUNS = 10  # 반복을 셀 최근 추천 횟수(하루 2번 → 5일)
+REPEAT_DROP = 2    # 그 안에서 이만큼 이상 나온 대상은 뺀다(1번 나온 건 감점)
+REPEAT_PENALTY = 10   # 1번 나온 대상의 총점 감점
+NEW_MIN_SHARE = 0.7   # 목록의 이만큼 이상은 처음 보는 소재(모자라면 다시 나온 것으로 채움)
+SIM_SAME = 0.6     # 글자 겹침(2글자 조각 자카드)이 이 이상이면 같은 소재로 본다 — 이름만 바꾼 반복을 잡는다
+MMR_SIM = 14       # 이미 고른 소재와 비슷한 만큼(0~1) 총점에서 최대 이만큼 빼고 고른다(다양성)
+CAT_MAX = 4        # 같은 '종류'는 목록에 이만큼까지(갈래 설정이 있는 채널은 갈래 규칙을 따른다)
+EDITOR_POOL = 26   # 편집장 검토에 넘기는 후보 수(20 + 빠질 몫)
 RSS_CACHE = OUT / "_rss_cache.json"
 # 점수 이름 기본값(채널 설정 "labels" 가 덮는다) — 대시보드는 latest.json 의 labels 순서대로 막대를 그린다
 DEFAULT_LABELS = {"hook": "자극", "demand": "수요", "korea": "한국 인지도", "paradox": "역설", "visual": "화면", "proof": "근거",
@@ -584,6 +593,80 @@ def recent_brief(ch):
     often = sorted(((disp[k], n) for k, n in cnt.items() if n >= 2), key=lambda x: -x[1])
     brief = {"살펴본_추천_횟수": len(rows), "자주_나온_대상": [{"대상": d, "나온_횟수": n} for d, n in often], "최근_추천_소재": names}
     return brief, {k for k, n in cnt.items() if n >= OFTEN_MAX}
+
+
+def _bigrams(*xs):
+    t = re.sub(r"[^가-힣A-Za-z0-9]", "", " ".join(str(x or "") for x in xs)).lower()
+    return {t[i:i + 2] for i in range(len(t) - 1)}
+
+
+def _sim(a, b):
+    return len(a & b) / len(a | b) if a and b else 0.0
+
+
+def seen_map(ch, runs=NOVELTY_RUNS):
+    """최근 runs 번 추천에 나온 대상 → 나온 횟수, 그리고 소재마다 글자 조각(이름만 바꾼 반복 잡기)"""
+    p = OUT / "history.jsonl"
+    rows = [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()] if p.exists() else []
+    rows = [r for r in rows if r.get("channel") == ch][-runs:]
+    cnt, names, texts = {}, {}, []
+    for r in rows:
+        for k in {_target(t) for t in r.get("topics", [])} - {""}:
+            cnt[k] = cnt.get(k, 0) + 1
+        for t in r.get("topics", []):
+            if _target(t):
+                names.setdefault(_target(t), _target_name(t))
+            texts.append((_target(t), _bigrams(t.get("소재"), t.get("대상"))))
+    return {"cnt": cnt, "names": names, "texts": texts, "runs": len(rows)}
+
+
+def novelty(t, seen):
+    """돌려줌: 최근 추천에 나온 횟수(대상이 같거나, 소재 글자가 SIM_SAME 이상 겹치면 그 대상의 횟수)"""
+    k = _target(t)
+    n = seen["cnt"].get(k, 0)
+    if not n:
+        b = _bigrams(t.get("소재"), t.get("대상"))
+        hits = [seen["cnt"].get(k2, 1) for k2, b2 in seen["texts"] if _sim(b, b2) >= SIM_SAME]
+        n = max(hits) if hits else 0
+    return n
+
+
+# ---------------------------------------------------------------- 재료: 우리 시청자(유튜브 분석, 2026-10-22 대시보드 개편 때 연결)
+AUD, ENG = {}, {}
+AGE_KO = lambda a: a.replace("age", "").replace("-", "~") + "세"
+TRAFFIC_KO = {"SHORTS": "쇼츠 피드", "SUBSCRIBER": "탐색(홈·구독)", "YT_SEARCH": "유튜브 검색", "RELATED_VIDEO": "추천 영상", "YT_OTHER_PAGE": "유튜브 다른 화면",
+              "YT_CHANNEL": "채널 페이지", "EXT_URL": "외부", "NO_LINK_OTHER": "직접", "NOTIFICATION": "알림", "PLAYLIST": "재생목록"}
+
+
+def audience_brief(ch):
+    """우리 채널을 실제로 누가·어디서·무엇을 검색해 보나 + 끝까지 본 비율 높은/낮은 편. 분석 연결 전이면 빈 문자열"""
+    a = (AUD.get("channels") or {}).get(ch) or {}
+    L = []
+    if a.get("ok"):
+        ag = a.get("age_gender") or []
+        if ag:
+            m = sum(v for _, g, v in ag if g == "male"); f = sum(v for _, g, v in ag if g == "female")
+            ages = {}
+            for x, _, v in ag:
+                ages[x] = ages.get(x, 0) + v
+            top = sorted(ages.items(), key=lambda z: -z[1])[:3]
+            L.append(f"시청자(최근 90일): 남 {m:.0f}% · 여 {f:.0f}% · 많은 나이 " + ", ".join(f"{AGE_KO(x)} {v:.0f}%" for x, v in top))
+        tr = a.get("traffic") or []
+        if tr:
+            tot = sum(r[1] for r in tr) or 1
+            L.append("들어오는 길(28일): " + " · ".join(f"{TRAFFIC_KO.get(r[0], r[0])} {r[1] / tot * 100:.0f}%" for r in tr[:4]))
+        se = a.get("search") or []
+        if se:
+            L.append("우리 채널을 찾아 들어온 유튜브 검색어(28일, 조회): " + " · ".join(f"{q} {v:,}" for q, v in se[:12])
+                     + " — 이 말 근처의 새 대상은 수요가 이미 증명된 쪽이다(같은 대상·이미 만든 편은 금지)")
+    vids = [(v, ENG.get(vid)) for vid, v in (VIDEOS or {}).items() if v.get("ch") == ch and ENG.get(vid) and (v.get("views") or 0) >= 300]
+    if len(vids) >= 6:
+        vids.sort(key=lambda x: -x[1]["avp"])
+        clip = lambda v: re.sub(r"#\S+", "", v.get("title") or "").strip()[:40]
+        row = lambda x: f"{x[1]['avp']:.0f}% · 조회 {x[0].get('views', 0):,} · {clip(x[0])}"
+        L.append("끝까지 본 비율(평균 시청 % — 쇼츠는 반복 재생으로 100%를 넘는다) 높은 편: " + " / ".join(row(x) for x in vids[:4]))
+        L.append("끝까지 본 비율 낮은 편: " + " / ".join(row(x) for x in vids[-3:]))
+    return "\n".join(L)
 
 
 # ---------------------------------------------------------------- 재료: 뉴스 · 검색어
@@ -1234,6 +1317,9 @@ def gather(c, ob, cal, trend, buzz=()):
     if c.get("use_outliers", not g):   # 한국 유튜브 전체 발굴(채널 키워드로 줄임)
         fob = filter_outliers(ob, c)
         mats.append(("지금 한국 유튜브에서 평소보다 몇 배 빨리 크는 영상(발굴)", sec_outliers(fob, R)))
+    aud = audience_brief(c["name"])
+    if aud:   # 2026-10-22: 우리 시청자 실측(누가·어디서·무슨 검색어로·어디까지 보나)
+        mats.append(("우리 채널 시청자 실측(유튜브 분석) — 이 사람들이 좋아할 소재를 고른다", aud))
     mats += [("우리 채널 성적", sec_ours(ours, R)), ("이미 만든 편", sec_done(done)), ("최근 추천(반복 금지용)", sec_recent(recent)),
              (f"최신 한국 뉴스(최근 {NEWS_DAYS}일) — 타이밍 가산 재료일 뿐, 뉴스에 났다고 소재가 되지 않는다", sec_news(kr_news, R))]
     if en_news:
@@ -1258,7 +1344,8 @@ def gather(c, ob, cal, trend, buzz=()):
     anc = anchors(c, eo, fob)
     info["anchors"] = {"src": anc["src"], "top": [f"{r['제목'][:40]} {int(r.get('조회') or 0):,}" for r in anc["top"]],
                        "bot": [f"{r['제목'][:40]} {int(r.get('조회') or 0):,}" for r in anc["bot"]]} if anc else None
-    return {"mats": mats, "recent": recent, "calib": cal, "anchors": anc, "made_recent": done["최근"]}, allowed, dates, overused, info, R.by_id
+    info["audience"] = bool(aud)
+    return {"mats": mats, "recent": recent, "calib": cal, "anchors": anc, "made_recent": done["최근"], "seen": seen_map(c["name"]), "aud": aud}, allowed, dates, overused, info, R.by_id
 
 
 def build_prompt(c, data):
@@ -1267,11 +1354,12 @@ def build_prompt(c, data):
     cal = data.get("calib") or {}
     n_cal = cal.get("n", 0)
     cal_line = ", ".join(f"{k} {v:+.2f}" for k, v in (cal.get("corr") or {}).items()) if n_cal >= 6 else "아직 자료 부족(6편 미만) — 기준표 그대로"
-    rec = data["recent"]
-    often = ", ".join(f"{x['대상']}({x['나온_횟수']}번)" for x in rec.get("자주_나온_대상", []))
-    repeat_rule = (f"- 반복 금지(가장 중요): 최근 {rec.get('살펴본_추천_횟수', 0)}번의 추천에 자주 나온 대상 — {often}. 이 대상들은 각각 1개까지만, "
-                   f"그것도 최근 {FRESH_DAYS}일 안의 새 기사나 지금 새로 터지는 영상이 근거일 때만 낸다. " if often else "- 반복 금지(가장 중요): ") + \
-                  "공식에 예로 든 이름은 '이만큼 유명한 대상'이라는 뜻이다 — 이미 만든 편이나 최근 추천에 있는 이름이면 되풀이하지 말고 같은 급의 다른 대상을 찾고, 아직 만든 적 없는 이름이면 추천해도 된다."
+    seen = data.get("seen") or {"names": {}, "runs": 0}
+    shown = list(seen["names"].values())[-160:]
+    repeat_rule = (f"- 반복 금지(가장 중요): 최근 {seen['runs']}번(약 {max(1, seen['runs'] // 2)}일) 추천에 이미 보여준 대상 {len(shown)}개 — {', '.join(shown)}. "
+                   "이 대상과 이름만 바꾼 같은 소재는 내지 마라(프로그램이 빼서 자리만 버린다). 사용자는 매번 새 소재를 원한다 — 같은 급의 아직 안 보여준 대상을 찾아라. "
+                   if shown else "- 반복 금지(가장 중요): ") + \
+                  "공식에 예로 든 이름은 '이만큼 유명한 대상'이라는 뜻이다 — 그 이름을 그대로 쓰지 말고 같은 급의 다른 대상을 찾아라."
     made = data.get("made_recent") or []
     # 2026-10-20 사용자 "올렸던 영상은왜자꾸 소재로 말하는지.." → 오래된 편도 같은 대상·후속은 전부 뺀다(옛 '자극 크면 남김' 폐기)
     made_rule = (f"- 이미 만든 편: 날짜 상관없이 이미 만든 편·올린 영상(최근 {MADE_DAYS}일: {' / '.join(made) if made else '없음'})의 대상과 그 후속은 내지 마라(프로그램이 뺀다). "
@@ -1308,8 +1396,9 @@ def build_prompt(c, data):
           made_rule,
           "- 최근 추천과 같은 소재는 새 근거가 있을 때만 다시 낸다.",
           repeat_rule,
-          f"- 다양성: {ask}개는 서로 다른 소재, 같은 대상은 2개까지. 섞어라 — ① 우리 대박 편(기준점 5점급)과 같은 결의 새 대상 "
-          "② 지금 빨리 크는 영상에서 나온 소재 ③ 사람들이 오래 찾아보는 큰 소재(유튜브에 조회수 큰 영상이 이미 많은 것) ④ 아직 아무도 안 한 새 각도.",
+          f"- 다양성: {ask}개는 서로 다른 소재, 같은 대상은 1개만, 같은 '종류'는 {CAT_MAX}개까지. 섞어라 — ① 우리 대박 편(기준점 5점급)과 같은 결의 새 대상 "
+          "② 지금 빨리 크는 영상에서 나온 소재 ③ 사람들이 오래 찾아보는 큰 소재(유튜브에 조회수 큰 영상이 이미 많은 것) ④ 아직 아무도 안 한 새 각도 "
+          "⑤ 우리 채널을 찾아 들어온 검색어 근처의 새 대상(재료에 있을 때).",
           "- 사실 확인: 제목의 숫자·전제(층수·높이·금액·몇 번째)는 재료에 그대로 있을 때만 쓴다. 기사 속 숫자가 지금 있는 것인지 앞으로 지을·할 것인지 "
           "헷갈리면 제목에 쓰지 말고 확인 줄에 넣어라."]
     if c.get("genre"):
@@ -1318,7 +1407,8 @@ def build_prompt(c, data):
         L.append("- " + c["output_note"])
     L += ["", "[출력 형식 — JSON·설명·머리말 없이 아래 줄 형식만. 소재마다 '## '로 시작, 좋은 순서대로]",
           "## 소재 한 줄 이름",
-          "대상: 핵심 대상 하나(건물·기업·인물·장소·제도의 가장 널리 쓰는 이름)"] + (
+          "대상: 핵심 대상 하나(건물·기업·인물·장소·제도의 가장 널리 쓰는 이름)",
+          "종류: 이 소재의 분야 한 낱말(예: 다리·댐·군사·교통·건물 / 유통·IT·금융·제조 / 연쇄살인·실종·괴담) — 목록 전체에 여러 종류가 고루 섞이게"] + (
           [f"갈래: {' 또는 '.join(kinds)} 중 하나"] if kinds else []) + [
           f"점수: {' '.join(keys)} 순서로 0~5 정수 {len(keys)}개 (예: {' '.join(['3', '2', '4', '3', '2'][:len(keys)])})",
           "검색어: 사람들이 유튜브에서 이 소재를 찾을 때 실제로 칠 말 1~2개를 '|'로 나눠(대상 이름 + 핵심 낱말, 2~4 낱말" + (", 영어로" if en else "") + ")",
@@ -1333,7 +1423,7 @@ def build_prompt(c, data):
           "날짜: 사건·일이 일어난 날 YYYY-MM-DD(정확히 알 때만, 모르면 생략)",
           "다가옴: 앞으로 3주 안에 이 대상이 다시 화제가 될 날 YYYY-MM-DD 무엇(개봉·선고·재판·기념일 — 근거 줄의 기사에 있을 때만, 없으면 생략)",
           (f"갈래마다 가장 좋은 {max(1, detail // len(kinds))}개(모두 {max(1, detail // len(kinds)) * len(kinds)}개)는 모든 줄을 쓰고, 나머지 소재는 대상·갈래·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다."
-           if kinds else f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다.")]
+           if kinds else f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·종류·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다.")]
     for i, (label, text) in enumerate(data["mats"], 1):
         L += ["", f"[재료 {i} — {label}]", text]
     L += ["", f"오늘은 {datetime.now(KST).strftime('%Y-%m-%d')} 이다."]
@@ -1341,7 +1431,7 @@ def build_prompt(c, data):
 
 
 FIELD = {"대상": "대상", "제목": "제목", "첫문장": "첫문장", "왜": "왜_터질까", "왜_터질까": "왜_터질까",
-         "장면": "보여줄_장면", "보여줄_장면": "보여줄_장면", "위험": "위험", "후속": "후속", "갈래": "갈래",
+         "장면": "보여줄_장면", "보여줄_장면": "보여줄_장면", "위험": "위험", "후속": "후속", "갈래": "갈래", "종류": "종류",
          "날짜": "날짜", "다가옴": "다가옴"}
 
 
@@ -1500,14 +1590,19 @@ def tame_hook(topics, fives=3, mean_max=3.0):
     return cut
 
 
-def finalize(c, topics, weights, overused=(), made=()):
-    """수요까지 붙은 후보 → 총점(측정 못 한 항목은 빼고 정규화) · 금지 말 든 소재 빼기 · 이미 만든 편 거르기 ·
-    같은 대상은 2개까지(최근 추천에 3번 이상 나온 대상은 1개) · 갈래 자리 → per_channel 개. 돌려줌: (소재들, 뺀 것 {까닭: [소재]})."""
+def finalize(c, topics, weights, overused=(), made=(), seen=None):
+    """수요까지 붙은 후보 → 총점 · 금지 말 든 소재 빼기 · 이미 만든 편 거르기 → (10-22 고도화) 반복 차단 · 비슷한 것 피하기 · 종류 고루.
+    - 최근 NOVELTY_RUNS 번 추천에 REPEAT_DROP 번 이상 나온 대상(이름만 바꾼 같은 소재 포함)은 뺀다, 1번 나온 건 REPEAT_PENALTY 감점
+    - 이미 고른 소재와 글자가 겹칠수록 감점하며 하나씩 고른다(MMR) · 같은 대상 1개 · 같은 종류 CAT_MAX 개 · 다시 나온 소재는 (1−NEW_MIN_SHARE) 몫까지
+    돌려줌: (편집장 검토에 넘길 후보 EDITOR_POOL 개 — 고른 순서, 뺀 것 {까닭: [소재]})."""
     w = weights or c["weights"]
+    n = CFG["per_channel"]
     ban = re.compile(c["ban_words"], re.I) if c.get("ban_words") else None
     cut = (datetime.now(KST) - timedelta(days=MADE_DAYS)).strftime("%Y-%m-%d")
-    drop = {"금지 유형": [], f"최근 {MADE_DAYS}일 만든 편": [], "이미 만든 편": [], "같은 대상": []}
-    out = []
+    rep_key = f"최근 {NOVELTY_RUNS}번 추천에 {REPEAT_DROP}번 이상"
+    drop = {"금지 유형": [], f"최근 {MADE_DAYS}일 만든 편": [], "이미 만든 편": [], rep_key: [], "같은 대상·비슷한 소재": []}
+    seen = seen or {"cnt": {}, "texts": [], "runs": 0}
+    pool = []
     for t in topics:
         s = t["점수"]
         # 유튜브 밖 신호는 못 잰 것(None)도 0으로 셈 — 빼고 정규화하면 못 잰 소재가 잰 소재보다 앞선다(10-12 시험)
@@ -1523,19 +1618,110 @@ def finalize(c, topics, weights, overused=(), made=()):
         if hit:   # 10-20 사용자 "올렸던 영상은왜자꾸 소재로 말하는지.." — 오래된 편도 남기지 않는다
             drop[f"최근 {MADE_DAYS}일 만든 편" if hit[1] >= cut else "이미 만든 편"].append(f"{name} ← {hit[0][:30]}")
             continue
-        out.append(t)
-    out.sort(key=lambda t: (-t["총점"], -(t["점수"].get("hook") or 0), 0 if t.get("최신") else 1))
-    kept, seen = [], {}
-    for t in out:
-        k = _target(t)
-        if k and seen.get(k, 0) >= (1 if k in overused else 2):
-            drop["같은 대상"].append(t.get("소재"))
+        k = novelty(t, seen)
+        t["새로움"] = k
+        if k >= REPEAT_DROP:
+            drop[rep_key].append(f"{name}({k}번)")
             continue
-        seen[k] = seen.get(k, 0) + 1
-        kept.append(t)
-    if c.get("kinds"):   # 갈래마다 최소 개수 자리를 남기고 나머지는 총점순(2026-09-28 논스킵 사건·괴담 믹스)
-        return keep_kinds(kept, CFG["per_channel"], {k: v.get("min", 0) for k, v in c["kinds"].items()}), drop
-    return kept[:CFG["per_channel"]], drop
+        t["_v"] = t["총점"] - (REPEAT_PENALTY if k else 0) + (0.5 if t.get("최신") else 0)
+        t["_b"] = _bigrams(t.get("소재"), t.get("대상"), t.get("제목"))
+        pool.append(t)
+    pool.sort(key=lambda t: (-t["_v"], -(t["점수"].get("hook") or 0)))
+    picked, tcnt, ccnt = [], {}, {}
+    max_rep = n - int(round(n * NEW_MIN_SHARE))
+    for strict in (True, False):   # 엄격하게 고르다 모자라면 종류·다시 나온 몫 제한을 풀고 채운다(같은 대상 1개는 그대로)
+        while len(picked) < EDITOR_POOL:
+            best = None
+            for t in pool:
+                if t in picked:
+                    continue
+                k = _target(t)
+                if k and tcnt.get(k, 0) >= 1:
+                    continue
+                cat = re.sub(r"\s+", "", str(t.get("종류") or ""))
+                if strict and not c.get("kinds") and cat and ccnt.get(cat, 0) >= CAT_MAX:
+                    continue
+                if strict and t["새로움"] and sum(1 for x in picked if x["새로움"]) >= max_rep:
+                    continue
+                v = t["_v"] - MMR_SIM * max((_sim(t["_b"], x["_b"]) for x in picked), default=0)
+                if best is None or v > best[0]:
+                    best = (v, t)
+            if not best:
+                break
+            t = best[1]
+            picked.append(t)
+            k, cat = _target(t), re.sub(r"\s+", "", str(t.get("종류") or ""))
+            tcnt[k] = tcnt.get(k, 0) + 1
+            if cat:
+                ccnt[cat] = ccnt.get(cat, 0) + 1
+    drop["같은 대상·비슷한 소재"] = [t.get("소재") for t in pool if t not in picked and tcnt.get(_target(t), 0) >= 1][:20]
+    for t in pool:
+        t.pop("_v", None); t.pop("_b", None)
+    return picked, drop
+
+
+def select(c, rows, n=None):
+    """편집장 순서(또는 고른 순서) → per_channel 개. 갈래 설정이 있으면 갈래마다 최소 자리를 남긴다."""
+    n = n or CFG["per_channel"]
+    if c.get("kinds"):   # 갈래마다 최소 개수 자리를 남기고 나머지는 순서대로(2026-09-28 논스킵 사건·괴담 믹스)
+        return keep_kinds(rows, n, {k: v.get("min", 0) for k, v in c["kinds"].items()})
+    return rows[:n]
+
+
+EDITOR_LINE = re.compile(r"^\s*\**\s*(\d+)\s*[|｜]\s*(\d+)\s*[|｜]\s*(.+?)\s*[|｜]\s*(.+?)\s*$")
+
+
+def editor_pass(c, pool, aud, anc, model):
+    """편집장(2026-10-22 고도화): 기획자가 고른 후보를 한 번 더 따져 약한·비슷한·의심스러운 소재를 빼고 순서를 정하고 제목을 다듬는다.
+    돌려줌: (편집장이 고른 순서 — 남은 후보는 뒤에 붙임, 사용량). 실패하면 (pool 그대로, None)."""
+    n = min(CFG["per_channel"], len(pool))
+    rows = []
+    for i, t in enumerate(pool, 1):
+        sc = t.get("점수") or {}
+        rows.append(f"{i}. {t.get('소재')} | 대상 {t.get('대상') or '-'} | 종류 {t.get('종류') or t.get('갈래') or '-'} | 총점 {t.get('총점')}"
+                    f"(자극 {sc.get('hook')}·수요 {sc.get('demand')}) | {'처음' if not t.get('새로움') else '최근에 한 번 나옴'}"
+                    f" | 제목: {t.get('제목') or ''} | 왜: {str(t.get('왜_터질까') or '')[:140]}")
+    top = ["- 우리 대박 편: " + " / ".join(f"{r['제목'][:36]}({int(r.get('조회') or 0):,})" for r in (anc or {}).get("top", [])[:5])] if anc else []
+    bot = ["- 우리 안 된 편: " + " / ".join(f"{r['제목'][:36]}({int(r.get('조회') or 0):,})" for r in (anc or {}).get("bot", [])[:4])] if anc else []
+    L = [f"너는 유튜브 채널 「{c['name']}」의 편집장이다. 기획자가 고른 소재 후보 {len(pool)}개를 마지막으로 검토해 {n}개를 고른다.",
+         "", "[채널 형식]", c["format"], "", "[떡상 공식 — 사용자 확정]"] + [f"- {x}" for x in c["formula"]] + \
+        ([""] + top + bot if anc else []) + (["", "[우리 시청자 실측]", aud] if aud else []) + [
+         "", "[할 일]",
+         f"- 지금 만들면 조회수가 가장 크게 터질 순서로 {n}개의 순위를 매긴다(후보가 {len(pool)}개면 약한 {len(pool) - n}개는 뺀다). 약한 소재도 순위는 매기되 한마디에 약점을 적는다.",
+         "- 빼야 할 것: 자극이 약한 정보·소식형 · 서로 비슷한 소재(가장 센 하나만) · 사실·전제가 의심스러운 것 · 채널 형식·공식에 안 맞는 것 · 우리 안 된 편과 같은 결.",
+         "- 1~5위는 서로 다른 결(대상 종류·감정·각도)이 되게 한다. '처음' 소재를 더 쳐 준다.",
+         "- 제목: 채널 제목 공식대로 더 누르고 싶게 다듬는다. 숫자·사실은 원래 제목과 왜 칸에 있는 것만 쓴다(지어내지 않는다). 이미 좋으면 그대로 둔다.",
+         "- 한마디: 왜 이 순위인지, 만들 때 무엇을 살릴지 한 문장.",
+         "", f"[출력 — 아래 형식의 줄만 정확히 {n}줄, 1위부터. 머리말·설명 없이]", "순위|후보번호|제목|한마디", "",
+         "[후보]"] + rows
+    try:
+        text, use = ask_claude("\n".join(L), model)
+        (OUT / "_answers").mkdir(exist_ok=True)
+        (OUT / "_answers" / f"{c['name']}_편집장.txt").write_text(text, encoding="utf-8")
+    except Exception as e:
+        log(c["name"], "편집장 검토 실패 — 고른 순서 그대로:", str(e)[:200])
+        return pool, None
+    order = []
+    for ln in text.splitlines():
+        m = EDITOR_LINE.match(ln)
+        if not m:
+            continue
+        i = int(m.group(2))
+        if not 1 <= i <= len(pool) or pool[i - 1] in order:
+            continue
+        t = pool[i - 1]
+        title, note = m.group(3).strip().strip("'\"“”"), m.group(4).strip()
+        if title and title != (t.get("제목") or "") and len(title) >= 8:
+            t["제목_원래"], t["제목"] = t.get("제목"), title
+        t["편집장"] = note[:160]
+        t["편집장_순위"] = len(order) + 1
+        order.append(t)
+    if len(order) < 3:
+        log(c["name"], f"편집장 답을 {len(order)}줄만 읽음 — 고른 순서 그대로")
+        return pool, use
+    if len(order) < n:
+        log(c["name"], f"편집장이 {len(order)}개만 순위를 매김 — 나머지는 고른 순서대로 뒤에 붙임")
+    return order + [t for t in pool if t not in order], use
 
 
 def kind_of(c, t):
@@ -1690,6 +1876,8 @@ def main():
     latest = json.loads(latest_p.read_text(encoding="utf-8")) if latest_p.exists() else {"channels": {}}
     global VIDEOS, VIEWS
     VIDEOS, VIEWS = gh_json("videos.json") or {}, gh_json("video_views.json") or {}
+    AUD.update(gh_json("audience.json") or {})            # 10-22 우리 시청자(나이·성별·유입·검색어)
+    ENG.update((gh_json("engaged.json") or {}).get("videos") or {})   # 영상별 평균 시청 비율
     ob = outliers_brief()
     trend = [] if (answers or "--score-only" in args) else trends()
     buzz = [] if "--score-only" in args else community_hot()
@@ -1742,7 +1930,12 @@ def main():
             tamed = tame_hook(cands)
             dm = measure_demand(c, cands)
             om = measure_outside(c, cands, buzz)
-            topics, dropped = finalize(c, cands, cal["weights"], overused, made_items(c))
+            pool, dropped = finalize(c, cands, cal["weights"], overused, made_items(c), seen_map(name))
+            ed_use = None
+            if not dry and not answers and "--no-editor" not in args and len(pool) > CFG["per_channel"] // 2:   # 10-22 편집장 검토(--answers 다시 정리 땐 AI 안 부름)
+                pool, ed_use = editor_pass(c, pool, audience_brief(name), anchors(c), CFG.get("model", "sonnet"))
+            topics = select(c, pool)
+            new_n = sum(1 for t in topics if not t.get("새로움"))
             fresh_n = sum(1 for t in topics if t.get("최신"))
             kinds = {k: {"icon": v.get("icon", ""), "min": v.get("min", 0)} for k, v in (c.get("kinds") or {}).items()} or None
             labels = {k: (c.get("labels") or {}).get(k) or DEFAULT_LABELS.get(k, k) for k in c["weights"]}   # 총점 가중치 순서 = 대시보드 막대 순서
@@ -1750,15 +1943,17 @@ def main():
                                         "trend_n": info.get("trend_n"), "fresh_n": fresh_n, "prompt_chars": info.get("prompt_chars"),
                                         "tokens": use, "labels": labels, "kinds": kinds, "genre_n": info.get("genre_n"), "genre_hot": info.get("genre_hot"),
                                         "candidates": len(cands), "demand": dm, "outside": om, "hook_cut": tamed, "anchors": info.get("anchors"),
+                                        "new_n": new_n, "editor": bool(ed_use), "editor_tokens": ed_use, "audience": info.get("audience"),
                                         "dropped": {k: v for k, v in dropped.items() if v}, "topics": topics, "calib": view}
             with (OUT / "history.jsonl").open("a", encoding="utf-8") as f:
-                f.write(json.dumps({"at": at, "channel": name, "topics": [{"소재": t.get("소재"), "대상": t.get("대상"), "제목": t.get("제목"),
+                f.write(json.dumps({"at": at, "channel": name, "topics": [{"소재": t.get("소재"), "대상": t.get("대상"), "제목": t.get("제목"), "종류": t.get("종류"),
                                                                             "총점": t["총점"], "점수": t.get("점수"), "최신": t.get("최신"),
                                                                             **({"갈래": t["갈래"]} if t.get("갈래") else {})}
                                                                            for t in topics]}, ensure_ascii=False) + "\n")
             log(name, f"유튜브 밖: 위키 문서 {om['위키_문서']}·커뮤니티 언급 {om['커뮤니티_언급']}·빈자리 3+ {om['빈자리_3+']}·타이밍 {om['타이밍']}")
             log(name, f"후보 {len(cands)}개 · hook 깎음 {tamed} · 수요 검색어 {dm['검색어']}(새로 {dm['새로_검색']}·실패 {dm['검색_실패']}·측정 못 함 {dm['측정_못함']}) · 뺌",
                 ", ".join(f"{k} {len(v)}" for k, v in dropped.items() if v) or "없음")
+            log(name, f"새로 나온 소재 {new_n}/{len(topics)} · 편집장 {'검토함 ' + tok_str(ed_use) if ed_use else '안 함'}")
             log(name, "추천", len(topics), "개", tok_str(use), f"· 📰최신 {fresh_n}개 ·",
                 *([" · ".join(f"{k} {sum(t.get('갈래') == k for t in topics)}개" for k in kinds), "·"] if kinds else []),
                 " / ".join(f"{t.get('소재')} {t['총점']}(자극 {t['점수'].get('hook')}·수요 {t['점수'].get('demand')})" for t in topics[:6]), "…")

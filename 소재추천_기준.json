@@ -1,7 +1,7 @@
 {
   "model": "sonnet",
   "per_channel": 20,
-  "candidates": 30,
+  "candidates": 40,
   "detail_top": 8,
   "channels": [
     {

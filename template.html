@@ -225,6 +225,8 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
 .sbars i { grid-column: 1 / -1; height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
 .sbars u { display: block; height: 100%; background: var(--accent); }
 .dm { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.ed { margin-top: 8px; font-size: 13px; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; color: var(--ink); }
+.ed b { color: var(--accent); }
 .dm a { color: var(--accent); margin-left: 6px; }
 details.memo { margin-top: 8px; font-size: 13px; }
 details summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: 12.5px; }
@@ -894,9 +896,10 @@ function topicCard(t, i, lab, ch) {
   const facts = (t["확인할_사실"] || []).map(x => `<li>${esc(x)}</li>`).join("");
   return `<article class="topic"><div class="hd"><div class="score ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}</div>
     <div style="min-width:0;flex:1"><div class="nm">${i + 1}. ${esc(t["소재"])}</div>
-      <div class="chips" style="margin-top:5px;gap:4px">${t["갈래"] ? `<span class="pill">${esc(t["갈래"])}</span>` : ""}${p ? `<span class="pill good">${PSTAT[p.status][0]} ${PSTAT[p.status][1]} ${esc(p.id)}</span>` : ""}${t["최신"] ? `<span class="pill blue">📰 ${md(t["최신"])} 기사</span>` : ""}${t["후속"] ? '<span class="pill">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="pill">${esc(t["대상"])}</span>` : ""}</div></div></div>
-    <div class="ttl"><div class="tx">${esc(ti)}${ko ? `<span class="ko">${esc(ko)}</span>` : ""}</div>
+      <div class="chips" style="margin-top:5px;gap:4px">${t["새로움"] === 0 ? '<span class="pill blue">🆕 처음 추천</span>' : t["새로움"] ? '<span class="pill" data-tip="최근 5일 추천에 한 번 나왔던 소재(감점해서 아래로)">↺ 다시 나옴</span>' : ""}${t["종류"] ? `<span class="pill">${esc(t["종류"])}</span>` : ""}${t["갈래"] ? `<span class="pill">${esc(t["갈래"])}</span>` : ""}${p ? `<span class="pill good">${PSTAT[p.status][0]} ${PSTAT[p.status][1]} ${esc(p.id)}</span>` : ""}${t["최신"] ? `<span class="pill blue">📰 ${md(t["최신"])} 기사</span>` : ""}${t["후속"] ? '<span class="pill">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="pill">${esc(t["대상"])}</span>` : ""}</div></div></div>
+    <div class="ttl"><div class="tx">${esc(ti)}${ko ? `<span class="ko">${esc(ko)}</span>` : ""}${t["제목_원래"] ? `<span class="ko">원래 안: ${esc(t["제목_원래"])}</span>` : ""}</div>
       <button class="ibtn" type="button" data-copy="${esc(t["제목"] || "")}">복사</button><button class="ibtn star ${on ? "on" : ""}" type="button" data-star="${esc(starKey(ch, t))}" data-ti="${i}" aria-pressed="${on}">${on ? "★" : "☆"}</button></div>
+    ${t["편집장"] ? `<div class="ed"><b>편집장</b> ${esc(t["편집장"])}</div>` : ""}
     <p class="why">${esc(t["왜_터질까"])}</p><div class="sbars">${bars}</div>${demandLine(t["수요"])}${outsideLine(t["밖"])}
     ${t["첫문장"] || facts ? `<details class="memo"><summary>첫 문장 · 장면 · 확인할 것</summary><div class="dl">
       ${t["첫문장"] ? `<div><div class="k">첫 문장</div>${esc(t["첫문장"])}</div>` : ""}${t["보여줄_장면"] ? `<div><div class="k">보여줄 장면</div>${esc(t["보여줄_장면"])}</div>` : ""}
@@ -921,11 +924,11 @@ function pageTopics(want) {
   let list = f === "star" ? Object.values(ST).filter(x => x.ch === cur).map((x, i) => ({ t: x.t, i })) : all.map((t, i) => ({ t, i })).filter(x => pick[f](x.t));
   if (S.tsort === "date") list.sort((a, b) => String(b.t["최신"] || "").localeCompare(String(a.t["최신"] || "")) || a.i - b.i);
   return ph("소재 추천", `채널마다 ${all.length}개 · 매일 오전 7시·오후 3시에 새로 골라요`) + chips
-  + `<div class="card"><div class="card-h"><div><h2><span class="dot" style="background:${colorOf(cur)}"></span> ${esc(cur)}</h2><div class="hint">${esc(c.at)} 기준 · 판단 ${esc(c.model || "-")}${c.news_n ? ` · 뉴스 ${c.news_n}건` : ""}</div></div>
-    <div class="bar-row" style="margin:0">${seg("tf", [["all", "전체"], ["new", "📰 최신 근거"], ["star", "⭐ 찜"]], f)}${seg("tsort", [["score", "점수순"], ["date", "최신 기사순"]], S.tsort === "date" ? "date" : "score")}</div></div>
+  + `<div class="card"><div class="card-h"><div><h2><span class="dot" style="background:${colorOf(cur)}"></span> ${esc(cur)}</h2><div class="hint">${esc(c.at)} 기준 · 판단 ${esc(c.model || "-")}${c.new_n !== undefined ? ` · <b style="color:var(--accent)">🆕 처음 나온 소재 ${c.new_n}/${all.length}</b>` : ""}${c.editor ? " · 편집장 검토 ✓" : ""}${c.audience ? " · 우리 시청자 자료 반영" : ""}${c.news_n ? ` · 뉴스 ${c.news_n}건` : ""}</div></div>
+    <div class="bar-row" style="margin:0">${seg("tf", [["all", "전체"], ["new", "📰 최신 근거"], ["star", "⭐ 찜"]], f)}${seg("tsort", [["score", "추천순"], ["date", "최신 기사순"]], S.tsort === "date" ? "date" : "score")}</div></div>
     ${c.stale ? `<div class="warnbox">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
     ${list.map(x => topicCard(x.t, x.i, lab, cur)).join("") || `<div class="empty">${f === "star" ? "찜한 소재가 없어요 — ☆를 누르면 이 기기에 남아요" : "조건에 맞는 소재가 없어요"}</div>`}</div>
-  <div class="note">자극은 우리 채널에서 실제로 터진·안 된 편을 기준으로 AI가, 수요는 유튜브 검색 실제 조회수로, 빈자리·관심 급등·커뮤니티·타이밍은 유튜브 밖 신호로 매겨요. 숫자는 만들기 전에 꼭 확인하세요.</div>`;
+  <div class="note">고르는 법: ① AI 기획자가 재료(지금 뜨는 영상·우리 대박/안 된 편·우리 시청자 검색어·뉴스·커뮤니티)로 후보 40개 → ② 자극은 우리 편 기준점으로, 수요는 유튜브 검색 실제 조회수로, 빈자리·관심 급등·커뮤니티·타이밍은 유튜브 밖 신호로 채점 → ③ 최근 5일 추천에 2번 이상 나온 소재·이미 만든 편은 빼고, 비슷한 소재는 하나만, 한 종류가 몰리지 않게 → ④ AI 편집장이 약한 것을 빼고 순서·제목을 다듬어요. 숫자는 만들기 전에 꼭 확인하세요.</div>`;
 }
 function afterTopics() {
   $$("[data-tch]").forEach(b => b.onclick = () => { S.tch = b.dataset.tch; remember(); render(); });
