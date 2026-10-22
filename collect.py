@@ -317,6 +317,24 @@ def engaged_auth():
     return {"client_id": cl["client_id"], "client_secret": cl["client_secret"], "tokens": {k: v["refresh_token"] for k, v in tok.items()}}
 
 
+_ACCESS = {}
+
+
+def access_tokens(auth):
+    """채널ID → 분석 API 접근 토큰(1시간짜리, 한 번 실행 안에서 다시 씀)"""
+    if _ACCESS:
+        return _ACCESS
+    for key, rt in (auth.get("tokens") or {}).items():
+        try:
+            req = urllib.request.Request("https://oauth2.googleapis.com/token", method="POST", data=urllib.parse.urlencode(
+                {"client_id": auth["client_id"], "client_secret": auth["client_secret"], "refresh_token": rt, "grant_type": "refresh_token"}).encode())
+            with urllib.request.urlopen(req, timeout=30) as r:
+                _ACCESS[key] = json.load(r)["access_token"]
+        except (urllib.error.URLError, KeyError, ValueError) as e:
+            print(f"! 유튜브 분석 연결 하나 실패({getattr(e, 'code', type(e).__name__)}) — 만료됐으면 다시 연결 필요")
+    return _ACCESS
+
+
 def _analytics(token, cid, start, end, metrics, **extra):
     url = ANALYTICS_API + "?" + urllib.parse.urlencode({"ids": f"channel=={cid}", "startDate": start, "endDate": end, "metrics": metrics, **extra})
     with urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": "Bearer " + token}), timeout=60) as r:
@@ -333,15 +351,7 @@ def collect_engaged(now, info):
     auth = engaged_auth()
     if not auth:
         return
-    access = {}
-    for key, rt in (auth.get("tokens") or {}).items():
-        try:
-            req = urllib.request.Request("https://oauth2.googleapis.com/token", method="POST", data=urllib.parse.urlencode(
-                {"client_id": auth["client_id"], "client_secret": auth["client_secret"], "refresh_token": rt, "grant_type": "refresh_token"}).encode())
-            with urllib.request.urlopen(req, timeout=30) as r:
-                access[key] = json.load(r)["access_token"]
-        except (urllib.error.URLError, KeyError, ValueError) as e:
-            print(f"! 유효 조회수 연결 하나 실패({getattr(e, 'code', type(e).__name__)}) — 만료됐으면 다시 연결 필요")
+    access = access_tokens(auth)
     if not access:
         old.update(at=now.isoformat(timespec="minutes"), err="연결이 모두 만료됨 — 다시 연결 필요")
         save("engaged.json", old)
@@ -371,6 +381,235 @@ def collect_engaged(now, info):
         out["channels"][c["name"]] = res
     save("engaged.json", out)
     print("· 유효 조회수: " + ", ".join(f"{n} {str(r['n']) + '편' if r['ok'] else r['err']}" for n, r in out["channels"].items()))
+
+
+# ---------------------------------------------------------------- 누가 보는지(유튜브 분석 API, 2026-10-22 개편)
+AUDIENCE_EVERY_HOURS = 6
+
+
+def collect_audience(now, info):
+    """채널마다 시청자: 나이×성별(90일)·국가·유입 경로·검색어·기기·구독 여부·쇼츠/본편(28일) + 최근 90일 일별(조회·유효·시청 시간·구독 +/−·좋아요·공유)
+    + 수익(파트너 채널, 수익 읽기 권한이 있을 때만). 분석 수치는 하루 한두 번 바뀌어서 6시간마다만 받는다."""
+    old = load("audience.json", {})
+    names = {c["name"] for c in info}
+    if old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=AUDIENCE_EVERY_HOURS) and names <= set(old.get("channels", {})):
+        return
+    auth = engaged_auth()
+    access = access_tokens(auth) if auth else {}
+    if not access:
+        return
+    day = lambda n: (now - timedelta(days=n)).strftime("%Y-%m-%d")
+    end, s28, s90 = now.strftime("%Y-%m-%d"), day(28), day(90)
+    out = {"at": now.isoformat(timespec="minutes"), "channels": {}}
+    for c in info:
+        prev = (old.get("channels") or {}).get(c["name"]) or {}
+        tok, res = None, {"ok": False, "err": "연결 안 됨"}
+        for key in ([c["id"]] if c["id"] in access else []) + [k for k in access if k != c["id"]]:
+            try:
+                daily = _analytics(access[key], c["id"], s90, end, "views,engagedViews,estimatedMinutesWatched,averageViewDuration,subscribersGained,subscribersLost,likes,shares",
+                                   dimensions="day", sort="day")
+                tok = access[key]
+                break
+            except urllib.error.HTTPError as e:
+                if e.code in (401, 403):
+                    continue
+                res = {"ok": False, "err": f"분석 API 오류 {e.code}"}
+                break
+            except urllib.error.URLError as e:
+                res = {"ok": False, "err": f"분석 API 연결 실패 {type(e).__name__}"}
+                break
+        if not tok:   # 잠깐 막힌 거면 지난 값은 두고 오류만 표시
+            out["channels"][c["name"]] = {**prev, **res, **({"stale": True} if prev.get("ok") else {})}
+            continue
+        miss = []
+
+        def q(start, metrics, **extra):
+            try:
+                return _analytics(tok, c["id"], start, end, metrics, **extra).get("rows") or []
+            except urllib.error.HTTPError as e:
+                miss.append(f"{extra.get('dimensions', metrics)} {e.code}")
+            except urllib.error.URLError:
+                miss.append(extra.get("dimensions", metrics))
+            return None
+
+        r = {"ok": True, "err": None, "daily": {"cols": ["day", "views", "engaged", "minutes", "avd", "gained", "lost", "likes", "shares"],
+                                                "rows": [[x[0]] + [round(v) if isinstance(v, float) else v for v in x[1:]] for x in daily.get("rows") or []]}}
+        rows = q(s90, "viewerPercentage", dimensions="ageGroup,gender", sort="ageGroup")
+        r["age_gender"] = [[a, g, round(v, 1)] for a, g, v in rows] if rows else []
+        rows = q(s28, "views,estimatedMinutesWatched", dimensions="country", sort="-views", maxResults=12)
+        r["country"] = [[k, int(v), int(m)] for k, v, m in rows] if rows else []
+        rows = q(s28, "views,estimatedMinutesWatched", dimensions="insightTrafficSourceType", sort="-views")
+        r["traffic"] = [[k, int(v), int(m)] for k, v, m in rows] if rows else []
+        rows = q(s28, "views", dimensions="insightTrafficSourceDetail", filters="insightTrafficSourceType==YT_SEARCH", sort="-views", maxResults=15)
+        r["search"] = [[k, int(v)] for k, v in rows] if rows else []
+        rows = q(s28, "views,estimatedMinutesWatched", dimensions="deviceType", sort="-views")
+        r["device"] = [[k, int(v), int(m)] for k, v, m in rows] if rows else []
+        rows = q(s28, "views,averageViewDuration", dimensions="subscribedStatus")
+        r["subscribed"] = [[k, int(v), int(d)] for k, v, d in rows] if rows else []
+        rows = q(s28, "views,estimatedMinutesWatched", dimensions="creatorContentType", sort="-views")
+        r["content"] = [[k, int(v), int(m)] for k, v, m in rows] if rows else []
+        try:   # 수익: 수익 읽기 권한(10-22 추가)으로 다시 연결한 파트너 채널만 — 403 은 '권한 없음'
+            rows = _analytics(tok, c["id"], s90, end, "estimatedRevenue", dimensions="day", sort="day", currency="KRW").get("rows") or []
+            r["revenue"] = [[d, round(v)] for d, v in rows]   # 원
+        except urllib.error.HTTPError as e:
+            r["revenue"] = None
+            if e.code not in (401, 403):
+                miss.append(f"수익 {e.code}")
+        except urllib.error.URLError:
+            r["revenue"] = prev.get("revenue")
+        if miss:
+            r["miss"] = miss
+        out["channels"][c["name"]] = r
+    save("audience.json", out)
+    print("· 시청자 분석: " + ", ".join(f"{n} {'✔' if r.get('ok') else r.get('err')}" for n, r in out["channels"].items()))
+
+
+# ---------------------------------------------------------------- 인스타(메타 공식 API, 2026-10-22)
+#   인스타_연결.py 로 계정마다 한 번 허용 → 깃허브 비밀값 IG_OAUTH = {"tokens": {사용자이름: 60일 토큰}}(맥이 하루 한 번 연장), 맥은 ~/.channel-dashboard/ig_tokens.json
+#   프로필(팔로워)은 매시간, 게시물 인사이트는 3시간, 일별 계정 인사이트는 하루치씩 채우고, 팔로워 나이·성별·지역은 하루 한 번.
+IG_API = "https://graph.instagram.com/v23.0/"
+IG_DAILY = "reach,views,accounts_engaged,total_interactions,likes,comments,shares,saves,profile_links_taps,follows_and_unfollows"
+
+
+def insta_tokens():
+    raw = os.environ.get("IG_OAUTH", "").strip()
+    if raw:
+        try:
+            return json.loads(raw).get("tokens") or {}
+        except ValueError:
+            print("! IG_OAUTH 형식 오류 — 인스타 건너뜀")
+            return {}
+    try:
+        tok = json.loads((Path.home() / ".channel-dashboard" / "ig_tokens.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return {v["username"]: v["token"] for v in tok.values()}
+
+
+class IgError(Exception):
+    pass
+
+
+def _ig(path, token, **params):
+    url = IG_API + path + "?" + urllib.parse.urlencode({**params, "access_token": token})
+    try:
+        with urllib.request.urlopen(url, timeout=30) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:   # 메타 오류 문구만(주소엔 토큰이 있어 출력하지 않음)
+        try:
+            err = json.load(e).get("error") or {}
+            msg = f"{e.code} {err.get('code', '')} {str(err.get('message', ''))[:120]}"
+        except ValueError:
+            msg = str(e.code)
+        raise IgError(msg) from None
+    except urllib.error.URLError as e:
+        raise IgError(type(e).__name__) from None
+
+
+def _ig_values(res):
+    """인사이트 응답 → {지표: 값}"""
+    out = {}
+    for it in res.get("data") or []:
+        tv = it.get("total_value")
+        if tv is not None:
+            out[it["name"]] = tv.get("value")
+        elif it.get("values"):
+            out[it["name"]] = it["values"][-1].get("value")
+    return out
+
+
+def collect_insta(now):
+    tokens = insta_tokens()
+    if not tokens:
+        return
+    store = load("insta.json", {"accounts": {}})
+    if store.get("at") and now - datetime.fromisoformat(store["at"]) < timedelta(minutes=50):
+        return
+    today = now.strftime("%Y-%m-%d")
+    accts = store.setdefault("accounts", {})
+    for user in [u for u in accts if u not in tokens]:   # 연결을 끊은 계정은 뺀다
+        accts.pop(user)
+    for user, tok in tokens.items():
+        a = accts.setdefault(user, {})
+        try:
+            p = _ig("me", tok, fields="user_id,username,name,profile_picture_url,followers_count,follows_count,media_count,account_type,biography")
+        except IgError as e:
+            a["err"] = f"프로필 실패 {e}"
+            print(f"! 인스타 @{user}: {a['err']}")
+            continue
+        a["err"] = None
+        a["profile"] = {"username": p.get("username"), "name": p.get("name"), "pic": p.get("profile_picture_url"), "bio": (p.get("biography") or "")[:150],
+                        "followers": p.get("followers_count", 0), "follows": p.get("follows_count", 0), "media": p.get("media_count", 0),
+                        "type": p.get("account_type"), "url": f"https://www.instagram.com/{p.get('username')}/"}
+        a.setdefault("hist", {})[today] = [p.get("followers_count", 0), p.get("media_count", 0)]
+        a["hist"] = {d: v for d, v in a["hist"].items() if d >= (now - timedelta(days=400)).strftime("%Y-%m-%d")}
+        a["hourly"] = thin([x for x in a.get("hourly", []) if x[0] >= (now - timedelta(days=14)).isoformat()] + [[now.isoformat(timespec="minutes"), p.get("followers_count", 0)]], now)
+        # 게시물(최근 30개) + 게시물별 인사이트 — 3시간마다
+        if not a.get("media_at") or now - datetime.fromisoformat(a["media_at"]) >= timedelta(hours=3):
+            try:
+                ms = _ig("me/media", tok, fields="id,caption,media_type,media_product_type,permalink,thumbnail_url,media_url,timestamp,like_count,comments_count", limit=30).get("data") or []
+                old_m = {m["id"]: m for m in a.get("media", [])}
+                media = []
+                for m in ms:
+                    reel = m.get("media_product_type") == "REELS"
+                    rec = {"id": m["id"], "cap": (m.get("caption") or "").split("\n")[0][:90], "type": "릴스" if reel else ("여러 장" if m.get("media_type") == "CAROUSEL_ALBUM" else "사진" if m.get("media_type") == "IMAGE" else "영상"),
+                           "url": m.get("permalink"), "thumb": m.get("thumbnail_url") or (m.get("media_url") if m.get("media_type") == "IMAGE" else None),
+                           "t": parse_time(m["timestamp"].replace("+0000", "+00:00")).astimezone(KST).strftime("%Y-%m-%d %H:%M"),
+                           "likes": m.get("like_count", 0), "comments": m.get("comments_count", 0)}
+                    want = "reach,views,likes,comments,shares,saved,total_interactions" + (",ig_reels_avg_watch_time" if reel else "")
+                    try:
+                        v = _ig_values(_ig(f"{m['id']}/insights", tok, metric=want))
+                    except IgError:
+                        try:
+                            v = _ig_values(_ig(f"{m['id']}/insights", tok, metric="reach,likes,comments,saved,shares"))
+                        except IgError:
+                            v = {k: old_m.get(m["id"], {}).get(k2) for k, k2 in (("reach", "reach"), ("views", "views"), ("shares", "shares"), ("saved", "saves"))}
+                    rec.update(reach=v.get("reach"), views=v.get("views"), shares=v.get("shares"), saves=v.get("saved"), inter=v.get("total_interactions"),
+                               avg_watch=round(v["ig_reels_avg_watch_time"] / 1000, 1) if v.get("ig_reels_avg_watch_time") else None)
+                    vh = dict(old_m.get(m["id"], {}).get("vh") or {})   # 날짜별 조회수(어제 대비 증가용)
+                    if rec["views"] is not None:
+                        vh[today] = rec["views"]
+                    rec["vh"] = {d: n for d, n in vh.items() if d >= (now - timedelta(days=30)).strftime("%Y-%m-%d")}
+                    media.append(rec)
+                a["media"], a["media_at"] = media, now.isoformat(timespec="minutes")
+            except IgError as e:
+                a["err"] = f"게시물 실패 {e}"
+        # 일별 계정 인사이트: 빠진 날을 한 번에 최대 7일씩(처음엔 28일 채움)
+        daily = a.setdefault("daily", {})
+        todo = [(now - timedelta(days=k)).strftime("%Y-%m-%d") for k in range(1, 29)]
+        todo = [d for d in todo if d not in daily or (d >= (now - timedelta(days=2)).strftime("%Y-%m-%d") and daily[d].get("_at", "") < today)][:7]
+        for d in todo:
+            t0 = int(datetime.fromisoformat(d).replace(tzinfo=KST).timestamp())
+            try:
+                v = _ig_values(_ig("me/insights", tok, metric=IG_DAILY, period="day", metric_type="total_value", since=t0, until=t0 + 86400))
+            except IgError as e:
+                a["err"] = f"일별 인사이트 실패 {e}"
+                break
+            daily[d] = {**v, "_at": today}
+        a["daily"] = {d: v for d, v in daily.items() if d >= (now - timedelta(days=120)).strftime("%Y-%m-%d")}
+        # 팔로워·반응한 사람 나이·성별·나라·도시 — 하루 한 번(팔로워 100명 미만이면 메타가 주지 않음)
+        if not a.get("demo_at") or now - datetime.fromisoformat(a["demo_at"]) >= timedelta(hours=24):
+            demo, why = {}, None
+            for metric, key in (("follower_demographics", "follower"), ("engaged_audience_demographics", "engaged")):
+                for bd in ("age", "gender", "country", "city"):
+                    res = None
+                    for extra in ({"timeframe": "this_month"}, {}):
+                        try:
+                            res = _ig("me/insights", tok, metric=metric, period="lifetime", metric_type="total_value", breakdown=bd, **extra)
+                            break
+                        except IgError as e:
+                            why = str(e)
+                    if not res:
+                        continue
+                    for it in res.get("data") or []:
+                        for b in (it.get("total_value") or {}).get("breakdowns") or []:
+                            rows = sorted(([x["dimension_values"][0], x["value"]] for x in b.get("results") or []), key=lambda x: -x[1])
+                            demo.setdefault(key, {})[bd] = rows[:12]
+            a["demo"] = {**demo, "at": now.isoformat(timespec="minutes"), **({} if demo else {"why": why})}
+            a["demo_at"] = now.isoformat(timespec="minutes")
+        print(f"· 인스타 @{user}: 팔로워 {a['profile']['followers']:,}" + (f" ! {a['err']}" if a.get("err") else ""))
+    store["at"] = now.isoformat(timespec="minutes")
+    save("insta.json", store)
 
 
 def collect():
@@ -528,6 +767,14 @@ def collect():
         collect_engaged(now, info)
     except Exception as e:   # 유효 조회수가 막혀도 대시보드는 그대로 만든다(메시지에 토큰이 섞이지 않게 종류만 출력)
         print(f"! 유효 조회수 실패: {type(e).__name__}")
+    try:
+        collect_audience(now, info)
+    except Exception as e:
+        print(f"! 시청자 분석 실패: {type(e).__name__}")
+    try:
+        collect_insta(now)
+    except Exception as e:
+        print(f"! 인스타 실패: {type(e).__name__}")
 
     # 주간 리포트: 월요일 오전 9시 이후 첫 실행에 한 번
     ctx = dict(now=now, info=info, videos=videos, vhist=vhist, hist=hist, early=early, money_hist=money_hist, alerts=alerts, bench=bench)
@@ -1705,12 +1952,30 @@ def build(ctx):
             "engaged": {"at": engaged.get("at"), "err": engaged.get("err"), "channels": engaged.get("channels") or {}},
             "telegram": bool(env_value("TELEGRAM_BOT_TOKEN") and env_value("TELEGRAM_CHAT_ID")) or bool(os.environ.get("TELEGRAM_ON")),
             "settings": {"surge_min": SURGE_MIN_PER_HOUR, "surge_ratio": SURGE_RATIO, "retention": RETENTION}}
-    try:
-        data["meeting"] = meeting(data, now)
-    except Exception as e:   # 회의가 막혀도 대시보드는 그대로 만든다
-        print(f"! 회의 만들기 실패: {type(e).__name__} {e}")
-        data["meeting"] = None
+    # 10-22 개편: 누가 보는지(유튜브 분석) · 인스타. 회의실(직원 그림)은 화면에서 뺐다
+    aud = load("audience.json", {})
+    data["audience"] = {"at": aud.get("at"), "channels": aud.get("channels") or {}}
+    data["insta"] = insta_view(load("insta.json", {}), now)
     return data
+
+
+def insta_view(store, now):
+    """화면용 인스타: 시간별 기록은 빼고, 게시물은 어제 대비 조회 증가만 붙인다"""
+    today = now.strftime("%Y-%m-%d")
+    out = []
+    for user, a in (store.get("accounts") or {}).items():
+        if not a.get("profile"):
+            out.append({"user": user, "err": a.get("err") or "아직 수집 전"})
+            continue
+        media = []
+        for m in a.get("media") or []:
+            vh = m.get("vh") or {}
+            before = max([d for d in vh if d < today], default=None)
+            media.append({k: v for k, v in m.items() if k != "vh"} | {"gain": (m["views"] - vh[before]) if before and m.get("views") is not None else None})
+        out.append({"user": user, "err": a.get("err"), "profile": a["profile"], "hist": a.get("hist") or {},
+                    "daily": {d: {k: v for k, v in x.items() if k != "_at"} for d, x in (a.get("daily") or {}).items()},
+                    "demo": a.get("demo") or {}, "media": media, "media_at": a.get("media_at")})
+    return {"at": store.get("at"), "accounts": out}
 
 
 def write_page(data):

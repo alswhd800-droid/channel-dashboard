@@ -31,8 +31,9 @@ KST = timezone(timedelta(hours=9))
 KEEP_DAYS = 14                                     # 이보다 오래된 기록은 버린다(공개된 건 API 쪽에 다 있다)
 
 # 채널 폴더 → 대시보드 채널 이름(channels.json 의 name)
-FOLDERS = {"거대한비밀": "거대한비밀", "거인의무덤": "거인의무덤", "논스킵": "논스킵", "영어채널": "The Paradox Desk",
-           "시술백과": "시술백과", "필요한법": "필요한법"}
+FOLDERS = {"거대한비밀": "거대한비밀", "거인의무덤": "거인의무덤", "논스킵": "논스킵",
+           "라스트씬": "라스트 씬",   # 10-08 폴더·채널 이름 바뀜(옛 역사의급소 — 폴더는 바로가기로 남음)
+           "근력과학": "몸리학", "낮달": "새벽서랍", "지도_옛날사진_수도권영상": "지도 한 장"}   # 10-22 대시보드 개편 때 추가(영어채널은 채널 삭제로 뺌)
 SKIP_DIRS = {".git", "node_modules", "__pycache__", "보관", "안쓰는파일", "venv", ".venv"}
 NAME_RE = re.compile(r"업로드정보|업로드_?.*결과")
 BAD_NAME = re.compile(r"_before|수정전")
@@ -180,7 +181,7 @@ def scan():
                     slot = kind + (no or (slot_no if kind == "쇼츠" else ""))
                     occ.setdefault(vid, []).append((seq, i == 0, {"id": vid, "ch": ch, "kind": kind, "slot": slot, "num": n2,
                                                                   "t": t.strftime("%Y-%m-%d %H:%M"), "ep": ep, "src": src}))
-                if not ids and "예약" in seg:
+                if not ids and "예약" in seg and not CANCEL_RE.search(seg):   # '… 예약 해제(사용자 삭제)' 가 붙은 계획은 뺀다(2026-09-28)
                     kind = "쇼츠" if "본편과 같은" in seg else section
                     planned.append({"ch": ch, "kind": kind, "num": n2, "t": t.strftime("%Y-%m-%d %H:%M"), "ep": ep, "src": src})
     # 영상마다: 그 영상이 줄의 첫 ID(주어)인 기록 중 마지막 → 없으면 곁들여 나온 기록 중 마지막

@@ -17,6 +17,8 @@ if ! git pull --rebase --autostash -q 2>>"$LOG"; then
   git rebase --abort 2>/dev/null; git fetch -q origin && git reset -q --hard origin/main
   cp "$T"/* topics/ 2>/dev/null; rm -rf "$T"
 fi
+# 10-22 인스타 토큰(60일짜리) 연장 — 7일 넘은 것만, 깃허브 비밀값 IG_OAUTH 도 같이 바꾼다
+/usr/bin/python3 인스타_연결.py --refresh >> "$LOG" 2>&1 || say "! 인스타 토큰 연장 실패 — 60일 안에 다시 연결 필요할 수 있음"
 if ! /usr/bin/python3 소재추천.py >> "$LOG" 2>&1; then say "✘ 추천 실패"; exit 1; fi
 git add topics/latest.json topics/history.jsonl
 if git diff --cached --quiet; then say "바뀐 것 없음"; exit 0; fi

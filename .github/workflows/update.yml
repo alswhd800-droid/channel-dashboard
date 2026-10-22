@@ -39,6 +39,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           YT_OAUTH: ${{ secrets.YT_OAUTH }}   # 유효 조회수(유튜브 분석 API, 읽기 전용 OAuth) — 3시간마다만 씀
+          IG_OAUTH: ${{ secrets.IG_OAUTH }}   # 인스타(메타 공식 API, 읽기 전용 토큰) — 프로필 매시간·인사이트 3시간·나이 성별 하루
         run: python collect.py
       - name: 떡상 후보 발굴 (하루 3번만 — API 할당량이 하루 10,000유닛이라 수집과 나눠 쓴다)
         if: always()
@@ -61,7 +62,6 @@ jobs:
           cp -R data site/data && cp docs/index.html site/index.html && touch site/.nojekyll
           cp privacy.html site/privacy.html   # 구글 OAuth 앱(유효 조회수)에 등록한 개인정보처리방침 주소
           cp ig-callback.html site/ig-callback.html   # 인스타 연결(메타 앱) 허용 뒤 돌아오는 주소 → 맥 127.0.0.1:8766 으로 넘김
-          if [ -d staff ]; then cp -R staff site/staff; fi   # 직원 사진(있을 때만)
           cd site
           git init -q -b gh-pages
           git config user.name "dashboard-bot"
