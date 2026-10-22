@@ -107,6 +107,8 @@ select { font: inherit; font-size: 13px; padding: 6px 28px 6px 10px; border-radi
 .pill.good { background: color-mix(in srgb, var(--up) 14%, transparent); color: var(--up); }
 .pill.bad { background: color-mix(in srgb, var(--down) 13%, transparent); color: var(--down); }
 .pill.blue { background: var(--accent-soft); color: var(--accent); }
+.pill.sh { background: color-mix(in srgb, var(--s2) 14%, transparent); color: var(--s2); }
+.pill.lf { background: color-mix(in srgb, var(--s7) 14%, transparent); color: var(--s7); }
 
 /* 계정 카드 */
 .acct { display: flex; flex-direction: column; gap: 10px; transition: border-color .15s; }
@@ -338,7 +340,7 @@ const country = c => { try { return (REGION && REGION.of(c)) || c; } catch (e) {
 const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 const S = Object.assign({ vplat: "all", vch: "all", vtype: "all", vper: "30", vsort: "gain", grow: "views", gper: 90, igrow: "followers", chv: "new",
-  tf: "all", tsort: "score", htype: "short", hsort: "score", hkind: "all", csort: "score", sch: "all", mtab: "ads" }, store.get("dash2", {}));
+  tf: "all", tsort: "score", htype: "short", hsort: "score", hkind: "all", csort: "score", sch: "all", stype: "all", mtab: "ads" }, store.get("dash2", {}));
 const remember = () => store.set("dash2", S);
 
 /* ───────── 데이터 꺼내기 ───────── */
@@ -592,7 +594,7 @@ function pageHome() {
       <div class="list">${(D.alerts || []).slice(0, 7).map(alertRow).join("") || '<div class="empty">아직 알림이 없어요</div>'}</div></div>
     <div class="card"><div class="card-h"><h2>다가오는 업로드</h2><a class="more muted" href="#schedule" style="font-size:13px">일정 ›</a></div>
       <div class="list">${up.map(x => `<div class="item"><span class="ico" style="font-size:12px;font-weight:700;width:52px">${esc(dayName(x.t.slice(0, 10)))}</span>
-        <div style="min-width:0"><div class="t">${esc(x.ep || "")}</div><div class="m"><span class="dot" style="background:${colorOf(x.ch)}"></span>${esc(x.ch)} · ${x.kind === "쇼츠" ? "쇼츠" : "본편"} · ${esc(x.t.slice(11))}</div></div>
+        <div style="min-width:0"><div class="t">${esc(x.ep || "")}</div><div class="m"><span class="pill ${x.kind === "쇼츠" ? "sh" : "lf"}">${x.kind === "쇼츠" ? "쇼츠" : "롱폼"}</span> <span class="dot" style="background:${colorOf(x.ch)}"></span>${esc(x.ch)} · ${esc(x.t.slice(11))}</div></div>
         <span class="r"><span class="pill ${x.st === "예약" ? "blue" : ""}">${esc(x.st === "계획" ? "계획" : "예약됨")}</span></span></div>`).join("") || '<div class="empty">예약된 업로드가 없어요</div>'}</div></div>
   </div>`
   + sec("이번 주 잘 된 영상", `<a class="more" href="#videos">콘텐츠 전체 ›</a>`)
@@ -943,8 +945,9 @@ const cvar = ch => `--c:${colorOf(ch) === "var(--muted)" ? "var(--ink-2)" : colo
 function schItems() {
   const pub = (D.videos || []).filter(v => v.published && v.public !== false).map(v => ({ ch: v.ch, d: v.published, hm: v.hm || "", st: "공개", short: v.short, title: v.title, url: v.url, views: v.views, thumb: v.thumb }));
   const rest = ((D.schedule && D.schedule.items) || []).map(x => ({ ch: x.ch, d: x.t.slice(0, 10), hm: x.t.slice(11), st: x.st, short: x.kind === "쇼츠", title: x.ep, url: x.id ? `https://studio.youtube.com/video/${x.id}/edit` : "" }));
-  return pub.concat(rest).sort((a, b) => (a.d + a.hm).localeCompare(b.d + b.hm));
+  return pub.concat(rest).filter(x => S.stype === "all" || (S.stype === "short") === !!x.short).sort((a, b) => (a.d + a.hm).localeCompare(b.d + b.hm));
 }
+const kindPill = short => `<span class="pill ${short ? "sh" : "lf"}">${short ? "쇼츠" : "롱폼"}</span>`;
 function schStrip(all) {
   const today = kstNow().slice(0, 10), days = Array.from({ length: 14 }, (_, i) => addDay(today, i - 6));
   const cad = Object.fromEntries(((D.cadence && D.cadence.rows) || []).map(r => [r.name, r]));
@@ -956,7 +959,7 @@ function schStrip(all) {
   return `<div class="card"><div class="striphd">${days.map(d => `<span class="${d === today ? "today" : ""}">${d === today ? "오늘" : +d.slice(8)}</span>`).join("")}</div>
   ${rows.map(x => {
     const cell = d => { const xs = x.mine.filter(v => v.d === d), st = xs.reduce((m, v) => SRANK[v.st] > SRANK[m] ? v.st : m, "공개");
-      return `<i class="${xs.length ? SCLS[st] : ""}${d === today ? " today" : ""}" style="${cvar(x.c.name)}" data-tip="${esc(`<b>${esc(x.c.name)} · ${dayName(d)}</b>${xs.map(v => `<div>${esc(v.hm)} ${SST[v.st]} · ${esc(String(v.title).slice(0, 30))}</div>`).join("") || "<div>없음</div>"}`)}">${xs.length || ""}</i>`; };
+      return `<i class="${xs.length ? SCLS[st] : ""}${d === today ? " today" : ""}" style="${cvar(x.c.name)}" data-tip="${esc(`<b>${esc(x.c.name)} · ${dayName(d)}</b>${xs.map(v => `<div>${esc(v.hm)} ${v.short ? "쇼츠" : "롱폼"} ${SST[v.st]} · ${esc(String(v.title).slice(0, 30))}</div>`).join("") || "<div>없음</div>"}`)}">${xs.length || ""}</i>`; };
     const b = x.booked, plans = x.ahead.length - b.length, nx = x.ahead[0], r = x.r;
     const sm = b.length ? `<span class="pill good">✓ ${esc(at(b[b.length - 1]))}까지 ${b.length}개 예약</span>` : plans ? `<span class="pill">계획 ${plans}개 · 아직 안 올림</span>` : `<span class="pill ${r && r.late ? "bad" : ""}">예약 없음${r && r.late ? " · 늦어짐" : ""}</span>`;
     const sub = [nx ? `다음 ${at(nx)} ${nx.title}` : "", x.last ? `최근 공개 ${at(x.last)}` : "공개 영상 없음", r && r.target ? `평소 ${r.target}일마다` : ""].filter(Boolean).join(" · ");
@@ -980,7 +983,7 @@ function schCal(all) {
 function schList(all) {
   const d = schDay, xs = all.filter(x => x.d === d && (S.sch === "all" || x.ch === S.sch));
   return `${sec(`${dayName(d)} · ${+d.slice(5, 7)}월 ${+d.slice(8)}일(${wday(d)}) <span class="muted" style="font-weight:500;font-size:13px">${xs.length}개</span>`)}<div class="card"><div class="list">${xs.map(x => {
-    const inner = `<span class="ico" style="width:48px;font-size:12px;font-weight:700">${esc(x.hm)}</span><div style="min-width:0"><div class="t">${esc(x.title)}</div><div class="m"><span class="dot" style="background:${colorOf(x.ch)}"></span>${esc(x.ch)} · ${x.short ? "쇼츠" : "본편"}</div></div><span class="r"><span class="pill ${x.st === "공개" ? "good" : x.st === "확인" ? "bad" : x.st === "계획" ? "" : "blue"}">${SST[x.st]}</span></span>`;
+    const inner = `<span class="ico" style="width:48px;font-size:12px;font-weight:700">${esc(x.hm)}</span><div style="min-width:0"><div class="t">${esc(x.title)}</div><div class="m">${kindPill(x.short)} <span class="dot" style="background:${colorOf(x.ch)}"></span>${esc(x.ch)}</div></div><span class="r"><span class="pill ${x.st === "공개" ? "good" : x.st === "확인" ? "bad" : x.st === "계획" ? "" : "blue"}">${SST[x.st]}</span></span>`;
     return x.url ? `<a class="item" href="${esc(x.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
   }).join("") || '<div class="empty">이날은 공개된 영상도 예약도 없어요</div>'}</div></div>`;
 }
@@ -990,16 +993,16 @@ function schRecent(all) {   // 10-22 사용자 "예약된건만 보이지말고 
   const next = all.filter(x => x.st !== "공개" && x.st !== "확인" && (x.d + " " + x.hm) >= now).slice(0, 14);
   const chk = all.filter(x => x.st === "확인" && x.d >= addDay(today, -7));
   const row = (x, right) => { const inner = `<span class="ico" style="width:58px;font-size:11.5px;font-weight:700;line-height:1.25;text-align:center">${esc(dayName(x.d))}<br>${esc(x.hm)}</span>
-    <div style="min-width:0"><div class="t">${esc(x.title)}</div><div class="m"><span class="dot" style="background:${colorOf(x.ch)}"></span>${esc(x.ch)} · ${x.short ? "쇼츠" : "본편"}</div></div><span class="r">${right}</span>`;
+    <div style="min-width:0"><div class="t">${esc(x.title)}</div><div class="m">${kindPill(x.short)} <span class="dot" style="background:${colorOf(x.ch)}"></span>${esc(x.ch)}</div></div><span class="r">${right}</span>`;
     return x.url ? `<a class="item" href="${esc(x.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`; };
   const byCh = CH.map(c => [c.name, done.filter(x => x.ch === c.name).length]);
   return `<div class="grid g2">
-    <div class="card"><div class="card-h"><div><h2>✅ 올라간 영상</h2><div class="hint">오늘·어제·그제 공개된 것 ${done.length}개 · 누르면 유튜브</div></div></div>
+    <div class="card"><div class="card-h"><div><h2>✅ 올라간 영상</h2><div class="hint">오늘·어제·그제 공개 ${done.length}개 — 쇼츠 ${done.filter(x => x.short).length} · 롱폼 ${done.filter(x => !x.short).length} · 누르면 유튜브</div></div></div>
       <div class="chips" style="gap:4px;margin-bottom:6px">${byCh.map(([n, k]) => `<span class="pill ${k ? "good" : ""}"><span class="dot" style="background:${colorOf(n)}"></span> ${esc(n)} ${k}</span>`).join("")}</div>
       <div class="list">${done.map(x => row(x, `<b>${man(x.views)}</b><span class="muted" style="font-size:12px">조회</span>`)).join("") || '<div class="empty">최근 3일 동안 공개된 영상이 없어요</div>'}</div></div>
-    <div class="card"><div class="card-h"><div><h2>⏳ 앞으로 올라갈 영상</h2><div class="hint">예약해 둔 것 · 계획만 있는 것</div></div></div>
+    <div class="card"><div class="card-h"><div><h2>⏳ 앞으로 올라갈 영상</h2><div class="hint">예약·계획 ${next.length}개 — 쇼츠 ${next.filter(x => x.short).length} · 롱폼 ${next.filter(x => !x.short).length}</div></div></div>
       <div class="list">${next.map(x => row(x, `<span class="pill ${x.st === "계획" ? "" : "blue"}">${SST[x.st]}</span>`)).join("") || '<div class="empty">예약된 업로드가 없어요</div>'}</div>
-      ${chk.length ? `<div class="warnbox">⚠ 공개 시각이 지났는데 유튜브에서 공개로 안 보이는 것 ${chk.length}개 — 비공개로 남았거나 예약을 바꿨는지 확인하세요<div style="margin-top:6px">${chk.map(x => `<div>· ${esc(x.ch)} ${esc(dayName(x.d))} ${esc(x.hm)} ${x.short ? "쇼츠" : "본편"} ${esc(x.title)}</div>`).join("")}</div></div>` : ""}</div>
+      ${chk.length ? `<div class="warnbox">⚠ 공개 시각이 지났는데 유튜브에서 공개로 안 보이는 것 ${chk.length}개 — 비공개로 남았거나 예약을 바꿨는지 확인하세요<div style="margin-top:6px">${chk.map(x => `<div>· ${esc(x.ch)} ${esc(dayName(x.d))} ${esc(x.hm)} ${x.short ? "쇼츠" : "롱폼"} ${esc(x.title)}</div>`).join("")}</div></div>` : ""}</div>
   </div>`;
 }
 function pageSchedule() {
@@ -1007,6 +1010,7 @@ function pageSchedule() {
   if (!schDay) schDay = kstNow().slice(0, 10);
   if (S.sch !== "all" && !CH.some(c => c.name === S.sch)) S.sch = "all";
   return ph("업로드 일정", `올라간 영상과 예약된 영상을 채널마다 한눈에${S0.at ? ` · 예약 기록 ${esc(S0.at.slice(5))} 기준` : ""}`)
+  + `<div class="bar-row">${seg("stype", [["all", "전체"], ["short", "쇼츠만"], ["long", "롱폼만"]], S.stype)}<span class="muted" style="font-size:12.5px">고르면 아래 목록·채널별 칸·달력이 모두 그 종류만 보여요</span></div>`
   + schRecent(all)
   + sec("채널별 · 지난 6일 ~ 앞으로 7일", '<span class="more">칠한 칸 = 공개됨 · 테두리 = 예약됨 · 빗금 = 계획만 · 숫자 = 그날 개수</span>') + schStrip(all)
   + sec("달력") + `<div class="chips" style="margin-bottom:10px">${["all", ...CH.map(c => c.name)].map(k => `<button type="button" class="chip ${S.sch === k ? "on" : ""}" data-sch="${esc(k)}">${k === "all" ? "전체" : `<span class="dot" style="background:${colorOf(k)}"></span>${esc(k)}`}</button>`).join("")}</div>
@@ -1117,7 +1121,7 @@ function render() {
   $("#main").innerHTML = html;
   document.title = (page === "ch" ? a + " · " : page === "ig" ? "@" + a + " · " : "") + "채널 대시보드";
   mountCharts();
-  ["grow", "gper", "igrow", "chv", "vplat", "vtype", "vper", "tf", "tsort", "htype", "hsort", "hkind", "csort", "atype"].forEach(k => bindSeg(k));
+  ["grow", "gper", "igrow", "chv", "vplat", "vtype", "vper", "tf", "tsort", "htype", "hsort", "hkind", "csort", "atype", "stype"].forEach(k => bindSeg(k));
   const vch = $("#vch"); if (vch) vch.onchange = () => { S.vch = vch.value; remember(); render(); };
   const vs = $("#vsort"); if (vs) vs.onchange = () => { S.vsort = vs.value; remember(); render(); };
   $$("tr[data-go]").forEach(r => r.onclick = () => { location.hash = r.dataset.go; });
