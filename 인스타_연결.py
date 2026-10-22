@@ -68,7 +68,7 @@ def main():
     state = secrets.token_urlsafe(16)
     url = "https://www.instagram.com/oauth/authorize?" + urllib.parse.urlencode({
         "client_id": app["app_id"], "redirect_uri": REDIRECT, "response_type": "code", "scope": SCOPES, "state": state,
-        "enable_fb_login": "0", "force_reauth": "true"})
+        "enable_fb_login": "0"})   # force_reauth 는 넣지 않는다 — 웹 세션이 끊겨 게시 자동화 계정이 로그아웃된다(10-22 몸리학)
     got = {}
 
     class H(http.server.BaseHTTPRequestHandler):
