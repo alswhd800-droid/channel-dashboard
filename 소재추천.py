@@ -604,11 +604,11 @@ def _sim(a, b):
     return len(a & b) / len(a | b) if a and b else 0.0
 
 
-def seen_map(ch, runs=NOVELTY_RUNS):
-    """최근 runs 번 추천에 나온 대상 → 나온 횟수, 그리고 소재마다 글자 조각(이름만 바꾼 반복 잡기)"""
+def seen_map(ch, runs=NOVELTY_RUNS, skip_at=None):
+    """최근 runs 번 추천에 나온 대상 → 나온 횟수, 그리고 소재마다 글자 조각(이름만 바꾼 반복 잡기). skip_at = 다시 정리하는 그 회차(세지 않음)"""
     p = OUT / "history.jsonl"
     rows = [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()] if p.exists() else []
-    rows = [r for r in rows if r.get("channel") == ch][-runs:]
+    rows = [r for r in rows if r.get("channel") == ch and r.get("at") != skip_at][-runs:]
     cnt, names, texts = {}, {}, []
     for r in rows:
         for k in {_target(t) for t in r.get("topics", [])} - {""}:
@@ -658,7 +658,7 @@ def audience_brief(ch):
         se = a.get("search") or []
         if se:
             L.append("우리 채널을 찾아 들어온 유튜브 검색어(28일, 조회): " + " · ".join(f"{q} {v:,}" for q, v in se[:12])
-                     + " — 이 말 근처의 새 대상은 수요가 이미 증명된 쪽이다(같은 대상·이미 만든 편은 금지)")
+                     + " — 이 말 근처의 새 대상은 수요가 이미 증명된 쪽이다(단 이미 만든 편과 같은 대상·같은 종류는 금지 — 예: 땅굴을 이미 했으면 땅굴 탐지도 금지)")
     vids = [(v, ENG.get(vid)) for vid, v in (VIDEOS or {}).items() if v.get("ch") == ch and ENG.get(vid) and (v.get("views") or 0) >= 300]
     if len(vids) >= 6:
         vids.sort(key=lambda x: -x[1]["avp"])
@@ -1671,7 +1671,10 @@ def select(c, rows, n=None):
 EDITOR_LINE = re.compile(r"^\s*\**\s*(\d+)\s*[|｜]\s*(\d+)\s*[|｜]\s*(.+?)\s*[|｜]\s*(.+?)\s*$")
 
 
-def editor_pass(c, pool, aud, anc, model):
+EDITOR_DROP = re.compile(r"^\s*\**\s*뺌\s*[|｜]\s*(\d+)\s*[|｜]\s*(.+?)\s*$")
+
+
+def editor_pass(c, pool, aud, anc, model, made=()):
     """편집장(2026-10-22 고도화): 기획자가 고른 후보를 한 번 더 따져 약한·비슷한·의심스러운 소재를 빼고 순서를 정하고 제목을 다듬는다.
     돌려줌: (편집장이 고른 순서 — 남은 후보는 뒤에 붙임, 사용량). 실패하면 (pool 그대로, None)."""
     n = min(CFG["per_channel"], len(pool))
@@ -1686,13 +1689,17 @@ def editor_pass(c, pool, aud, anc, model):
     L = [f"너는 유튜브 채널 「{c['name']}」의 편집장이다. 기획자가 고른 소재 후보 {len(pool)}개를 마지막으로 검토해 {n}개를 고른다.",
          "", "[채널 형식]", c["format"], "", "[떡상 공식 — 사용자 확정]"] + [f"- {x}" for x in c["formula"]] + \
         ([""] + top + bot if anc else []) + (["", "[우리 시청자 실측]", aud] if aud else []) + [
+         "", "[이미 만든 편·올린 영상 — 같은 대상·같은 종류(후속·다른 각도 포함)는 반드시 '뺌']",
+         " / ".join(dict.fromkeys(re.sub(r"\s+", " ", re.sub(r"#\S+", "", str(x[0]))).strip()[:40] for x in made))[:9000] or "없음",
          "", "[할 일]",
+         "- 먼저 위 '이미 만든 편'과 겹치는 후보를 찾아 뺀다. 예: 땅굴 편을 여러 번 만들었으면 '땅굴 탐지'·'땅굴 발견'도 같은 종류다. 우리 채널 검색어와 가깝다는 이유로 이미 만든 종류를 살리지 마라.",
          f"- 지금 만들면 조회수가 가장 크게 터질 순서로 {n}개의 순위를 매긴다(후보가 {len(pool)}개면 약한 {len(pool) - n}개는 뺀다). 약한 소재도 순위는 매기되 한마디에 약점을 적는다.",
          "- 빼야 할 것: 자극이 약한 정보·소식형 · 서로 비슷한 소재(가장 센 하나만) · 사실·전제가 의심스러운 것 · 채널 형식·공식에 안 맞는 것 · 우리 안 된 편과 같은 결.",
          "- 1~5위는 서로 다른 결(대상 종류·감정·각도)이 되게 한다. '처음' 소재를 더 쳐 준다.",
          "- 제목: 채널 제목 공식대로 더 누르고 싶게 다듬는다. 숫자·사실은 원래 제목과 왜 칸에 있는 것만 쓴다(지어내지 않는다). 이미 좋으면 그대로 둔다.",
          "- 한마디: 왜 이 순위인지, 만들 때 무엇을 살릴지 한 문장.",
-         "", f"[출력 — 아래 형식의 줄만 정확히 {n}줄, 1위부터. 머리말·설명 없이]", "순위|후보번호|제목|한마디", "",
+         "", f"[출력 — 머리말·설명 없이 두 가지 줄만. 먼저 순위 줄(1위부터, 뺀 것 빼고 최대 {n}줄), 그다음 뺀 후보마다 뺌 줄]",
+         "순위|후보번호|제목|한마디", "뺌|후보번호|까닭(이미 만든 편 '…'과 같은 종류 등 한 줄)", "",
          "[후보]"] + rows
     try:
         text, use = ask_claude("\n".join(L), model)
@@ -1701,13 +1708,20 @@ def editor_pass(c, pool, aud, anc, model):
     except Exception as e:
         log(c["name"], "편집장 검토 실패 — 고른 순서 그대로:", str(e)[:200])
         return pool, None
-    order = []
+    order, gone = [], []
     for ln in text.splitlines():
+        d = EDITOR_DROP.match(ln)
+        if d:
+            i = int(d.group(1))
+            if 1 <= i <= len(pool) and pool[i - 1] not in gone:
+                pool[i - 1]["편집장_뺌"] = d.group(2)[:120]
+                gone.append(pool[i - 1])
+            continue
         m = EDITOR_LINE.match(ln)
         if not m:
             continue
         i = int(m.group(2))
-        if not 1 <= i <= len(pool) or pool[i - 1] in order:
+        if not 1 <= i <= len(pool) or pool[i - 1] in order or pool[i - 1] in gone:
             continue
         t = pool[i - 1]
         title, note = m.group(3).strip().strip("'\"“”"), m.group(4).strip()
@@ -1718,10 +1732,12 @@ def editor_pass(c, pool, aud, anc, model):
         order.append(t)
     if len(order) < 3:
         log(c["name"], f"편집장 답을 {len(order)}줄만 읽음 — 고른 순서 그대로")
-        return pool, use
+        return [t for t in pool if t not in gone], use
     if len(order) < n:
         log(c["name"], f"편집장이 {len(order)}개만 순위를 매김 — 나머지는 고른 순서대로 뒤에 붙임")
-    return order + [t for t in pool if t not in order], use
+    if gone:
+        log(c["name"], "편집장이 뺌: " + " / ".join(f"{t.get('소재')}({t.get('편집장_뺌')})" for t in gone))
+    return order + [t for t in pool if t not in order and t not in gone], use
 
 
 def kind_of(c, t):
@@ -1930,10 +1946,12 @@ def main():
             tamed = tame_hook(cands)
             dm = measure_demand(c, cands)
             om = measure_outside(c, cands, buzz)
-            pool, dropped = finalize(c, cands, cal["weights"], overused, made_items(c), seen_map(name))
+            made = made_items(c)
+            pool, dropped = finalize(c, cands, cal["weights"], overused, made, seen_map(name, skip_at=at if answers else None))
             ed_use = None
-            if not dry and not answers and "--no-editor" not in args and len(pool) > CFG["per_channel"] // 2:   # 10-22 편집장 검토(--answers 다시 정리 땐 AI 안 부름)
-                pool, ed_use = editor_pass(c, pool, audience_brief(name), anchors(c), CFG.get("model", "sonnet"))
+            if not dry and (not answers or "--editor" in args) and "--no-editor" not in args and len(pool) > CFG["per_channel"] // 2:   # 10-22 편집장 검토(--answers 다시 정리 땐 --editor 일 때만 AI)
+                pool, ed_use = editor_pass(c, pool, audience_brief(name), anchors(c), CFG.get("model", "sonnet"), made)
+                dropped["편집장이 뺌(이미 만든 종류 등)"] = [f"{t.get('소재')} — {t.get('편집장_뺌')}" for t in cands if t.get("편집장_뺌")]
             topics = select(c, pool)
             new_n = sum(1 for t in topics if not t.get("새로움"))
             fresh_n = sum(1 for t in topics if t.get("최신"))
@@ -1945,7 +1963,12 @@ def main():
                                         "candidates": len(cands), "demand": dm, "outside": om, "hook_cut": tamed, "anchors": info.get("anchors"),
                                         "new_n": new_n, "editor": bool(ed_use), "editor_tokens": ed_use, "audience": info.get("audience"),
                                         "dropped": {k: v for k, v in dropped.items() if v}, "topics": topics, "calib": view}
-            with (OUT / "history.jsonl").open("a", encoding="utf-8") as f:
+            hp = OUT / "history.jsonl"   # 다시 정리(--answers)면 그 회차 줄을 바꿔 끼운다(같은 회차가 두 번 세지지 않게)
+            hl = [l for l in hp.read_text(encoding="utf-8").splitlines() if l.strip()] if hp.exists() else []
+            if answers:
+                hl = [l for l in hl if not (json.loads(l).get("channel") == name and json.loads(l).get("at") == at)]
+            hp.write_text("\n".join(hl) + ("\n" if hl else ""), encoding="utf-8")
+            with hp.open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": at, "channel": name, "topics": [{"소재": t.get("소재"), "대상": t.get("대상"), "제목": t.get("제목"), "종류": t.get("종류"),
                                                                             "총점": t["총점"], "점수": t.get("점수"), "최신": t.get("최신"),
                                                                             **({"갈래": t["갈래"]} if t.get("갈래") else {})}
