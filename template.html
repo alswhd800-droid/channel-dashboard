@@ -421,8 +421,15 @@ function drawChart(el, c) {
   const xc = i => bar ? L + step * (i + 0.5) : L + (n <= 1 ? iw / 2 : iw * i / (n - 1));
   let g = "";
   sc.t.forEach(v => { g += `<line class="${v === 0 ? "b" : "g"}" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${esc(fmt(v))}</text>`; });
-  const every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(iw / 58))));
-  for (let i = n - 1; i >= 0; i -= every) g += `<text class="ax" x="${xc(i)}" y="${H - 6}" text-anchor="middle">${esc(c.x[i])}</text>`;
+  if (c.days) {   // 날마다 한 칸(2026-10-27 사용자 "2일별로 띄엄띄엄 … 일마다 보여주게"): 자리가 되면 하루도 빼지 않고, 날짜만 · 맨 앞과 달 바뀌는 칸은 월/일
+    const every = Math.max(1, Math.ceil(20 / (bar ? step : iw / Math.max(1, n - 1)))), idx = [];
+    for (let i = n - 1; i >= 0; i -= every) idx.unshift(i);
+    idx.forEach((i, k) => { const d = c.days[i], lab = k === 0 || d.slice(0, 7) !== c.days[idx[k - 1]].slice(0, 7) ? md(d) : String(+d.slice(8, 10));
+      g += `<text class="ax" x="${xc(i)}" y="${H - 6}" text-anchor="middle">${esc(lab)}</text>`; });
+  } else {
+    const every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(iw / 58))));
+    for (let i = n - 1; i >= 0; i -= every) g += `<text class="ax" x="${xc(i)}" y="${H - 6}" text-anchor="middle">${esc(c.x[i])}</text>`;
+  }
   let body = "";
   if (bar) {
     const bw = Math.max(1.5, Math.min(26, step * 0.66)), r = Math.min(4, bw / 2.5);
@@ -431,15 +438,15 @@ function drawChart(el, c) {
       const segs = c.series.map((s, k) => ({ v: s.data[i], k })).filter(x => x.v);
       const lastPos = segs.filter(x => x.v > 0).pop(), lastNeg = segs.filter(x => x.v < 0).pop();
       segs.forEach(({ v, k }) => {
-        const col = c.series[k].color, x0 = xc(i) - bw / 2;
+        const col = c.series[k].color, fo = c.series[k].op ? ` fill-opacity="${c.series[k].op}"` : "", x0 = xc(i) - bw / 2;
         if (v > 0) {
           const y1 = y(pos + v), y0 = y(pos); pos += v;
           const gap = pos - v > 0 ? 1.5 : 0, top = y1, bot = y0 - gap, rr = x => x === lastPos ? Math.min(r, (bot - top) / 1.5) : 0, rad = rr(segs.find(s => s.k === k));
-          if (bot - top > 0.3) body += `<path d="M${x0},${bot}V${top + rad}Q${x0},${top} ${x0 + rad},${top}H${x0 + bw - rad}Q${x0 + bw},${top} ${x0 + bw},${top + rad}V${bot}Z" fill="${col}"/>`;
+          if (bot - top > 0.3) body += `<path d="M${x0},${bot}V${top + rad}Q${x0},${top} ${x0 + rad},${top}H${x0 + bw - rad}Q${x0 + bw},${top} ${x0 + bw},${top + rad}V${bot}Z" fill="${col}"${fo}/>`;
         } else {
           const y0 = y(neg), y1 = y(neg + v); neg += v;
           const gap = neg - v < 0 ? 1.5 : 0, top = y0 + gap, bot = y1, rad = (segs.find(s => s.k === k) === lastNeg) ? Math.min(r, (bot - top) / 1.5) : 0;
-          if (bot - top > 0.3) body += `<path d="M${x0},${top}V${bot - rad}Q${x0},${bot} ${x0 + rad},${bot}H${x0 + bw - rad}Q${x0 + bw},${bot} ${x0 + bw},${bot - rad}V${top}Z" fill="${col}"/>`;
+          if (bot - top > 0.3) body += `<path d="M${x0},${top}V${bot - rad}Q${x0},${bot} ${x0 + rad},${bot}H${x0 + bw - rad}Q${x0 + bw},${bot} ${x0 + bw},${bot - rad}V${top}Z" fill="${col}"${fo}/>`;
         }
       });
     }
@@ -462,14 +469,14 @@ function drawChart(el, c) {
       hov.innerHTML = `<line class="xh" x1="${xc(i)}" x2="${xc(i)}" y1="${T}" y2="${T + ih}"/>`;
       hov2.innerHTML = c.series.map(s => s.data[i] === null || s.data[i] === undefined ? "" : `<circle cx="${xc(i)}" cy="${y(s.data[i])}" r="4.5" fill="${s.color}" stroke="var(--surface)" stroke-width="2"/>`).join("");
     }
-    const rows = c.series.filter(s => !s.hideTip).map(s => ttRow(s.color, s.name, s.data[i] === null || s.data[i] === undefined ? "-" : (c.tipFmt || fmt)(s.data[i]))).join("");
+    const rows = c.series.filter(s => !s.hideTip && !(c.skipNull && (s.data[i] === null || s.data[i] === undefined))).map(s => ttRow(s.color, s.name, s.data[i] === null || s.data[i] === undefined ? "-" : (c.tipFmt || fmt)(s.data[i]))).join("");
     showTT(`<b>${esc((c.xl || c.x)[i])}</b>${rows}${c.tipExtra ? c.tipExtra(i) : ""}`, e.clientX, e.clientY);
   });
   svg.querySelector(".hit").addEventListener("pointerleave", () => { hov.innerHTML = ""; hov2.innerHTML = ""; hideTT(); });
 }
 function mountCharts() { $$(".chart[data-ci]").forEach(el => drawChart(el, CHARTS[+el.dataset.ci])); }
 let rsz; addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(mountCharts, 120); });
-const legend = series => series.length < 2 ? "" : `<div class="legend">${series.map(s => `<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("")}</div>`;
+const legend = series => series.length < 2 ? "" : `<div class="legend">${series.map(s => `<span><i style="background:${s.color}${s.op ? `;opacity:${s.op}` : ""}"></i>${esc(s.name)}</span>`).join("")}</div>`;
 function spark(vals, { w = 132, h = 38, kind = "line", color = "var(--accent)" } = {}) {
   const v = vals.map(x => x === undefined ? null : x), nn = v.filter(x => x !== null);
   if (nn.length < 2) return `<svg class="spark" width="${w}" height="${h}"></svg>`;
@@ -633,25 +640,37 @@ function pageChannels() {
 
 /* ───────── 3. 유튜브 채널 상세 ───────── */
 function growthYT(c, A) {
-  const s = ser(c.name) || {}, per = +S.gper || 90;
-  let x = [], xl = [], series = [], note = "", fmt = man;
+  const s = ser(c.name) || {}, per = +S.gper || 90, yday = addDay(D.updated.slice(0, 10), -1), all = dates();
+  let days = [], series = [], note = "", fmt = man, tipExtra = null;
   if (A && A.daily && A.daily.rows.length) {
-    let rows = A.daily.rows.slice(-per);
+    let rows = A.daily.rows.filter(r => r[0] <= yday);
     const first = rows.findIndex(r => r[1] > 0); if (first > 0) rows = rows.slice(first);   // 채널이 생기기 전 빈 날은 자른다
-    x = rows.map(r => md(r[0])); xl = rows.map(r => `${md(r[0])}(${wday(r[0])})`);
-    if (S.grow === "views") series = [{ name: "조회수", data: rows.map(r => r[1]), color: "var(--s1)" }];
-    else if (S.grow === "subs") series = [{ name: "구독 늘어남", data: rows.map(r => r[5]), color: "var(--s1)" }, { name: "구독 취소", data: rows.map(r => -r[6]), color: "var(--s8)" }];
-    else { series = [{ name: "시청 시간", data: rows.map(r => Math.round(r[3] / 60)), color: "var(--s3)" }]; fmt = v => man(v) + "시간"; }
-    note = "유튜브 분석 기준 · 최근 2~3일은 아직 덜 집계돼요";
+    // 유튜브 분석은 2~3일 늦게 나온다 → 그 뒤 어제까지는 공개 조회수(영상 조회수 합의 하루 차이)로 먼저 채우고 옅게 그린다
+    const pub = d => { const i = all.indexOf(d); return i < 0 ? {} : { v: s.shorts && s.shorts[i] !== null && s.shorts[i] !== undefined ? s.shorts[i] + ((s.long && s.long[i]) || 0) : null, g: s.subs_gain ? s.subs_gain[i] ?? null : null }; };
+    let items = rows.map(r => ({ d: r[0], r }));
+    for (let d = rows.length ? addDay(rows[rows.length - 1][0], 1) : yday; d <= yday; d = addDay(d, 1)) items.push({ d, p: pub(d) });
+    items = items.slice(-per);
+    const temp = items.filter(o => o.p), A1 = (f, base) => items.map(o => o.r ? f(o.r) : base(o.p));
+    days = items.map(o => o.d);
+    if (S.grow === "views") series = [{ name: "조회수", data: A1(r => r[1], () => null), color: "var(--s1)" },
+      ...(temp.length ? [{ name: "조회수(잠정)", data: A1(() => null, p => p.v ?? null), color: "var(--s1)", op: 0.4 }] : [])];
+    else if (S.grow === "subs") series = [{ name: "구독 늘어남", data: A1(r => r[5], () => null), color: "var(--s1)" }, { name: "구독 취소", data: A1(r => -r[6], () => null), color: "var(--s8)" },
+      ...(temp.length ? [{ name: "구독 순증(잠정)", data: A1(() => null, p => p.g ?? null), color: "var(--s1)", op: 0.4 }] : [])];
+    else { series = [{ name: "시청 시간", data: A1(r => Math.round(r[3] / 60), () => null), color: "var(--s3)" }]; fmt = v => man(v) + "시간"; }
+    tipExtra = i => items[i].p ? `<div class="hint" style="margin-top:4px">${S.grow === "watch" ? "시청 시간은 유튜브 분석이 집계한 뒤(2~3일) 나와요" : "공개 숫자로 먼저 본 잠정치 · 2~3일 뒤 유튜브 분석 값으로 바뀌어요"}</div>` : "";
+    note = !temp.length ? "유튜브 분석 기준 · 최근 2~3일은 아직 덜 집계돼요" : S.grow === "watch" ? `유튜브 분석 기준 · ${md(temp[0].d)}~어제 시청 시간은 분석이 나오는 2~3일 뒤에 채워져요`
+      : `유튜브 분석 기준 · ${md(temp[0].d)}~어제(옅은 막대)는 분석이 아직 안 나와 공개 숫자로 먼저 보여 줘요`;
   } else {
-    const ds = dates().slice(-per), n = ds.length;
-    x = ds.map(md); xl = ds.map(d => `${md(d)}(${wday(d)})`);
-    if (S.grow === "views") series = [{ name: "쇼츠", data: lastN(s.shorts, n), color: "var(--s1)" }, { name: "본편", data: lastN(s.long, n), color: "var(--s2)" }];
-    else if (S.grow === "subs") series = [{ name: "구독자 증가", data: lastN(s.subs_gain, n), color: "var(--s1)" }];
+    let end = all.length; while (end && all[end - 1] > yday) end--;   // 오늘은 하루가 덜 차서 어제까지
+    const st = Math.max(0, end - per), cut = a => (a || []).slice(st, end);
+    days = all.slice(st, end);
+    if (S.grow === "views") series = [{ name: "쇼츠", data: cut(s.shorts), color: "var(--s1)" }, { name: "본편", data: cut(s.long), color: "var(--s2)" }];
+    else if (S.grow === "subs") series = [{ name: "구독자 증가", data: cut(s.subs_gain), color: "var(--s1)" }];
     else { series = []; note = "시청 시간은 유튜브 분석을 연결하면 나와요"; }
     if (!note) note = "공개 통계 기준(날마다 마지막 수집값의 차이)";
   }
-  const bar = series.length ? chartBox({ type: "bar", stack: true, x, xl, series, h: 240, fmt, label: c.name + " 성장" }) : `<div class="empty">${note}</div>`;
+  const x = days.map(md), xl = days.map(d => `${md(d)}(${wday(d)})`);
+  const bar = series.length ? chartBox({ type: "bar", stack: true, x, xl, days, series, h: 240, fmt, skipNull: true, tipExtra, label: c.name + " 성장" }) : `<div class="empty">${note}</div>`;
   return `<div class="card"><div class="card-h"><div class="hint" style="margin-top:6px">${esc(note)}</div>
     <div class="bar-row" style="margin:0">${seg("grow", [["views", "조회수"], ["subs", "구독자"], ["watch", "시청 시간"]], S.grow)}${seg("gper", [[30, "30일"], [90, "90일"]], per)}</div></div>
     ${bar}${legend(series)}</div>`;
