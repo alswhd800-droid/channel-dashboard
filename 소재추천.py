@@ -1096,8 +1096,15 @@ def buzz_score(n):
     return 0 if n <= 0 else 2 if n == 1 else 3 if n <= 3 else 4 if n <= 6 else 5
 
 
+_WIKI_FAILS = [0]   # 연달아 실패한 수 — WIKI_GIVE_UP 번이면 이번 실행에선 위키를 안 묻는다
+WIKI_GIVE_UP = 6     # 10-28 위키가 429 로 막히자 소재마다 16초씩 기다려 채널 10곳에 2시간 넘게 걸렸다
+
+
 def _wiki_get(url):
-    """위키 API 한 번. 404 말고 실패(429·시간 초과·끊김)는 잠깐 쉬고 세 번 더(10-12 시험에서 절반이 한 번에 실패)."""
+    """위키 API 한 번. 404 말고 실패(429·시간 초과·끊김)는 잠깐 쉬고 세 번 더(10-12 시험에서 절반이 한 번에 실패).
+    WIKI_GIVE_UP 번 연달아 실패하면 막힌 것으로 보고 바로 실패한다(관심 급등·빈자리는 못 잰 것으로 0)."""
+    if _WIKI_FAILS[0] >= WIKI_GIVE_UP:
+        raise RuntimeError("위키가 막혀 이번 실행에선 건너뜀")
     for i in range(4):
         try:
             return json.loads(urllib.request.urlopen(urllib.request.Request(url, headers=WIKI_UA), timeout=20).read().decode("utf-8"))
@@ -1126,14 +1133,18 @@ def wiki_views(name, lang="ko"):
                        f"{start:%Y%m%d}/{end:%Y%m%d}")
         v = [it.get("views", 0) for it in pv.get("items", [])]
         v = [0] * (67 - len(v)) + v   # 조회 0인 날은 빠져서 온다 — 앞을 0으로 채움
+        _WIKI_FAILS[0] = 0
         return {"문서": title, "7일": round(sum(v[-7:]) / 7, 1), "60일": round(sum(v[:-7]) / max(1, len(v) - 7), 1)}
     except urllib.error.HTTPError as e:
         if e.code == 404:
             return {"문서": None}
-        log(f"  위키 실패 {name}: HTTP {e.code}")
+        _WIKI_FAILS[0] += 1
+        log(f"  위키 실패 {name}: HTTP {e.code}" + (" — 연달아 실패해 이번 실행에선 위키를 건너뜀" if _WIKI_FAILS[0] == WIKI_GIVE_UP else ""))
         return None
     except Exception as e:
-        log(f"  위키 실패 {name}: {str(e)[:80]}")
+        if _WIKI_FAILS[0] < WIKI_GIVE_UP:
+            _WIKI_FAILS[0] += 1
+            log(f"  위키 실패 {name}: {str(e)[:80]}")
         return None
 
 
