@@ -884,9 +884,12 @@ const PSTAT = { picked: ["📋", "대기"], making: ["🛠", "제작 중"], uplo
 const ageKo = m => m === null || m === undefined ? "" : m < 1 ? "개설 1달 안" : `개설 ${m}개월`;
 function topicRow(t, i, ch) {
   const h = t["떡상"], p = ((D.pipeline || {}).items || []).find(x => x.ch === ch && x["소재"] === t["소재"]);
-  const rocket = h ? `<div class="rocket">🚀 <a href="${esc(h["채널주소"])}" target="_blank" rel="noopener">${esc(h["채널"])} ↗</a>`
-    + `<span>${[ageKo(h["개월"]), h["구독"] ? `구독 ${man(h["구독"])}` : ""].filter(Boolean).join(" · ")}</span>`
-    + `<a href="${esc(h.url)}" target="_blank" rel="noopener" title="${esc(h["제목"] || "")}">${esc(h["종류"] || "영상")} ${man(h["조회"])}회${h["평소대비"] ? ` · 평소 ${man(Math.round(h["평소대비"]))}배` : ""} ↗</a></div>`
+  // 10-28 사용자 "채널뿐만 아니라 떡상한 영상 링크도 같이" — 채널 줄 + 영상(제목) 줄
+  const vt = h ? String(h["제목"] || "").replace(/#\S+/g, "").replace(/\s+/g, " ").trim() : "";
+  const rocket = h ? `<div class="rocket">🚀 채널 <a href="${esc(h["채널주소"])}" target="_blank" rel="noopener">${esc(h["채널"])} ↗</a>`
+    + `<span>${[ageKo(h["개월"]), h["구독"] ? `구독 ${man(h["구독"])}` : ""].filter(Boolean).join(" · ")}</span></div>`
+    + `<div class="rocket">▶ ${h["종류"] === "본편" ? "롱폼" : "쇼츠"} <a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(vt || "영상 보기")} ↗</a>`
+    + `<span>${man(h["조회"])}회${h["평소대비"] ? ` · 평소 ${man(Math.round(h["평소대비"]))}배` : ""}</span></div>`
     : '<div class="rocket">🚀 떡상 근거 없음</div>';
   return `<article class="topic"><div class="score ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}</div>
     <div style="min-width:0;flex:1"><div class="nm">${i + 1}. ${esc(t["소재"])}${p ? ` <span class="pill good">${PSTAT[p.status][0]} ${PSTAT[p.status][1]}</span>` : ""}</div>${rocket}</div></article>`;
@@ -905,11 +908,16 @@ function pageTopics(want) {
   const cur = names.includes(S.tch) ? S.tch : names[0];
   if (!cur) return ph("소재 추천") + '<div class="card empty">지금 채널 목록에 맞는 추천이 없어요</div>';
   const c = T.channels[cur], all = c.topics || [];
+  // 10-28 사용자 "떡상소재 숏폼과 롱폼으로 각각 나눠서" — 빌려 온 떡상 영상이 쇼츠인지 롱폼(본편)인지로 나눠 본다(번호는 전체 순위 그대로)
+  const kindOf = t => (t["떡상"] || {})["종류"], f = ["쇼츠", "본편"].includes(S.tf) ? S.tf : "all";
+  const cnt = k => all.filter(t => kindOf(t) === k).length;
+  const list = all.map((t, i) => ({ t, i })).filter(x => f === "all" || kindOf(x.t) === f);
   return ph("소재 추천", `채널마다 ${all.length}개 · 매일 오전 7시·오후 3시에 새로 골라요`) + chips
-  + `<div class="card"><div class="card-h"><div><h2><span class="dot" style="background:${colorOf(cur)}"></span> ${esc(cur)}</h2><div class="hint">${esc(c.at)} 기준${c.new_hits_n ? ` · 신규 채널 떡상 ${c.new_hits_n}편에서 컨셉을 빌림` : ""}</div></div></div>
+  + `<div class="card"><div class="card-h"><div><h2><span class="dot" style="background:${colorOf(cur)}"></span> ${esc(cur)}</h2><div class="hint">${esc(c.at)} 기준${c.new_hits_n ? ` · 신규 채널 떡상 ${c.new_hits_n}편에서 컨셉을 빌림` : ""}</div></div>
+    <div class="bar-row" style="margin:0">${seg("tf", [["all", `전체 ${all.length}`], ["쇼츠", `🎬 쇼츠 떡상 ${cnt("쇼츠")}`], ["본편", `📺 롱폼 떡상 ${cnt("본편")}`]], f)}</div></div>
     ${c.stale ? `<div class="warnbox">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
-    ${all.map((t, i) => topicRow(t, i, cur)).join("") || '<div class="empty">추천이 없어요</div>'}</div>
-  <div class="note">🚀 = 이 소재가 컨셉을 빌려 온 영상이에요. 개설 1년 안 된 채널인데 그 채널 평소의 몇 배로 터진 영상만 골라요. 점수는 자극·유튜브 검색 수요·떡상 크기를 합친 100점 만점이에요.</div>`;
+    ${list.map(x => topicRow(x.t, x.i, cur)).join("") || `<div class="empty">${f === "본편" ? "이번 추천엔 롱폼 떡상에서 빌린 소재가 없어요 — 신규 채널 롱폼 떡상이 쌓이면 늘어요" : "추천이 없어요"}</div>`}</div>
+  <div class="note">🚀 채널 · ▶ 영상 = 이 소재가 컨셉을 빌려 온 떡상 영상이에요. 개설 1년 안 된 채널인데 그 채널 평소의 몇 배로 터진 영상만 골라요(쇼츠·롱폼 따로). 점수는 자극·유튜브 검색 수요·떡상 크기를 합친 100점 만점이에요.</div>`;
 }
 function afterTopics() {
   $$("[data-tch]").forEach(b => b.onclick = () => { S.tch = b.dataset.tch; remember(); render(); });

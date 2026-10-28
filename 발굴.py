@@ -50,9 +50,10 @@ GROWTH_MIN_SUBS = 300        # 구독자 급상승 목록에 넣을 최소 구�
 GROWTH_TOP_N = 50
 # 신규 채널 떡상(2026-10-28 사용자 "신규채널인데 떡상한 영상 컨셉을 찾아서") — 소재추천.py 가 이 영상들의 컨셉을 빌려 소재를 만든다
 NEW_CH_DAYS = 365            # 개설한 지 이 안의 채널을 '신규 채널'로 본다
-NEW_HIT_MIN_VIEWS = 20000    # 신규 채널 떡상 영상 최소 조회수
+NEW_HIT_MIN_VIEWS = 20000    # 신규 채널 떡상 영상 최소 조회수 — 쇼츠
+NEW_HIT_MIN_VIEWS_LONG = 5000   # 롱폼(본편)은 조회수 단위가 달라 낮게(10-28 사용자 "숏폼과 롱폼으로 각각 나눠서")
 NEW_HIT_KEEP_DAYS = 21       # 한 번 찾은 떡상 영상을 이만큼 들고 있는다(발굴마다 풀의 다른 채널을 보니 쌓아야 넓어진다)
-NEW_HIT_TOP_N = 200
+NEW_HIT_TOP_N = 120          # 쇼츠·롱폼 각각 — 한 줄로 자르면 조회수 큰 쇼츠가 롱폼 자리를 다 차지한다
 NEW_RECHECK_SHARE = 0.6      # 풀 재확인 자리 중 신규 채널 몫
 
 # 검색 씨앗 — 한 번에 다 돌리지 않고 돌아가며 조금씩 쓴다. 자유롭게 고쳐도 된다.
@@ -180,7 +181,7 @@ def new_hits(rows, pool, now):
     keep = {r["id"]: r for r in load("hunt_new_hits.json", [])}
     for r in rows:
         c = pool.get(r["ch_id"]) or {}
-        if r["views"] < NEW_HIT_MIN_VIEWS or not is_new_channel(c, now):
+        if r["views"] < (NEW_HIT_MIN_VIEWS if r["short"] else NEW_HIT_MIN_VIEWS_LONG) or not is_new_channel(c, now):
             continue
         keep[r["id"]] = {k: r.get(k) for k in ("id", "title", "ch", "ch_id", "ch_url", "url", "published", "views", "sec", "short",
                                                 "subs", "base", "mult", "vph", "thumb")} | \
@@ -195,7 +196,7 @@ def new_hits(rows, pool, now):
         r["score"] = round(min(r["mult"], 300) ** 0.5 * (r["views"] / 10000) ** 0.5, 1)
         out.append(r)
     out.sort(key=lambda r: -r["score"])
-    out = out[:NEW_HIT_TOP_N]
+    out = [r for r in out if r["short"]][:NEW_HIT_TOP_N] + [r for r in out if not r["short"]][:NEW_HIT_TOP_N]
     save("hunt_new_hits.json", out)
     return out
 
@@ -467,7 +468,8 @@ def hunt(budget):
     out = {"at": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "used": USED, "budget": budget,
            "pool": len(pool), "scanned": len(live), "notes": notes,
            "rules": {"max_age_h": MAX_AGE_H, "min_views": MIN_VIEWS, "min_mult": MIN_MULTIPLE,
-                     "short_max_sec": SHORT_MAX_SEC, "new_ch_days": NEW_CH_DAYS, "new_hit_min_views": NEW_HIT_MIN_VIEWS},
+                     "short_max_sec": SHORT_MAX_SEC, "new_ch_days": NEW_CH_DAYS, "new_hit_min_views": NEW_HIT_MIN_VIEWS,
+                     "new_hit_min_views_long": NEW_HIT_MIN_VIEWS_LONG},
            "shorts": shorts, "long": longs, "channels": chans, "new_hits": nh, "cut": cut}
     save("outliers.json", out)
     print(f"✔ 쇼츠 {len(shorts)}편 · 본편 {len(longs)}편 · 급상승채널 {len(chans)}곳 · 신규 채널 떡상 {len(nh)}편 저장 (outliers.json) · {USED}유닛 사용 · 채널풀 {len(pool)}곳")

@@ -249,9 +249,13 @@ def outliers_brief():
 #   발굴.py 가 하루 3번 '개설 1년 안 된 채널인데 그 채널 평소의 몇 배로 터진 영상'을 쌓아 둔다(outliers.json 의 new_hits, 3주치).
 #   소재마다 이 중 하나의 컨셉(형식·각도·제목 틀)을 빌려 우리 채널 소재로 옮기고, 대시보드엔 소재·점수·그 떡상 채널 링크만 보인다.
 NEW_CH_DAYS = 365      # 발굴.py 와 같은 기준(개설한 지 이 안)
-NEW_HIT_PER_CH = 40    # 채널마다 AI에 보여 줄 떡상 영상 수(채널 키워드에 맞는 것 먼저, 나머지는 컨셉만 빌릴 큰 떡상)
-NEW_HIT_TOP = 15       # 그중 분야와 상관없이 넣는 큰 떡상(형식·제목 틀은 분야를 넘어 옮겨진다)
-ROCKET_TIERS = ((1_000_000, 20), (300_000, 10), (100_000, 5), (30_000, 3))   # (조회, 평소 대비 배수) 이상이면 5·4·3·2점, 못 미치면 1점
+# 10-28 사용자 "숏폼과 롱폼으로 각각 나눠서 볼수있게" — 쇼츠 떡상·롱폼(본편) 떡상을 따로 골라 보여 주고, 목록에도 둘 다 자리를 남긴다
+NEW_HIT_PER_CH = {"쇼츠": 25, "본편": 20}   # 채널마다 AI에 보여 줄 떡상 영상 수(채널 키워드에 맞는 것 먼저, 나머지는 컨셉만 빌릴 큰 떡상)
+NEW_HIT_TOP = {"쇼츠": 10, "본편": 8}       # 그중 분야와 상관없이 넣는 큰 떡상(형식·제목 틀은 분야를 넘어 옮겨진다)
+NEW_HIT_MIN_LONG = 5000                     # 롱폼 떡상 최소 조회수(쇼츠는 2만) — 발굴.py 와 같은 기준
+ROCKET_MIN = 6                              # 목록 20개 중 쇼츠 떡상·롱폼 떡상 소재를 각각 이만큼은 남긴다(후보가 있으면)
+ROCKET_TIERS = {"쇼츠": ((1_000_000, 20), (300_000, 10), (100_000, 5), (30_000, 3)),   # (조회, 평소 대비 배수) 이상이면 5·4·3·2점, 못 미치면 1점
+                "본편": ((300_000, 10), (100_000, 5), (30_000, 3), (10_000, 3))}
 
 
 def _months(started):
@@ -263,18 +267,18 @@ def _months(started):
 
 
 def new_channel_hits():
-    """신규 채널 떡상 영상 목록(점수순). 발굴 기록에 new_hits 가 아직 없으면(발굴.py 고치기 전 기록) 지금 뜨는 영상 중 개설 1년 안 채널 것으로 대신한다."""
+    """신규 채널 떡상 영상 목록(점수순) — 발굴이 쌓은 new_hits + 지금 뜨는 영상 중 개설 1년 안 채널 것."""
     o = gh_json("outliers.json") or {}
-    rows = o.get("new_hits")
-    if rows is None:
-        pool = gh_json("hunt_channels.json") or {}
-        cut = (datetime.now(KST) - timedelta(days=NEW_CH_DAYS)).strftime("%Y-%m-%d")
-        rows = []
-        for r in (o.get("shorts") or []) + (o.get("long") or []):
-            st = r.get("started") or (pool.get(r.get("ch_id")) or {}).get("started")
-            if st and st >= cut and (r.get("views") or 0) >= 20000:
-                rows.append({**r, "started": st, "score": round(min(r.get("mult") or 0, 300) ** 0.5 * ((r.get("views") or 0) / 10000) ** 0.5, 1)})
-        rows.sort(key=lambda r: -r["score"])
+    rows = list(o.get("new_hits") or [])
+    # 지금 뜨는 영상 중 개설 1년 안 채널 것도 더한다 — 쌓인 목록이 없을 때(발굴.py 고치기 전 기록)와, 쌓인 목록에 아직 없는 롱폼(10-28 기준을 5천 회로 낮춤)
+    pool = gh_json("hunt_channels.json") or {}
+    cut = (datetime.now(KST) - timedelta(days=NEW_CH_DAYS)).strftime("%Y-%m-%d")
+    have = {r.get("id") for r in rows}
+    for r in (o.get("shorts") or []) + (o.get("long") or []):
+        st = r.get("started") or (pool.get(r.get("ch_id")) or {}).get("started")
+        if r.get("id") not in have and st and st >= cut and (r.get("views") or 0) >= (20000 if r.get("short") else NEW_HIT_MIN_LONG):
+            rows.append({**r, "started": st, "score": round(min(r.get("mult") or 0, 300) ** 0.5 * ((r.get("views") or 0) / 10000) ** 0.5, 1)})
+    rows.sort(key=lambda r: -(r.get("score") or 0))
     out = []
     for r in rows:
         if not r.get("url"):
@@ -286,11 +290,15 @@ def new_channel_hits():
 
 
 def pick_hits(c, hits):
-    """채널에 보여 줄 신규 채널 떡상: 채널 키워드(outlier_keywords)가 제목에 든 것 먼저 + 분야 상관없는 큰 떡상 NEW_HIT_TOP 개."""
+    """채널에 보여 줄 신규 채널 떡상 — 쇼츠·롱폼 따로: 채널 키워드(outlier_keywords)가 제목에 든 것 먼저 + 분야 상관없는 큰 떡상 NEW_HIT_TOP 개."""
     rx = re.compile(c["outlier_keywords"], re.I) if c.get("outlier_keywords") else None
     fit = [h for h in hits if rx and rx.search(f"{h['제목']} {h['채널']}")]
-    big = [h for h in hits if h not in fit][:NEW_HIT_TOP]
-    return (fit[:NEW_HIT_PER_CH - len(big)] + big)[:NEW_HIT_PER_CH], {h["url"] for h in fit}
+    out = []
+    for kind, n in NEW_HIT_PER_CH.items():
+        f = [h for h in fit if h["종류"] == kind]
+        big = [h for h in hits if h["종류"] == kind and h not in f][:NEW_HIT_TOP[kind]]
+        out += (f[:n - len(big)] + big)[:n]
+    return out, {h["url"] for h in fit}
 
 
 def sec_new_hits(rows, fit, R):
@@ -308,7 +316,7 @@ def rocket_score(h, same_field):
     if not h:
         return 0
     v, m = h.get("조회") or 0, h.get("평소대비") or 0
-    s = next((5 - i for i, (tv, tm) in enumerate(ROCKET_TIERS) if v >= tv and m >= tm), 1)
+    s = next((5 - i for i, (tv, tm) in enumerate(ROCKET_TIERS.get(h.get("종류"), ROCKET_TIERS["쇼츠"])) if v >= tv and m >= tm), 1)
     return min(5, s + (1 if same_field else 0))
 
 
@@ -1472,6 +1480,8 @@ def build_prompt(c, data):
          "그 영상을 그대로 따라 하지 말고(같은 대상·같은 제목 금지) 먹힌 장치만 옮겨라.",
          "- 분야가 '같음'인 영상이면 가장 좋다. '다름'이어도 장치(랭킹·비교·'~했더니'·숫자 대비·반전·체험·질문형 제목 등)가 우리 채널에 자연스럽게 옮겨지면 쓴다. 억지로 붙이지는 마라.",
          "- 빌린 영상은 '떡상:' 줄에 R번호로 적는다. 프로그램이 그 영상이 얼마나 크게 터졌는지로 떡상 점수를 매긴다(빌린 영상이 없으면 0점이라 뒤로 밀린다).",
+         f"- 쇼츠 떡상과 롱폼(본편) 떡상을 둘 다 빌려라 — 재료 1에 롱폼 떡상이 있으면 후보의 절반 가까이(최소 {ROCKET_MIN + 4}개)는 롱폼 떡상의 컨셉(롱폼 제목 틀·도입·전개 장치)을 빌린다. "
+         "롱폼 떡상은 조회수 단위가 쇼츠보다 작다(롱폼 5만 회가 쇼츠 100만 회만큼 크다). 대시보드는 쇼츠 떡상·롱폼 떡상을 따로 보여 준다.",
          "", "[점수 기준 — 각 0~5 정수]"] + [f"- {k}: {v}" for k, v in sc.items()] + [
          "- demand(시장 수요)는 네가 매기지 않는다 — 프로그램이 '검색어' 줄로 유튜브를 검색해 상위 영상 조회수로 잰다.",
          "- gap(빈자리)·wiki(관심 급등)·buzz(커뮤니티)·timing(타이밍)도 프로그램이 잰다: 위키백과 조회수·커뮤니티 인기글에서 관심은 큰데 "
@@ -1682,6 +1692,7 @@ def clean(c, got, allowed, dates=None, hits=None):
         t.pop("떡상", None)
         if h:
             t["떡상"] = {k: h.get(k) for k in ("제목", "채널", "채널주소", "url", "조회", "평소대비", "구독", "개설", "개월", "종류")}
+            t["떡상종류"] = h.get("종류")
         else:
             t.pop("컨셉", None)
         if "rocket" in c["weights"]:
@@ -1787,7 +1798,7 @@ def select(c, rows, n=None):
     n = n or CFG["per_channel"]
     if c.get("kinds"):   # 갈래마다 최소 개수 자리를 남기고 나머지는 순서대로(2026-09-28 논스킵 사건·괴담 믹스)
         return keep_kinds(rows, n, {k: v.get("min", 0) for k, v in c["kinds"].items()})
-    return rows[:n]
+    return keep_kinds(rows, n, {"쇼츠": ROCKET_MIN, "본편": ROCKET_MIN}, key="떡상종류")   # 10-28 쇼츠 떡상·롱폼 떡상 둘 다 자리
 
 
 EDITOR_LINE = re.compile(r"^\s*\**\s*(\d+)\s*[|｜]\s*(\d+)\s*[|｜]\s*(.+?)\s*[|｜]\s*(.+?)\s*$")
@@ -2100,6 +2111,7 @@ def main():
                                         "tokens": use, "labels": labels, "kinds": kinds, "genre_n": info.get("genre_n"), "genre_hot": info.get("genre_hot"),
                                         "candidates": len(cands), "demand": dm, "outside": om, "hook_cut": tamed, "anchors": info.get("anchors"),
                                         "new_n": new_n, "new_hits_n": info.get("new_hits_n"), "rocket_n": sum(1 for t in topics if t.get("떡상")),
+                                        "rocket_kinds": {k: sum(1 for t in topics if t.get("떡상종류") == k) for k in NEW_HIT_PER_CH},
                                         "editor": bool(ed_use), "editor_tokens": ed_use, "audience": info.get("audience"),
                                         "dropped": {k: v for k, v in dropped.items() if v}, "topics": topics, "calib": view}
             hp = OUT / "history.jsonl"   # 다시 정리(--answers)면 그 회차 줄을 바꿔 끼운다(같은 회차가 두 번 세지지 않게)
