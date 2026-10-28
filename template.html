@@ -209,26 +209,14 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
 .post .st b { color: var(--ink); }
 .post .cap { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* 소재 */
-.topic { border-top: 1px solid var(--line); padding: 16px 0; }
+/* 소재 — 10-28 간단하게: 소재 · 점수 · 떡상 채널 링크 */
+.topic { display: flex; gap: 12px; align-items: center; border-top: 1px solid var(--line); padding: 12px 0; }
 .topic:first-child { border-top: 0; padding-top: 4px; }
-.topic .hd { display: flex; gap: 12px; align-items: flex-start; }
 .score { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; font-weight: 780; font-size: 17px; flex: none; background: var(--surface-2); color: var(--ink-2); }
 .score.hi { background: var(--accent-soft); color: var(--accent); }
-.topic .nm { font-weight: 700; font-size: 15px; }
-.topic .ttl { margin-top: 8px; display: flex; gap: 8px; align-items: flex-start; }
-.topic .ttl .tx { font-weight: 600; flex: 1; background: var(--surface-2); padding: 8px 10px; border-radius: 10px; font-size: 13.5px; }
-.topic .ttl .tx .ko { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
-.topic .why { color: var(--ink-2); font-size: 13.5px; margin: 8px 0; }
-.sbars { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 4px 14px; font-size: 12px; color: var(--ink-2); }
-.sbars div { display: grid; grid-template-columns: 1fr auto; gap: 2px 6px; align-items: center; }
-.sbars i { grid-column: 1 / -1; height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
-.sbars u { display: block; height: 100%; background: var(--accent); }
-.dm { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
-.ed { margin-top: 8px; font-size: 13px; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; color: var(--ink); }
-.ed b { color: var(--accent); }
-.dm a { color: var(--accent); margin-left: 6px; }
-details.memo { margin-top: 8px; font-size: 13px; }
+.topic .nm { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+.topic .rocket { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 12.5px; color: var(--muted); }
+.topic .rocket a { color: var(--accent); font-weight: 600; overflow-wrap: anywhere; }
 details summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: 12.5px; }
 details .dl { display: grid; gap: 8px; margin-top: 8px; padding: 10px 12px; background: var(--surface-2); border-radius: 10px; }
 details .dl .k { font-size: 11.5px; color: var(--muted); font-weight: 650; }
@@ -891,38 +879,17 @@ function anaBench() {
 }
 
 /* ───────── 7. 소재 추천 ───────── */
-const TLABEL = { hook: "자극", demand: "수요", korea: "한국 인지도", paradox: "역설", visual: "화면", proof: "근거", gap: "빈자리", wiki: "관심 급등", buzz: "커뮤니티", timing: "타이밍" };
-const splitKo = s => { const m = String(s || "").match(/^(.*\S)\s*\(([^()]*[가-힣][^()]*)\)\s*$/); return m && /[A-Za-z]/.test(m[1]) ? [m[1], m[2]] : [String(s || ""), ""]; };
-const STAR_KEY = "dash_stars";
-const stars = () => store.get(STAR_KEY, {});
-const starKey = (ch, t) => ch + "|" + (t["소재"] || t["제목"] || "");
-const demandLine = d => !d ? "" : d["측정"] === "실패" || d["측정"] === "생략" ? `<div class="dm">🔎 수요: 이번엔 유튜브 검색 못 함 · '${esc(d["검색어"] || "")}'</div>`
-  : `<div class="dm">🔎 유튜브 '${esc(d["검색어"] || "")}' 최대 <b>${man(d["최대"])}</b> · 상위 3개 중앙 ${man(d["중앙"])} · 10만+ ${d["10만+"] || 0}편${(d["예시"] || []).map((u, j) => `<a href="${esc(u)}" target="_blank" rel="noopener">예시${j + 1}</a>`).join("")}</div>`;
-const outsideLine = o => {
-  if (!o) return "";
-  const w = o["위키"], b = o["커뮤니티"], g = o["빈자리"], parts = [];
-  if (w) parts.push(`📚 위키 하루 ${man(Math.round(w["7일"]))}회(평소 ${man(Math.round(w["60일"]))})`);
-  if (b) parts.push(`💬 커뮤니티 인기글 ${b["수"]}개`);
-  if (g && g["관심"] > g["공급"]) parts.push(`🕳️ 빈자리: 밖 관심 ${g["관심"]} · 유튜브 큰 영상 ${g["공급"]}`);
-  if (o["타이밍"]) parts.push(`📅 ${esc(o["타이밍"])}`);
-  return parts.length ? `<div class="dm">${parts.join(" · ")}</div>` : "";
-};
+/* 10-28 사용자 "그냥 소재 점수 떡상채널링크 정도만 간단하게" — 소재마다 이름 · 총점 · 컨셉을 빌려 온 신규 채널 떡상 영상(채널·영상 링크)만 */
 const PSTAT = { picked: ["📋", "대기"], making: ["🛠", "제작 중"], upload: ["✅", "업로드"] };
-function topicCard(t, i, lab, ch) {
-  const s = t["점수"] || {}, [ti, ko] = splitKo(t["제목"]), on = !!stars()[starKey(ch, t)];
-  const p = ((D.pipeline || {}).items || []).find(x => x.ch === ch && x["소재"] === t["소재"]);
-  const bars = Object.keys(lab).filter(k => k in s).map(k => s[k] === null ? `<div><span>${esc(lab[k])}</span><b>–</b><i></i></div>` : `<div><span>${esc(lab[k])}</span><b>${s[k]}</b><i><u style="width:${s[k] * 20}%"></u></i></div>`).join("");
-  const facts = (t["확인할_사실"] || []).map(x => `<li>${esc(x)}</li>`).join("");
-  return `<article class="topic"><div class="hd"><div class="score ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}</div>
-    <div style="min-width:0;flex:1"><div class="nm">${i + 1}. ${esc(t["소재"])}</div>
-      <div class="chips" style="margin-top:5px;gap:4px">${t["새로움"] === 0 ? '<span class="pill blue">🆕 처음 추천</span>' : t["새로움"] ? '<span class="pill" data-tip="최근 5일 추천에 한 번 나왔던 소재(감점해서 아래로)">↺ 다시 나옴</span>' : ""}${t["종류"] ? `<span class="pill">${esc(t["종류"])}</span>` : ""}${t["갈래"] ? `<span class="pill">${esc(t["갈래"])}</span>` : ""}${p ? `<span class="pill good">${PSTAT[p.status][0]} ${PSTAT[p.status][1]} ${esc(p.id)}</span>` : ""}${t["최신"] ? `<span class="pill blue">📰 ${md(t["최신"])} 기사</span>` : ""}${t["후속"] ? '<span class="pill">대박 편 후속</span>' : ""}${t["대상"] ? `<span class="pill">${esc(t["대상"])}</span>` : ""}</div></div></div>
-    <div class="ttl"><div class="tx">${esc(ti)}${ko ? `<span class="ko">${esc(ko)}</span>` : ""}${t["제목_원래"] ? `<span class="ko">원래 안: ${esc(t["제목_원래"])}</span>` : ""}</div>
-      <button class="ibtn" type="button" data-copy="${esc(t["제목"] || "")}">복사</button><button class="ibtn star ${on ? "on" : ""}" type="button" data-star="${esc(starKey(ch, t))}" data-ti="${i}" aria-pressed="${on}">${on ? "★" : "☆"}</button></div>
-    ${t["편집장"] ? `<div class="ed"><b>편집장</b> ${esc(t["편집장"])}</div>` : ""}
-    <p class="why">${esc(t["왜_터질까"])}</p><div class="sbars">${bars}</div>${demandLine(t["수요"])}${outsideLine(t["밖"])}
-    ${t["첫문장"] || facts ? `<details class="memo"><summary>첫 문장 · 장면 · 확인할 것</summary><div class="dl">
-      ${t["첫문장"] ? `<div><div class="k">첫 문장</div>${esc(t["첫문장"])}</div>` : ""}${t["보여줄_장면"] ? `<div><div class="k">보여줄 장면</div>${esc(t["보여줄_장면"])}</div>` : ""}
-      ${facts ? `<div><div class="k">만들기 전 꼭 확인</div><ul>${facts}</ul></div>` : ""}${t["위험"] ? `<div><div class="k">위험</div>${esc(t["위험"])}</div>` : ""}</div></details>` : ""}</article>`;
+const ageKo = m => m === null || m === undefined ? "" : m < 1 ? "개설 1달 안" : `개설 ${m}개월`;
+function topicRow(t, i, ch) {
+  const h = t["떡상"], p = ((D.pipeline || {}).items || []).find(x => x.ch === ch && x["소재"] === t["소재"]);
+  const rocket = h ? `<div class="rocket">🚀 <a href="${esc(h["채널주소"])}" target="_blank" rel="noopener">${esc(h["채널"])} ↗</a>`
+    + `<span>${[ageKo(h["개월"]), h["구독"] ? `구독 ${man(h["구독"])}` : ""].filter(Boolean).join(" · ")}</span>`
+    + `<a href="${esc(h.url)}" target="_blank" rel="noopener" title="${esc(h["제목"] || "")}">${esc(h["종류"] || "영상")} ${man(h["조회"])}회${h["평소대비"] ? ` · 평소 ${man(Math.round(h["평소대비"]))}배` : ""} ↗</a></div>`
+    : '<div class="rocket">🚀 떡상 근거 없음</div>';
+  return `<article class="topic"><div class="score ${t["총점"] >= 80 ? "hi" : ""}">${t["총점"]}</div>
+    <div style="min-width:0;flex:1"><div class="nm">${i + 1}. ${esc(t["소재"])}${p ? ` <span class="pill good">${PSTAT[p.status][0]} ${PSTAT[p.status][1]}</span>` : ""}</div>${rocket}</div></article>`;
 }
 function pageTopics(want) {
   const T = D.topics;
@@ -937,25 +904,15 @@ function pageTopics(want) {
   }
   const cur = names.includes(S.tch) ? S.tch : names[0];
   if (!cur) return ph("소재 추천") + '<div class="card empty">지금 채널 목록에 맞는 추천이 없어요</div>';
-  const c = T.channels[cur], all = c.topics || [], lab = { ...TLABEL, ...(c.labels || {}) }, ST = stars();
-  const pick = { all: () => true, new: t => t["최신"], star: t => ST[starKey(cur, t)] };
-  const f = pick[S.tf] ? S.tf : "all";
-  let list = f === "star" ? Object.values(ST).filter(x => x.ch === cur).map((x, i) => ({ t: x.t, i })) : all.map((t, i) => ({ t, i })).filter(x => pick[f](x.t));
-  if (S.tsort === "date") list.sort((a, b) => String(b.t["최신"] || "").localeCompare(String(a.t["최신"] || "")) || a.i - b.i);
+  const c = T.channels[cur], all = c.topics || [];
   return ph("소재 추천", `채널마다 ${all.length}개 · 매일 오전 7시·오후 3시에 새로 골라요`) + chips
-  + `<div class="card"><div class="card-h"><div><h2><span class="dot" style="background:${colorOf(cur)}"></span> ${esc(cur)}</h2><div class="hint">${esc(c.at)} 기준 · 판단 ${esc(c.model || "-")}${c.new_n !== undefined ? ` · <b style="color:var(--accent)">🆕 처음 나온 소재 ${c.new_n}/${all.length}</b>` : ""}${c.editor ? " · 편집장 검토 ✓" : ""}${c.audience ? " · 우리 시청자 자료 반영" : ""}${c.news_n ? ` · 뉴스 ${c.news_n}건` : ""}</div></div>
-    <div class="bar-row" style="margin:0">${seg("tf", [["all", "전체"], ["new", "📰 최신 근거"], ["star", "⭐ 찜"]], f)}${seg("tsort", [["score", "추천순"], ["date", "최신 기사순"]], S.tsort === "date" ? "date" : "score")}</div></div>
+  + `<div class="card"><div class="card-h"><div><h2><span class="dot" style="background:${colorOf(cur)}"></span> ${esc(cur)}</h2><div class="hint">${esc(c.at)} 기준${c.new_hits_n ? ` · 신규 채널 떡상 ${c.new_hits_n}편에서 컨셉을 빌림` : ""}</div></div></div>
     ${c.stale ? `<div class="warnbox">⚠ ${esc(c.stale)} — 지난 추천을 보여줘요</div>` : ""}
-    ${list.map(x => topicCard(x.t, x.i, lab, cur)).join("") || `<div class="empty">${f === "star" ? "찜한 소재가 없어요 — ☆를 누르면 이 기기에 남아요" : "조건에 맞는 소재가 없어요"}</div>`}</div>
-  <div class="note">고르는 법: ① AI 기획자가 재료(지금 뜨는 영상·우리 대박/안 된 편·우리 시청자 검색어·뉴스·커뮤니티)로 후보 40개 → ② 자극은 우리 편 기준점으로, 수요는 유튜브 검색 실제 조회수로, 빈자리·관심 급등·커뮤니티·타이밍은 유튜브 밖 신호로 채점 → ③ 최근 5일 추천에 2번 이상 나온 소재·이미 만든 편은 빼고, 비슷한 소재는 하나만, 한 종류가 몰리지 않게 → ④ AI 편집장이 약한 것을 빼고 순서·제목을 다듬어요. 숫자는 만들기 전에 꼭 확인하세요.</div>`;
+    ${all.map((t, i) => topicRow(t, i, cur)).join("") || '<div class="empty">추천이 없어요</div>'}</div>
+  <div class="note">🚀 = 이 소재가 컨셉을 빌려 온 영상이에요. 개설 1년 안 된 채널인데 그 채널 평소의 몇 배로 터진 영상만 골라요. 점수는 자극·유튜브 검색 수요·떡상 크기를 합친 100점 만점이에요.</div>`;
 }
 function afterTopics() {
   $$("[data-tch]").forEach(b => b.onclick = () => { S.tch = b.dataset.tch; remember(); render(); });
-  $$("[data-star]").forEach(b => b.onclick = () => {
-    const ST = stars(), k = b.dataset.star, cur = k.split("|")[0], c = D.topics.channels[cur];
-    if (ST[k]) delete ST[k]; else { const t = (c.topics || [])[+b.dataset.ti]; if (t) ST[k] = { ch: cur, at: c.at, t }; }
-    store.set(STAR_KEY, ST); const y = scrollY; render(); scrollTo(0, y);
-  });
 }
 
 /* ───────── 8. 업로드 일정 ───────── */

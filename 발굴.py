@@ -48,6 +48,12 @@ POOL_MAX_SUBS = 2_000_000    # 이보다 큰 채널은 풀에서 감시하지 �
 MAX_VIDEO_COUNT = 3000       # 영상이 이보다 많으면 방송사·언론사 클립 채널로 본다
 GROWTH_MIN_SUBS = 300        # 구독자 급상승 목록에 넣을 최소 구독자
 GROWTH_TOP_N = 50
+# 신규 채널 떡상(2026-10-28 사용자 "신규채널인데 떡상한 영상 컨셉을 찾아서") — 소재추천.py 가 이 영상들의 컨셉을 빌려 소재를 만든다
+NEW_CH_DAYS = 365            # 개설한 지 이 안의 채널을 '신규 채널'로 본다
+NEW_HIT_MIN_VIEWS = 20000    # 신규 채널 떡상 영상 최소 조회수
+NEW_HIT_KEEP_DAYS = 21       # 한 번 찾은 떡상 영상을 이만큼 들고 있는다(발굴마다 풀의 다른 채널을 보니 쌓아야 넓어진다)
+NEW_HIT_TOP_N = 200
+NEW_RECHECK_SHARE = 0.6      # 풀 재확인 자리 중 신규 채널 몫
 
 # 검색 씨앗 — 한 번에 다 돌리지 않고 돌아가며 조금씩 쓴다. 자유롭게 고쳐도 된다.
 SEEDS = [
@@ -154,6 +160,44 @@ def is_personal(c):
 
 def parse_time(s):
     return datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+def is_new_channel(c, now=None):
+    """개설한 지 NEW_CH_DAYS 안의 채널인가(채널 정보의 started = 개설일)."""
+    s = c.get("started")
+    if not s:
+        return False
+    try:
+        started = datetime.strptime(s[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return False
+    return ((now or datetime.now(timezone.utc)) - started).days <= NEW_CH_DAYS
+
+
+def new_hits(rows, pool, now):
+    """신규 채널 떡상 영상 — 이번에 찾은 것(배수 3배+·조회 NEW_HIT_MIN_VIEWS+)을 지난 목록(hunt_new_hits.json)에 더해
+    NEW_HIT_KEEP_DAYS 일 들고 있는다(같은 영상은 새 숫자로 바꿈). 돌려줌: 점수순 NEW_HIT_TOP_N 개."""
+    keep = {r["id"]: r for r in load("hunt_new_hits.json", [])}
+    for r in rows:
+        c = pool.get(r["ch_id"]) or {}
+        if r["views"] < NEW_HIT_MIN_VIEWS or not is_new_channel(c, now):
+            continue
+        keep[r["id"]] = {k: r.get(k) for k in ("id", "title", "ch", "ch_id", "ch_url", "url", "published", "views", "sec", "short",
+                                                "subs", "base", "mult", "vph", "thumb")} | \
+                        {"started": c.get("started"), "video_count": c.get("video_count"), "seen": now.isoformat(timespec="seconds")}
+    out = []
+    for r in keep.values():
+        age = (now - parse_time(r["published"])).total_seconds() / 3600
+        if age > NEW_HIT_KEEP_DAYS * 24:
+            continue
+        r["age_h"] = round(age, 1)
+        # 배수(체급 대비 이상함)와 조회수(절대 크기)를 같이 본다 — 구독 3천에 30만이 구독 30만에 30만보다 위
+        r["score"] = round(min(r["mult"], 300) ** 0.5 * (r["views"] / 10000) ** 0.5, 1)
+        out.append(r)
+    out.sort(key=lambda r: -r["score"])
+    out = out[:NEW_HIT_TOP_N]
+    save("hunt_new_hits.json", out)
+    return out
 
 
 def dur_sec(d):
@@ -291,9 +335,18 @@ def discover(budget, pool):
     notes.append(f"인기차트 {len(found)}개")
 
     # 2) 채널 풀 재확인 — 채널당 1유닛. 발견해 둔 채널이 많을수록 싸게 넓어진다.
+    #    신규 채널(개설 1년 안)을 자리의 60%까지 먼저 본다 — 오래 안 본 순서만으로는 풀 6천 곳을 한 바퀴 도는 데 3주 넘게 걸렸다(10-28)
     before = len(found)
     watch = [c for c in pool.values() if (c.get("subs") or 0) <= POOL_MAX_SUBS]
     watch.sort(key=lambda c: c.get("last_seen", ""))          # 오래 안 본 채널부터
+    new = [c for c in watch if is_new_channel(c)]
+    old = [c for c in watch if not is_new_channel(c)]
+    watch, ni, oi = [], 0, 0
+    while ni < len(new) or oi < len(old):
+        if ni < len(new) and (oi >= len(old) or ni < NEW_RECHECK_SHARE * (len(watch) + 1)):
+            watch.append(new[ni]); ni += 1
+        else:
+            watch.append(old[oi]); oi += 1
     for c in watch:
         if USED + 2 > budget * 0.20:                          # 풀 재확인은 예산의 20%까지
             break
@@ -404,6 +457,9 @@ def hunt(budget):
             r["score"] = round(100 * (1 - (by_mult[r["id"]] + by_vph[r["id"]]) / (2 * max(n - 1, 1))), 1)
         return sorted(group, key=lambda r: -r["score"])[:TOP_N]
 
+    for r in rows:   # 채널 개설일 — 대시보드·소재 추천이 '신규 채널'을 가른다
+        r["started"] = (pool.get(r["ch_id"]) or {}).get("started")
+    nh = new_hits(rows, pool, now)
     shorts = ranked([r for r in rows if r["short"]])
     longs = ranked([r for r in rows if not r["short"]])
     chans = growing(pool, now)
@@ -411,10 +467,10 @@ def hunt(budget):
     out = {"at": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "used": USED, "budget": budget,
            "pool": len(pool), "scanned": len(live), "notes": notes,
            "rules": {"max_age_h": MAX_AGE_H, "min_views": MIN_VIEWS, "min_mult": MIN_MULTIPLE,
-                     "short_max_sec": SHORT_MAX_SEC},
-           "shorts": shorts, "long": longs, "channels": chans, "cut": cut}
+                     "short_max_sec": SHORT_MAX_SEC, "new_ch_days": NEW_CH_DAYS, "new_hit_min_views": NEW_HIT_MIN_VIEWS},
+           "shorts": shorts, "long": longs, "channels": chans, "new_hits": nh, "cut": cut}
     save("outliers.json", out)
-    print(f"✔ 쇼츠 {len(shorts)}편 · 본편 {len(longs)}편 · 급상승채널 {len(chans)}곳 저장 (outliers.json) · {USED}유닛 사용 · 채널풀 {len(pool)}곳")
+    print(f"✔ 쇼츠 {len(shorts)}편 · 본편 {len(longs)}편 · 급상승채널 {len(chans)}곳 · 신규 채널 떡상 {len(nh)}편 저장 (outliers.json) · {USED}유닛 사용 · 채널풀 {len(pool)}곳")
     for r in (shorts[:3] + longs[:3]):
         print(f"   {r['mult']:>5.1f}배 {r['vph']:>7,}/h  {r['ch'][:12]:<12} 구독 {(r['subs'] or 0):>9,}  {r['title'][:34]}")
 
