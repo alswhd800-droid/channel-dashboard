@@ -17,6 +17,11 @@
     조회수로 잼, AI 안 씀)를 가장 크게. hook 은 우리 채널(또는 같은 장르) 실제 상위·하위 5편을 기준점으로 상대 채점(5점 최대 3개·평균 3 이하).
     · 뉴스 최소 개수·'최신 우선' 규칙을 없애고 뉴스는 타이밍 가산 재료로만 · 채널마다 금지 유형(ban·ban_words)
     · 최근 7일 안에 만든 편의 대상·후속은 빼고, 더 오래된 만든 편과 같은 대상은 hook 4↑·demand 3↑일 때만 · 후보 30개 → 수요 측정 → 총점순 20개.
+2026-10-28 사용자: "소재추천이 아직도 별로야.. 더 고도화되고 신규채널인데 떡상한 영상 컨셉을 찾아서 올려주고 모든채널 다 소재추천해주고
+    그냥 소재 점수 떡상채널링크 정도만 간단하게"
+  → 재료 1 = 신규 채널(개설 1년 안) 떡상 영상(발굴.py 가 3주치 쌓는 outliers.json new_hits) — 소재마다 그중 하나의 컨셉을 빌려 '떡상:' 줄에 번호,
+    프로그램이 그 영상 크기(조회·평소 대비 배수, 같은 분야 +1)로 rocket 점수(가중치 3) · 대시보드엔 소재·총점·떡상 채널/영상 링크만
+    · 채널 10곳 전부(라스트 씬·몸리학·새벽서랍·지도 한 장·시술백과·동네검증단 추가) · AI 를 기다리는 동안 다른 채널이 돈다(설정 "parallel", 3곳씩).
 
 입력(판단 재료 — 전부 프로그램이 모은다, AI 토큰 0):
   · 발굴 결과(한국어 채널): gh-pages 의 data/outliers.json (발굴.py 가 06·14·21시에 찾은 '채널 평소보다 몇 배 빨리 크는 영상')
@@ -68,6 +73,7 @@ import statistics
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -109,7 +115,7 @@ EDITOR_POOL = 26   # 편집장 검토에 넘기는 후보 수(20 + 빠질 몫)
 RSS_CACHE = OUT / "_rss_cache.json"
 # 점수 이름 기본값(채널 설정 "labels" 가 덮는다) — 대시보드는 latest.json 의 labels 순서대로 막대를 그린다
 DEFAULT_LABELS = {"hook": "자극", "demand": "수요", "korea": "한국 인지도", "paradox": "역설", "visual": "화면", "proof": "근거",
-                  "gap": "빈자리", "wiki": "관심 급등", "buzz": "커뮤니티", "timing": "타이밍"}
+                  "gap": "빈자리", "wiki": "관심 급등", "buzz": "커뮤니티", "timing": "타이밍", "rocket": "떡상 컨셉"}
 EN_MIN_MULT = 1.5  # 영어권 한국 영상: 그 채널 평소의 이만큼 이상이어야 '빨리 크는 영상'
 HANGUL = re.compile(r"[\uac00-\ud7a3]")
 # 뉴스에서 뺄 것: 블로그·카페·영상 주소, 도박·연재물 광고성 글(2026-09-27 최신순으로만 뽑았더니 섞여 들어옴)
@@ -237,6 +243,73 @@ def outliers_brief():
             "쇼츠": [vid(r) for r in top(o.get("shorts"), 30)],
             "본편": [vid(r) for r in top(o.get("long"), 20)],
             "뜨는채널": [{"채널": r.get("title"), "구독": r.get("subs"), "하루증가": r.get("per_day"), "url": r.get("url")} for r in top(o.get("channels"), 12)]}
+
+
+# ---- 신규 채널 떡상(2026-10-28 사용자 "더 고도화되고 신규채널인데 떡상한 영상 컨셉을 찾아서 올려주고 … 소재 점수 떡상채널링크 정도만")
+#   발굴.py 가 하루 3번 '개설 1년 안 된 채널인데 그 채널 평소의 몇 배로 터진 영상'을 쌓아 둔다(outliers.json 의 new_hits, 3주치).
+#   소재마다 이 중 하나의 컨셉(형식·각도·제목 틀)을 빌려 우리 채널 소재로 옮기고, 대시보드엔 소재·점수·그 떡상 채널 링크만 보인다.
+NEW_CH_DAYS = 365      # 발굴.py 와 같은 기준(개설한 지 이 안)
+NEW_HIT_PER_CH = 40    # 채널마다 AI에 보여 줄 떡상 영상 수(채널 키워드에 맞는 것 먼저, 나머지는 컨셉만 빌릴 큰 떡상)
+NEW_HIT_TOP = 15       # 그중 분야와 상관없이 넣는 큰 떡상(형식·제목 틀은 분야를 넘어 옮겨진다)
+ROCKET_TIERS = ((1_000_000, 20), (300_000, 10), (100_000, 5), (30_000, 3))   # (조회, 평소 대비 배수) 이상이면 5·4·3·2점, 못 미치면 1점
+
+
+def _months(started):
+    try:
+        d = (datetime.now(KST).date() - datetime.strptime(str(started)[:10], "%Y-%m-%d").date()).days
+    except ValueError:
+        return None
+    return max(0, round(d / 30.4))
+
+
+def new_channel_hits():
+    """신규 채널 떡상 영상 목록(점수순). 발굴 기록에 new_hits 가 아직 없으면(발굴.py 고치기 전 기록) 지금 뜨는 영상 중 개설 1년 안 채널 것으로 대신한다."""
+    o = gh_json("outliers.json") or {}
+    rows = o.get("new_hits")
+    if rows is None:
+        pool = gh_json("hunt_channels.json") or {}
+        cut = (datetime.now(KST) - timedelta(days=NEW_CH_DAYS)).strftime("%Y-%m-%d")
+        rows = []
+        for r in (o.get("shorts") or []) + (o.get("long") or []):
+            st = r.get("started") or (pool.get(r.get("ch_id")) or {}).get("started")
+            if st and st >= cut and (r.get("views") or 0) >= 20000:
+                rows.append({**r, "started": st, "score": round(min(r.get("mult") or 0, 300) ** 0.5 * ((r.get("views") or 0) / 10000) ** 0.5, 1)})
+        rows.sort(key=lambda r: -r["score"])
+    out = []
+    for r in rows:
+        if not r.get("url"):
+            continue
+        out.append({"제목": r.get("title"), "채널": r.get("ch"), "채널주소": r.get("ch_url") or f"https://www.youtube.com/channel/{r.get('ch_id')}",
+                    "url": r["url"], "조회": r.get("views") or 0, "평소대비": r.get("mult"), "구독": r.get("subs"), "개설": r.get("started"),
+                    "개월": _months(r.get("started")), "경과일": round((r.get("age_h") or 0) / 24, 1), "종류": "쇼츠" if r.get("short") else "본편"})
+    return out
+
+
+def pick_hits(c, hits):
+    """채널에 보여 줄 신규 채널 떡상: 채널 키워드(outlier_keywords)가 제목에 든 것 먼저 + 분야 상관없는 큰 떡상 NEW_HIT_TOP 개."""
+    rx = re.compile(c["outlier_keywords"], re.I) if c.get("outlier_keywords") else None
+    fit = [h for h in hits if rx and rx.search(f"{h['제목']} {h['채널']}")]
+    big = [h for h in hits if h not in fit][:NEW_HIT_TOP]
+    return (fit[:NEW_HIT_PER_CH - len(big)] + big)[:NEW_HIT_PER_CH], {h["url"] for h in fit}
+
+
+def sec_new_hits(rows, fit, R):
+    if not rows:
+        return "(아직 없음 — 발굴이 쌓이면 채워진다)"
+    L = ["칸: 번호|분야(같음=우리 채널 키워드에 맞음)|종류|조회|평소대비(배)|구독|개설 몇 달|경과일|채널|제목"]
+    title = lambda s: re.sub(r"\s+", " ", re.sub(r"#\S+", "", str(s or ""))).strip()[:70]   # 해시태그 줄은 토큰만 먹는다
+    L += [f"{R(h['url'])}|{'같음' if h['url'] in fit else '다름'}|{h['종류']}|{h['조회']}|{h['평소대비']}|{h['구독']}|{h['개월']}|{h['경과일']}|{h['채널']}|{title(h['제목'])}"
+          for h in rows]
+    return "\n".join(L)
+
+
+def rocket_score(h, same_field):
+    """떡상 컨셉 점수 0~5 — 빌려 온 영상이 얼마나 크게(조회)·이상하게(평소 대비 배수) 터졌나, 같은 분야면 +1."""
+    if not h:
+        return 0
+    v, m = h.get("조회") or 0, h.get("평소대비") or 0
+    s = next((5 - i for i, (tv, tm) in enumerate(ROCKET_TIERS) if v >= tv and m >= tm), 1)
+    return min(5, s + (1 if same_field else 0))
 
 
 def _yt_feed(cid, tries=5):
@@ -1303,7 +1376,7 @@ def calibrate(c, scored):
 
 # ---------------------------------------------------------------- 판단
 
-def gather(c, ob, cal, trend, buzz=()):
+def gather(c, ob, cal, trend, buzz=(), hits=()):
     """채널 하나의 판단 재료(표 줄 + R번호). 돌려줌: (프롬프트 재료, 근거로 쓸 수 있는 주소, 주소→기사 날짜, 1개만 허용할 대상, 요약 숫자, R번호→주소)"""
     R = Refs()
     recent, overused = recent_brief(c["name"])
@@ -1311,6 +1384,8 @@ def gather(c, ob, cal, trend, buzz=()):
     kr_news = news(c["news"], per=c.get("news_per", 5), cap=c.get("news_cap", 100))
     en_news = news(c["news_en"], per=4, cap=40, sources=("google",), lang="en") if c.get("news_en") else []
     g, eo, fob, mats = c.get("genre"), None, None, []
+    nh, fit = pick_hits(c, hits)   # 10-28 신규 채널 떡상 — 소재마다 이 중 하나의 컨셉을 빌린다(재료 1번)
+    mats.append((f"신규 채널(개설 {NEW_CH_DAYS // 30}개월 안)인데 떡상한 영상 — 소재마다 이 중 하나의 컨셉을 빌려 '떡상:' 줄에 번호를 단다", sec_new_hits(nh, fit, R)))
     if g:   # 같은 장르 채널 훑기(영어채널·논스킵)
         eo = genre_outliers(genre_conf(g["file"]), KOREA_RE if g.get("filter") == "korea" else None)
         mats.append((g.get("label", "같은 장르 채널에서 지금 빨리 크는 영상(유튜브 RSS — 그 채널 평소 대비 배수·하루 조회수) · 공급"), sec_genre(eo, R)))
@@ -1345,6 +1420,8 @@ def gather(c, ob, cal, trend, buzz=()):
     info["anchors"] = {"src": anc["src"], "top": [f"{r['제목'][:40]} {int(r.get('조회') or 0):,}" for r in anc["top"]],
                        "bot": [f"{r['제목'][:40]} {int(r.get('조회') or 0):,}" for r in anc["bot"]]} if anc else None
     info["audience"] = bool(aud)
+    info["new_hits_n"], info["new_hits_fit"] = len(nh), len(fit)
+    info["hits"] = {h["url"]: {**h, "같은분야": h["url"] in fit} for h in nh}   # 답의 '떡상:' 번호 → 영상·채널(--answers 다시 정리에도 쓰려고 재료 파일에 남긴다)
     return {"mats": mats, "recent": recent, "calib": cal, "anchors": anc, "made_recent": done["최근"], "seen": seen_map(c["name"]), "aud": aud}, allowed, dates, overused, info, R.by_id
 
 
@@ -1378,6 +1455,12 @@ def build_prompt(c, data):
          f"(프로그램이 유튜브 검색으로 수요를 재고, 금지 유형·이미 만든 편·같은 대상 겹침을 걸러 {n}개를 쓴다).",
          "", "[채널 형식]", c["format"],
          "", "[떡상 공식 — 사용자 확정, 반드시 따른다]"] + [f"- {x}" for x in c["formula"]] + kind_block + [
+         "", "[신규 채널 떡상 컨셉 — 가장 중요(2026-10-28 사용자 확정)]",
+         "- 재료 1은 개설 1년도 안 된 채널인데 그 채널 평소의 몇 배로 터진 영상이다. 구독자가 적은데 터졌다는 건 채널 힘이 아니라 '컨셉'이 먹혔다는 뜻이다.",
+         "- 소재마다 재료 1에서 영상 하나를 골라 그 컨셉(무엇이 클릭을 부르나 — 형식·각도·제목 틀·첫 장면의 장치)을 빌리고, 대상은 우리 채널 형식·공식에 맞는 것으로 바꾼다. "
+         "그 영상을 그대로 따라 하지 말고(같은 대상·같은 제목 금지) 먹힌 장치만 옮겨라.",
+         "- 분야가 '같음'인 영상이면 가장 좋다. '다름'이어도 장치(랭킹·비교·'~했더니'·숫자 대비·반전·체험·질문형 제목 등)가 우리 채널에 자연스럽게 옮겨지면 쓴다. 억지로 붙이지는 마라.",
+         "- 빌린 영상은 '떡상:' 줄에 R번호로 적는다. 프로그램이 그 영상이 얼마나 크게 터졌는지로 떡상 점수를 매긴다(빌린 영상이 없으면 0점이라 뒤로 밀린다).",
          "", "[점수 기준 — 각 0~5 정수]"] + [f"- {k}: {v}" for k, v in sc.items()] + [
          "- demand(시장 수요)는 네가 매기지 않는다 — 프로그램이 '검색어' 줄로 유튜브를 검색해 상위 영상 조회수로 잰다.",
          "- gap(빈자리)·wiki(관심 급등)·buzz(커뮤니티)·timing(타이밍)도 프로그램이 잰다: 위키백과 조회수·커뮤니티 인기글에서 관심은 큰데 "
@@ -1408,6 +1491,7 @@ def build_prompt(c, data):
     L += ["", "[출력 형식 — JSON·설명·머리말 없이 아래 줄 형식만. 소재마다 '## '로 시작, 좋은 순서대로]",
           "## 소재 한 줄 이름",
           "대상: 핵심 대상 하나(건물·기업·인물·장소·제도의 가장 널리 쓰는 이름)",
+          "떡상: 재료 1의 R번호 하나 = 그 영상에서 빌린 컨셉 한 줄(예: R3 = '공 하나 줬더니 본업 들킨' 반전 체험 틀)",
           "종류: 이 소재의 분야 한 낱말(예: 다리·댐·군사·교통·건물 / 유통·IT·금융·제조 / 연쇄살인·실종·괴담) — 목록 전체에 여러 종류가 고루 섞이게"] + (
           [f"갈래: {' 또는 '.join(kinds)} 중 하나"] if kinds else []) + [
           f"점수: {' '.join(keys)} 순서로 0~5 정수 {len(keys)}개 (예: {' '.join(['3', '2', '4', '3', '2'][:len(keys)])})",
@@ -1423,7 +1507,8 @@ def build_prompt(c, data):
           "날짜: 사건·일이 일어난 날 YYYY-MM-DD(정확히 알 때만, 모르면 생략)",
           "다가옴: 앞으로 3주 안에 이 대상이 다시 화제가 될 날 YYYY-MM-DD 무엇(개봉·선고·재판·기념일 — 근거 줄의 기사에 있을 때만, 없으면 생략)",
           (f"갈래마다 가장 좋은 {max(1, detail // len(kinds))}개(모두 {max(1, detail // len(kinds)) * len(kinds)}개)는 모든 줄을 쓰고, 나머지 소재는 대상·갈래·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다."
-           if kinds else f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·종류·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다.")]
+           if kinds else f"위에서 {detail}개는 모든 줄을 쓰고, 그 뒤 소재는 대상·떡상·종류·점수·검색어·제목·왜(1문장)·근거·날짜·다가옴 줄만 쓴다."),
+          "떡상 줄은 모든 소재에 쓴다."]
     for i, (label, text) in enumerate(data["mats"], 1):
         L += ["", f"[재료 {i} — {label}]", text]
     L += ["", f"오늘은 {datetime.now(KST).strftime('%Y-%m-%d')} 이다."]
@@ -1468,6 +1553,10 @@ def parse_answer(text, refs, keys):
                     if mm and mm.group(1) in refs:
                         ev.append({"url": refs[mm.group(1)], "메모": mm.group(2).strip()})
                 t["근거"] = ev
+            elif k == "떡상":   # 10-28 빌린 신규 채널 떡상 영상 — 'R3 = 빌린 컨셉'
+                mm = re.match(r"\s*\[?(R\d+)\]?\s*[=:：\-–—]?\s*(.*)", v)
+                if mm and mm.group(1) in refs:
+                    t["떡상_url"], t["컨셉"] = refs[mm.group(1)], mm.group(2).strip().strip("'\"“”")
             elif k in ("확인", "확인할_사실"):
                 t["확인할_사실"] = [x.strip() for x in v.split("|") if x.strip()]
             elif k == "검색어":   # 유튜브 수요를 잴 검색어 1~2개(2026-09-29)
@@ -1490,6 +1579,10 @@ LEAN = ["--system-prompt", SYSTEM, "--tools", "", "--strict-mcp-config", "--mcp-
         "--setting-sources", "project", "--disable-slash-commands", "--no-session-persistence"]
 
 
+_RUN = threading.Lock()     # 채널마다 스레드 하나(10-28 채널 10곳) — AI 답을 기다릴 때만 놓아서 나머지(캐시·파일 쓰기)는 한 번에 한 채널만
+_HOLD = threading.local()
+
+
 def ask_claude(prompt, model):
     """claude -p(구독) 한 턴 → (답 글, 사용량). 빈 폴더에서 부른다(프로젝트 문서를 안 읽게)."""
     cmd = ["claude", "-p", "--output-format", "json", "--model", model, "--max-turns", "1"] + LEAN
@@ -1497,7 +1590,14 @@ def ask_claude(prompt, model):
         cmd += ["--effort", CFG["effort"]]
     with tempfile.TemporaryDirectory() as tmp:
         # 후보 30개(2026-09-29)부터 한 번에 9~11분 걸려서 15분 → 25분으로 늘림
-        r = subprocess.run(cmd, input=prompt, capture_output=True, text=True, timeout=1500, cwd=tmp)
+        held = getattr(_HOLD, "on", False)
+        if held:
+            _RUN.release()
+        try:
+            r = subprocess.run(cmd, input=prompt, capture_output=True, text=True, timeout=1500, cwd=tmp)
+        finally:
+            if held:
+                _RUN.acquire()
     try:
         env = json.loads(r.stdout)
     except Exception:
@@ -1532,9 +1632,10 @@ def strip_refs(x):
     return re.sub(r"\s{2,}", " ", x).strip()
 
 
-def clean(c, got, allowed, dates=None):
+def clean(c, got, allowed, dates=None, hits=None):
     """AI 답 정리(후보 전부, 순서는 AI 답 그대로): AI 점수 0~5 정리(수요는 measure_demand 가 붙인다), 설명 글에 샌 R번호 지우기,
-    지어낸 근거 주소 버림, 근거 기사 날짜로 '최신' 표시, 갈래."""
+    지어낸 근거 주소 버림, 근거 기사 날짜로 '최신' 표시, 갈래, 빌린 신규 채널 떡상 영상(떡상)과 그 점수(rocket)."""
+    hits = hits or {}
     ai_keys = list(c["scores"])
     dates, cut = dates or {}, fresh_cut()
     out = []
@@ -1564,6 +1665,16 @@ def clean(c, got, allowed, dates=None):
         t.pop("최신", None)
         if ds and ds[0] >= cut:
             t["최신"] = ds[0]      # 최근 14일 기사·검색어에 근거(대시보드 📰) — 타이밍 표시일 뿐 점수는 올리지 않는다
+        h = hits.get(t.pop("떡상_url", None) or "")
+        if not h:   # 떡상 줄을 빠뜨렸어도 근거 줄에 떡상 영상 번호를 달았으면 그걸 쓴다
+            h = next((hits[e["url"]] for e in t["근거"] if e["url"] in hits), None)
+        t.pop("떡상", None)
+        if h:
+            t["떡상"] = {k: h.get(k) for k in ("제목", "채널", "채널주소", "url", "조회", "평소대비", "구독", "개설", "개월", "종류")}
+        else:
+            t.pop("컨셉", None)
+        if "rocket" in c["weights"]:
+            s["rocket"] = rocket_score(h, h and h.get("같은분야"))
         out.append(t)
     return out
 
@@ -1680,10 +1791,12 @@ def editor_pass(c, pool, aud, anc, model, made=()):
     n = min(CFG["per_channel"], len(pool))
     rows = []
     for i, t in enumerate(pool, 1):
-        sc = t.get("점수") or {}
+        sc, h = t.get("점수") or {}, t.get("떡상")
+        rocket = (f"빌린 떡상: {h['채널']}(개설 {h['개월']}개월) '{str(h['제목'] or '')[:40]}' {int(h['조회'] or 0):,}회·평소 {h['평소대비']}배"
+                  f" → {t.get('컨셉') or ''}") if h else "빌린 떡상 없음"
         rows.append(f"{i}. {t.get('소재')} | 대상 {t.get('대상') or '-'} | 종류 {t.get('종류') or t.get('갈래') or '-'} | 총점 {t.get('총점')}"
-                    f"(자극 {sc.get('hook')}·수요 {sc.get('demand')}) | {'처음' if not t.get('새로움') else '최근에 한 번 나옴'}"
-                    f" | 제목: {t.get('제목') or ''} | 왜: {str(t.get('왜_터질까') or '')[:140]}")
+                    f"(자극 {sc.get('hook')}·수요 {sc.get('demand')}·떡상 {sc.get('rocket', '-')}) | {'처음' if not t.get('새로움') else '최근에 한 번 나옴'}"
+                    f" | 제목: {t.get('제목') or ''} | 왜: {str(t.get('왜_터질까') or '')[:140]} | {rocket}")
     top = ["- 우리 대박 편: " + " / ".join(f"{r['제목'][:36]}({int(r.get('조회') or 0):,})" for r in (anc or {}).get("top", [])[:5])] if anc else []
     bot = ["- 우리 안 된 편: " + " / ".join(f"{r['제목'][:36]}({int(r.get('조회') or 0):,})" for r in (anc or {}).get("bot", [])[:4])] if anc else []
     L = [f"너는 유튜브 채널 「{c['name']}」의 편집장이다. 기획자가 고른 소재 후보 {len(pool)}개를 마지막으로 검토해 {n}개를 고른다.",
@@ -1696,6 +1809,7 @@ def editor_pass(c, pool, aud, anc, model, made=()):
          f"- 지금 만들면 조회수가 가장 크게 터질 순서로 {n}개의 순위를 매긴다(후보가 {len(pool)}개면 약한 {len(pool) - n}개는 뺀다). 약한 소재도 순위는 매기되 한마디에 약점을 적는다.",
          "- 빼야 할 것: 자극이 약한 정보·소식형 · 서로 비슷한 소재(가장 센 하나만) · 사실·전제가 의심스러운 것 · 채널 형식·공식에 안 맞는 것 · 우리 안 된 편과 같은 결.",
          "- 1~5위는 서로 다른 결(대상 종류·감정·각도)이 되게 한다. '처음' 소재를 더 쳐 준다.",
+         "- 신규 채널 떡상 컨셉(10-28 사용자 확정): 개설 1년 안 된 채널에서 크게 터진 영상의 컨셉을 제대로 옮긴 소재를 위로 올린다. 빌린 떡상이 없거나 컨셉이 억지로 붙은 소재는 아래로.",
          "- 제목: 채널 제목 공식대로 더 누르고 싶게 다듬는다. 숫자·사실은 원래 제목과 왜 칸에 있는 것만 쓴다(지어내지 않는다). 이미 좋으면 그대로 둔다.",
          "- 한마디: 왜 이 순위인지, 만들 때 무엇을 살릴지 한 문장.",
          "", f"[출력 — 머리말·설명 없이 두 가지 줄만. 먼저 순위 줄(1위부터, 뺀 것 빼고 최대 {n}줄), 그다음 뺀 후보마다 뺌 줄]",
@@ -1900,9 +2014,22 @@ def main():
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     sp = OUT / "scored.json"; scored = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
     cp = OUT / "calibration.json"; calib_all = json.loads(cp.read_text(encoding="utf-8")) if cp.exists() else {}
-    for c in CFG["channels"]:
+    hits = [] if (answers or "--score-only" in args) else new_channel_hits()
+    if not (answers or "--score-only" in args):
+        log(f"신규 채널 떡상 영상 {len(hits)}편" + (f" — 1위 {hits[0]['채널']}(개설 {hits[0]['개월']}개월) {hits[0]['조회']:,}회" if hits else ""))
+    for k in [k for k in latest["channels"] if k not in {c["name"] for c in CFG["channels"]}]:   # 설정에서 빠진 채널의 옛 추천은 지운다
+        del latest["channels"][k]
+
+    def run(c):   # 채널 하나 — AI 를 기다리는 동안만 다른 채널이 돈다(ask_claude 가 _RUN 을 잠시 놓는다)
         name = c["name"]
-        if only and name != only: continue
+        with _RUN:
+            _HOLD.on = True
+            try:
+                one(c, name)
+            finally:
+                _HOLD.on = False
+
+    def one(c, name):
         if not dry and not answers:
             try:
                 k = score_published(c, scored)
@@ -1914,7 +2041,7 @@ def main():
         log(name, f"보정: {cal['n']}편, 상관 {cal['corr']}, 가중치 {cal['weights']}, 추천→실제 {len(cal['hits'])}편")
         if "--score-only" in args:   # 우리 영상 채점·보정만(추천은 안 함)
             if name in latest["channels"]: latest["channels"][name]["calib"] = view
-            continue
+            return
         mp = OUT / f"_materials_{name}.json"
         try:
             at = now
@@ -1925,7 +2052,7 @@ def main():
                 ap = ap if ap.exists() else Path(answers) / f"{name}.json"
                 got, use, model = parse_answer(ap.read_text(encoding="utf-8"), m.get("refs", {}), list(c["scores"])), None, label
             else:
-                data, allowed, dates, overused, info, refs = gather(c, ob, cal, trend, buzz)
+                data, allowed, dates, overused, info, refs = gather(c, ob, cal, trend, buzz, hits)
                 prompt = build_prompt(c, data)
                 info["prompt_chars"] = len(prompt)
                 log(name, f"재료: 장르 {info['genre_n'] if info['genre_n'] is not None else '-'}·발굴 {info['outliers_n'] if info['outliers_n'] is not None else '-'}, 우리 {info['ours_n']}편, "
@@ -1936,13 +2063,13 @@ def main():
                                           "refs": refs}, ensure_ascii=False), encoding="utf-8")
                 if dry:
                     (OUT / f"_prompt_{name}.txt").write_text(prompt, encoding="utf-8")
-                    continue
+                    return
                 model = CFG.get("model", "sonnet")
                 text, use = ask_claude(prompt, model)
                 (OUT / "_answers").mkdir(exist_ok=True)
                 (OUT / "_answers" / f"{name}.txt").write_text(text, encoding="utf-8")
                 got = parse_answer(text, refs, list(c["scores"]))
-            cands = clean(c, got, allowed, dates)
+            cands = clean(c, got, allowed, dates, info.get("hits"))
             tamed = tame_hook(cands)
             dm = measure_demand(c, cands)
             om = measure_outside(c, cands, buzz)
@@ -1961,7 +2088,8 @@ def main():
                                         "trend_n": info.get("trend_n"), "fresh_n": fresh_n, "prompt_chars": info.get("prompt_chars"),
                                         "tokens": use, "labels": labels, "kinds": kinds, "genre_n": info.get("genre_n"), "genre_hot": info.get("genre_hot"),
                                         "candidates": len(cands), "demand": dm, "outside": om, "hook_cut": tamed, "anchors": info.get("anchors"),
-                                        "new_n": new_n, "editor": bool(ed_use), "editor_tokens": ed_use, "audience": info.get("audience"),
+                                        "new_n": new_n, "new_hits_n": info.get("new_hits_n"), "rocket_n": sum(1 for t in topics if t.get("떡상")),
+                                        "editor": bool(ed_use), "editor_tokens": ed_use, "audience": info.get("audience"),
                                         "dropped": {k: v for k, v in dropped.items() if v}, "topics": topics, "calib": view}
             hp = OUT / "history.jsonl"   # 다시 정리(--answers)면 그 회차 줄을 바꿔 끼운다(같은 회차가 두 번 세지지 않게)
             hl = [l for l in hp.read_text(encoding="utf-8").splitlines() if l.strip()] if hp.exists() else []
@@ -1976,6 +2104,7 @@ def main():
             log(name, f"유튜브 밖: 위키 문서 {om['위키_문서']}·커뮤니티 언급 {om['커뮤니티_언급']}·빈자리 3+ {om['빈자리_3+']}·타이밍 {om['타이밍']}")
             log(name, f"후보 {len(cands)}개 · hook 깎음 {tamed} · 수요 검색어 {dm['검색어']}(새로 {dm['새로_검색']}·실패 {dm['검색_실패']}·측정 못 함 {dm['측정_못함']}) · 뺌",
                 ", ".join(f"{k} {len(v)}" for k, v in dropped.items() if v) or "없음")
+            log(name, f"신규 채널 떡상 재료 {info.get('new_hits_n')}편(같은 분야 {info.get('new_hits_fit')}) · 떡상 컨셉 빌린 소재 {sum(1 for t in topics if t.get('떡상'))}/{len(topics)}")
             log(name, f"새로 나온 소재 {new_n}/{len(topics)} · 편집장 {'검토함 ' + tok_str(ed_use) if ed_use else '안 함'}")
             log(name, "추천", len(topics), "개", tok_str(use), f"· 📰최신 {fresh_n}개 ·",
                 *([" · ".join(f"{k} {sum(t.get('갈래') == k for t in topics)}개" for k in kinds), "·"] if kinds else []),
@@ -1984,6 +2113,12 @@ def main():
             log(name, "실패 — 지난 추천 유지:", str(e)[:300])
             if name in latest["channels"]:
                 latest["channels"][name]["stale"] = f"{now} 갱신 실패"
+
+    chs = [c for c in CFG["channels"] if not only or c["name"] == only]
+    with ThreadPoolExecutor(max(1, int(CFG.get("parallel", 3)))) as ex:   # 10-28 채널 10곳 — 한 곳씩이면 2시간 넘게 걸린다
+        list(ex.map(run, chs))
+    if only and not chs:
+        raise SystemExit(f"채널을 못 찾았어요({only}) — 이 중에서: {', '.join(c['name'] for c in CFG['channels'])}")
     if not dry:
         cp.write_text(json.dumps(calib_all, ensure_ascii=False, indent=1), encoding="utf-8")
         latest["at"] = now
