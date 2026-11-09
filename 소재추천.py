@@ -207,8 +207,10 @@ def sec_ours(o, R):
 def sec_done(d):
     t = [re.sub(r"\s+", " ", re.sub(r"#\S+", "", x)).strip()[:45] for x in d["올린_영상_제목"]]
     rec = d.get("최근")
+    ok = d.get("반복_허용") or []
     return ((f"최근 {MADE_DAYS}일 안에 만든 편(이 대상·후속은 내지 마라): " + " / ".join(rec) + "\n") if rec else "") + \
-        "이미 만든 편 전부(날짜 상관없이 같은 대상·후속은 내지 마라) — 편 폴더: " + (" / ".join(d["편_폴더"]) or "없음") + "\n올린 영상 제목: " + (" / ".join(t) or "없음")
+        "이미 만든 편 전부(날짜 상관없이 같은 대상·후속은 내지 마라) — 편 폴더: " + (" / ".join(d["편_폴더"]) or "없음") + "\n올린 영상 제목: " + (" / ".join(t) or "없음") + \
+        (f"\n예외 — {'·'.join(ok)}: 채널의 핵심 대상이라 다시 내도 된다. 단 위 제목에 이미 나온 각도·일화·멤버 조합은 금지, 안 다룬 멤버·새 사건·새 각도만." if ok else "")
 
 
 def sec_recent(rec):
@@ -578,7 +580,7 @@ def done_topics(c):
     made = [x for x in made_items(c) if x[1] >= cut]
     # 짧은 이름(편 폴더·고른 소재)으로 알린다. 폴더 날짜를 모를 때(예약 실행, 사본에 날짜 없음)만 올린 영상 제목으로
     recent = [n for n, _, k in made if k != "영상"] or [re.sub(r"\s+", " ", re.sub(r"#\S+", "", n)).strip()[:40] for n, _, k in made]
-    return {"편_폴더": folders, "올린_영상_제목": titles, "최근": list(dict.fromkeys(recent))}
+    return {"편_폴더": folders, "올린_영상_제목": titles, "최근": list(dict.fromkeys(recent)), "반복_허용": c.get("repeat_targets") or []}
 
 
 def made_items(c):
@@ -617,7 +619,7 @@ def _made_toks(s):
     return [_nz(w) for w in re.findall(r"[가-힣A-Za-z0-9]{2,}", str(s or "").lower()) if w not in MADE_STOP]
 
 
-def made_hit(t, made):
+def made_hit(t, made, repeat=()):
     """소재 t 가 이미 만든 편과 같은 대상인가(또는 그 편의 후속인가) → 가장 최근에 만든 (이름, 날짜), 아니면 None.
     같다고 보는 경우: 대상 이름이 편 폴더 이름·영상 제목·고른 소재에 들어 있다 / 편 폴더(짧은 이름)의 낱말이 모두 소재에 들어 있다
     (3글자 이상 낱말은 대상·소재·제목 어디든, 2글자 낱말은 대상 안에서만) / 후속 줄이 그 편을 가리킨다."""
@@ -631,9 +633,20 @@ def made_hit(t, made):
     tl = [w for w in re.findall(r"[가-힣A-Za-z0-9]{2,}", str(t.get("대상") or "")) if w not in MADE_STOP]
     head = _nz(tl[-1]) if len(tl) >= 2 and len(tl[-1]) >= 3 and tl[-1] not in HEAD_STOP else ""
     best = None
+    # 11-09 스튜디오K '리센느'처럼 채널 핵심 대상(repeat_targets)은 다시 내도 된다 — 이름 대신 각도 낱말이 그 편과 절반 넘게 겹치면 같은 편
+    rep_on = [r for r in repeat if r and r in str(t.get("대상") or "")]
+    if rep_on:
+        tgts = [g for g in tgts if not any(_nz(r) in g for r in rep_on)]
+        head = ""
+        angle = set(_made_toks(" ".join(str(t.get(x) or "") for x in ("소재", "제목")))) - {_nz(r) for r in rep_on}
     for name, day, kind in made:
         nn, toks = _nz(name), _made_toks(name)
         short = kind in ("폴더", "고름")
+        if rep_on:
+            nt = set(toks) - {_nz(r) for r in rep_on}
+            if nt and len(angle & nt) >= max(2, (len(nt) + 1) // 2) and (best is None or day > best[1]):
+                best = (name, day)
+            continue
         hit = any(g in nn for g in tgts) \
             or (short and toks and all((w in text) if len(w) >= 3 else (w in tgt) for w in toks)) \
             or (head and head in nn)
@@ -1459,7 +1472,8 @@ def build_prompt(c, data):
     made = data.get("made_recent") or []
     # 2026-10-20 사용자 "올렸던 영상은왜자꾸 소재로 말하는지.." → 오래된 편도 같은 대상·후속은 전부 뺀다(옛 '자극 크면 남김' 폐기)
     made_rule = (f"- 이미 만든 편: 날짜 상관없이 이미 만든 편·올린 영상(최근 {MADE_DAYS}일: {' / '.join(made) if made else '없음'})의 대상과 그 후속은 내지 마라(프로그램이 뺀다). "
-                 "같은 종류의 다른 대상(예: 북한 잠수함을 이미 했으면 한국 잠수함도)도 같은 대상으로 본다.")
+                 "같은 종류의 다른 대상(예: 북한 잠수함을 이미 했으면 한국 잠수함도)도 같은 대상으로 본다."
+                 + (f" 예외: {'·'.join(c['repeat_targets'])} 는 채널 핵심 대상이라 다시 내도 된다 — 안 다룬 멤버·새 사건·새 각도만(이미 올린 제목의 각도·일화는 금지)." if c.get("repeat_targets") else ""))
     kinds = c.get("kinds") or {}   # 갈래(2026-09-28 논스킵 사건·괴담 믹스): 갈래마다 공식·최소 개수
     kind_block = []
     if kinds:
@@ -1746,7 +1760,7 @@ def finalize(c, topics, weights, overused=(), made=(), seen=None):
         if ban and ban.search(" ".join(str(t.get(x) or "") for x in ("제목", "대상", "소재"))):
             drop["금지 유형"].append(name)
             continue
-        hit = made_hit(t, made)
+        hit = made_hit(t, made, c.get("repeat_targets") or ())
         t.pop("만든_편", None)
         if hit:   # 10-20 사용자 "올렸던 영상은왜자꾸 소재로 말하는지.." — 오래된 편도 남기지 않는다
             drop[f"최근 {MADE_DAYS}일 만든 편" if hit[1] >= cut else "이미 만든 편"].append(f"{name} ← {hit[0][:30]}")
@@ -1827,7 +1841,8 @@ def editor_pass(c, pool, aud, anc, model, made=()):
          "", "[이미 만든 편·올린 영상 — 같은 대상·같은 종류(후속·다른 각도 포함)는 반드시 '뺌']",
          " / ".join(dict.fromkeys(re.sub(r"\s+", " ", re.sub(r"#\S+", "", str(x[0]))).strip()[:40] for x in made))[:9000] or "없음",
          "", "[할 일]",
-         "- 먼저 위 '이미 만든 편'과 겹치는 후보를 찾아 뺀다. 예: 땅굴 편을 여러 번 만들었으면 '땅굴 탐지'·'땅굴 발견'도 같은 종류다. 우리 채널 검색어와 가깝다는 이유로 이미 만든 종류를 살리지 마라.",
+         "- 먼저 위 '이미 만든 편'과 겹치는 후보를 찾아 뺀다. 예: 땅굴 편을 여러 번 만들었으면 '땅굴 탐지'·'땅굴 발견'도 같은 종류다. 우리 채널 검색어와 가깝다는 이유로 이미 만든 종류를 살리지 마라."
+         + (f" 단 {'·'.join(c['repeat_targets'])} 는 채널 핵심 대상이라 예외 — 안 다룬 멤버·새 사건·새 각도면 남기고, 이미 나온 각도·일화만 뺀다." if c.get("repeat_targets") else ""),
          f"- 지금 만들면 조회수가 가장 크게 터질 순서로 {n}개의 순위를 매긴다(후보가 {len(pool)}개면 약한 {len(pool) - n}개는 뺀다). 약한 소재도 순위는 매기되 한마디에 약점을 적는다.",
          "- 빼야 할 것: 자극이 약한 정보·소식형 · 서로 비슷한 소재(가장 센 하나만) · 사실·전제가 의심스러운 것 · 채널 형식·공식에 안 맞는 것 · 우리 안 된 편과 같은 결.",
          "- 1~5위는 서로 다른 결(대상 종류·감정·각도)이 되게 한다. '처음' 소재를 더 쳐 준다.",
