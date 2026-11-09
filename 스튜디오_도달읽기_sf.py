@@ -7,14 +7,17 @@
              "channels":{채널ID:{"name","ok","err","total":{impressions,ctr,views,avd_sec,avp,watch_hours,subs_net},
                                   "traffic":[{key,label,impressions,ctr,views}], "videos":[{id,impressions,ctr,views,avd_sec,avp,shorts_kept_pct}]}}}
   - ctr·avp·shorts_kept_pct 는 % 숫자(2.81 = 2.81%). avd_sec 초, watch_hours 시간. 화면 반올림 전 값. 값이 없으면 null.
+  - avd_sec(스튜디오 '평균 시청 지속 시간')는 시청 시간 ÷ '유효 조회수' 기준이라 views × avd_sec ≠ 시청 시간(11-09 대조).
   - shorts_kept_pct = Shorts 피드 '계속 시청함' %(SHORTS_FEED_IMPRESSIONS_VTR) — Shorts 피드 노출이 있는 영상(=쇼츠)만, 나머지 null.
   - traffic key 는 스튜디오 내부 이름 그대로: SUBSCRIBER=탐색 기능, YT_RELATED=추천 동영상, YT_SEARCH=검색, SHORTS=Shorts 피드 …
     (트래픽 소스의 impressions/ctr 은 '썸네일' 노출 — Shorts 피드 줄은 썸네일 노출이 없어 null 이 정상)
 
 하는 일(채널마다):
-  1) www.youtube.com/channel_switcher?next=<그 채널 분석 주소> 에서 그 채널 항목(핸들)을 JS 클릭으로 전환
-     (스튜디오는 주소 끝 ?c=채널ID 로는 이제 '권한 없음' — 11-09 확인)
-  2) 분석 화면 ytcfg CHANNEL_ID 가 그 채널인지 확인 → 아니면 읽지 않음
+  1) 이 탭 스튜디오의 sessionStorage 'session_logininfo'(탭마다 채널을 붙잡아 두는 값)를 지우고 /channel/<ID>/analytics 를 연다.
+     그 채널로 열리면(같은 구글 계정 채널 일부는 전환 없이 열림) 그대로 읽고, '권한 없음'이면
+     www.youtube.com/channel_switcher?next=스튜디오 첫 화면 에서 그 채널 항목(핸들)을 JS 클릭으로 전환한 뒤 다시 연다.
+     (주소 끝 ?c=채널ID 는 이제 '권한 없음' — 11-09 확인. 고정값을 안 지우면 전환해도 옛 채널로 되돌아가거나 '권한 없음'이 몇 분씩 남음)
+  2) 분석 화면 ytcfg CHANNEL_ID·주소의 채널이 그 채널인지 확인 → 아니면 읽지 않음
   3) XHR 을 가로채고 history.pushState 로 '콘텐츠' 탭을 열어 화면이 부르는 yta_web/get_cards 요청의 헤더·context 를 얻음
      (요청 screenConfig.entity.channelId 도 그 채널인지 확인) → 같은 헤더로 yta_web/join 에 직접 질의
   4) 기간 = 화면 머리글의 '지난 28일' 날짜 범위(태평양 시간). 11-09 거대한비밀로 대조: 화면 Shorts 조회수 787.2만 = 질의 7,872,027,
@@ -260,7 +263,10 @@ def wait_state(sec=40):
 
 
 def ok_state(st, ch):
-    return isinstance(st, dict) and st.get('host') == 'studio.youtube.com' and st.get('ch') == ch and not st.get('denied')
+    if not (isinstance(st, dict) and st.get('host') == 'studio.youtube.com' and st.get('ch') == ch and not st.get('denied')):
+        return False
+    m = re.search(r'/channel/(UC[0-9A-Za-z_-]{22})', st.get('url') or '')
+    return (m is None) or m.group(1) == ch
 
 
 # ---------------- 채널 전환 ----------------
@@ -279,10 +285,34 @@ def switcher_list(next_url=None):
     return r if isinstance(r, list) else []
 
 
-def switch_to(ch, handle, dest):
-    """channel_switcher 에서 handle 항목을 눌러 ch 로 전환하고 dest 가 그 채널로 열릴 때까지. 돌려주는 값 = STATE"""
+ROOT = 'https://studio.youtube.com/'
+
+# 11-09 찾음: 스튜디오는 탭마다 sessionStorage 'session_logininfo' 에 채널(신원)을 붙잡아 둔다.
+#   channel_switcher 로 www 쪽 선택을 바꿔도 이 탭의 스튜디오는 그 값대로 옛 채널로 되돌아가거나(첫 화면 → 새 채널 → 옛 채널),
+#   새 채널 분석 주소가 '권한 없음'(?sttick=0)으로 몇 분씩 남았다(같은 주소 다시 열기·www 다녀오기로는 200초도 안 풀림).
+#   그 값을 지우고 다시 열면 바로 www 에서 고른 채널로 열린다 — 이 탭의 저장소만 지우는 것이라 다른 창·설정은 그대로.
+UNPIN = "try{sessionStorage.removeItem('session_logininfo')}catch(e){} return 1;"
+
+
+def open_studio(url):
+    """이 탭 스튜디오의 채널 고정(sessionStorage)을 지운 뒤 url 을 연다. 돌려주는 값 = STATE"""
+    if q('location.host') != 'studio.youtube.com':
+        nav(ROOT)
+        wait_state(30)
+    f(UNPIN)
+    nav(url)
+    return wait_state(40)
+
+
+def studio_root():
+    return open_studio(ROOT)
+
+
+def switch_to(ch, handle, max_wait=120):
+    """channel_switcher(next=스튜디오 첫 화면)에서 handle 항목을 눌러 ch 로 전환하고, 스튜디오 첫 화면 CHANNEL_ID 가 ch 가 될 때까지(두 번째 클릭은 안 함).
+    돌려주는 값 = STATE"""
     wait_others()
-    items = switcher_list(dest)
+    items = switcher_list(ROOT)
     if not any((it.get('h') or '').lower() == handle.lower() for it in items):
         raise Stop('전환 목록에 %s 없음 (%s)' % (handle, short([it.get('t') for it in items], 400)))
     f('window.__old=1; return 1;')
@@ -296,32 +326,64 @@ def switch_to(ch, handle, dest):
         u = q("window.__old?null:location.href")
         if isinstance(u, str) and u.startswith('https://studio.youtube.com/'):
             break
-    st = wait_state(30)
-    t1 = time.time()
-    while not ok_state(st, ch) and time.time() - t1 < 45:
-        # 전환이 늦게 반영되면(10-24 메모: 10~15초) 같은 주소를 4초 간격으로 다시 연다 — 두 번째 클릭은 안 함
-        time.sleep(4)
-        nav(dest)
-        st = wait_state(30)
+    time.sleep(2)
+    st = studio_root()
+    n = 0
+    while time.time() - t0 < max_wait:
+        if ok_state(st, ch):
+            time.sleep(2.5)
+            st2 = q(STATE)       # 되돌아가지 않는지 한 번 더
+            if ok_state(st2, ch):
+                if n:
+                    log('  전환 반영 %.0f초' % (time.time() - t0))
+                return st2
+            st = st2
+        n += 1
+        time.sleep(3)
+        if n % 2 == 0:
+            nav('https://www.youtube.com/account')
+            time.sleep(2)
+        st = studio_root()
+        if n % 3 == 0:
+            log('  전환 반영 기다림 %.0f초' % (time.time() - t0), (st or {}).get('ch'))
     return st
 
 
 def ensure_channel(ch, handle):
-    dest = 'https://studio.youtube.com/channel/%s/analytics/tab-overview/period-default' % ch
-    nav(dest)
-    st = wait_state(40)
+    # 11-09: 분석 깊은 주소(/analytics/tab-overview/period-default)는 전환 직후 1~2분 '권한 없음'인 채널(스튜디오 이면)이 있었다 —
+    #   첫 화면이 이미 그 채널이어도. /analytics 입구 주소는 먼저 열리고 기본 탭(지난 28일)으로 넘어감 → 입구 주소 + 최대 90초 다시 열기
+    dest = 'https://studio.youtube.com/channel/%s/analytics' % ch
+
+    def open_dest(sec=90):
+        st = {}
+        t0 = time.time()
+        while True:
+            st = open_studio(dest)
+            if ok_state(st, ch):
+                return st
+            if time.time() - t0 > sec:
+                return st
+            time.sleep(5)
+
+    st = open_studio(dest)
     if ok_state(st, ch):
         return st
-    log('세션이 다른 채널 — 전환', ch, handle, short(st, 160))
-    st = switch_to(ch, handle, dest)
+    log('세션이 다른 채널 — 전환', ch, handle, '| 분석 화면', (st or {}).get('ch'), 'denied' if (st or {}).get('denied') else '')
+    st = switch_to(ch, handle)
     if ok_state(st, ch):
-        return st
-    # 같은 탭이 옛 채널을 기억하는 경우(10-24 메모) — 창을 새로 열어 한 번 더 본다
+        t0 = time.time()
+        st = open_dest()
+        if ok_state(st, ch):
+            if time.time() - t0 > 10:
+                log('  분석 화면 열림 %.0f초 뒤' % (time.time() - t0))
+            return st
+    # 그래도 다르면 창을 새로 열어 한 번 더 본다(새 창 = 새 sessionStorage)
     log('전환 뒤에도 채널이 다름 — 창을 새로 열어 다시 봄', short(st, 160))
     close_window()
     time.sleep(1)
-    open_window(dest)
-    st = wait_state(40)
+    open_window(ROOT)
+    wait_state(40)
+    st = open_dest(40)
     if ok_state(st, ch):
         return st
     raise Stop('채널 전환 실패(분석 화면 CHANNEL_ID=%s)' % (st or {}).get('ch'))
@@ -334,9 +396,8 @@ def discover(ch):
     cands = [it['h'] for it in items if it.get('h') and it['h'].lower() not in known]
     log('핸들 모름', ch, '— 모르는 항목', cands)
     for h in cands:
-        dest = 'https://studio.youtube.com/channel/%s/analytics/tab-overview/period-default' % ch
         try:
-            st = switch_to(ch, h, dest)
+            st = switch_to(ch, h, max_wait=90)
         except Stop as e:
             log('  ', h, '실패', str(e)[:120])
             continue
@@ -515,14 +576,11 @@ def read_channel(ch, a, b):
 # ---------------- 되돌리기 ----------------
 def restore_home():
     """기본 채널을 '@논스킵'으로(11-07 메모: next 는 논스킵 스튜디오 주소로 해야 반영됨) — 분석 화면 CHANNEL_ID 와 전환 목록으로 확인"""
-    home = 'https://studio.youtube.com/channel/%s' % HOME_CH
-    nav('https://studio.youtube.com/')
-    st = wait_state(40)
+    st = studio_root()
     if not ok_state(st, HOME_CH):
         log('기본 채널 되돌림 — 지금', short(st, 160))
-        st = switch_to(HOME_CH, HOME_HANDLE, home)
-        nav('https://studio.youtube.com/')
-        st = wait_state(40)
+        st = switch_to(HOME_CH, HOME_HANDLE)
+        st = studio_root()
     items = switcher_list()
     sel = [it.get('h') for it in items if it.get('sel')]
     ok = ok_state(st, HOME_CH)
@@ -537,10 +595,16 @@ def main(out, chans):
     result = {c: {'name': names[c], 'ok': False, 'err': None, 'total': None, 'traffic': [], 'videos': []} for c in chans}
     period = None
     wait_others()
-    order = [c for c in chans if c != HOME_CH] + ([HOME_CH] if HOME_CH in chans else [])   # 논스킵을 맨 끝에 → 되돌림 전환 1번 아낌
-    open_window('https://studio.youtube.com/')
+    open_window(ROOT)
     restored = None
     try:
+        wait_state(40)
+        st0 = studio_root()
+        cur = (st0 or {}).get('ch')
+        log('시작 세션 채널', cur, (st0 or {}).get('name'))
+        # 지금 세션 채널을 맨 앞(전환 없이), 논스킵을 맨 끝(되돌림 전환 1번 아낌)
+        order = [c for c in chans if c == cur and c != HOME_CH] + [c for c in chans if c not in (cur, HOME_CH)] + \
+                ([HOME_CH] if HOME_CH in chans else [])
         for ch in order:
             name, handle = CHANNELS.get(ch, (ch, None))
             try:

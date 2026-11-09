@@ -1,5 +1,5 @@
 {
- "at": "2026-11-09T21:30+09:00",
+ "at": "2026-11-09T21:56+09:00",
  "source": "studio yta_web/join",
  "period": {
   "label": "지난 28일",
@@ -15,10 +15,10 @@
    "total": {
     "impressions": 1132669,
     "ctr": 7.6,
-    "views": 8030544,
+    "views": 8030545,
     "avd_sec": 130.534,
     "avp": 90.87,
-    "watch_hours": 153132.91,
+    "watch_hours": 153132.96,
     "subs_net": 11479
    },
    "traffic": [
@@ -27,7 +27,7 @@
      "label": "Shorts 피드",
      "impressions": null,
      "ctr": null,
-     "views": 7444505
+     "views": 7444506
     },
     {
      "key": "SUBSCRIBER",
@@ -126,7 +126,7 @@
      "id": "NpQ7PgVHR08",
      "impressions": 23236,
      "ctr": 5.41,
-     "views": 3353596,
+     "views": 3353597,
      "avd_sec": 143.595,
      "avp": 90.31,
      "shorts_kept_pct": 71.38
@@ -2557,11 +2557,983 @@
   },
   "UCiQOGLTz89s8ZhWGxMp1JfA": {
    "name": "스튜디오 이면",
-   "ok": false,
-   "err": "채널 전환 실패(분석 화면 CHANNEL_ID=None)",
-   "total": null,
-   "traffic": [],
-   "videos": []
+   "ok": true,
+   "err": null,
+   "total": {
+    "impressions": 107534,
+    "ctr": 4.4,
+    "views": 107723,
+    "avd_sec": 60.204,
+    "avp": 72.03,
+    "watch_hours": 853.318,
+    "subs_net": 61
+   },
+   "traffic": [
+    {
+     "key": "SHORTS",
+     "label": "Shorts 피드",
+     "impressions": null,
+     "ctr": null,
+     "views": 83506
+    },
+    {
+     "key": "SUBSCRIBER",
+     "label": "탐색 기능",
+     "impressions": 54921,
+     "ctr": 6.07,
+     "views": 17942
+    },
+    {
+     "key": "YT_SEARCH",
+     "label": "YouTube 검색",
+     "impressions": 14249,
+     "ctr": 4.1,
+     "views": 3292
+    },
+    {
+     "key": "YT_OTHER_PAGE",
+     "label": "기타 YouTube 기능",
+     "impressions": null,
+     "ctr": null,
+     "views": 1222
+    },
+    {
+     "key": "YT_RELATED",
+     "label": "추천 동영상",
+     "impressions": 35113,
+     "ctr": 2.09,
+     "views": 877
+    },
+    {
+     "key": "YT_CHANNEL",
+     "label": "채널 페이지",
+     "impressions": 3156,
+     "ctr": 2.47,
+     "views": 423
+    },
+    {
+     "key": "NOTIFICATION",
+     "label": "알림",
+     "impressions": null,
+     "ctr": null,
+     "views": 90
+    },
+    {
+     "key": "UNKNOWN_MOBILE_OR_DIRECT",
+     "label": "직접 입력 또는 알 수 없음",
+     "impressions": null,
+     "ctr": null,
+     "views": 89
+    },
+    {
+     "key": "END_SCREEN",
+     "label": "최종 화면",
+     "impressions": null,
+     "ctr": null,
+     "views": 59
+    },
+    {
+     "key": "SHORTS_CONTENT_LINKS",
+     "label": "Shorts 콘텐츠 링크",
+     "impressions": null,
+     "ctr": null,
+     "views": 39
+    },
+    {
+     "key": "PLAYLIST",
+     "label": "재생목록",
+     "impressions": 95,
+     "ctr": 3.16,
+     "views": 10
+    },
+    {
+     "key": "SOUND_PAGE",
+     "label": "사운드 페이지",
+     "impressions": null,
+     "ctr": null,
+     "views": 9
+    },
+    {
+     "key": "EXT_URL",
+     "label": "외부",
+     "impressions": null,
+     "ctr": null,
+     "views": 8
+    },
+    {
+     "key": "HASHTAGS",
+     "label": "해시태그 페이지",
+     "impressions": null,
+     "ctr": null,
+     "views": 1
+    }
+   ],
+   "videos": [
+    {
+     "id": "Elv6TRL5kM0",
+     "impressions": 2134,
+     "ctr": 5.3,
+     "views": 73406,
+     "avd_sec": 51.985,
+     "avp": 94.52,
+     "shorts_kept_pct": 63.04
+    },
+    {
+     "id": "Z4CmeNUE3jQ",
+     "impressions": 26789,
+     "ctr": 7.11,
+     "views": 9059,
+     "avd_sec": 131.539,
+     "avp": 48.54,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "sPVYWhNgXF8",
+     "impressions": 14173,
+     "ctr": 4.52,
+     "views": 4273,
+     "avd_sec": 81.091,
+     "avp": 29.17,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "14HKWnsBMvk",
+     "impressions": 301,
+     "ctr": 2.66,
+     "views": 2598,
+     "avd_sec": 45.82,
+     "avp": 77.66,
+     "shorts_kept_pct": 67.7
+    },
+    {
+     "id": "EkMf7jSlpQk",
+     "impressions": 719,
+     "ctr": 3.2,
+     "views": 2055,
+     "avd_sec": 63.667,
+     "avp": 120.13,
+     "shorts_kept_pct": 61.05
+    },
+    {
+     "id": "mALrSXdIEQ4",
+     "impressions": 5857,
+     "ctr": 4.18,
+     "views": 1374,
+     "avd_sec": 125.148,
+     "avp": 43.01,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "0pRZ_NFS0Hs",
+     "impressions": 89,
+     "ctr": 3.37,
+     "views": 1364,
+     "avd_sec": 45.224,
+     "avp": 85.33,
+     "shorts_kept_pct": 46.13
+    },
+    {
+     "id": "_Qql0WArSMI",
+     "impressions": 221,
+     "ctr": 0.9,
+     "views": 1350,
+     "avd_sec": 83.507,
+     "avp": 170.42,
+     "shorts_kept_pct": 54.03
+    },
+    {
+     "id": "0XWNtcdmP5M",
+     "impressions": 154,
+     "ctr": 3.25,
+     "views": 1248,
+     "avd_sec": 60.746,
+     "avp": 89.33,
+     "shorts_kept_pct": 58.66
+    },
+    {
+     "id": "-twVWPjU6CU",
+     "impressions": 130,
+     "ctr": 1.54,
+     "views": 1220,
+     "avd_sec": 55.206,
+     "avp": 110.41,
+     "shorts_kept_pct": 52.2
+    },
+    {
+     "id": "cMdrXxoPfOs",
+     "impressions": 122,
+     "ctr": 2.46,
+     "views": 1203,
+     "avd_sec": 36.706,
+     "avp": 65.55,
+     "shorts_kept_pct": 40.66
+    },
+    {
+     "id": "rbPbFI0Cr0o",
+     "impressions": 4153,
+     "ctr": 5.35,
+     "views": 1083,
+     "avd_sec": 140.248,
+     "avp": 34.97,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "dmNR8NoxTFs",
+     "impressions": 147,
+     "ctr": 4.08,
+     "views": 980,
+     "avd_sec": 40.543,
+     "avp": 72.4,
+     "shorts_kept_pct": 41.64
+    },
+    {
+     "id": "tXAP48JinRU",
+     "impressions": 12520,
+     "ctr": 4.23,
+     "views": 877,
+     "avd_sec": 142.581,
+     "avp": 47.69,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "UkExCg-7xO4",
+     "impressions": 3037,
+     "ctr": 2.67,
+     "views": 764,
+     "avd_sec": 101.505,
+     "avp": 35.74,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "moEfOOUt6WU",
+     "impressions": 3802,
+     "ctr": 3.1,
+     "views": 613,
+     "avd_sec": 162.523,
+     "avp": 23.28,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "-a20dtxNisY",
+     "impressions": 3056,
+     "ctr": 4.91,
+     "views": 472,
+     "avd_sec": 149.036,
+     "avp": 30.23,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "z0mTbo_sh0I",
+     "impressions": 49,
+     "ctr": 0.0,
+     "views": 452,
+     "avd_sec": 31.108,
+     "avp": 59.82,
+     "shorts_kept_pct": 28.41
+    },
+    {
+     "id": "UptUDZoKsiw",
+     "impressions": 5,
+     "ctr": 0.0,
+     "views": 363,
+     "avd_sec": 34.761,
+     "avp": 70.94,
+     "shorts_kept_pct": 29.55
+    },
+    {
+     "id": "DPvVMTOnKuc",
+     "impressions": 921,
+     "ctr": 8.47,
+     "views": 317,
+     "avd_sec": 110.742,
+     "avp": 28.25,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "EW-DmQEogts",
+     "impressions": 1963,
+     "ctr": 3.31,
+     "views": 272,
+     "avd_sec": 94.221,
+     "avp": 42.44,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "cv7OxLmin9Y",
+     "impressions": 576,
+     "ctr": 6.08,
+     "views": 197,
+     "avd_sec": 226.309,
+     "avp": 58.93,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "6ffQwpi1BSE",
+     "impressions": 1304,
+     "ctr": 3.76,
+     "views": 184,
+     "avd_sec": 28.604,
+     "avp": 68.1,
+     "shorts_kept_pct": 84.21
+    },
+    {
+     "id": "Hjrgoow7O4g",
+     "impressions": 7731,
+     "ctr": 0.74,
+     "views": 131,
+     "avd_sec": 95.361,
+     "avp": 30.08,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "X6BpyzuTU78",
+     "impressions": 497,
+     "ctr": 5.03,
+     "views": 112,
+     "avd_sec": 119.347,
+     "avp": 18.53,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "5_ee0GreIwU",
+     "impressions": 686,
+     "ctr": 3.79,
+     "views": 106,
+     "avd_sec": 35.675,
+     "avp": 75.9,
+     "shorts_kept_pct": 71.05
+    },
+    {
+     "id": "-nEPdp15Rio",
+     "impressions": 1072,
+     "ctr": 3.26,
+     "views": 91,
+     "avd_sec": 101.93,
+     "avp": 31.85,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "Py7fQtVFbIY",
+     "impressions": 514,
+     "ctr": 2.53,
+     "views": 83,
+     "avd_sec": 37.128,
+     "avp": 88.4,
+     "shorts_kept_pct": 86.36
+    },
+    {
+     "id": "qgZG0_kW3wM",
+     "impressions": 245,
+     "ctr": 6.94,
+     "views": 79,
+     "avd_sec": 127.677,
+     "avp": 33.34,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "UkCg2uY5ZvM",
+     "impressions": 296,
+     "ctr": 7.77,
+     "views": 77,
+     "avd_sec": 190.443,
+     "avp": 39.68,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "GOeoG5ZbdR0",
+     "impressions": 3481,
+     "ctr": 0.95,
+     "views": 74,
+     "avd_sec": 119.713,
+     "avp": 19.75,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "XNIMnEz67pk",
+     "impressions": 410,
+     "ctr": 4.15,
+     "views": 70,
+     "avd_sec": 27.944,
+     "avp": 63.51,
+     "shorts_kept_pct": 79.17
+    },
+    {
+     "id": "ag0-b6zZ72U",
+     "impressions": 451,
+     "ctr": 4.43,
+     "views": 64,
+     "avd_sec": 40.066,
+     "avp": 50.72,
+     "shorts_kept_pct": 79.17
+    },
+    {
+     "id": "k8AqBwr0Whk",
+     "impressions": 200,
+     "ctr": 11.5,
+     "views": 58,
+     "avd_sec": 297.367,
+     "avp": 44.38,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "F3eLBOAmbNs",
+     "impressions": 1490,
+     "ctr": 0.6,
+     "views": 49,
+     "avd_sec": 57.66,
+     "avp": 21.43,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "nKzivmIn_d0",
+     "impressions": 104,
+     "ctr": 1.92,
+     "views": 49,
+     "avd_sec": 31.886,
+     "avp": 61.32,
+     "shorts_kept_pct": 69.7
+    },
+    {
+     "id": "1N_XPHyzEkk",
+     "impressions": 168,
+     "ctr": 3.57,
+     "views": 47,
+     "avd_sec": 195.224,
+     "avp": 50.45,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "J2Yajg0gG1s",
+     "impressions": 338,
+     "ctr": 1.18,
+     "views": 42,
+     "avd_sec": 53.545,
+     "avp": 82.38,
+     "shorts_kept_pct": 63.64
+    },
+    {
+     "id": "ZnuumAUEfrw",
+     "impressions": 734,
+     "ctr": 0.82,
+     "views": 40,
+     "avd_sec": 178.62,
+     "avp": 71.73,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "mI1UJUTpmu8",
+     "impressions": 151,
+     "ctr": 5.96,
+     "views": 32,
+     "avd_sec": 133.919,
+     "avp": 32.11,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "rj-udqMFBy0",
+     "impressions": 251,
+     "ctr": 4.38,
+     "views": 31,
+     "avd_sec": 165.255,
+     "avp": 42.48,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "qJbBjHO_hNA",
+     "impressions": 1017,
+     "ctr": 1.38,
+     "views": 31,
+     "avd_sec": 143.483,
+     "avp": 44.84,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "-BRLkyZWGzQ",
+     "impressions": 181,
+     "ctr": 2.76,
+     "views": 30,
+     "avd_sec": 93.949,
+     "avp": 22.48,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "wYke1Lx1aL8",
+     "impressions": 140,
+     "ctr": 3.57,
+     "views": 28,
+     "avd_sec": 40.967,
+     "avp": 66.08,
+     "shorts_kept_pct": 69.23
+    },
+    {
+     "id": "PVqQdsD9JuE",
+     "impressions": 154,
+     "ctr": 1.3,
+     "views": 27,
+     "avd_sec": 60.073,
+     "avp": 93.86,
+     "shorts_kept_pct": 63.64
+    },
+    {
+     "id": "sjuV0EHUX3s",
+     "impressions": 178,
+     "ctr": 2.81,
+     "views": 25,
+     "avd_sec": 20.829,
+     "avp": 65.09,
+     "shorts_kept_pct": 60.87
+    },
+    {
+     "id": "83NFXUkhmho",
+     "impressions": 62,
+     "ctr": 4.84,
+     "views": 23,
+     "avd_sec": 41.841,
+     "avp": 59.77,
+     "shorts_kept_pct": 68.75
+    },
+    {
+     "id": "SAKpRfNF8oE",
+     "impressions": 128,
+     "ctr": 4.69,
+     "views": 23,
+     "avd_sec": 74.758,
+     "avp": 26.32,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "xYuVDANAtuE",
+     "impressions": 122,
+     "ctr": 6.56,
+     "views": 22,
+     "avd_sec": 57.631,
+     "avp": 10.91,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "igJfK3TRY1M",
+     "impressions": 157,
+     "ctr": 1.27,
+     "views": 20,
+     "avd_sec": 21.66,
+     "avp": 47.09,
+     "shorts_kept_pct": 62.5
+    },
+    {
+     "id": "whijCMUw3K8",
+     "impressions": 134,
+     "ctr": 0.75,
+     "views": 19,
+     "avd_sec": 15.011,
+     "avp": 51.76,
+     "shorts_kept_pct": 44.44
+    },
+    {
+     "id": "MnHCf4bJu6w",
+     "impressions": 87,
+     "ctr": 4.6,
+     "views": 18,
+     "avd_sec": 142.984,
+     "avp": 40.62,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "sjSHfWVxH50",
+     "impressions": 94,
+     "ctr": 2.13,
+     "views": 18,
+     "avd_sec": 33.16,
+     "avp": 69.08,
+     "shorts_kept_pct": 71.43
+    },
+    {
+     "id": "RLKFojtW_pI",
+     "impressions": 92,
+     "ctr": 3.26,
+     "views": 18,
+     "avd_sec": 33.842,
+     "avp": 72.0,
+     "shorts_kept_pct": 72.73
+    },
+    {
+     "id": "HxKPMPgWNns",
+     "impressions": 107,
+     "ctr": 2.8,
+     "views": 16,
+     "avd_sec": 331.653,
+     "avp": 53.67,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "6i_abQNwmv4",
+     "impressions": 70,
+     "ctr": 0.0,
+     "views": 16,
+     "avd_sec": 45.619,
+     "avp": 54.96,
+     "shorts_kept_pct": 44.44
+    },
+    {
+     "id": "Wv8ZLKchb3w",
+     "impressions": 528,
+     "ctr": 0.76,
+     "views": 15,
+     "avd_sec": 115.922,
+     "avp": 39.16,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "zzfuwQL4xas",
+     "impressions": 173,
+     "ctr": 2.31,
+     "views": 14,
+     "avd_sec": 33.906,
+     "avp": 75.35,
+     "shorts_kept_pct": 63.64
+    },
+    {
+     "id": "UI7j8RWscVM",
+     "impressions": 98,
+     "ctr": 0.0,
+     "views": 14,
+     "avd_sec": 15.0,
+     "avp": 41.67,
+     "shorts_kept_pct": 28.57
+    },
+    {
+     "id": "z8x_v0A67Lo",
+     "impressions": 60,
+     "ctr": 3.33,
+     "views": 13,
+     "avd_sec": 28.675,
+     "avp": 57.35,
+     "shorts_kept_pct": 57.14
+    },
+    {
+     "id": "fgllUwoADok",
+     "impressions": 71,
+     "ctr": 5.63,
+     "views": 12,
+     "avd_sec": 352.057,
+     "avp": 96.19,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "QxOM13dol3g",
+     "impressions": 514,
+     "ctr": 1.56,
+     "views": 11,
+     "avd_sec": 292.452,
+     "avp": 49.15,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "nW9li4lquqA",
+     "impressions": 710,
+     "ctr": 0.14,
+     "views": 10,
+     "avd_sec": 17.808,
+     "avp": 25.81,
+     "shorts_kept_pct": 60.0
+    },
+    {
+     "id": "8yUpytsxZZs",
+     "impressions": 56,
+     "ctr": 7.14,
+     "views": 9,
+     "avd_sec": 15.797,
+     "avp": 33.61,
+     "shorts_kept_pct": 57.14
+    },
+    {
+     "id": "wCK6WLrOyTc",
+     "impressions": 28,
+     "ctr": 10.71,
+     "views": 9,
+     "avd_sec": 31.686,
+     "avp": 68.88,
+     "shorts_kept_pct": 37.5
+    },
+    {
+     "id": "excvbWTRaoU",
+     "impressions": 77,
+     "ctr": 0.0,
+     "views": 9,
+     "avd_sec": 3.146,
+     "avp": 0.41,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "D-Ikp9Wo5C8",
+     "impressions": 38,
+     "ctr": 0.0,
+     "views": 9,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "5W22S3etGA0",
+     "impressions": 51,
+     "ctr": 3.92,
+     "views": 8,
+     "avd_sec": 153.017,
+     "avp": 30.85,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "bBiztCEMWYo",
+     "impressions": 32,
+     "ctr": 6.25,
+     "views": 8,
+     "avd_sec": 13.849,
+     "avp": 43.28,
+     "shorts_kept_pct": 57.14
+    },
+    {
+     "id": "XVCZ4YiXuM4",
+     "impressions": 296,
+     "ctr": 2.03,
+     "views": 8,
+     "avd_sec": 140.165,
+     "avp": 21.66,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "vCQi_5UL-VA",
+     "impressions": 41,
+     "ctr": 2.44,
+     "views": 8,
+     "avd_sec": 653.2,
+     "avp": 89.6,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "L6v68Kf9kfY",
+     "impressions": 41,
+     "ctr": 4.88,
+     "views": 7,
+     "avd_sec": 9.982,
+     "avp": 0.91,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "bfZ2Tigk920",
+     "impressions": 38,
+     "ctr": 0.0,
+     "views": 7,
+     "avd_sec": 29.6,
+     "avp": 95.48,
+     "shorts_kept_pct": 16.67
+    },
+    {
+     "id": "YHMEYEnjvj4",
+     "impressions": 44,
+     "ctr": 2.27,
+     "views": 7,
+     "avd_sec": 34.2,
+     "avp": 81.43,
+     "shorts_kept_pct": 0.0
+    },
+    {
+     "id": "O0D1GKNtotg",
+     "impressions": 26,
+     "ctr": 0.0,
+     "views": 7,
+     "avd_sec": 28.1,
+     "avp": 39.58,
+     "shorts_kept_pct": 100.0
+    },
+    {
+     "id": "mMMlVBmfAPY",
+     "impressions": 46,
+     "ctr": 4.35,
+     "views": 7,
+     "avd_sec": 98.271,
+     "avp": 25.07,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "W1vXrDSIUsk",
+     "impressions": 56,
+     "ctr": 0.0,
+     "views": 6,
+     "avd_sec": 8.9,
+     "avp": 16.48,
+     "shorts_kept_pct": 33.33
+    },
+    {
+     "id": "EI2VjyinG54",
+     "impressions": 33,
+     "ctr": 0.0,
+     "views": 5,
+     "avd_sec": 7.08,
+     "avp": 15.39,
+     "shorts_kept_pct": 100.0
+    },
+    {
+     "id": "HGrgbYs_pUE",
+     "impressions": 47,
+     "ctr": 2.13,
+     "views": 5,
+     "avd_sec": 307.288,
+     "avp": 65.24,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "Wf1ZHQnRxBc",
+     "impressions": 29,
+     "ctr": 0.0,
+     "views": 5,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "VJKTmwT2VrE",
+     "impressions": 22,
+     "ctr": 0.0,
+     "views": 5,
+     "avd_sec": 40.8,
+     "avp": 99.51,
+     "shorts_kept_pct": 16.67
+    },
+    {
+     "id": "wevsb-5h0oQ",
+     "impressions": 19,
+     "ctr": 0.0,
+     "views": 5,
+     "avd_sec": 4.1,
+     "avp": 8.72,
+     "shorts_kept_pct": 20.0
+    },
+    {
+     "id": "1hLwHAWl1eg",
+     "impressions": 19,
+     "ctr": 0.0,
+     "views": 4,
+     "avd_sec": 33.7,
+     "avp": 46.81,
+     "shorts_kept_pct": 50.0
+    },
+    {
+     "id": "RZbRBvGp86E",
+     "impressions": 34,
+     "ctr": 0.0,
+     "views": 4,
+     "avd_sec": 8.537,
+     "avp": 1.79,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "z9ENBiymvgM",
+     "impressions": 41,
+     "ctr": 0.0,
+     "views": 3,
+     "avd_sec": 16.1,
+     "avp": 5.44,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "vGmMvn9Spus",
+     "impressions": 16,
+     "ctr": 6.25,
+     "views": 3,
+     "avd_sec": 242.984,
+     "avp": 36.05,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "I784DNLgbCg",
+     "impressions": 81,
+     "ctr": 2.47,
+     "views": 3,
+     "avd_sec": 242.737,
+     "avp": 36.56,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "bzIhcplNlhQ",
+     "impressions": 44,
+     "ctr": 2.27,
+     "views": 2,
+     "avd_sec": 286.017,
+     "avp": 61.11,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "tIjdSqsmqwg",
+     "impressions": 29,
+     "ctr": 6.9,
+     "views": 2,
+     "avd_sec": 29.81,
+     "avp": 7.47,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "e7j-3IM3BaQ",
+     "impressions": 13,
+     "ctr": 0.0,
+     "views": 1,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "QODCYviW6n4",
+     "impressions": 26,
+     "ctr": 0.0,
+     "views": 1,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "aJd7zXuLESE",
+     "impressions": 14,
+     "ctr": 0.0,
+     "views": 1,
+     "avd_sec": 3.3,
+     "avp": 0.61,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "VjatPZ3xVqo",
+     "impressions": 15,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "9JU5APswxiQ",
+     "impressions": 1,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "E7F7D53Y0Is",
+     "impressions": 13,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "3xSltZE2o5c",
+     "impressions": 1,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    }
+   ]
   },
   "UC0N5pdcVXvvZ9fVqTiRKXSA": {
    "name": "밑바닥부터",
@@ -2734,11 +3706,778 @@
   },
   "UCrjSI-EYrWrxNUOEo06tS0w": {
    "name": "몸리학",
-   "ok": false,
-   "err": "채널 전환 실패(분석 화면 CHANNEL_ID=None)",
-   "total": null,
-   "traffic": [],
-   "videos": []
+   "ok": true,
+   "err": null,
+   "total": {
+    "impressions": 460926,
+    "ctr": 6.73,
+    "views": 186652,
+    "avd_sec": 112.681,
+    "avp": 39.06,
+    "watch_hours": 2513.244,
+    "subs_net": 342
+   },
+   "traffic": [
+    {
+     "key": "SHORTS",
+     "label": "Shorts 피드",
+     "impressions": null,
+     "ctr": null,
+     "views": 89368
+    },
+    {
+     "key": "SUBSCRIBER",
+     "label": "탐색 기능",
+     "impressions": 299299,
+     "ctr": 8.09,
+     "views": 78979
+    },
+    {
+     "key": "YT_SEARCH",
+     "label": "YouTube 검색",
+     "impressions": 26643,
+     "ctr": 5.28,
+     "views": 7093
+    },
+    {
+     "key": "YT_RELATED",
+     "label": "추천 동영상",
+     "impressions": 117825,
+     "ctr": 3.76,
+     "views": 5654
+    },
+    {
+     "key": "YT_CHANNEL",
+     "label": "채널 페이지",
+     "impressions": 15780,
+     "ctr": 5.9,
+     "views": 2309
+    },
+    {
+     "key": "YT_OTHER_PAGE",
+     "label": "기타 YouTube 기능",
+     "impressions": null,
+     "ctr": null,
+     "views": 1510
+    },
+    {
+     "key": "EXT_URL",
+     "label": "외부",
+     "impressions": null,
+     "ctr": null,
+     "views": 1073
+    },
+    {
+     "key": "UNKNOWN_MOBILE_OR_DIRECT",
+     "label": "직접 입력 또는 알 수 없음",
+     "impressions": null,
+     "ctr": null,
+     "views": 657
+    },
+    {
+     "key": "PLAYLIST",
+     "label": "재생목록",
+     "impressions": 1379,
+     "ctr": 3.55,
+     "views": 108
+    },
+    {
+     "key": "NOTIFICATION",
+     "label": "알림",
+     "impressions": null,
+     "ctr": null,
+     "views": 107
+    },
+    {
+     "key": "HASHTAGS",
+     "label": "해시태그 페이지",
+     "impressions": null,
+     "ctr": null,
+     "views": 4
+    },
+    {
+     "key": "SOUND_PAGE",
+     "label": "사운드 페이지",
+     "impressions": null,
+     "ctr": null,
+     "views": 4
+    },
+    {
+     "key": "SHORTS_CONTENT_LINKS",
+     "label": "Shorts 콘텐츠 링크",
+     "impressions": null,
+     "ctr": null,
+     "views": 4
+    }
+   ],
+   "videos": [
+    {
+     "id": "_tPx4O1r7gY",
+     "impressions": 237553,
+     "ctr": 6.48,
+     "views": 43739,
+     "avd_sec": 249.349,
+     "avp": 41.91,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "T7cVZB_EKxo",
+     "impressions": 72989,
+     "ctr": 7.28,
+     "views": 16095,
+     "avd_sec": 214.099,
+     "avp": 35.39,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "gmAk6qTh6fo",
+     "impressions": 46622,
+     "ctr": 7.3,
+     "views": 12127,
+     "avd_sec": 224.419,
+     "avp": 24.11,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "A-lx2q1aSXg",
+     "impressions": 44646,
+     "ctr": 8.29,
+     "views": 10164,
+     "avd_sec": 219.154,
+     "avp": 34.57,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "SNUDxCrJg4A",
+     "impressions": 13629,
+     "ctr": 5.16,
+     "views": 3826,
+     "avd_sec": 41.034,
+     "avp": 14.98,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "lotofkMX-QE",
+     "impressions": 463,
+     "ctr": 6.48,
+     "views": 3627,
+     "avd_sec": 36.235,
+     "avp": 88.38,
+     "shorts_kept_pct": 63.67
+    },
+    {
+     "id": "Nt7Z4b2t3zI",
+     "impressions": 712,
+     "ctr": 3.93,
+     "views": 3567,
+     "avd_sec": 23.884,
+     "avp": 91.86,
+     "shorts_kept_pct": 66.12
+    },
+    {
+     "id": "Gc5swBxaBto",
+     "impressions": 1331,
+     "ctr": 3.98,
+     "views": 3560,
+     "avd_sec": 33.175,
+     "avp": 132.7,
+     "shorts_kept_pct": 53.83
+    },
+    {
+     "id": "wITyI4qupak",
+     "impressions": 1229,
+     "ctr": 6.43,
+     "views": 3518,
+     "avd_sec": 30.226,
+     "avp": 77.5,
+     "shorts_kept_pct": 61.06
+    },
+    {
+     "id": "2Sn7zjCrCFc",
+     "impressions": 641,
+     "ctr": 7.33,
+     "views": 3166,
+     "avd_sec": 20.964,
+     "avp": 91.15,
+     "shorts_kept_pct": 49.79
+    },
+    {
+     "id": "5BDNu0yrHsY",
+     "impressions": 424,
+     "ctr": 6.6,
+     "views": 3085,
+     "avd_sec": 17.653,
+     "avp": 73.55,
+     "shorts_kept_pct": 50.24
+    },
+    {
+     "id": "tvUG4zF5CwQ",
+     "impressions": 2233,
+     "ctr": 11.15,
+     "views": 3023,
+     "avd_sec": 32.088,
+     "avp": 76.4,
+     "shorts_kept_pct": 60.05
+    },
+    {
+     "id": "h6M5XCYZ6aw",
+     "impressions": 5626,
+     "ctr": 6.08,
+     "views": 2500,
+     "avd_sec": 20.784,
+     "avp": 83.14,
+     "shorts_kept_pct": 62.05
+    },
+    {
+     "id": "JHAmgtwB29c",
+     "impressions": 1414,
+     "ctr": 4.46,
+     "views": 2495,
+     "avd_sec": 25.321,
+     "avp": 90.43,
+     "shorts_kept_pct": 56.45
+    },
+    {
+     "id": "6QG_FAU7IvU",
+     "impressions": 238,
+     "ctr": 1.68,
+     "views": 2391,
+     "avd_sec": 15.589,
+     "avp": 67.78,
+     "shorts_kept_pct": 51.71
+    },
+    {
+     "id": "Nr2LVnDz_gQ",
+     "impressions": 935,
+     "ctr": 6.31,
+     "views": 2367,
+     "avd_sec": 34.596,
+     "avp": 98.85,
+     "shorts_kept_pct": 72.59
+    },
+    {
+     "id": "gdm-OWQFzsg",
+     "impressions": 690,
+     "ctr": 2.9,
+     "views": 2319,
+     "avd_sec": 19.548,
+     "avp": 81.45,
+     "shorts_kept_pct": 38.88
+    },
+    {
+     "id": "GFtLKGPFPIc",
+     "impressions": 649,
+     "ctr": 3.85,
+     "views": 2286,
+     "avd_sec": 19.724,
+     "avp": 78.9,
+     "shorts_kept_pct": 44.47
+    },
+    {
+     "id": "7Wet4LSURY8",
+     "impressions": 483,
+     "ctr": 3.73,
+     "views": 2190,
+     "avd_sec": 20.979,
+     "avp": 99.9,
+     "shorts_kept_pct": 47.83
+    },
+    {
+     "id": "FGE2pSo12po",
+     "impressions": 590,
+     "ctr": 2.88,
+     "views": 2123,
+     "avd_sec": 23.294,
+     "avp": 89.59,
+     "shorts_kept_pct": 49.16
+    },
+    {
+     "id": "Ey3qm9M3nLc",
+     "impressions": 1452,
+     "ctr": 2.07,
+     "views": 1805,
+     "avd_sec": 38.011,
+     "avp": 131.07,
+     "shorts_kept_pct": 62.47
+    },
+    {
+     "id": "MKtyFYPsQkM",
+     "impressions": 626,
+     "ctr": 10.06,
+     "views": 1776,
+     "avd_sec": 34.472,
+     "avp": 76.6,
+     "shorts_kept_pct": 64.34
+    },
+    {
+     "id": "jFWlvh1e6bI",
+     "impressions": 327,
+     "ctr": 1.83,
+     "views": 1744,
+     "avd_sec": 27.693,
+     "avp": 110.77,
+     "shorts_kept_pct": 57.72
+    },
+    {
+     "id": "URdQfMKiDUs",
+     "impressions": 441,
+     "ctr": 5.22,
+     "views": 1706,
+     "avd_sec": 36.292,
+     "avp": 145.17,
+     "shorts_kept_pct": 57.6
+    },
+    {
+     "id": "675v0k1CUtc",
+     "impressions": 576,
+     "ctr": 3.99,
+     "views": 1694,
+     "avd_sec": 29.625,
+     "avp": 92.58,
+     "shorts_kept_pct": 46.95
+    },
+    {
+     "id": "o3Yiyd3IyF4",
+     "impressions": 579,
+     "ctr": 3.45,
+     "views": 1652,
+     "avd_sec": 35.054,
+     "avp": 134.82,
+     "shorts_kept_pct": 48.11
+    },
+    {
+     "id": "kHp3JEMrvAY",
+     "impressions": 286,
+     "ctr": 3.5,
+     "views": 1560,
+     "avd_sec": 30.573,
+     "avp": 78.39,
+     "shorts_kept_pct": 53.34
+    },
+    {
+     "id": "E_860YSXecc",
+     "impressions": 760,
+     "ctr": 5.13,
+     "views": 1524,
+     "avd_sec": 21.911,
+     "avp": 84.27,
+     "shorts_kept_pct": 48.41
+    },
+    {
+     "id": "M4dT5mBlQDg",
+     "impressions": 209,
+     "ctr": 2.39,
+     "views": 1519,
+     "avd_sec": 25.107,
+     "avp": 96.57,
+     "shorts_kept_pct": 46.58
+    },
+    {
+     "id": "HhjNrNfkZZ8",
+     "impressions": 477,
+     "ctr": 2.52,
+     "views": 1508,
+     "avd_sec": 19.911,
+     "avp": 79.65,
+     "shorts_kept_pct": 51.93
+    },
+    {
+     "id": "ByRuy9N0MmY",
+     "impressions": 716,
+     "ctr": 5.17,
+     "views": 1495,
+     "avd_sec": 20.475,
+     "avp": 75.83,
+     "shorts_kept_pct": 47.41
+    },
+    {
+     "id": "auualEz1eek",
+     "impressions": 198,
+     "ctr": 1.01,
+     "views": 1493,
+     "avd_sec": 23.018,
+     "avp": 88.53,
+     "shorts_kept_pct": 28.38
+    },
+    {
+     "id": "Tcbnm206pr4",
+     "impressions": 312,
+     "ctr": 5.45,
+     "views": 1463,
+     "avd_sec": 26.67,
+     "avp": 91.97,
+     "shorts_kept_pct": 46.69
+    },
+    {
+     "id": "kZvlVi1-UbQ",
+     "impressions": 331,
+     "ctr": 5.14,
+     "views": 1461,
+     "avd_sec": 24.927,
+     "avp": 77.9,
+     "shorts_kept_pct": 44.93
+    },
+    {
+     "id": "I8gvdYEqXJI",
+     "impressions": 219,
+     "ctr": 4.11,
+     "views": 1446,
+     "avd_sec": 27.087,
+     "avp": 84.65,
+     "shorts_kept_pct": 53.52
+    },
+    {
+     "id": "R4bFcopXTL8",
+     "impressions": 285,
+     "ctr": 2.81,
+     "views": 1438,
+     "avd_sec": 21.911,
+     "avp": 70.68,
+     "shorts_kept_pct": 46.53
+    },
+    {
+     "id": "cxPV9trJeco",
+     "impressions": 310,
+     "ctr": 4.19,
+     "views": 1434,
+     "avd_sec": 14.767,
+     "avp": 47.64,
+     "shorts_kept_pct": 51.22
+    },
+    {
+     "id": "jIxbKE9puOU",
+     "impressions": 389,
+     "ctr": 2.06,
+     "views": 1394,
+     "avd_sec": 18.654,
+     "avp": 77.72,
+     "shorts_kept_pct": 57.24
+    },
+    {
+     "id": "TsYUmNUkDT0",
+     "impressions": 345,
+     "ctr": 4.06,
+     "views": 1387,
+     "avd_sec": 20.921,
+     "avp": 77.48,
+     "shorts_kept_pct": 47.73
+    },
+    {
+     "id": "M8bkS0l3Ieo",
+     "impressions": 687,
+     "ctr": 3.2,
+     "views": 1385,
+     "avd_sec": 18.945,
+     "avp": 75.78,
+     "shorts_kept_pct": 32.98
+    },
+    {
+     "id": "OhAms9rdXXg",
+     "impressions": 936,
+     "ctr": 2.99,
+     "views": 1372,
+     "avd_sec": 21.671,
+     "avp": 83.35,
+     "shorts_kept_pct": 47.02
+    },
+    {
+     "id": "OEVaO3EVK1E",
+     "impressions": 390,
+     "ctr": 4.36,
+     "views": 1338,
+     "avd_sec": 31.806,
+     "avp": 138.29,
+     "shorts_kept_pct": 45.33
+    },
+    {
+     "id": "r_9TMBMOM_M",
+     "impressions": 301,
+     "ctr": 5.32,
+     "views": 1338,
+     "avd_sec": 27.21,
+     "avp": 104.66,
+     "shorts_kept_pct": 59.71
+    },
+    {
+     "id": "JokqtfBqcwc",
+     "impressions": 302,
+     "ctr": 4.97,
+     "views": 1335,
+     "avd_sec": 20.812,
+     "avp": 80.05,
+     "shorts_kept_pct": 58.18
+    },
+    {
+     "id": "meI2qCLw7Ew",
+     "impressions": 977,
+     "ctr": 3.58,
+     "views": 1330,
+     "avd_sec": 18.869,
+     "avp": 85.77,
+     "shorts_kept_pct": 44.36
+    },
+    {
+     "id": "bWnjvhZzR6w",
+     "impressions": 197,
+     "ctr": 1.52,
+     "views": 1272,
+     "avd_sec": 18.885,
+     "avp": 65.12,
+     "shorts_kept_pct": 50.04
+    },
+    {
+     "id": "F1wTX1nlDLs",
+     "impressions": 732,
+     "ctr": 6.15,
+     "views": 1264,
+     "avd_sec": 33.102,
+     "avp": 87.11,
+     "shorts_kept_pct": 45.52
+    },
+    {
+     "id": "gBXU10YsOMc",
+     "impressions": 221,
+     "ctr": 1.81,
+     "views": 1235,
+     "avd_sec": 18.096,
+     "avp": 69.6,
+     "shorts_kept_pct": 55.03
+    },
+    {
+     "id": "uTfMD3Vb1Lk",
+     "impressions": 280,
+     "ctr": 3.21,
+     "views": 1201,
+     "avd_sec": 17.918,
+     "avp": 74.66,
+     "shorts_kept_pct": 50.28
+    },
+    {
+     "id": "X1COfCw4S04",
+     "impressions": 780,
+     "ctr": 4.49,
+     "views": 1186,
+     "avd_sec": 18.381,
+     "avp": 68.08,
+     "shorts_kept_pct": 29.77
+    },
+    {
+     "id": "9t-V2pUReaA",
+     "impressions": 389,
+     "ctr": 4.37,
+     "views": 1166,
+     "avd_sec": 19.159,
+     "avp": 73.69,
+     "shorts_kept_pct": 30.66
+    },
+    {
+     "id": "B3TVSJZ9aK8",
+     "impressions": 728,
+     "ctr": 4.12,
+     "views": 1152,
+     "avd_sec": 29.887,
+     "avp": 129.94,
+     "shorts_kept_pct": 24.05
+    },
+    {
+     "id": "i-5_0UOp_B8",
+     "impressions": 230,
+     "ctr": 2.61,
+     "views": 1101,
+     "avd_sec": 17.501,
+     "avp": 72.92,
+     "shorts_kept_pct": 47.82
+    },
+    {
+     "id": "FbYVHDy3S9g",
+     "impressions": 274,
+     "ctr": 6.2,
+     "views": 1096,
+     "avd_sec": 14.383,
+     "avp": 68.49,
+     "shorts_kept_pct": 41.48
+    },
+    {
+     "id": "A3I5wFo5-sM",
+     "impressions": 358,
+     "ctr": 4.19,
+     "views": 1094,
+     "avd_sec": 16.958,
+     "avp": 70.66,
+     "shorts_kept_pct": 32.63
+    },
+    {
+     "id": "d0qjewgN1Z8",
+     "impressions": 287,
+     "ctr": 4.18,
+     "views": 711,
+     "avd_sec": 29.054,
+     "avp": 107.61,
+     "shorts_kept_pct": 33.48
+    },
+    {
+     "id": "-9noGQo5OrE",
+     "impressions": 414,
+     "ctr": 1.69,
+     "views": 703,
+     "avd_sec": 17.765,
+     "avp": 61.26,
+     "shorts_kept_pct": 25.81
+    },
+    {
+     "id": "ppQQkfaFyuE",
+     "impressions": 129,
+     "ctr": 7.75,
+     "views": 607,
+     "avd_sec": 19.71,
+     "avp": 51.87,
+     "shorts_kept_pct": 57.41
+    },
+    {
+     "id": "-s9sgTKxQL4",
+     "impressions": 2574,
+     "ctr": 8.66,
+     "views": 605,
+     "avd_sec": 87.783,
+     "avp": 57.37,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "cGxNyQygXos",
+     "impressions": 801,
+     "ctr": 5.37,
+     "views": 597,
+     "avd_sec": 21.299,
+     "avp": 81.92,
+     "shorts_kept_pct": 53.02
+    },
+    {
+     "id": "Jtnu6Lp-_8A",
+     "impressions": 452,
+     "ctr": 3.98,
+     "views": 334,
+     "avd_sec": 17.935,
+     "avp": 68.98,
+     "shorts_kept_pct": 31.42
+    },
+    {
+     "id": "75ZSb3XgMqk",
+     "impressions": 1848,
+     "ctr": 7.68,
+     "views": 305,
+     "avd_sec": 85.706,
+     "avp": 57.52,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "OlHjD0O726A",
+     "impressions": 1122,
+     "ctr": 4.46,
+     "views": 72,
+     "avd_sec": 97.716,
+     "avp": 57.82,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "iAihLEyAEKg",
+     "impressions": 155,
+     "ctr": 5.81,
+     "views": 30,
+     "avd_sec": 28.648,
+     "avp": 84.26,
+     "shorts_kept_pct": 84.21
+    },
+    {
+     "id": "tXXTjogwDaI",
+     "impressions": 191,
+     "ctr": 3.14,
+     "views": 28,
+     "avd_sec": 21.303,
+     "avp": 78.9,
+     "shorts_kept_pct": 73.68
+    },
+    {
+     "id": "77B5DIkv-T4",
+     "impressions": 4,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "LyYcysKlkrY",
+     "impressions": 4,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "ihB7UA-jevM",
+     "impressions": 3,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "KVZIGhPt5cM",
+     "impressions": 4,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "669emMZyuUs",
+     "impressions": 3,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "EnV-LzYmXnQ",
+     "impressions": 3,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "4HD3rLc8y1Y",
+     "impressions": 4,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "JUtxboFBAug",
+     "impressions": 4,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "Q4AqY2b9P8k",
+     "impressions": 3,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    }
+   ]
   },
   "UC4SccKanDerMZK3CtBZjVnQ": {
    "name": "스튜디오K",
@@ -2952,11 +4691,133 @@
   },
   "UCAy5fJTHLrG8WatQqUcJS0g": {
    "name": "새벽서랍",
-   "ok": false,
-   "err": "채널 전환 실패(분석 화면 CHANNEL_ID=None)",
-   "total": null,
-   "traffic": [],
-   "videos": []
+   "ok": true,
+   "err": null,
+   "total": {
+    "impressions": 810,
+    "ctr": 2.22,
+    "views": 69,
+    "avd_sec": 150.322,
+    "avp": 80.22,
+    "watch_hours": 2.467,
+    "subs_net": 0
+   },
+   "traffic": [
+    {
+     "key": "SUBSCRIBER",
+     "label": "탐색 기능",
+     "impressions": 41,
+     "ctr": 0.0,
+     "views": 29
+    },
+    {
+     "key": "YT_SEARCH",
+     "label": "YouTube 검색",
+     "impressions": 601,
+     "ctr": 1.33,
+     "views": 20
+    },
+    {
+     "key": "PLAYLIST",
+     "label": "재생목록",
+     "impressions": 35,
+     "ctr": 5.71,
+     "views": 6
+    },
+    {
+     "key": "YT_RELATED",
+     "label": "추천 동영상",
+     "impressions": 103,
+     "ctr": 3.88,
+     "views": 5
+    },
+    {
+     "key": "YT_CHANNEL",
+     "label": "채널 페이지",
+     "impressions": 30,
+     "ctr": 13.33,
+     "views": 4
+    },
+    {
+     "key": "YT_OTHER_PAGE",
+     "label": "기타 YouTube 기능",
+     "impressions": null,
+     "ctr": null,
+     "views": 4
+    },
+    {
+     "key": "UNKNOWN_MOBILE_OR_DIRECT",
+     "label": "직접 입력 또는 알 수 없음",
+     "impressions": null,
+     "ctr": null,
+     "views": 1
+    }
+   ],
+   "videos": [
+    {
+     "id": "plTW-jpsrgA",
+     "impressions": 140,
+     "ctr": 1.43,
+     "views": 36,
+     "avd_sec": 190.492,
+     "avp": 87.78,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "WgqooAzmskw",
+     "impressions": 377,
+     "ctr": 1.86,
+     "views": 16,
+     "avd_sec": 8.639,
+     "avp": 22.73,
+     "shorts_kept_pct": 100.0
+    },
+    {
+     "id": "WqN8r3nmnr8",
+     "impressions": 51,
+     "ctr": 11.76,
+     "views": 7,
+     "avd_sec": 100.141,
+     "avp": 50.32,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "jVlTlAJMfW0",
+     "impressions": 53,
+     "ctr": 3.77,
+     "views": 4,
+     "avd_sec": 198.375,
+     "avp": 101.73,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "C3P3dNC-dPA",
+     "impressions": 24,
+     "ctr": 0.0,
+     "views": 3,
+     "avd_sec": 179.9,
+     "avp": 90.86,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "3j_ACR8gmck",
+     "impressions": 13,
+     "ctr": 7.69,
+     "views": 3,
+     "avd_sec": 49.233,
+     "avp": 25.25,
+     "shorts_kept_pct": null
+    },
+    {
+     "id": "CO5KJxkJW2w",
+     "impressions": 154,
+     "ctr": 0.0,
+     "views": null,
+     "avd_sec": null,
+     "avp": null,
+     "shorts_kept_pct": null
+    }
+   ]
   },
   "UCbVskN7P3vwHhL2UNrfzB6A": {
    "name": "플레이트미디어",
