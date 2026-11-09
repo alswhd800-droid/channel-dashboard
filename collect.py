@@ -292,6 +292,19 @@ def rename_channels(channels, hist, money_hist, videos, alerts):
             for a in alerts["items"]:
                 if a.get("ch") == old:
                     a["ch"] = new
+            # 목표 알림 기록 키에도 채널 이름이 들어간다 → 같이 옮긴다. 안 옮기면 이름 바꾼 날 이미 지난 목표가 다시 뜬다
+            # (11-09 거인의무덤→스튜디오 이면 5건·오름→플레이트미디어 1건). 이미 다시 뜬 것은 지운다
+            seen, again = alerts["seen"], set()
+            for i, k in enumerate(seen):
+                for pre in ("subs", "chviews", "money"):
+                    if k.startswith(f"{pre}:{old}:"):
+                        seen[i] = f"{pre}:{new}:" + k[len(pre) + len(old) + 2:]
+                        if seen[i] in seen[:i] + seen[i + 1:] and pre != "money":
+                            goal = seen[i].rsplit(":", 1)[1]
+                            again.add(f"구독자 {fmt(goal)}명 돌파 🎉" if pre == "subs" else f"채널 전체 조회수 {fmt(goal)}회 돌파 🎉")
+            alerts["seen"] = list(dict.fromkeys(seen))
+            if again:
+                alerts["items"] = [a for a in alerts["items"] if not (a.get("type") == "goal" and a.get("ch") == new and a.get("title") in again)]
 
 
 def name_alias():
