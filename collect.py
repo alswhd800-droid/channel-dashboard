@@ -488,7 +488,7 @@ REACH_KEEP_DAYS = 60
 # 리포팅 API traffic_source_type 숫자 → 화면 갈래(분석 API·스튜디오 글자 키도 같은 갈래로)
 SRC_GROUP = {"3": "BROWSE", "7": "SUGGESTED", "20": "SUGGESTED", "5": "SEARCH", "4": "CHANNEL", "9": "EXTERNAL",
              "23": "SHORTS", "24": "SHORTS", "26": "SHORTS", "27": "SHORTS", "30": "SHORTS", "32": "SHORTS",
-             "SUBSCRIBER": "BROWSE", "YT_BROWSE": "BROWSE", "BROWSE": "BROWSE", "RELATED_VIDEO": "SUGGESTED", "SUGGESTED": "SUGGESTED",
+             "SUBSCRIBER": "BROWSE", "YT_BROWSE": "BROWSE", "BROWSE": "BROWSE", "RELATED_VIDEO": "SUGGESTED", "YT_RELATED": "SUGGESTED", "SUGGESTED": "SUGGESTED",
              "END_SCREEN": "SUGGESTED", "YT_SEARCH": "SEARCH", "SEARCH": "SEARCH", "SHORTS": "SHORTS", "HASHTAGS": "SHORTS",
              "SOUND_PAGE": "SHORTS", "VIDEO_REMIXES": "SHORTS", "SHORTS_CONTENT_LINKS": "SHORTS", "YT_CHANNEL": "CHANNEL",
              "CHANNEL": "CHANNEL", "EXT_URL": "EXTERNAL", "EXTERNAL": "EXTERNAL",
@@ -1316,19 +1316,20 @@ def cadence(videos, now, sched=None):
 # ---------------------------------------------------------------- 왜 안 뜨나(노출 → 클릭 → 시청 진단, 2026-11-09)
 REACH_WINDOW = 28
 SRC_ORDER = ("BROWSE", "SUGGESTED", "SEARCH", "SHORTS", "CHANNEL", "EXTERNAL", "OTHER")
-CTR_LOW, CTR_GOOD = 3.0, 5.0       # 본편 노출 클릭률 %(유튜브 고객센터: 채널·영상 절반이 2~10%)
+CTR_LOW, CTR_MID, CTR_GOOD = 3.0, 4.0, 5.0   # 본편 노출 클릭률 %(유튜브 고객센터: 채널·영상 절반이 2~10%) — 3~4%는 '아래쪽'(warn)
 SHORT_AVP_LOW, SHORT_AVP_GOOD = 60.0, 90.0
 KEPT_LOW = 55.0                    # 쇼츠 '계속 시청함' %(스튜디오에서 읽은 값만 있음)
 IMP_FEW = 300                      # 본편 한 편 28일 노출이 이보다 적으면 '노출 거의 없음'
 CH_IMP_FEW = 3000                  # 채널 본편 28일 노출 합이 이보다 적으면 채널 전체가 '노출 거의 없음'
 VERDICT = {   # 키: (꼬리표, 색)
     "ctr": ("썸네일·제목", "bad"), "drop": ("초반 이탈", "bad"), "no_imp": ("노출 거의 없음", "bad"), "few_imp": ("노출 적음", "warn"),
-    "fading": ("노출 줄어듦", "warn"), "swipe": ("첫 1초 넘김", "bad"), "short_drop": ("끝까지 안 봄", "bad"),
+    "fading": ("노출 줄어듦", "warn"), "ctr_mid": ("클릭률 아래쪽", "warn"), "swipe": ("첫 1초 넘김", "bad"), "short_drop": ("끝까지 안 봄", "bad"),
     "few_feed": ("피드에 덜 뜸", "warn"), "good": ("잘 되는 중", "good"), "ok": ("보통", ""), "early": ("판단 이름", ""),
 }
 FIX = {
     "ctr": ["썸네일 두 줄에 누가·무엇이를 넣어 1초에 뜻이 통하게(영상 봐야 아는 생략 문구 금지)",
             "제목 앞쪽에 검색어(소재어·지명·숫자)", "A/B 3개 중 이긴 쪽 방식을 다음 편 기본으로"],
+    "ctr_mid": ["썸네일 두 줄에 누가·무엇이를 넣어 1초에 뜻이 통하게", "제목 앞쪽에 검색어(소재어·지명·숫자)", "A/B 3개 중 이긴 쪽 방식을 다음 편 기본으로"],
     "drop": ["첫 30초에 결과·사건부터(쇼츠처럼), 인사·배경 설명은 뒤로", "훅 다음엔 맥락 먼저 — 누워서 들어도 따라오게",
              "스튜디오 '시청 지속 시간' 그래프에서 처음 크게 떨어지는 구간을 잘라 내기"],
     "no_imp": ["올린 뒤 첫 1~2시간 반응이 다음 노출을 정해요 — 시청자 많은 시간에 공개", "검색 수요 있는 소재(소재 추천 점수 높은 것)로",
@@ -1471,41 +1472,50 @@ def reach_view(now, info, videos, engaged):
         new_s = [v["views"] for v in videos.values() if v["ch"] == name and v["short"] and v.get("public", True)
                  and 2 <= (now - parse_time(v["published"])).total_seconds() / 86400 <= 28]
         s_ratio = round(statistics.median(new_s) / statistics.median(all_s), 2) if len(new_s) >= 3 and len(all_s) >= 6 and statistics.median(all_s) else None
-        if not recs:
-            main = None
-        elif shorts_led:
-            main = ("swipe" if kept_s is not None and kept_s < KEPT_LOW else "short_drop" if avp_s is not None and avp_s < SHORT_AVP_LOW else
-                    "few_feed" if s_ratio is not None and s_ratio < 0.5 else
-                    "good" if (avp_s or 0) >= SHORT_AVP_GOOD else "ok")
-        elif not longs:
-            main = "ok"
-        else:
-            main = ("no_imp" if imp_l < CH_IMP_FEW else "ctr" if ctr_l is not None and ctr_l < CTR_LOW else
-                    "drop" if avp_l is not None and avp_l < lo else
-                    "fading" if imp7 is not None and imp_l >= 4 * 7 and imp7 * 4 < 0.5 * imp_l else
-                    "good" if (ctr_l or 0) >= CTR_GOOD and (avp_l or 0) >= hi else "ok")
-        # 이유 한 줄(숫자로)
+        # 막힌 곳을 본편·쇼츠 둘 다 찾고, 심한 것(bad) → 주력 형식 → 깔때기 앞쪽 순으로 하나를 '막힌 곳', 나머지는 '그 밖'
         f = lambda n: fmt(n) if n is not None else "-"
-        if main == "no_imp":
-            why = f"본편 노출이 {REACH_WINDOW}일 동안 {f(imp_l)}회뿐 — 유튜브가 아직 거의 안 보여 줘요"
-            why += (f". 보여 준 것도 {ctr_l}%만 눌렀어요(보통 {CTR_LOW:g}~{CTR_GOOD:g}%)" if ctr_l is not None and ctr_l < CTR_LOW else
-                    f". 본 사람은 평균 {avp_l}%까지 봤어요" if avp_l is not None else "")
-        elif main == "ctr":
-            why = f"노출은 {f(imp_l)}회인데 클릭률 {ctr_l}% — 보여 줘도 안 눌러요(보통 {CTR_LOW:g}~{CTR_GOOD:g}%)"
-        elif main == "drop":
-            why = f"클릭률 {ctr_l}%로 눌리긴 하는데 평균 {avp_l}%만 보고 나가요 — 유튜브가 더 안 밀어 줘요(이 길이 보통 {lo:g}% 넘음)"
-        elif main == "fading":
-            why = f"최근 7일 노출 {f(imp7)}회 — {REACH_WINDOW}일 평균 속도의 {round(imp7 * 4 / imp_l * 100)}%로 줄었어요"
-        elif main == "swipe":
-            why = f"쇼츠 피드에서 {round(100 - kept_s)}%가 바로 넘겨요 — 첫 1초가 약해요"
-        elif main == "short_drop":
-            why = f"쇼츠를 평균 {avp_s}%만 보고 넘겨요 — 끝까지 보는 쇼츠가 더 밀려요"
-        elif main == "few_feed":
-            why = f"최근 쇼츠 조회가 채널 쇼츠 보통의 {round(s_ratio * 100)}% — 피드가 덜 밀어 줘요"
-        elif main == "good":
-            why = (f"쇼츠 평균 시청 {avp_s}% — 잘 되고 있어요" if shorts_led else f"클릭률 {ctr_l}% · 평균 시청 {avp_l}% — 둘 다 보통 이상이에요")
+        dom = "short" if shorts_led else "long"
+        issues = []   # (bad=0·warn=1, 형식, 순서, 키, 이유)
+        if longs:
+            if imp_l < CH_IMP_FEW:
+                issues.append((0, "long", 0, "no_imp", f"본편 노출이 {REACH_WINDOW}일 동안 {f(imp_l)}회뿐 — 유튜브가 아직 거의 안 보여 줘요"))
+            if ctr_l is not None and ctr_l < CTR_LOW:
+                issues.append((0, "long", 1, "ctr", f"본편 노출 {f(imp_l)}회 중 {ctr_l}%만 눌렀어요 — 썸네일·제목이 안 끌어요(보통 {CTR_LOW:g}~{CTR_GOOD:g}%)"))
+            elif ctr_l is not None and ctr_l < CTR_MID:
+                issues.append((1, "long", 1, "ctr_mid", f"본편 클릭률 {ctr_l}% — 보통({CTR_LOW:g}~{CTR_GOOD:g}%)의 아래쪽이라 노출이 크게 안 늘어요"))
+            if avp_l is not None and avp_l < lo:
+                issues.append((0, "long", 2, "drop", f"본편을 눌러도 평균 {avp_l}%만 보고 나가요 — 이 길이면 {lo:g}%는 넘어야 더 밀어 줘요"))
+            if imp7 is not None and imp_l >= 28 and imp7 * 4 < 0.5 * imp_l:
+                issues.append((1, "long", 5, "fading", f"최근 7일 본편 노출 {f(imp7)}회 — {REACH_WINDOW}일 평균 속도의 {round(imp7 * 4 / imp_l * 100)}%로 줄었어요"))
+        if shorts and views_s:
+            if kept_s is not None and kept_s < KEPT_LOW:
+                issues.append((0, "short", 3, "swipe", f"쇼츠는 피드에서 {round(100 - kept_s)}%가 바로 넘겨요(계속 시청 {kept_s}%) — 첫 1초가 약해요"))
+            elif avp_s is not None and avp_s < SHORT_AVP_LOW:
+                issues.append((0, "short", 4, "short_drop", f"쇼츠를 평균 {avp_s}%만 보고 넘겨요 — 끝까지 보는 쇼츠가 더 밀려요"))
+            if s_ratio is not None and s_ratio < 0.5:
+                issues.append((1, "short", 6, "few_feed", f"최근 쇼츠 조회가 채널 쇼츠 보통의 {round(s_ratio * 100)}% — 피드가 덜 밀어 줘요"))
+        issues.sort(key=lambda t: (t[0], t[1] != dom, t[2]))
+        ok_long = f"본편은 클릭률 {ctr_l}% · 평균 시청 {avp_l}%로 괜찮아요" if longs and ctr_l is not None and avp_l is not None else None
+        ok_short = f"쇼츠는 평균 시청 {avp_s}%" + (f" · 계속 시청 {kept_s}%" if kept_s is not None else "") + "로 괜찮아요" if shorts and avp_s is not None else None
+        if not recs:
+            main, why, also = None, "", []
+        elif issues:
+            main, why = issues[0][3], issues[0][4]
+            also = [t[4] for t in issues[1:3]]
+            fmts = {t[1] for t in issues}
+            if "long" not in fmts and ok_long:
+                also.append(ok_long)
+            if "short" not in fmts and ok_short:
+                also.append(ok_short)
         else:
-            why = (f"쇼츠 평균 시청 {avp_s}%" if shorts_led else f"클릭률 {ctr_l}% · 평균 시청 {avp_l}%") + " — 크게 막힌 곳은 없어요"
+            good = ((avp_s or 0) >= SHORT_AVP_GOOD) if shorts_led else ((ctr_l or 0) >= CTR_GOOD and (avp_l or 0) >= hi)
+            main = "good" if good else "ok"
+            why = ((f"쇼츠 평균 시청 {avp_s}%" + (f" · 계속 시청 {kept_s}%" if kept_s is not None else "")) if shorts_led
+                   else f"본편 클릭률 {ctr_l}% · 평균 시청 {avp_l}%") + (" — 잘 되고 있어요" if good else " — 크게 막힌 곳은 없어요")
+            also = [x for x in ((ok_long if shorts_led else ok_short),) if x]
+        fix = list(FIX.get(main, []))
+        if issues[1:] and issues[1][3] != main and FIX.get(issues[1][3]):
+            fix.append(FIX[issues[1][3]][0])
         src_l = sorted(([g, a[0], _pct(a[1], a[0], 2)] for g, a in src.items() if a[0]), key=lambda t: SRC_ORDER.index(t[0]) if t[0] in SRC_ORDER else 99)
         pool = [x for x in longs if x["imp"] >= 1000 and x["ctr"] is not None]
         best = max(pool, key=lambda x: x["ctr"], default=None)
@@ -1513,7 +1523,7 @@ def reach_view(now, info, videos, engaged):
         cnt = {}
         for x in recs:
             cnt[x["v"]] = cnt.get(x["v"], 0) + 1
-        out_ch[name] = {"ok": True, "basis": basis, "main": main, "why": why, "fix": FIX.get(main, []), "shorts_led": shorts_led,
+        out_ch[name] = {"ok": True, "basis": basis, "main": main, "why": why, "also": also, "fix": fix, "shorts_led": shorts_led,
                         "imp": imp_l, "ctr": ctr_l, "imp7": imp7, "avp": avp_l, "views": views_l, "n_long": len(longs),
                         "views_s": views_s, "avp_s": avp_s, "kept_s": kept_s, "n_short": len(shorts), "s_ratio": s_ratio,
                         "src": src_l, "count": cnt,

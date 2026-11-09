@@ -119,6 +119,7 @@ select { font: inherit; font-size: 13px; padding: 6px 28px 6px 10px; border-radi
 .diaggrid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
 .diag .card-h { margin-bottom: 4px; align-items: center; }
 .diag .why { font-weight: 650; font-size: 14px; line-height: 1.5; margin: 4px 0 10px; }
+.diag .also { color: var(--ink-2); font-size: 12.5px; margin: -4px 0 10px; line-height: 1.55; }
 .diag .nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .diag .nums > div { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; min-width: 0; }
 .diag .nums .k { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -962,6 +963,7 @@ function diagCard(name, r) {
   const more = !sl && r.n_short ? ` · 쇼츠 ${r.n_short}편 평균 시청 ${r.avp_s == null ? "-" : pctf(r.avp_s)}` : sl && r.n_long ? ` · 본편 ${r.n_long}편 노출 ${man(r.imp)} · 클릭률 ${r.ctr == null ? "-" : pctf(r.ctr)}` : "";
   return `<div class="card diag"><div class="card-h">${head}${vTag(r.main)}</div>
     <div class="why">${esc(r.why)}</div>
+    ${(r.also || []).length ? `<div class="also">${r.also.map(t => `<div>· ${esc(t)}</div>`).join("")}</div>` : ""}
     <div class="nums">${nums.map(([k, v]) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join("")}</div>
     ${src.length ? `<div class="hint" style="margin-top:12px">노출이 어디서 났나</div>${shareBar(src)}` : ""}
     ${ex("잘 눌림", r.best)}${ex("안 눌림", r.worst)}
@@ -990,7 +992,7 @@ function pageDiag() {
   okN.forEach(n => { const k = C[n].main; if (k) cnt[k] = (cnt[k] || 0) + 1; });
   const summary = Object.entries(cnt).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${esc((V[k] || [k])[0])} ${n}곳`).join(" · ");
   const ch = okN.includes(S.dch) ? S.dch : "all", type = S.dtype || "all", per = String(S.dper || "60"), sort = S.dsort || "imp";
-  const BAD = { ctr: 0, drop: 1, no_imp: 2, swipe: 3, short_drop: 4, few_imp: 5, few_feed: 6, fading: 7, ok: 8, good: 9 };
+  const BAD = { ctr: 0, drop: 1, no_imp: 2, swipe: 3, short_drop: 4, few_imp: 5, few_feed: 6, fading: 7, ctr_mid: 8, ok: 9, good: 10 };
   const order = { imp: (a, b) => (b.imp || 0) - (a.imp || 0) || (b.views || 0) - (a.views || 0),
     ctr: (a, b) => (a.short - b.short) || ((a.ctr ?? 999) - (b.ctr ?? 999)), bad: (a, b) => (BAD[a.v] ?? 9) - (BAD[b.v] ?? 9) || (b.imp || 0) - (a.imp || 0) };
   const list = (R.videos || []).filter(v => (ch === "all" || v.ch === ch) && (type === "all" || (type === "short") === v.short) && (per === "all" || v.age <= +per) && v.v !== "early")
