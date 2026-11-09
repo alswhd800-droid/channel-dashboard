@@ -543,8 +543,8 @@ def scan_done(c):
         try:
             if p.is_dir():
                 for x in sorted(p.iterdir()):
-                    if x.is_dir() and re.match(r"^\d", x.name):
-                        nm = re.sub(r"^\d+[-_ ]*", "", x.name).replace("_", " ")
+                    if x.is_dir() and re.match(r"^[ES]?\d", x.name):   # 단계엔진 편은 E09_·S01_ (11-09 밑바닥부터)
+                        nm = re.sub(r"^[ES]?\d+[-_ ]*", "", x.name).replace("_", " ")
                         st = x.stat()   # 만든 날 = 편 폴더가 생긴 날(맥 st_birthtime, 없으면 수정 시각)
                         day = datetime.fromtimestamp(getattr(st, "st_birthtime", st.st_mtime), KST).strftime("%Y-%m-%d")
                         names.append(nm)
