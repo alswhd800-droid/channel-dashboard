@@ -1,12 +1,12 @@
 [
   {"name": "거대한비밀", "id": "UCvv5gDOhB164Ao_IB2zC0nA", "handles": ["@거대한비밀"]},
   {"name": "논스킵", "id": "UCTW1Dy2mEpRWAdZ12qVVL8A", "handles": ["@논스킵"], "old_names": ["돈구"]},
-  {"name": "거인의무덤", "id": "UCiQOGLTz89s8ZhWGxMp1JfA", "handles": ["@거인의무덤"]},
-  {"name": "라스트 씬", "id": "UCIzgGbqF2jLRcdk1DCkj2EQ", "handles": ["@lastscene_drama"], "old_names": ["역사의급소"]},
+  {"name": "스튜디오 이면", "id": "UCiQOGLTz89s8ZhWGxMp1JfA", "handles": ["@스튜디오이면", "@거인의무덤"], "old_names": ["거인의무덤"]},
+  {"name": "밑바닥부터", "id": "UC0N5pdcVXvvZ9fVqTiRKXSA", "handles": ["@mitbadakbuteo"]},
   {"name": "몸리학", "id": "UCrjSI-EYrWrxNUOEo06tS0w", "handles": ["@momrihak"]},
-  {"name": "오름", "id": "UCbVskN7P3vwHhL2UNrfzB6A", "handles": ["@oreum_korea"]},
+  {"name": "스튜디오K", "id": "UC4SccKanDerMZK3CtBZjVnQ", "handles": ["@studiok_official"]},
   {"name": "새벽서랍", "id": "UCAy5fJTHLrG8WatQqUcJS0g", "handles": ["@새벽서랍dawn"], "old_names": ["낮달DAYMOON"]},
-  {"name": "지도 한 장", "id": "UCsTSuSVSSrRkBp9HpaBhsaQ", "handles": ["@jidohanjang"]},
-  {"name": "시술백과", "id": "UCCbtZv--gwZNVVGovQl2KBg", "handles": ["@시술백과"]},
+  {"name": "플레이트미디어", "id": "UCbVskN7P3vwHhL2UNrfzB6A", "handles": ["@플레이트미디어", "@oreum_korea"], "old_names": ["오름"]},
+  {"name": "메디스튜디오", "id": "UCCbtZv--gwZNVVGovQl2KBg", "handles": ["@메디스튜디오", "@시술백과"], "old_names": ["시술백과"]},
   {"name": "동네검증단", "id": "UCglHOESio_m6yd-kkKZ9mzg", "handles": ["@동네검증단"], "old_names": ["필요한법"]}
 ]

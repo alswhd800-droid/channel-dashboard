@@ -294,6 +294,15 @@ def rename_channels(channels, hist, money_hist, videos, alerts):
                     a["ch"] = new
 
 
+def name_alias():
+    """channels.json old_names → 지금 이름. 맥 쪽 파일(제작비·소재 추천·업로드 일정)은 옛 이름을 그대로 쓸 수 있어서(11-09 채널 개편)"""
+    try:
+        chans = json.loads((ROOT / "channels.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return {o: e["name"] for e in chans for o in e.get("old_names", [])}
+
+
 # ---------------------------------------------------------------- 수집
 
 # ---------------------------------------------------------------- 유효 조회수(유튜브 분석 API)
@@ -463,6 +472,159 @@ def collect_audience(now, info):
         out["channels"][c["name"]] = r
     save("audience.json", out)
     print("· 시청자 분석: " + ", ".join(f"{n} {'✔' if r.get('ok') else r.get('err')}" for n, r in out["channels"].items()))
+
+
+# ---------------------------------------------------------------- 썸네일 노출수·노출 클릭률(2026-11-09)
+#   사용자 "클릭이 왜안나오고.. 썸네일 노출이 얼마고 이런거까지 왜 영상이안뜨는거까지 다분석해ㅓ대시보드 보이게해줘"
+#   분석 API(질의형)에는 노출수가 없다(videoThumbnailImpressions 는 '지원 안 하는 질의', 11-09 시험) → 리포팅 API 도달 보고서.
+#   채널마다 작업(job)을 한 번 만들면 유튜브가 만든 날 전 30일치 + 매일 하루치 CSV 를 쌓아 둔다(첫 보고서는 48시간 안).
+#   basic = 날짜·영상별 노출·클릭률 · combined = 거기에 트래픽 소스(탐색·추천·검색·쇼츠…) → 소스별로만 합쳐 둔다.
+#   작업은 그 채널 토큰으로만 만들 수 있다(관리자 토큰은 자기 채널 작업만) → 채널마다 유효조회수_연결.py 로 한 번 허용.
+#   보고서가 아직 없는 채널은 스튜디오에서 읽어 둔 값(reach/studio_*.json, 브라우저 에이전트가 읽기만)으로 채운다.
+REPORTING_API = "https://youtubereporting.googleapis.com/v1/"
+REACH_TYPES = {"basic": "channel_reach_basic_a1", "combined": "channel_reach_combined_a1"}
+REACH_EVERY_HOURS = 6
+REACH_KEEP_DAYS = 60
+# 리포팅 API traffic_source_type 숫자 → 화면 갈래(분석 API·스튜디오 글자 키도 같은 갈래로)
+SRC_GROUP = {"3": "BROWSE", "7": "SUGGESTED", "20": "SUGGESTED", "5": "SEARCH", "4": "CHANNEL", "9": "EXTERNAL",
+             "23": "SHORTS", "24": "SHORTS", "26": "SHORTS", "27": "SHORTS", "30": "SHORTS", "32": "SHORTS",
+             "SUBSCRIBER": "BROWSE", "YT_BROWSE": "BROWSE", "BROWSE": "BROWSE", "RELATED_VIDEO": "SUGGESTED", "SUGGESTED": "SUGGESTED",
+             "END_SCREEN": "SUGGESTED", "YT_SEARCH": "SEARCH", "SEARCH": "SEARCH", "SHORTS": "SHORTS", "HASHTAGS": "SHORTS",
+             "SOUND_PAGE": "SHORTS", "VIDEO_REMIXES": "SHORTS", "SHORTS_CONTENT_LINKS": "SHORTS", "YT_CHANNEL": "CHANNEL",
+             "CHANNEL": "CHANNEL", "EXT_URL": "EXTERNAL", "EXTERNAL": "EXTERNAL",
+             "탐색 기능": "BROWSE", "추천 동영상": "SUGGESTED", "YouTube 검색": "SEARCH", "Shorts 피드": "SHORTS", "채널 페이지": "CHANNEL",
+             "외부": "EXTERNAL", "최종 화면": "SUGGESTED"}
+
+
+def src_group(key):
+    return SRC_GROUP.get(str(key).strip(), "OTHER")
+
+
+def _rep(token, path, method="GET", body=None, **params):
+    url = REPORTING_API + path + ("?" + urllib.parse.urlencode(params) if params else "")
+    head = {"Authorization": "Bearer " + token, **({"Content-Type": "application/json"} if body is not None else {})}
+    req = urllib.request.Request(url, method=method, data=json.dumps(body).encode() if body is not None else None, headers=head)
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.load(r)
+
+
+def _rep_all(token, path, key, **params):
+    out, page = [], None
+    while True:
+        r = _rep(token, path, **params, **({"pageToken": page} if page else {}))
+        out += r.get(key) or []
+        page = r.get("nextPageToken")
+        if not page:
+            return out
+
+
+def _rep_csv(token, url):
+    import csv, gzip, io
+    with urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": "Bearer " + token}), timeout=180) as r:
+        raw = r.read()
+    if raw[:2] == b"\x1f\x8b":
+        raw = gzip.decompress(raw)
+    return list(csv.DictReader(io.StringIO(raw.decode("utf-8-sig"))))
+
+
+def _clicks(imp, ctr):
+    """CTR 칸은 '노출 중 클릭 비율' — 0~1 비율로 오면 그대로, 1 넘는 값(%)이면 100으로 나눠 클릭 수로"""
+    ctr = float(ctr or 0)
+    return imp * (ctr / 100 if ctr > 1 else ctr)
+
+
+def collect_reach(now, info):
+    old = load("reach.json", {})
+    auth = engaged_auth()
+    keys = sorted((auth or {}).get("tokens") or {})
+    oc = old.get("channels") or {}
+    # 토큰이 있는데 막혔거나(API 꺼짐 등) 첫 보고서를 기다리는 채널이 있으면 1시간마다, 다 받고 있으면 6시간마다
+    wait = any(not (oc.get(c["name"]) or {}).get("ok") or not (oc.get(c["name"]) or {}).get("vd") for c in info if c["id"] in keys)
+    if (old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=1 if wait else REACH_EVERY_HOURS) and old.get("keys") == keys
+            and {c["name"] for c in info} <= set(oc)):
+        return
+    access = access_tokens(auth) if auth else {}
+    if not access:
+        return
+    cut = (now - timedelta(days=REACH_KEEP_DAYS)).strftime("%Y-%m-%d")
+    end, s28 = now.strftime("%Y-%m-%d"), (now - timedelta(days=28)).strftime("%Y-%m-%d")
+    out = {"at": now.isoformat(timespec="minutes"), "keys": keys, "channels": {}}
+    for c in info:
+        prev = (old.get("channels") or {}).get(c["name"]) or {}
+        r = {k: dict(prev.get(k) or {}) for k in ("jobs", "seen", "vd", "sd", "vs")}
+        r.update(ok=False, err="연결 안 됨 — 이 채널로 한 번 허용 필요", since=prev.get("since"), v28=prev.get("v28") or {}, reports=prev.get("reports", 0))
+        tok = access.get(c["id"])
+        if tok:
+            try:
+                jobs = {j["reportTypeId"]: j for j in _rep_all(tok, "jobs", "jobs")}
+                for k, t in REACH_TYPES.items():
+                    if t not in jobs:
+                        jobs[t] = _rep(tok, "jobs", "POST", {"reportTypeId": t, "name": f"channel-dashboard {k}"})
+                        print(f"· 노출 보고서 작업 만듦: {c['name']} {k}")
+                    r["jobs"][k] = jobs[t]["id"]
+                r["since"] = min(jobs[t].get("createTime") or now.isoformat() for t in REACH_TYPES.values())
+                for k in REACH_TYPES:
+                    reps = _rep_all(tok, f"jobs/{r['jobs'][k]}/reports", "reports", **({"createdAfter": r["seen"][k]} if r["seen"].get(k) else {}))
+                    for rep in sorted(reps, key=lambda x: x.get("createTime", "")):
+                        rows = _rep_csv(tok, rep["downloadUrl"])
+                        per_day = {}
+                        for x in rows:
+                            day = x.get("date", "")
+                            day = f"{day[:4]}-{day[4:6]}-{day[6:8]}" if len(day) == 8 else rep["startTime"][:10]
+                            imp = int(float(x.get("video_thumbnail_impressions") or 0))
+                            if not imp:
+                                continue
+                            clk = _clicks(imp, x.get("video_thumbnail_impressions_ctr"))
+                            d = per_day.setdefault(day, {})
+                            if k == "basic":
+                                a = d.setdefault(x.get("video_id", ""), [0, 0.0])
+                                a[0] += imp; a[1] += clk
+                            else:
+                                g = src_group(x.get("traffic_source_type"))
+                                a = d.setdefault("_ch", {}).setdefault(g, [0, 0.0])
+                                a[0] += imp; a[1] += clk
+                                b = d.setdefault(x.get("video_id", ""), {}).setdefault(g, [0, 0.0])
+                                b[0] += imp; b[1] += clk
+                        if not rows:   # 그날 노출 0 이어도 '받은 날'로 남긴다(다시 받지 않게)
+                            per_day.setdefault(rep["startTime"][:10], {})
+                        for day, d in per_day.items():   # 같은 날 보고서가 다시 오면(보정) 새 것으로 바꾼다
+                            if k == "basic":
+                                r["vd"][day] = {v: [a[0], round(a[1], 2)] for v, a in d.items()}
+                            else:
+                                r["sd"][day] = {g: [a[0], round(a[1], 2)] for g, a in (d.pop("_ch", {}) or {}).items()}
+                                r["vs"][day] = {v: {g: [a[0], round(a[1], 2)] for g, a in gs.items()} for v, gs in d.items()}
+                        r["seen"][k] = rep.get("createTime") or r["seen"].get(k)
+                        r["reports"] = r.get("reports", 0) + 1
+                r.update(ok=True, err=None)
+            except urllib.error.HTTPError as e:
+                body = e.read().decode("utf-8", "replace")[:400]
+                r["err"] = ("리포팅 API 꺼짐 — 구글 클라우드에서 켜야 함" if "has not been used" in body or "disabled" in body
+                            else "권한 없음 — 이 채널로 다시 허용 필요" if e.code in (401, 403) else f"리포팅 API 오류 {e.code}")
+            except (urllib.error.URLError, KeyError, ValueError) as e:
+                r["err"] = f"리포팅 API 연결 실패 {type(e).__name__}"
+        for k in ("vd", "sd", "vs"):
+            r[k] = {d: v for d, v in r[k].items() if d >= cut}
+        # 노출과 같은 기간의 영상별 조회·평균 시청(분석 API — 관리자 토큰도 됨)
+        for key in ([c["id"]] if c["id"] in access else []) + [k for k in access if k != c["id"]]:
+            got = None
+            for _ in range(2):   # 가끔 500·연결 끊김이 한 번씩 난다(11-09 몸리학) → 한 번 더
+                try:
+                    got = _analytics(access[key], c["id"], s28, end, "views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage",
+                                     dimensions="video", sort="-views", maxResults=200).get("rows") or []
+                    break
+                except urllib.error.HTTPError as e:
+                    if e.code in (401, 403):
+                        break
+                    time.sleep(2)
+                except urllib.error.URLError:
+                    time.sleep(2)
+            if got is not None:
+                r["v28"] = {vid: [int(v), int(m), int(d), round(float(p), 1)] for vid, v, m, d, p in got}
+                r["v28_from"] = s28
+                break
+        out["channels"][c["name"]] = r
+    save("reach.json", out)
+    print("· 노출 보고서: " + ", ".join(f"{n} {str(len(r['vd'])) + '일치' if r['ok'] else r['err'][:14]}" for n, r in out["channels"].items()))
 
 
 # ---------------------------------------------------------------- 인스타(메타 공식 API, 2026-10-22)
@@ -774,6 +936,10 @@ def collect():
     except Exception as e:
         print(f"! 시청자 분석 실패: {type(e).__name__}")
     try:
+        collect_reach(now, info)
+    except Exception as e:
+        print(f"! 노출 보고서 실패: {type(e).__name__}")
+    try:
         collect_insta(now)
     except Exception as e:
         print(f"! 인스타 실패: {type(e).__name__}")
@@ -876,8 +1042,9 @@ def load_costs(chans):
     import unicodedata
     nfc = lambda x: unicodedata.normalize("NFC", x)
     views = {nfc(x["name"]): (x["shorts_views"] + x["long_views"]) for x in chans}
+    alias = name_alias()
     for ch in c.get("채널", []):
-        ch["name"] = nfc(ch["name"])
+        ch["name"] = alias.get(nfc(ch["name"]), nfc(ch["name"]))
         v = views.get(ch["name"])
         ch["조회수"] = v
         ch["천회당krw"] = round(ch["합계krw"] / v * 1000) if v else None
@@ -906,6 +1073,8 @@ def load_topics():
         d = json.loads(p.read_text(encoding="utf-8"))
     except Exception:
         return None
+    alias = name_alias()
+    d["channels"] = {alias.get(k, k): v for k, v in (d.get("channels") or {}).items()}
     hist, hp = {}, ROOT / "topics" / "history.jsonl"
     if hp.exists():
         for line in hp.read_text(encoding="utf-8").splitlines():
@@ -913,7 +1082,7 @@ def load_topics():
                 r = json.loads(line)
             except Exception:
                 continue
-            hist.setdefault(r.get("channel"), []).append({"at": r.get("at"), "topics": [
+            hist.setdefault(alias.get(r.get("channel"), r.get("channel")), []).append({"at": r.get("at"), "topics": [
                 {k: t.get(k) for k in ("소재", "제목", "총점", "최신", "갈래") if t.get(k) is not None} for t in r.get("topics", [])]})
         for ch in list(hist):
             cur = ((d.get("channels") or {}).get(ch) or {}).get("at")
@@ -1075,6 +1244,9 @@ def schedule(videos, now):
     예약 영상은 비공개라 API 키로는 안 보여서 기록을 쓴다. 공개된 영상은 화면이 videos 에서 바로 그린다.
     st: 예약(ID 있음·시각 전) · 공개중(시각이 막 지남 — 다음 수집 때 잡힘) · 계획(ID 없음 = 기록상 아직 안 올림) · 확인(시각이 지났는데 공개로 안 잡힘)"""
     S = read_json(ROOT / "schedule.json", {})
+    alias = name_alias()
+    for x in S.get("items") or []:
+        x["ch"] = alias.get(x.get("ch"), x.get("ch"))
     pub = {}
     for v in videos.values():
         if v.get("public", True):
@@ -1139,6 +1311,218 @@ def cadence(videos, now, sched=None):
                      "n28": sum(sum(x) for x in count.values()), "cal": [count.get(d, [0, 0]) for d in dates],
                      "next": nb[0] if nb else None, "until": nb[-1] if nb else None, "booked": len(nb)})
     return {"dates": dates, "rows": rows}
+
+
+# ---------------------------------------------------------------- 왜 안 뜨나(노출 → 클릭 → 시청 진단, 2026-11-09)
+REACH_WINDOW = 28
+SRC_ORDER = ("BROWSE", "SUGGESTED", "SEARCH", "SHORTS", "CHANNEL", "EXTERNAL", "OTHER")
+CTR_LOW, CTR_GOOD = 3.0, 5.0       # 본편 노출 클릭률 %(유튜브 고객센터: 채널·영상 절반이 2~10%)
+SHORT_AVP_LOW, SHORT_AVP_GOOD = 60.0, 90.0
+KEPT_LOW = 55.0                    # 쇼츠 '계속 시청함' %(스튜디오에서 읽은 값만 있음)
+IMP_FEW = 300                      # 본편 한 편 28일 노출이 이보다 적으면 '노출 거의 없음'
+CH_IMP_FEW = 3000                  # 채널 본편 28일 노출 합이 이보다 적으면 채널 전체가 '노출 거의 없음'
+VERDICT = {   # 키: (꼬리표, 색)
+    "ctr": ("썸네일·제목", "bad"), "drop": ("초반 이탈", "bad"), "no_imp": ("노출 거의 없음", "bad"), "few_imp": ("노출 적음", "warn"),
+    "fading": ("노출 줄어듦", "warn"), "swipe": ("첫 1초 넘김", "bad"), "short_drop": ("끝까지 안 봄", "bad"),
+    "few_feed": ("피드에 덜 뜸", "warn"), "good": ("잘 되는 중", "good"), "ok": ("보통", ""), "early": ("판단 이름", ""),
+}
+FIX = {
+    "ctr": ["썸네일 두 줄에 누가·무엇이를 넣어 1초에 뜻이 통하게(영상 봐야 아는 생략 문구 금지)",
+            "제목 앞쪽에 검색어(소재어·지명·숫자)", "A/B 3개 중 이긴 쪽 방식을 다음 편 기본으로"],
+    "drop": ["첫 30초에 결과·사건부터(쇼츠처럼), 인사·배경 설명은 뒤로", "훅 다음엔 맥락 먼저 — 누워서 들어도 따라오게",
+             "스튜디오 '시청 지속 시간' 그래프에서 처음 크게 떨어지는 구간을 잘라 내기"],
+    "no_imp": ["올린 뒤 첫 1~2시간 반응이 다음 노출을 정해요 — 시청자 많은 시간에 공개", "검색 수요 있는 소재(소재 추천 점수 높은 것)로",
+               "쇼츠에 본편을 '관련 동영상'으로 묶어 끌어오기"],
+    "few_imp": ["잘 된 편과 같은 갈래의 소재로 다음 편", "올린 시간·요일을 잘 된 편과 맞추기", "쇼츠에서 본편으로 끌어오기"],
+    "fading": ["올리는 간격이 벌어졌는지 확인(업로드 일정)", "잘 된 편과 같은 갈래의 다음 소재", "예전 인기 편 제목·썸네일 새로 고치기"],
+    "swipe": ["첫 1초에 움직임·결과(글자 설명은 그 뒤)", "첫 문장은 질문 말고 사건으로", "첫 화면 제목판에 무슨 일인지 한 줄"],
+    "short_drop": ["중간 설명을 덜어 길이 줄이기", "끝에 반전·숫자 하나 남기기", "끝과 처음이 이어지게(다시 보기)"],
+    "few_feed": ["첫 1초·첫 문장을 더 세게", "같은 갈래로 연달아 올려 피드 시험 늘리기", "잘 된 쇼츠의 첫 장면 방식 따라 하기"],
+    "good": ["지금 방식 유지 — 잘 된 편의 썸네일·첫 문장을 다음 편 기준으로"],
+    "ok": ["클릭률·시청률 중 낮은 쪽부터 손보기"],
+}
+
+
+def avp_band(dur):
+    """본편 평균 조회율 기준(낮음, 좋음) — 길수록 끝까지 보는 비율이 낮은 게 보통"""
+    return (25.0, 40.0) if dur >= 600 else (30.0, 45.0) if dur >= 240 else (40.0, 55.0)
+
+
+def studio_snapshot():
+    """브라우저 에이전트가 스튜디오에서 읽어 둔 노출·클릭률(가장 최근 파일). 리포팅 API 보고서가 아직 없는 채널에만 쓴다"""
+    for f in sorted((ROOT / "reach").glob("studio_*.json"), reverse=True):
+        try:
+            return json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+    return {}
+
+
+def _pct(a, b, d=1):
+    return round(a / b * 100, d) if b else None
+
+
+def reach_view(now, info, videos, engaged):
+    R, snap = load("reach.json", {}), studio_snapshot()
+    snap_ch = {}
+    for cid, x in (snap.get("channels") or {}).items():
+        nm = next((c["name"] for c in info if c["id"] == cid), None)
+        if nm and x.get("ok") and (x.get("videos") or x.get("total")):
+            snap_ch[nm] = x
+    ev = engaged.get("videos") or {}
+    out_ch, out_v = {}, []
+    for c in info:
+        name, r = c["name"], (R.get("channels") or {}).get(c["name"]) or {}
+        days = sorted(r.get("vd") or {})
+        per, src = {}, {}
+        if days:
+            last = days[-1]
+            start = (datetime.fromisoformat(last) - timedelta(days=REACH_WINDOW - 1)).strftime("%Y-%m-%d")
+            d7 = (datetime.fromisoformat(last) - timedelta(days=6)).strftime("%Y-%m-%d")
+            for d in days:
+                if d < start:
+                    continue
+                for vid, (imp, clk) in r["vd"][d].items():
+                    q = per.setdefault(vid, {"imp": 0, "clk": 0.0, "imp7": 0, "src": {}})
+                    q["imp"] += imp
+                    q["clk"] += clk
+                    q["imp7"] += imp if d >= d7 else 0
+            for d, vs in (r.get("vs") or {}).items():
+                for vid, gs in (vs.items() if d >= start else []):
+                    for g, (imp, clk) in gs.items():
+                        a = per.setdefault(vid, {"imp": 0, "clk": 0.0, "imp7": 0, "src": {}})["src"].setdefault(g, [0, 0.0])
+                        a[0] += imp
+                        a[1] += clk
+            for d, gs in (r.get("sd") or {}).items():
+                for g, (imp, clk) in (gs.items() if d >= start else []):
+                    a = src.setdefault(g, [0, 0.0])
+                    a[0] += imp
+                    a[1] += clk
+            for vid, (views, mins, avd, avp) in (r.get("v28") or {}).items():
+                q = per.setdefault(vid, {"imp": 0, "clk": 0.0, "imp7": 0, "src": {}})
+                q.update(views=views, avd=avd, avp=avp)
+            basis = {"kind": "api", "start": start, "end": last, "at": R.get("at")}
+        elif name in snap_ch:
+            x = snap_ch[name]
+            for v in x.get("videos") or []:
+                imp = v.get("impressions") or 0
+                per[v["id"]] = {"imp": imp, "clk": imp * (v.get("ctr") or 0) / 100, "imp7": None, "src": {},
+                                "views": v.get("views"), "avd": v.get("avd_sec"), "avp": v.get("avp"), "kept": v.get("shorts_kept_pct")}
+            for t in x.get("traffic") or []:
+                imp = t.get("impressions") or 0
+                a = src.setdefault(src_group(t.get("key") or t.get("label")), [0, 0.0])
+                a[0] += imp
+                a[1] += imp * (t.get("ctr") or 0) / 100
+            P = snap.get("period") or {}
+            basis = {"kind": "studio", "start": P.get("start"), "end": P.get("end"), "at": snap.get("at")}
+        else:
+            out_ch[name] = {"ok": False, "why": r.get("err") if r.get("err") and not r.get("ok") else
+                            "노출 보고서 준비 중 — 작업을 만든 뒤 48시간 안에 처음 나와요" if r.get("ok") else "아직 수집 전", "since": r.get("since")}
+            continue
+        recs = []
+        for vid, q in per.items():
+            v = videos.get(vid)
+            if not v or v["ch"] != name:
+                continue
+            age = (now - parse_time(v["published"])).total_seconds() / 86400
+            avp = q.get("avp")
+            if avp is None and vid in ev:
+                avp = ev[vid].get("avp")
+            x = {"id": vid, "ch": name, "title": v["title"], "thumb": v["thumb"], "short": bool(v["short"]), "dur": v["dur"],
+                 "published": parse_time(v["published"]).astimezone(KST).strftime("%Y-%m-%d"), "age": round(age, 1),
+                 "imp": q["imp"], "clk": round(q["clk"], 1), "ctr": _pct(q["clk"], q["imp"], 2), "imp7": q.get("imp7"),
+                 "views": q.get("views"), "avd": q.get("avd"), "avp": avp, "kept": q.get("kept"),
+                 "top_src": max(q["src"].items(), key=lambda t: t[1][0])[0] if q["src"] else None,
+                 "url": f"https://www.youtube.com/{'shorts/' if v['short'] else 'watch?v='}{vid}"}
+            recs.append(x)
+        longs = [x for x in recs if not x["short"]]
+        shorts = [x for x in recs if x["short"]]
+        med_imp = statistics.median([x["imp"] for x in longs if x["age"] >= 7]) if [x for x in longs if x["age"] >= 7] else None
+        med_sv = statistics.median([x["views"] for x in shorts if x.get("views") is not None]) if [x for x in shorts if x.get("views") is not None] else None
+        for x in recs:   # 영상 한 편마다 어디서 막혔나
+            if x["short"]:
+                k = ("swipe" if x["kept"] is not None and x["kept"] < KEPT_LOW else
+                     "short_drop" if x["avp"] is not None and x["avp"] < SHORT_AVP_LOW else
+                     "few_feed" if med_sv and x.get("views") is not None and x["views"] < 0.4 * med_sv and len(shorts) >= 4 else
+                     "good" if x["avp"] is not None and x["avp"] >= SHORT_AVP_GOOD and (x["kept"] is None or x["kept"] >= 70) else "ok")
+            else:
+                lo, hi = avp_band(x["dur"])
+                k = ("early" if x["age"] < 2 else "no_imp" if x["imp"] < IMP_FEW else
+                     "ctr" if x["ctr"] is not None and x["ctr"] < CTR_LOW else
+                     "drop" if x["avp"] is not None and x["avp"] < lo else
+                     "few_imp" if med_imp and x["imp"] < 0.4 * med_imp and len(longs) >= 4 else
+                     "good" if (x["ctr"] or 0) >= CTR_GOOD and (x["avp"] or 0) >= hi else "ok")
+            x["v"] = k
+        imp_l, clk_l = sum(x["imp"] for x in longs), sum(x["clk"] for x in longs)
+        vw_l = [x for x in longs if x.get("views") and x["avp"] is not None]
+        avp_l = round(sum(x["avp"] * x["views"] for x in vw_l) / sum(x["views"] for x in vw_l), 1) if vw_l else None
+        vw_s = [x for x in shorts if x.get("views") and x["avp"] is not None]
+        avp_s = round(sum(x["avp"] * x["views"] for x in vw_s) / sum(x["views"] for x in vw_s), 1) if vw_s else None
+        kp = [x for x in shorts if x.get("views") and x["kept"] is not None]
+        kept_s = round(sum(x["kept"] * x["views"] for x in kp) / sum(x["views"] for x in kp), 1) if kp else None
+        views_l, views_s = sum(x.get("views") or 0 for x in longs), sum(x.get("views") or 0 for x in shorts)
+        imp7 = sum(x["imp7"] or 0 for x in longs) if basis["kind"] == "api" else None
+        ctr_l = _pct(clk_l, imp_l, 2)
+        dur_l = statistics.median([x["dur"] for x in longs]) if longs else 600
+        lo, hi = avp_band(dur_l)
+        shorts_led = views_s > 2.5 * max(views_l, 1) and len(shorts) >= 3
+        # 쇼츠: 최근 28일에 올린 쇼츠 조회 중간값이 채널 쇼츠 전체 중간값보다 한참 낮으면 '피드에 덜 뜸'
+        all_s = [v["views"] for v in videos.values() if v["ch"] == name and v["short"] and v.get("public", True)]
+        new_s = [v["views"] for v in videos.values() if v["ch"] == name and v["short"] and v.get("public", True)
+                 and 2 <= (now - parse_time(v["published"])).total_seconds() / 86400 <= 28]
+        s_ratio = round(statistics.median(new_s) / statistics.median(all_s), 2) if len(new_s) >= 3 and len(all_s) >= 6 and statistics.median(all_s) else None
+        if not recs:
+            main = None
+        elif shorts_led:
+            main = ("swipe" if kept_s is not None and kept_s < KEPT_LOW else "short_drop" if avp_s is not None and avp_s < SHORT_AVP_LOW else
+                    "few_feed" if s_ratio is not None and s_ratio < 0.5 else
+                    "good" if (avp_s or 0) >= SHORT_AVP_GOOD else "ok")
+        elif not longs:
+            main = "ok"
+        else:
+            main = ("no_imp" if imp_l < CH_IMP_FEW else "ctr" if ctr_l is not None and ctr_l < CTR_LOW else
+                    "drop" if avp_l is not None and avp_l < lo else
+                    "fading" if imp7 is not None and imp_l >= 4 * 7 and imp7 * 4 < 0.5 * imp_l else
+                    "good" if (ctr_l or 0) >= CTR_GOOD and (avp_l or 0) >= hi else "ok")
+        # 이유 한 줄(숫자로)
+        f = lambda n: fmt(n) if n is not None else "-"
+        if main == "no_imp":
+            why = f"본편 노출이 {REACH_WINDOW}일 동안 {f(imp_l)}회뿐 — 유튜브가 아직 거의 안 보여 줘요"
+            why += (f". 보여 준 것도 {ctr_l}%만 눌렀어요(보통 {CTR_LOW:g}~{CTR_GOOD:g}%)" if ctr_l is not None and ctr_l < CTR_LOW else
+                    f". 본 사람은 평균 {avp_l}%까지 봤어요" if avp_l is not None else "")
+        elif main == "ctr":
+            why = f"노출은 {f(imp_l)}회인데 클릭률 {ctr_l}% — 보여 줘도 안 눌러요(보통 {CTR_LOW:g}~{CTR_GOOD:g}%)"
+        elif main == "drop":
+            why = f"클릭률 {ctr_l}%로 눌리긴 하는데 평균 {avp_l}%만 보고 나가요 — 유튜브가 더 안 밀어 줘요(이 길이 보통 {lo:g}% 넘음)"
+        elif main == "fading":
+            why = f"최근 7일 노출 {f(imp7)}회 — {REACH_WINDOW}일 평균 속도의 {round(imp7 * 4 / imp_l * 100)}%로 줄었어요"
+        elif main == "swipe":
+            why = f"쇼츠 피드에서 {round(100 - kept_s)}%가 바로 넘겨요 — 첫 1초가 약해요"
+        elif main == "short_drop":
+            why = f"쇼츠를 평균 {avp_s}%만 보고 넘겨요 — 끝까지 보는 쇼츠가 더 밀려요"
+        elif main == "few_feed":
+            why = f"최근 쇼츠 조회가 채널 쇼츠 보통의 {round(s_ratio * 100)}% — 피드가 덜 밀어 줘요"
+        elif main == "good":
+            why = (f"쇼츠 평균 시청 {avp_s}% — 잘 되고 있어요" if shorts_led else f"클릭률 {ctr_l}% · 평균 시청 {avp_l}% — 둘 다 보통 이상이에요")
+        else:
+            why = (f"쇼츠 평균 시청 {avp_s}%" if shorts_led else f"클릭률 {ctr_l}% · 평균 시청 {avp_l}%") + " — 크게 막힌 곳은 없어요"
+        src_l = sorted(([g, a[0], _pct(a[1], a[0], 2)] for g, a in src.items() if a[0]), key=lambda t: SRC_ORDER.index(t[0]) if t[0] in SRC_ORDER else 99)
+        pool = [x for x in longs if x["imp"] >= 1000 and x["ctr"] is not None]
+        best = max(pool, key=lambda x: x["ctr"], default=None)
+        worst = min(pool, key=lambda x: x["ctr"], default=None) if len(pool) >= 2 else None
+        cnt = {}
+        for x in recs:
+            cnt[x["v"]] = cnt.get(x["v"], 0) + 1
+        out_ch[name] = {"ok": True, "basis": basis, "main": main, "why": why, "fix": FIX.get(main, []), "shorts_led": shorts_led,
+                        "imp": imp_l, "ctr": ctr_l, "imp7": imp7, "avp": avp_l, "views": views_l, "n_long": len(longs),
+                        "views_s": views_s, "avp_s": avp_s, "kept_s": kept_s, "n_short": len(shorts), "s_ratio": s_ratio,
+                        "src": src_l, "count": cnt,
+                        "best": {k: best[k] for k in ("id", "title", "ctr", "imp", "thumb", "url")} if best else None,
+                        "worst": {k: worst[k] for k in ("id", "title", "ctr", "imp", "thumb", "url")} if worst and worst is not best else None}
+        out_v += recs
+    out_v.sort(key=lambda x: -(x["imp"] or 0))
+    return {"at": R.get("at"), "snap_at": snap.get("at"), "window": REACH_WINDOW, "channels": out_ch, "videos": out_v[:600],
+            "verdict": VERDICT, "bands": {"ctr": [CTR_LOW, CTR_GOOD], "short_avp": [SHORT_AVP_LOW, SHORT_AVP_GOOD], "kept": KEPT_LOW}}
 
 
 def build(ctx):
@@ -1282,6 +1666,11 @@ def build(ctx):
     aud = load("audience.json", {})
     data["audience"] = {"at": aud.get("at"), "channels": aud.get("channels") or {}}
     data["insta"] = insta_view(load("insta.json", {}), now)
+    try:
+        data["reach"] = reach_view(now, info, videos, engaged)
+    except Exception as e:   # 진단이 깨져도 나머지 화면은 그대로
+        print(f"! 노출 진단 실패: {type(e).__name__}: {e}")
+        data["reach"] = None
     return data
 
 

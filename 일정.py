@@ -31,9 +31,9 @@ KST = timezone(timedelta(hours=9))
 KEEP_DAYS = 14                                     # 이보다 오래된 기록은 버린다(공개된 건 API 쪽에 다 있다)
 
 # 채널 폴더 → 대시보드 채널 이름(channels.json 의 name)
-FOLDERS = {"거대한비밀": "거대한비밀", "거인의무덤": "거인의무덤", "논스킵": "논스킵",
-           "라스트씬": "라스트 씬",   # 10-08 폴더·채널 이름 바뀜(옛 역사의급소 — 폴더는 바로가기로 남음)
-           "근력과학": "몸리학", "낮달": "새벽서랍", "지도_옛날사진_수도권영상": "지도 한 장"}   # 10-22 대시보드 개편 때 추가(영어채널은 채널 삭제로 뺌)
+FOLDERS = {"거대한비밀": "거대한비밀", "거인의무덤": "스튜디오 이면", "논스킵": "논스킵",   # 11-04 거인의무덤 → 스튜디오 이면(폴더는 그대로)
+           "공통/단계엔진/편": "밑바닥부터",   # 11-06 라스트 씬 채널 지움 → 새 채널 밑바닥부터(편 폴더는 단계엔진)
+           "근력과학": "몸리학", "낮달": "새벽서랍", "스튜디오k": "스튜디오K"}   # 11-06 스튜디오K 새 채널(옛 지도 한 장·시나리오K 채널 지움) · 10-22 대시보드 개편 때 추가
 SKIP_DIRS = {".git", "node_modules", "__pycache__", "보관", "안쓰는파일", "venv", ".venv"}
 NAME_RE = re.compile(r"업로드정보|업로드_?.*결과")
 BAD_NAME = re.compile(r"_before|수정전")
@@ -147,8 +147,9 @@ def scan():
     seq = 0
     for _, p, ch, chdir in files:
         num, label = episode(p, chdir)
-        base_kind = "쇼츠" if "쇼츠" in p.name or p.parent.name == "쇼츠" else "본편"
-        slot_no = (re.search(r"쇼츠(\d)", p.name) or [None, ""])[1]
+        sub = p.parent.name                            # 편 폴더 안 쇼츠/ · 쇼츠1_등수/ (10-27 몸리학 028 쇼츠 4개가 한 칸으로 겹쳐 1개만 뜸)
+        base_kind = "쇼츠" if "쇼츠" in p.name or sub.startswith("쇼츠") else "본편"
+        slot_no = (re.search(r"쇼츠(\d)", p.name) or re.match(r"쇼츠(\d)", sub) or [None, ""])[1]
         loose = "결과" in p.name
         section = base_kind
         try:
