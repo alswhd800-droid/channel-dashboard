@@ -42,7 +42,8 @@ SHORT_MAX_SEC = 180          # 3분 이하 = 쇼츠로 본다
 MAX_AGE_H = 24 * 14          # 2주 넘은 영상은 '지금 터지는 중'이 아니다
 MIN_VIEWS = 3000             # 이보다 적으면 아직 신호가 아니다
 MIN_MULTIPLE = 3             # 채널 평소의 3배 미만은 후보에서 뺀다
-TOP_N = 50
+TOP_N_SHORT = 200            # 대시보드·소재 추천에 남기는 수 — 11-12 발굴 탭을 쪽 넘기기로 바꾸며 넉넉히
+TOP_N_LONG = 300             # 11-12 사용자 "본편 조회수 갑자기 잘터진 소재들.. 훨씬더 많이 보고싶은데"
 POOL_RECHECK_H = 20          # 채널 기준선(중간값)을 다시 재는 주기
 POOL_MAX_SUBS = 2_000_000    # 이보다 큰 채널은 풀에서 감시하지 않는다(체급 대비가 의미 없음)
 MAX_VIDEO_COUNT = 3000       # 영상이 이보다 많으면 방송사·언론사 클립 채널로 본다
@@ -173,6 +174,44 @@ def is_new_channel(c, now=None):
     except ValueError:
         return False
     return ((now or datetime.now(timezone.utc)) - started).days <= NEW_CH_DAYS
+
+
+def load_hits():
+    """지난 발굴들이 찾은 후보(id → 줄). 처음이면 마지막 발굴 결과와 신규 채널 떡상 목록으로 시작한다."""
+    hits = load("hunt_hits.json", None)
+    if hits is None:
+        last = load("outliers.json", {}) or {}
+        hits = {r["id"]: r for r in load("hunt_new_hits.json", []) + (last.get("shorts") or []) + (last.get("long") or []) if r.get("id")}
+    return hits
+
+
+def accumulate(rows, hits, pool, now):
+    """이번에 찾은 후보 + 지난 후보(올라온 지 2주 안). 2026-11-12: 발굴마다 풀의 다른 채널(8천 곳 중 100곳쯤)을 보니
+    그 회차 것만 남기면 본편이 20~30편뿐이었다 → 쌓아 두고, 이번에 안 걸린 것은 조회수만 새로 받아(50편당 1유닛) 배수·속도를 다시 잰다."""
+    seen = now.isoformat(timespec="seconds")
+    keep = dict(hits)
+    for r in rows:
+        keep[r["id"]] = {**r, "seen": seen}
+    old = [i for i, r in keep.items() if r.get("seen") != seen
+           and (now - parse_time(r["published"])).total_seconds() / 3600 <= MAX_AGE_H]
+    fresh = video_rows(old) if old else {}
+    out = {}
+    for i, r in keep.items():
+        if r.get("seen") != seen:
+            v, c = fresh.get(i), pool.get(r["ch_id"])
+            if not v or (c and not is_personal(c)):
+                continue                      # 지워졌거나 비공개, 또는 그 뒤 제외 목록에 든 채널
+            r = {**r, **{k: v[k] for k in ("title", "views", "likes", "comments", "thumb")}}
+        age = (now - parse_time(r["published"])).total_seconds() / 3600
+        if age > MAX_AGE_H or not r.get("base"):
+            continue
+        r["age_h"] = round(age, 1)
+        r["mult"] = round(r["views"] / max(r["base"], 1), 1)
+        r["vph"] = round(r["views"] / max(age, 1))
+        r["started"] = (pool.get(r["ch_id"]) or {}).get("started") or r.get("started")
+        out[i] = r
+    save("hunt_hits.json", out)
+    return list(out.values())
 
 
 def new_hits(rows, pool, now):
@@ -364,10 +403,10 @@ def discover(budget, pool):
         n = state["seed"]
         kw = SEEDS[n % len(SEEDS)]
         state["seed"] += 1
-        # 두 번에 한 번은 4~20분 영상만 찾는다 — 조회수순 검색은 쇼츠가 거의 다 차지해 롱폼 채널이 풀에 잘 안 들어온다(2026-09-28).
-        # 한 바퀴(SEEDS 전체)마다 짝이 바뀌어 같은 키워드도 두 방식으로 번갈아 찾는다.
-        dur = "medium" if (n + n // len(SEEDS)) % 2 else "any"
-        used_seeds.append(kw + ("(롱폼)" if dur == "medium" else ""))
+        # 조회수순 검색은 쇼츠가 거의 다 차지해 롱폼 채널이 풀에 잘 안 들어온다(2026-09-28) → 세 번에 두 번은 본편만
+        # (4~20분·20분 넘게, 11-12 본편을 더 많이). 한 바퀴(SEEDS 전체)마다 차례가 밀려 같은 키워드도 세 방식으로 번갈아 찾는다.
+        dur = ("medium", "any", "long")[(n + n // len(SEEDS)) % 3]
+        used_seeds.append(kw + {"medium": "(롱폼)", "long": "(20분+)"}.get(dur, ""))
         r = get("search", cost=100, part="id", type="video", q=kw, order="viewCount", videoDuration=dur,
                 publishedAfter=after, regionCode="KR", relevanceLanguage="ko", maxResults=50)
         found.update(i["id"]["videoId"] for i in r.get("items", []) if i.get("id", {}).get("videoId"))
@@ -383,6 +422,7 @@ def hunt(budget):
     BLOCK_WORDS, BLOCK_IDS, BLOCK_NAMES = blocklist()
     now = datetime.now(timezone.utc)
     pool = load("hunt_channels.json", {})
+    hits = load_hits()
     ids, notes = discover(budget, pool)
     print(f"· 후보 영상 {len(ids)}개 — " + " / ".join(notes))
 
@@ -413,7 +453,7 @@ def hunt(budget):
     todo.sort(key=lambda cid: -promise.get(cid, 0))
     measured = 0
     for cid in todo:
-        if USED + 3 > budget - 40:            # 구독자 추적(풀 전체) 몫 40유닛은 남긴다
+        if USED + 3 > budget - 40 - (len(hits) // 50 + 2):   # 구독자 추적(풀 전체) 40유닛 + 쌓인 후보 새로 받기 몫은 남긴다
             break
         c = pool[cid]
         rows = list(video_rows(recent_uploads(c["uploads"], 12)).values())
@@ -448,7 +488,7 @@ def hunt(budget):
                      "ch_url": f"https://www.youtube.com/channel/{v['ch_id']}"})
 
     # 배수 순위와 속도 순위를 반반 섞는다 — 절대 조회수가 아니라 '이상함 + 빠름'
-    def ranked(group):
+    def ranked(group, top):
         if not group:
             return []
         by_mult = {r["id"]: i for i, r in enumerate(sorted(group, key=lambda r: -r["mult"]))}
@@ -456,13 +496,15 @@ def hunt(budget):
         n = len(group)
         for r in group:
             r["score"] = round(100 * (1 - (by_mult[r["id"]] + by_vph[r["id"]]) / (2 * max(n - 1, 1))), 1)
-        return sorted(group, key=lambda r: -r["score"])[:TOP_N]
+        return sorted(group, key=lambda r: -r["score"])[:top]
 
     for r in rows:   # 채널 개설일 — 대시보드·소재 추천이 '신규 채널'을 가른다
         r["started"] = (pool.get(r["ch_id"]) or {}).get("started")
     nh = new_hits(rows, pool, now)
-    shorts = ranked([r for r in rows if r["short"]])
-    longs = ranked([r for r in rows if not r["short"]])
+    found_now = len(rows)
+    rows = accumulate(rows, hits, pool, now)
+    shorts = ranked([r for r in rows if r["short"]], TOP_N_SHORT)
+    longs = ranked([r for r in rows if not r["short"]], TOP_N_LONG)
     chans = growing(pool, now)
     print(f"· 걸러냄 — 외국 {cut['외국']}편 · 회사/방송사 {cut['회사']}편")
     out = {"at": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "used": USED, "budget": budget,
@@ -472,6 +514,7 @@ def hunt(budget):
                      "new_hit_min_views_long": NEW_HIT_MIN_VIEWS_LONG},
            "shorts": shorts, "long": longs, "channels": chans, "new_hits": nh, "cut": cut}
     save("outliers.json", out)
+    print(f"· 이번에 찾은 후보 {found_now}편 + 지난 발굴에서 쌓인 후보 → 2주 안 {len(rows)}편")
     print(f"✔ 쇼츠 {len(shorts)}편 · 본편 {len(longs)}편 · 급상승채널 {len(chans)}곳 · 신규 채널 떡상 {len(nh)}편 저장 (outliers.json) · {USED}유닛 사용 · 채널풀 {len(pool)}곳")
     for r in (shorts[:3] + longs[:3]):
         print(f"   {r['mult']:>5.1f}배 {r['vph']:>7,}/h  {r['ch'][:12]:<12} 구독 {(r['subs'] or 0):>9,}  {r['title'][:34]}")
