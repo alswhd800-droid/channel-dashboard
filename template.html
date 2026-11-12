@@ -231,6 +231,36 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
 .post .st b { color: var(--ink); }
 .post .cap { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* 발굴 — 11-12 유튜브식 카드 격자(쇼츠 세로·본편 16:9) + 쪽 넘기기 */
+.ytgrid { display: grid; gap: 24px 16px; }
+.ytgrid.sh { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.ytgrid.lg { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 16px; }
+.yt { display: flex; flex-direction: column; min-width: 0; }
+.yt-th { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: var(--surface-3); }
+.yt.sh .yt-th { aspect-ratio: 9 / 16; }
+.yt-th img { width: 100%; height: 100%; object-fit: cover; }
+.yt-x { position: absolute; left: 6px; top: 6px; background: var(--yt); color: #fff; font-size: 11.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px; }
+.yt-d { position: absolute; right: 6px; bottom: 6px; background: rgba(0,0,0,.78); color: #fff; font-size: 12px; font-weight: 600; padding: 1px 5px; border-radius: 4px; font-variant-numeric: tabular-nums; }
+.yt-t { margin-top: 10px; font-weight: 650; font-size: 14px; line-height: 1.42; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.yt.sh .yt-t { font-size: 13.5px; }
+.yt:hover .yt-t { color: var(--accent); }
+.yt-m { color: var(--muted); font-size: 12.5px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.yt-m + .yt-m { margin-top: 0; }
+.yt-s { color: var(--ink-2); font-size: 12px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pager { display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap; margin: 30px 0 4px; }
+.pager button { min-width: 34px; height: 34px; padding: 0 10px; border: 1px solid var(--line); background: var(--surface); border-radius: 9px; font-size: 13px; font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.pager button:hover:not(:disabled) { border-color: var(--line-2); color: var(--ink); }
+.pager button.on { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.pager button:disabled { opacity: .4; cursor: default; }
+.pager .gap { color: var(--muted); padding: 0 2px; }
+.pager .cnt { flex-basis: 100%; text-align: center; color: var(--muted); font-size: 12px; margin-top: 6px; }
+#huntTop { scroll-margin-top: 72px; }
+@media (max-width: 1080px) { .ytgrid.sh { grid-template-columns: repeat(4, minmax(0, 1fr)); } .ytgrid.lg { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .ytgrid.lg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .ytgrid.sh { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 10px; } }
+@media (max-width: 520px) { .ytgrid.lg { grid-template-columns: minmax(0, 1fr); gap: 22px; } }
+@media (max-width: 480px) { .ytgrid.sh { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 /* 소재 — 10-28 간단하게: 소재 · 점수 · 떡상 채널 링크 */
 .topic { display: flex; gap: 12px; align-items: center; border-top: 1px solid var(--line); padding: 12px 0; }
 .topic:first-child { border-top: 0; padding-top: 4px; }
@@ -1112,27 +1142,56 @@ function afterSchedule() {
 }
 
 /* ───────── 9. 발굴 ───────── */
+// 11-12 사용자 "대시보드 발굴탭 ui를 약간 유튜브형식으로 나열해줄수있나 깔끔하게.. 페이지넘기면서 보게.. 쇼츠 본편" → 쇼츠는 세로 카드·본편은 16:9 카드 격자, 한 쪽 12개씩
+const HUNT_PER = 12;
 const chanKind = r => { if (r.kind !== undefined) return r.kind; const b = r.base || {}, s = b.s != null, l = b.l != null; return s && l ? "mix" : s ? "short" : l ? "long" : null; };
+const dur = s => { s = Math.round(s || 0); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${x}` : `${m}:${x}`; };
+const agoH = h => h < 1 ? Math.max(1, Math.round(h * 60)) + "분 전" : h < 24 ? Math.round(h) + "시간 전" : h < 24 * 7 ? Math.round(h / 24) + "일 전" : Math.round(h / 24 / 7) + "주 전";
+// 쇼츠는 세로 원본 썸네일(oar2), 본편은 큰 썸네일(hq720) — 없으면 유튜브가 120px 회색 그림을 주므로 그때는 받아 둔 작은 썸네일로
+const ytImg = (r, kind) => `<img src="https://i.ytimg.com/vi/${esc(r.id)}/${kind}.jpg" data-fb="${esc(r.thumb || "")}" alt="" loading="lazy" referrerpolicy="no-referrer" onload="if(this.naturalWidth<=120&&this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb=''}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb=''}">`;
+// 배수는 10배 넘으면 정수로(635.1배 → 635배), 셋째 줄은 좁은 쇼츠 칸에도 들어가게 두 값만 — 속도로 정렬하면 속도를 앞에
+const xN = m => m >= 10 ? Math.round(m).toLocaleString("ko-KR") : (+m || 0).toFixed(1);
+const huntCard = (r, short, sk) => `<a class="yt ${short ? "sh" : "lg"}" href="${esc(r.url)}" target="_blank" rel="noopener" title="${esc(r.title)} · 구독 ${r.subs === null ? "비공개" : man(r.subs)} · 평소 ${man(r.base)}회 · 시간당 ${man(r.vph)}회">
+  <div class="yt-th">${ytImg(r, short ? "oar2" : "hq720")}<span class="yt-x">평소의 ${xN(r.mult)}배</span><span class="yt-d">${dur(r.sec)}</span></div>
+  <div class="yt-t">${esc(r.title)}</div><div class="yt-m">${esc(r.ch)}</div><div class="yt-m">조회수 ${man(r.views)}회 · ${agoH(r.age_h)}</div>
+  <div class="yt-s">${sk === "vph" ? `시간당 ${man(r.vph)}회 · 구독 ${r.subs === null ? "비공개" : man(r.subs)}` : `구독 ${r.subs === null ? "비공개" : man(r.subs)} · 평소 ${man(r.base)}회`}</div></a>`;
+const pager = (k, n, cur) => {
+  const pages = Math.ceil(n / HUNT_PER); if (pages <= 1) return "";
+  const btn = (p, l, dis, on) => `<button type="button" data-hpg="${p}" class="${on ? "on" : ""}"${dis ? " disabled" : ""}${on ? ' aria-current="page"' : ""}>${l}</button>`;
+  const show = [...new Set([1, cur - 2, cur - 1, cur, cur + 1, cur + 2, pages])].filter(p => p >= 1 && p <= pages).sort((x, y) => x - y);
+  const nums = show.map((p, i) => (i && p - show[i - 1] > 1 ? '<span class="gap">…</span>' : "") + btn(p, p, false, p === cur)).join("");
+  return `<nav class="pager" data-k="${esc(k)}" aria-label="쪽 넘기기">${btn(cur - 1, "‹ 이전", cur === 1)}${nums}${btn(cur + 1, "다음 ›", cur === pages)}
+    <span class="cnt">${(cur - 1) * HUNT_PER + 1}–${Math.min(n, cur * HUNT_PER)} / ${n}개</span></nav>`;
+};
 function pageHunt() {
   const o = D.outliers;
   if (!o) return ph("발굴") + '<div class="card empty">아직 수집 전이에요</div>';
-  const isCh = S.htype === "chan", kind = ["all", "long", "short"].includes(S.hkind) ? S.hkind : "all";
-  const chans = k => (o.channels || []).filter(r => k === "all" || chanKind(r) === k).sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 50);
+  const isCh = S.htype === "chan", isShort = S.htype !== "long", kind = ["all", "long", "short"].includes(S.hkind) ? S.hkind : "all";
+  const chans = k => (o.channels || []).filter(r => k === "all" || chanKind(r) === k).sort((a, b) => (b.score || 0) - (a.score || 0));
   const list = (isCh ? chans(kind) : S.htype === "long" ? o.long : o.shorts) || [];
   const sk = isCh ? (["score", "per_day", "pct_day", "subs"].includes(S.csort) ? S.csort : "score") : (["score", "mult", "vph", "views"].includes(S.hsort) ? S.hsort : "score");
   const sorted = [...list].sort((a, b) => (b[sk] || 0) - (a[sk] || 0));
+  // 쪽 번호는 보는 목록(쇼츠·본편·채널 × 정렬)이 바뀌면 1쪽부터
+  const pk = `${S.htype}/${isCh ? kind + "/" : ""}${sk}`, pages = Math.max(1, Math.ceil(sorted.length / HUNT_PER));
+  const pg = S.hpgk === pk ? Math.min(Math.max(1, +S.hpg || 1), pages) : 1, from = (pg - 1) * HUNT_PER, shown = sorted.slice(from, from + HUNT_PER);
   const KT = { long: "롱폼만", short: "쇼츠만", mix: "롱폼+쇼츠" };
-  const vrow = (r, i) => `<a class="item" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="muted num" style="width:20px;text-align:right;font-weight:700">${i + 1}</span>${thumb(r.thumb)}<div style="min-width:0"><div class="t">${esc(r.title)}</div>
-    <div class="m">${esc(r.ch)} · 구독 ${r.subs === null ? "비공개" : man(r.subs)} · 평소 ${man(r.base)}회 · ${r.age_h < 48 ? Math.round(r.age_h) + "시간" : Math.round(r.age_h / 24) + "일"} 전</div></div>
-    <div class="r"><b class="up">${man(r.mult)}배</b><span class="muted" style="font-size:12px">${man(r.vph)}/시간 · ${man(r.views)}회</span></div></a>`;
-  const crow = (r, i) => { const b = r.base || {}; return `<a class="item" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="muted num" style="width:20px;text-align:right;font-weight:700">${i + 1}</span><div style="min-width:0"><div class="t">${KT[chanKind(r)] ? `<span class="pill">${KT[chanKind(r)]}</span> ` : ""}${esc(r.title)}</div>
+  const crow = (r, i) => { const b = r.base || {}; return `<a class="item" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="muted num" style="width:24px;text-align:right;font-weight:700">${from + i + 1}</span><div style="min-width:0"><div class="t">${KT[chanKind(r)] ? `<span class="pill">${KT[chanKind(r)]}</span> ` : ""}${esc(r.title)}</div>
     <div class="m">구독 ${man(r.subs)} · 영상 ${man(r.video_count)}개${r.started ? " · " + esc(r.started) + " 개설" : ""}${b.s ? " · 평소 쇼츠 " + man(b.s) : ""}${b.l ? " · 본편 " + man(b.l) : ""}</div></div>
     <div class="r"><b class="up">+${man(r.per_day)}/일</b><span class="muted" style="font-size:12px">${r.pct_day}%/일 · ${r.days}일간 +${man(r.gain)}</span></div></a>`; };
+  const none = '<div class="card empty">조건에 맞는 후보가 없어요. 다음 수집 때 다시 확인해 주세요.</div>';
+  const body = isCh ? (shown.length ? `<div class="card"><div class="list">${shown.map(crow).join("")}</div></div>` : none)
+    : shown.length ? `<div class="ytgrid ${isShort ? "sh" : "lg"}">${shown.map(r => huntCard(r, isShort, sk)).join("")}</div>` : none;
   return ph("발굴", `${isCh ? "구독자가 갑자기 빠르게 느는 국내 채널" : "그 채널 평소보다 몇 배 빨리 크는 영상"} · ${esc(o.at)} 기준 · 한국시간 06·14·21시`)
-  + `<div class="bar-row">${seg("htype", [["short", "쇼츠"], ["long", "본편"], ["chan", "채널"]], S.htype)}${isCh ? seg("hkind", [["all", "전체"], ["long", "롱폼만"], ["short", "쇼츠만"]], kind) : ""}
+  + `<div class="bar-row" id="huntTop">${seg("htype", [["short", `쇼츠 ${(o.shorts || []).length}`], ["long", `본편 ${(o.long || []).length}`], ["chan", `채널 ${chans("all").length}`]], S.htype)}${isCh ? seg("hkind", [["all", "전체"], ["long", "롱폼만"], ["short", "쇼츠만"]], kind) : ""}
     ${isCh ? seg("csort", [["score", "종합"], ["per_day", "하루 증가"], ["pct_day", "증가율"], ["subs", "구독자"]], sk) : seg("hsort", [["score", "종합"], ["mult", "배수"], ["vph", "속도"], ["views", "조회수"]], sk)}</div>
-  <div class="card"><div class="list">${sorted.map(isCh ? crow : vrow).join("") || '<div class="empty">조건에 맞는 후보가 없어요. 다음 수집 때 다시 확인해 주세요.</div>'}</div></div>
-  <div class="note">쇼츠 ${(o.shorts || []).length} · 본편 ${(o.long || []).length} · 채널 ${chans("all").length} · 살펴본 채널 ${man(o.pool)}곳 · 배수 = 그 채널 최근 영상 중간값 대비, 속도 = 올라온 뒤 시간당 조회수. 방송사·기업·언론 채널은 뺐어요.</div>`;
+  ${body}${pager(pk, sorted.length, pg)}
+  <div class="note">살펴본 채널 ${man(o.pool)}곳 · 빨간 딱지 = 그 채널 최근 영상 중간값 대비 몇 배인지, 속도 = 올라온 뒤 시간당 조회수. 방송사·기업·언론 채널은 뺐어요.</div>`;
+}
+function afterHunt() {
+  $$("[data-hpg]").forEach(b => b.onclick = () => {
+    S.hpg = +b.dataset.hpg; S.hpgk = b.closest(".pager").dataset.k; remember(); render();
+    const t = $("#huntTop"); if (t) t.scrollIntoView({ block: "start" });
+  });
 }
 
 /* ───────── 10. 수익 ───────── */
@@ -1216,6 +1275,7 @@ function render() {
   if (page === "topics") afterTopics();
   if (page === "diag") afterDiag();
   if (page === "schedule") afterSchedule();
+  if (page === "hunt") afterHunt();
 }
 let lastRoute = "";
 addEventListener("hashchange", () => { const r = location.hash.split("/")[0]; render(); if (r !== lastRoute) scrollTo(0, 0); lastRoute = r; });
