@@ -382,7 +382,7 @@ const country = c => { try { return (REGION && REGION.of(c)) || c; } catch (e) {
 const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 const S = Object.assign({ vplat: "all", vch: "all", vtype: "all", vper: "30", vsort: "gain", grow: "views", gper: 90, igrow: "followers", chv: "new",
-  tf: "all", tsort: "score", htype: "short", hsort: "score", hkind: "all", hage: "all", csort: "score", sch: "all", stype: "all", mtab: "ads" }, store.get("dash2", {}));
+  tf: "all", tsort: "score", htype: "short", hsort: "score", hkind: "all", hage: "all", hbase: "mult", csort: "score", sch: "all", stype: "all", mtab: "ads" }, store.get("dash2", {}));
 const remember = () => store.set("dash2", S);
 
 /* ───────── 데이터 꺼내기 ───────── */
@@ -1151,10 +1151,10 @@ const agoH = h => h < 1 ? Math.max(1, Math.round(h * 60)) + "분 전" : h < 24 ?
 const ytImg = (r, kind) => `<img src="https://i.ytimg.com/vi/${esc(r.id)}/${kind}.jpg" data-fb="${esc(r.thumb || "")}" alt="" loading="lazy" referrerpolicy="no-referrer" onload="if(this.naturalWidth<=120&&this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb=''}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb=''}">`;
 // 배수는 10배 넘으면 정수로(635.1배 → 635배), 셋째 줄은 좁은 쇼츠 칸에도 들어가게 두 값만 — 속도로 정렬하면 속도를 앞에
 const xN = m => m >= 10 ? Math.round(m).toLocaleString("ko-KR") : (+m || 0).toFixed(1);
-const huntCard = (r, short, sk) => `<a class="yt ${short ? "sh" : "lg"}" href="${esc(r.url)}" target="_blank" rel="noopener" title="${esc(r.title)} · 구독 ${r.subs === null ? "비공개" : man(r.subs)} · 평소 ${man(r.base)}회 · 시간당 ${man(r.vph)}회">
-  <div class="yt-th">${ytImg(r, short ? "oar2" : "hq720")}<span class="yt-x">평소의 ${xN(r.mult)}배</span><span class="yt-d">${dur(r.sec)}</span></div>
+const huntCard = (r, short, sk) => `<a class="yt ${short ? "sh" : "lg"}" href="${esc(r.url)}" target="_blank" rel="noopener" title="${esc(r.title)} · 구독 ${r.subs === null ? "비공개" : man(r.subs)}${r.base ? ` · 평소 ${man(r.base)}회` : ""} · 시간당 ${man(r.vph)}회">
+  <div class="yt-th">${ytImg(r, short ? "oar2" : "hq720")}${r.mult >= 3 ? `<span class="yt-x">평소의 ${xN(r.mult)}배</span>` : ""}<span class="yt-d">${dur(r.sec)}</span></div>
   <div class="yt-t">${esc(r.title)}</div><div class="yt-m">${esc(r.ch)}</div><div class="yt-m">조회수 ${man(r.views)}회 · ${agoH(r.age_h)}</div>
-  <div class="yt-s">${sk === "vph" ? `시간당 ${man(r.vph)}회 · 구독 ${r.subs === null ? "비공개" : man(r.subs)}` : `구독 ${r.subs === null ? "비공개" : man(r.subs)} · 평소 ${man(r.base)}회`}</div></a>`;
+  <div class="yt-s">${sk === "vph" || !r.base ? `시간당 ${man(r.vph)}회 · 구독 ${r.subs === null ? "비공개" : man(r.subs)}` : `구독 ${r.subs === null ? "비공개" : man(r.subs)} · 평소 ${man(r.base)}회`}</div></a>`;
 const pager = (k, n, cur) => {
   const pages = Math.ceil(n / HUNT_PER); if (pages <= 1) return "";
   const btn = (p, l, dis, on) => `<button type="button" data-hpg="${p}" class="${on ? "on" : ""}"${dis ? " disabled" : ""}${on ? ' aria-current="page"' : ""}>${l}</button>`;
@@ -1170,11 +1170,13 @@ function pageHunt() {
   const chans = k => (o.channels || []).filter(r => k === "all" || chanKind(r) === k).sort((a, b) => (b.score || 0) - (a.score || 0));
   // 11-12 후보를 2주치 쌓게 바꿔(발굴.py accumulate) 목록이 길어짐 → 올라온 지 3일·7일로 좁혀 보기
   const age = ["3", "7"].includes(String(S.hage)) ? +S.hage : 0;
-  const list = ((isCh ? chans(kind) : S.htype === "long" ? o.long : o.shorts) || []).filter(r => isCh || !age || r.age_h <= age * 24);
+  // 11-12 사용자 "꼭 평소보다 조회수가 잘터진 영상이 아니더라도.. 조회수 잘터진 영상 도 보여줘.." → 기준 '조회수 많음'(발굴.py big_*)
+  const big = S.hbase === "views" && !!(o.big_shorts || o.big_long), SL = big ? o.big_shorts : o.shorts, LL = big ? o.big_long : o.long;
+  const list = ((isCh ? chans(kind) : S.htype === "long" ? LL : SL) || []).filter(r => isCh || !age || r.age_h <= age * 24);
   const sk = isCh ? (["score", "per_day", "pct_day", "subs"].includes(S.csort) ? S.csort : "score") : (["score", "mult", "vph", "views"].includes(S.hsort) ? S.hsort : "score");
   const sorted = [...list].sort((a, b) => (b[sk] || 0) - (a[sk] || 0));
   // 쪽 번호는 보는 목록(쇼츠·본편·채널 × 정렬)이 바뀌면 1쪽부터
-  const pk = `${S.htype}/${isCh ? kind : age}/${sk}`, pages = Math.max(1, Math.ceil(sorted.length / HUNT_PER));
+  const pk = `${S.htype}/${isCh ? kind : age + "/" + big}/${sk}`, pages = Math.max(1, Math.ceil(sorted.length / HUNT_PER));
   const pg = S.hpgk === pk ? Math.min(Math.max(1, +S.hpg || 1), pages) : 1, from = (pg - 1) * HUNT_PER, shown = sorted.slice(from, from + HUNT_PER);
   const KT = { long: "롱폼만", short: "쇼츠만", mix: "롱폼+쇼츠" };
   const crow = (r, i) => { const b = r.base || {}; return `<a class="item" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="muted num" style="width:24px;text-align:right;font-weight:700">${from + i + 1}</span><div style="min-width:0"><div class="t">${KT[chanKind(r)] ? `<span class="pill">${KT[chanKind(r)]}</span> ` : ""}${esc(r.title)}</div>
@@ -1183,11 +1185,11 @@ function pageHunt() {
   const none = '<div class="card empty">조건에 맞는 후보가 없어요. 다음 수집 때 다시 확인해 주세요.</div>';
   const body = isCh ? (shown.length ? `<div class="card"><div class="list">${shown.map(crow).join("")}</div></div>` : none)
     : shown.length ? `<div class="ytgrid ${isShort ? "sh" : "lg"}">${shown.map(r => huntCard(r, isShort, sk)).join("")}</div>` : none;
-  return ph("발굴", `${isCh ? "구독자가 갑자기 빠르게 느는 국내 채널" : "그 채널 평소보다 몇 배 빨리 크는 영상"} · ${esc(o.at)} 기준 · 한국시간 06·14·21시`)
-  + `<div class="bar-row" id="huntTop">${seg("htype", [["short", `쇼츠 ${(o.shorts || []).length}`], ["long", `본편 ${(o.long || []).length}`], ["chan", `채널 ${chans("all").length}`]], S.htype)}${isCh ? seg("hkind", [["all", "전체"], ["long", "롱폼만"], ["short", "쇼츠만"]], kind) : seg("hage", [["all", "2주 안"], ["7", "7일 안"], ["3", "3일 안"]], age ? String(age) : "all")}
+  return ph("발굴", `${isCh ? "구독자가 갑자기 빠르게 느는 국내 채널" : big ? "채널 크기와 상관없이 2주 안에 조회수가 크게 나온 국내 영상" : "그 채널 평소보다 몇 배 빨리 크는 영상"} · ${esc(o.at)} 기준 · 한국시간 06·14·21시`)
+  + `<div class="bar-row" id="huntTop">${seg("htype", [["short", `쇼츠 ${(SL || []).length}`], ["long", `본편 ${(LL || []).length}`], ["chan", `채널 ${chans("all").length}`]], S.htype)}${!isCh && (o.big_shorts || o.big_long) ? seg("hbase", [["mult", "평소보다 터짐"], ["views", "조회수 많음"]], big ? "views" : "mult") : ""}${isCh ? seg("hkind", [["all", "전체"], ["long", "롱폼만"], ["short", "쇼츠만"]], kind) : seg("hage", [["all", "2주 안"], ["7", "7일 안"], ["3", "3일 안"]], age ? String(age) : "all")}
     ${isCh ? seg("csort", [["score", "종합"], ["per_day", "하루 증가"], ["pct_day", "증가율"], ["subs", "구독자"]], sk) : seg("hsort", [["score", "종합"], ["mult", "배수"], ["vph", "속도"], ["views", "조회수"]], sk)}</div>
   ${body}${pager(pk, sorted.length, pg)}
-  <div class="note">살펴본 채널 ${man(o.pool)}곳 · 빨간 딱지 = 그 채널 최근 영상 중간값 대비 몇 배인지, 속도 = 올라온 뒤 시간당 조회수. 방송사·기업·언론 채널은 뺐어요.</div>`;
+  <div class="note">살펴본 채널 ${man(o.pool)}곳 · 빨간 딱지 = 그 채널 최근 영상 중간값 대비 몇 배인지(3배 넘을 때만), 속도 = 올라온 뒤 시간당 조회수${big ? " · 조회수 많음 = 쇼츠 30만·본편 5만 회 넘은 영상, 종합은 조회수와 속도 순위 반반" : ""}. 방송사·기업·언론 채널은 뺐어요.</div>`;
 }
 function afterHunt() {
   $$("[data-hpg]").forEach(b => b.onclick = () => {
@@ -1265,7 +1267,7 @@ function render() {
   $("#main").innerHTML = html;
   document.title = (page === "ch" ? a + " · " : page === "ig" ? "@" + a + " · " : "") + "채널 대시보드";
   mountCharts();
-  ["grow", "gper", "igrow", "chv", "vplat", "vtype", "vper", "tf", "tsort", "htype", "hsort", "hkind", "hage", "csort", "atype", "stype", "dtype", "dper", "dsort"].forEach(k => bindSeg(k));
+  ["grow", "gper", "igrow", "chv", "vplat", "vtype", "vper", "tf", "tsort", "htype", "hsort", "hkind", "hage", "hbase", "csort", "atype", "stype", "dtype", "dper", "dsort"].forEach(k => bindSeg(k));
   const vch = $("#vch"); if (vch) vch.onchange = () => { S.vch = vch.value; remember(); render(); };
   const vs = $("#vsort"); if (vs) vs.onchange = () => { S.vsort = vs.value; remember(); render(); };
   $$("tr[data-go]").forEach(r => r.onclick = () => { location.hash = r.dataset.go; });
