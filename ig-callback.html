@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>인스타 연결</title>
+<style>body{font:16px/1.6 -apple-system,system-ui,sans-serif;background:#f6f7f9;color:#1d2330;display:grid;place-items:center;min-height:100vh;margin:0;padding:16px}
+main{max-width:420px;background:#fff;border-radius:14px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08)}code{word-break:break-all;font-size:12px;color:#6b7280}
+@media (prefers-color-scheme:dark){body{background:#111318;color:#e7e9ee}main{background:#1a1d24}}</style></head>
+<body><main><h3 id="t">맥으로 넘기는 중…</h3><p id="m">채널 대시보드 맥 프로그램(인스타_연결.py)이 이 연결을 받아요.</p><code id="c"></code></main>
+<script>
+// 인스타 허용 뒤 돌아오는 곳(https 만 허용돼서 둠) → 맥에서 기다리는 인스타_연결.py(127.0.0.1:8766)로 그대로 넘긴다
+const q = new URLSearchParams(location.search);
+if (q.get("code") || q.get("error")) {
+  setTimeout(() => location.replace("http://127.0.0.1:8766/" + location.search), 300);
+  setTimeout(() => { document.getElementById("t").textContent = "맥 프로그램이 응답하지 않아요"; document.getElementById("m").textContent = "인스타_연결.py 가 켜져 있는지 확인하세요."; }, 6000);
+} else { document.getElementById("t").textContent = "연결 정보가 없어요"; document.getElementById("m").textContent = ""; }
+</script></body></html>
