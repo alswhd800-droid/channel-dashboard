@@ -42,10 +42,10 @@ HOME_HANDLE = '@논스킵'
 CHANNELS = {
     'UCvv5gDOhB164Ao_IB2zC0nA': ('거대한비밀', '@거대한비밀'),
     'UCTW1Dy2mEpRWAdZ12qVVL8A': ('논스킵', '@논스킵'),
-    'UCiQOGLTz89s8ZhWGxMp1JfA': ('스튜디오 이면', '@스튜디오이면'),
+    'UCiQOGLTz89s8ZhWGxMp1JfA': ('널포인트', '@nullpoint_kr'),
     'UC0N5pdcVXvvZ9fVqTiRKXSA': ('밑바닥부터', '@mitbadakbuteo'),
     'UCrjSI-EYrWrxNUOEo06tS0w': ('몸리학', '@momrihak'),
-    'UC4SccKanDerMZK3CtBZjVnQ': ('스튜디오K', '@studiok_official'),
+    'UC4SccKanDerMZK3CtBZjVnQ': ('사각지대', '@blindspot_docu'),
     'UCAy5fJTHLrG8WatQqUcJS0g': ('새벽서랍', '@새벽서랍dawn'),
     'UCbVskN7P3vwHhL2UNrfzB6A': ('플레이트미디어', None),   # 다른 구글 계정(현우)
     'UCCbtZv--gwZNVVGovQl2KBg': ('메디스튜디오', None),     # 다른 구글 계정(현우)

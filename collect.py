@@ -43,7 +43,8 @@ VIDEO_GOALS = (1000, 10000, 100000, 1000000)
 CHANNEL_GOALS = (10000, 100000, 1000000, 10000000)
 
 # 유튜브 파트너 프로그램 광고 수익 조건(유튜브 고객센터 72851, 2026-09 확인)
-#   구독자 1,000명 + (최근 12개월 공개 본편 시청 시간 4,000시간 또는 최근 90일 공개 쇼츠 조회수 1,000만 회)
+#   구독자 1,000명 + (최근 12개월 공개 본편 시청 시간 4,000시간 또는 최근 90일 공개 쇼츠 유효 조회수 1,000만 회)
+#   11-15 사용자 "광고수익조건도 유효조회수 기준으로 되어야하는데" — 분석 API 가 연결된 채널은 유튜브가 세는 값(collect_engaged 의 ypp)을 쓴다
 # 2027-02-01부터 새로 신청하는 채널은 시청 시간 8,000시간 또는 쇼츠 2,000만 회(유튜브 블로그 2026-08-10)
 ADS = {"subs": 1000, "watch": 4000, "shorts90": 10_000_000}
 ADS_NEW = {"date": "2027-02-01", "watch": 8000, "shorts90": 20_000_000}
@@ -53,6 +54,7 @@ ADS_NEW = {"date": "2027-02-01", "watch": 8000, "shorts90": 20_000_000}
 #   분석 수치는 하루 한두 번만 바뀌어서 3시간마다만 받는다(무료, 할당량 여유).
 ENGAGED_EVERY_HOURS = 3
 ANALYTICS_API = "https://youtubeanalytics.googleapis.com/v2/reports"
+BOOKED_EVERY_MIN = 30   # 예약 영상(같은 OAuth 의 youtube.readonly) — 채널당 2유닛, 30분마다
 
 
 def env_value(name):
@@ -187,24 +189,31 @@ def rate(hist, name, key, days=7):
     return (last - first) / span
 
 
-def monetization(now, name, snap, mine, hist):
-    """광고 수익 조건 하나만: 구독자(필수) + 본편 시청 시간 또는 쇼츠 조회수(둘 중 하나)"""
+def monetization(now, name, snap, mine, hist, ypp=None):
+    """광고 수익 조건 하나만: 구독자(필수) + 본편 시청 시간 또는 쇼츠 유효 조회수(둘 중 하나).
+    ypp(분석 연결 채널, ypp_numbers) 가 있으면 유튜브가 세는 값 그대로, 없으면 공개 조회수로 추정(src='estimate' — 쇼츠는 유효 조회수가 아니라 실제보다 크게 나옴)."""
     in_days = lambda v, n: parse_time(v["published"]) >= now - timedelta(days=n)
     public = [v for v in mine if v.get("public", True)]
-    shorts90 = sum(v["views"] for v in public if v["short"] and in_days(v, 90))
     longs = [v for v in public if not v["short"] and in_days(v, 365)]
-    watch = sum(v["views"] * v["dur"] * RETENTION for v in longs) / 3600
     avg_long = (sum(v["dur"] for v in longs) / len(longs)) if longs else 0
-    lr = rate(hist, name, "long_views")
-    cur = {"subs": snap["subs"], "watch": round(watch, 1), "shorts90": shorts90}
-    speed = {"subs": rate(hist, name, "subs"), "shorts90": rate(hist, name, "shorts_views"),
-             "watch": (lr * avg_long * RETENTION / 3600) if lr is not None else None}
+    if ypp and ypp.get("upto"):
+        src, per_view = "analytics", ypp.get("per_view_min")
+        cur = {"subs": snap["subs"], "watch": ypp["watch_h"], "shorts90": ypp["shorts90"]}
+        speed = {"subs": rate(hist, name, "subs"), "shorts90": ypp.get("sp_shorts"), "watch": ypp.get("sp_watch")}
+    else:
+        src, per_view = "estimate", (avg_long * RETENTION / 60 if avg_long else None)
+        watch = sum(v["views"] * v["dur"] * RETENTION for v in longs) / 3600
+        lr = rate(hist, name, "long_views")
+        cur = {"subs": snap["subs"], "watch": round(watch, 1), "shorts90": sum(v["views"] for v in public if v["short"] and in_days(v, 90))}
+        speed = {"subs": rate(hist, name, "subs"), "shorts90": rate(hist, name, "shorts_views"),
+                 "watch": (lr * avg_long * RETENTION / 3600) if lr is not None else None}
     window = {"subs": None, "watch": 365, "shorts90": 90}   # 기간 안에 채워야 하는 조건(오래된 것은 빠져나감)
     deadline = datetime.fromisoformat(ADS_NEW["date"]).replace(tzinfo=KST)
     days_left = max(0, (deadline - now).days)
     items = []
-    for key, label, unit in (("subs", "구독자", "명"), ("watch", "본편 시청 시간 · 최근 12개월(추정)", "시간"),
-                             ("shorts90", "쇼츠 조회수 · 최근 90일", "회")):
+    est = src == "estimate"
+    for key, label, unit in (("subs", "구독자", "명"), ("watch", "본편 시청 시간 · 최근 12개월" + ("(추정)" if est else ""), "시간"),
+                             ("shorts90", "쇼츠 조회수 · 최근 90일(추정 — 유효 조회수 아님)" if est else "쇼츠 유효 조회수 · 최근 90일", "회")):
         goal, sp = ADS[key], speed[key]
         left = max(0, goal - cur[key])
         eta = None if left == 0 else (round(left / sp) if sp and sp > 0 else None)
@@ -219,12 +228,13 @@ def monetization(now, name, snap, mine, hist):
     by = {i["key"]: i for i in items}
     path = max(by["watch"]["pct"], by["shorts90"]["pct"])  # 시청 시간 또는 쇼츠 조회수 중 하나만 채우면 됨
     overall = min(by["subs"]["pct"], path)
-    # 남은 시청 시간을 본편 조회수로 환산(영상 평균 길이 × 평균 시청 비율)
-    views_left = round(by["watch"]["left"] * 3600 / (avg_long * RETENTION)) if avg_long else None
+    # 남은 시청 시간을 본편 조회수로 환산(분석 연결 = 실제 본편 1회당 시청 분, 추정 = 영상 평균 길이 × 평균 시청 비율)
+    views_left = round(by["watch"]["left"] * 60 / per_view) if per_view else None
     ads = {"key": "ads", "name": "광고 수익", "items": items, "overall": overall, "done": overall >= 100,
            "best_path": "watch" if by["watch"]["pct"] >= by["shorts90"]["pct"] else "shorts90",
            "block": "subs" if by["subs"]["pct"] <= path else ("watch" if by["watch"]["pct"] >= by["shorts90"]["pct"] else "shorts90"),
-           "avg_long": round(avg_long), "views_left": views_left}
+           "avg_long": round(avg_long), "views_left": views_left, "per_view_min": round(per_view, 1) if per_view else None,
+           "src": src, "upto": ypp.get("upto") if not est else None}
     return {"tiers": [ads], "retention": RETENTION, "days_left": days_left, "new_rules": ADS_NEW}
 
 
@@ -368,7 +378,7 @@ def collect_engaged(now, info):
     names = {c["name"] for c in info}
     auth = engaged_auth()
     if (old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=ENGAGED_EVERY_HOURS) and names <= set(old.get("channels", {}))
-            and all(r.get("ok") or c["id"] not in ((auth or {}).get("tokens") or {}) for c in info for r in [old["channels"].get(c["name"], {})])):
+            and "ypp" in old and all(r.get("ok") or c["id"] not in ((auth or {}).get("tokens") or {}) for c in info for r in [old["channels"].get(c["name"], {})])):
         return   # 새로 연결한 채널이 '연결 안 됨'으로 남아 있으면 3시간을 기다리지 않는다
     if not auth:
         return
@@ -378,7 +388,8 @@ def collect_engaged(now, info):
         save("engaged.json", old)
         return
     end, start7 = now.strftime("%Y-%m-%d"), (now - timedelta(days=7)).strftime("%Y-%m-%d")
-    out = {"at": now.isoformat(timespec="minutes"), "err": None, "channels": {}, "videos": dict(old.get("videos") or {})}
+    out = {"at": now.isoformat(timespec="minutes"), "err": None, "channels": {}, "videos": dict(old.get("videos") or {}),
+           "ypp": {k: v for k, v in (old.get("ypp") or {}).items() if k in names}}
     for c in info:
         res = {"ok": False, "err": "연결 안 됨"}
         for key in ([c["id"]] if c["id"] in access else []) + [k for k in access if k != c["id"]]:
@@ -398,10 +409,79 @@ def collect_engaged(now, info):
             for vid, eng, views, avp, subs in life.get("rows") or []:
                 out["videos"][vid] = {"eng": int(eng), "views": int(views), "avp": round(float(avp), 1), "subs": int(subs), "eng7": int(w.get(vid, 0))}
             res = {"ok": True, "err": None, "n": len(life.get("rows") or [])}
+            try:
+                out["ypp"][c["name"]] = ypp_numbers(access[key], c["id"], now)
+            except (urllib.error.HTTPError, urllib.error.URLError) as e:   # 못 받으면 지난 값 그대로(수익 조건 화면은 '언제 기준'을 같이 보여 줌)
+                print(f"! 수익 조건 수치 실패: {c['name']} {getattr(e, 'code', type(e).__name__)}")
             break
         out["channels"][c["name"]] = res
     save("engaged.json", out)
     print("· 유효 조회수: " + ", ".join(f"{n} {str(r['n']) + '편' if r['ok'] else r['err']}" for n, r in out["channels"].items()))
+
+
+def ypp_numbers(token, cid, now):
+    """광고 수익 조건에 유튜브가 세는 값: 최근 90일 쇼츠 유효 조회수 · 최근 12개월 본편(일반+라이브) 시청 시간,
+    하루 속도(분석 수치가 있는 마지막 7일 평균)와 본편 1회당 시청 분. 분석 수치는 2~3일 늦어서 upto(마지막 날)를 같이 둔다."""
+    day = lambda n: (now - timedelta(days=n)).strftime("%Y-%m-%d")
+    end, LONG = now.strftime("%Y-%m-%d"), ("videoOnDemand", "liveStream")
+    rows = _analytics(token, cid, day(89), end, "engagedViews,estimatedMinutesWatched", dimensions="day,creatorContentType", sort="day").get("rows") or []
+    year = _analytics(token, cid, day(364), end, "views,estimatedMinutesWatched", dimensions="creatorContentType").get("rows") or []
+    sh, lg = {}, {}
+    for d, kind, eng, mins in rows:
+        if kind == "shorts":
+            sh[d] = sh.get(d, 0) + int(eng)
+        elif kind in LONG:
+            lg[d] = lg.get(d, 0) + int(mins)
+    upto = max((r[0] for r in rows), default=None)
+    week = [(datetime.fromisoformat(upto) - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)] if upto else []
+    lviews, lmins = sum(int(r[1]) for r in year if r[0] in LONG), sum(int(r[2]) for r in year if r[0] in LONG)
+    return {"shorts90": sum(sh.values()), "watch_h": round(lmins / 60, 1), "long_views": lviews, "upto": upto,
+            "sp_shorts": round(sum(sh.get(d, 0) for d in week) / 7) if week else None,
+            "sp_watch": round(sum(lg.get(d, 0) for d in week) / 7 / 60, 1) if week else None,
+            "per_view_min": round(lmins / lviews, 2) if lviews else None}
+
+
+def _data_api(token, method, **params):
+    """데이터 API 를 채널 주인 OAuth 로(비공개·예약 영상까지 보임)"""
+    url = API + method + "?" + urllib.parse.urlencode(params)
+    with urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": "Bearer " + token}), timeout=60) as r:
+        return json.load(r)
+
+
+def collect_booked(now, info):
+    """예약 영상(11-15 사용자 "채널 대시보드에 예약업로드 된거랑.. 우리 채널 추가된거 완벽하게.. 넣어줄래?"): API 키로는 비공개라 안 보여서
+    업로드 기록 파일(일정.py → schedule.json)에만 기대던 것을, 분석 연결 채널은 그 채널 토큰(youtube.readonly)으로 업로드 목록 최근 50개에서
+    공개 예약(publishAt)이 걸린 영상을 직접 읽는다 — 기록을 안 남긴 예약도 일정에 뜨고, 시각은 스튜디오 값이 이긴다."""
+    old = load("booked.json", {})
+    names = {c["name"] for c in info}
+    if old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(minutes=BOOKED_EVERY_MIN) and names <= set(old.get("channels", {})):
+        return
+    auth = engaged_auth()
+    access = access_tokens(auth) if auth else {}
+    if not access:
+        return
+    out = {"at": now.isoformat(timespec="minutes"), "channels": {}, "items": []}
+    for c in info:
+        tok = access.get(c["id"])
+        if not tok:
+            out["channels"][c["name"]] = {"ok": False, "err": "연결 안 됨"}
+            continue
+        try:
+            pl = _data_api(tok, "playlistItems", part="contentDetails,status", playlistId="UU" + c["id"][2:], maxResults=50)
+            ids = [i["contentDetails"]["videoId"] for i in pl.get("items", []) if (i.get("status") or {}).get("privacyStatus") != "public"]
+            got = _data_api(tok, "videos", part="status,snippet,contentDetails", id=",".join(ids)).get("items", []) if ids else []
+        except (urllib.error.HTTPError, urllib.error.URLError) as e:
+            out["channels"][c["name"]] = {"ok": False, "err": f"오류 {getattr(e, 'code', type(e).__name__)}"}
+            out["items"] += [x for x in old.get("items") or [] if x["ch"] == c["name"]]   # 이번에 못 읽으면 지난 목록 그대로
+            continue
+        mine = [{"id": v["id"], "ch": c["name"], "kind": "쇼츠" if seconds(v["contentDetails"].get("duration")) <= 180 else "본편",
+                 "t": parse_time(v["status"]["publishAt"]).astimezone(KST).strftime("%Y-%m-%d %H:%M"), "ep": v["snippet"]["title"][:60]}
+                for v in got if (v.get("status") or {}).get("publishAt")]
+        out["items"] += mine
+        out["channels"][c["name"]] = {"ok": True, "n": len(mine)}
+    out["items"].sort(key=lambda x: x["t"])
+    save("booked.json", out)
+    print("· 예약 영상(스튜디오): " + ", ".join(f"{n} {r['n'] if r['ok'] else r['err']}" for n, r in out["channels"].items()))
 
 
 # ---------------------------------------------------------------- 누가 보는지(유튜브 분석 API, 2026-10-22 개편)
@@ -915,8 +995,9 @@ def collect():
                           now, key=lambda h: h["t"])
     hist["daily"][today] = snap
     money_today = {}
+    ypp_all = load("engaged.json", {}).get("ypp") or {}
     for c in info:
-        m = monetization(now, c["name"], snap[c["name"]], [v for v in videos.values() if v["ch"] == c["name"]], hist)
+        m = monetization(now, c["name"], snap[c["name"]], [v for v in videos.values() if v["ch"] == c["name"]], hist, ypp_all.get(c["name"]))
         money_today[c["name"]] = {t["key"]: round(t["overall"], 2) for t in m["tiers"]}
         for t in m["tiers"]:
             for p in (25, 50, 75):
@@ -948,6 +1029,10 @@ def collect():
         collect_audience(now, info)
     except Exception as e:
         print(f"! 시청자 분석 실패: {type(e).__name__}")
+    try:
+        collect_booked(now, info)
+    except Exception as e:
+        print(f"! 예약 영상 실패: {type(e).__name__}")
     try:
         collect_reach(now, info)
     except Exception as e:
@@ -1260,12 +1345,19 @@ def schedule(videos, now):
     alias = name_alias()
     for x in S.get("items") or []:
         x["ch"] = alias.get(x.get("ch"), x.get("ch"))
+    # 11-15 분석 연결 채널은 스튜디오 예약(collect_booked)을 합친다: 같은 영상이면 스튜디오 시각·종류가 이기고, 기록에 없던 예약은 새로 넣는다
+    booked = {x["id"]: x for x in load("booked.json", {}).get("items") or []}
+    rows = [dict(x, **{k: booked[x["id"]][k] for k in ("t", "kind")}) if x.get("id") in booked else x for x in S.get("items") or []]
+    have = {x.get("id") for x in rows}
+    rows += [dict(b) for vid, b in booked.items() if vid not in have]
     pub = {}
     for v in videos.values():
         if v.get("public", True):
             pub.setdefault((v["ch"], bool(v["short"])), []).append(parse_time(v["published"]))
+    for b in booked.values():   # 계획(ID 없음)이 스튜디오 예약과 같은 시각이면 이미 올린 것
+        pub.setdefault((b["ch"], b["kind"] == "쇼츠"), []).append(datetime.strptime(b["t"], "%Y-%m-%d %H:%M").replace(tzinfo=KST))
     items = []
-    for x in S.get("items") or []:
+    for x in rows:
         try:
             t = datetime.strptime(x["t"], "%Y-%m-%d %H:%M").replace(tzinfo=KST)
         except (KeyError, ValueError):
@@ -1562,6 +1654,7 @@ def build(ctx):
         return cur[name][key] - prev[name][key]
 
     chans = []
+    ypp_all = load("engaged.json", {}).get("ypp") or {}
     for c in info:
         s = cur.get(c["name"])
         if not s:
@@ -1571,7 +1664,7 @@ def build(ctx):
                       "d_subs": delta(c["name"], "subs"), "d_views": delta(c["name"], "views"),
                       "d_shorts": delta(c["name"], "shorts_views"), "d_long": delta(c["name"], "long_views"),
                       "likes": sum(v["likes"] for v in mine), "comments": sum(v["comments"] for v in mine),
-                      "money": monetization(now, c["name"], s, mine, hist)})
+                      "money": monetization(now, c["name"], s, mine, hist, ypp_all.get(c["name"]))})
     series_days = days[-61:]
     by_ch = {}
     for c in chans:

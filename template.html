@@ -1203,7 +1203,7 @@ const MTAB = [["ads", "광고 수익 조건"], ["rev", "실제 수익"], ["cost"
 function pageMoney(tab, name) {
   tab = MTAB.some(x => x[0] === tab) ? tab : "ads";
   const tabs = `<div class="chips" style="margin-bottom:16px">${MTAB.map(([k, l]) => `<a class="chip ${k === tab ? "on" : ""}" href="#money/${k}">${l}</a>`).join("")}</div>`;
-  return ph("수익", tab === "ads" ? "구독 1,000명 + (본편 시청 4,000시간 또는 쇼츠 90일 1,000만 회)" : tab === "rev" ? "유튜브 분석의 예상 수익(원)" : "편당 만드는 데 든 돈") + tabs + (tab === "ads" ? moneyAds(name) : tab === "rev" ? moneyRev() : moneyCost(name));
+  return ph("수익", tab === "ads" ? "구독 1,000명 + (본편 시청 4,000시간 또는 쇼츠 90일 유효 조회수 1,000만 회)" : tab === "rev" ? "유튜브 분석의 예상 수익(원)" : "편당 만드는 데 든 돈") + tabs + (tab === "ads" ? moneyAds(name) : tab === "rev" ? moneyRev() : moneyCost(name));
 }
 function moneyAds(name) {
   const adOf = c => (c.money && c.money.tiers || []).find(t => t.key === "ads");
@@ -1213,11 +1213,11 @@ function moneyAds(name) {
     return `<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>채널</th><th style="width:40%">진행</th><th>막힌 곳</th></tr></thead><tbody>${CH.map(c => {
       const ad = adOf(c); if (!ad) return "";
       const by = Object.fromEntries(ad.items.map(i => [i.key, i])), b = by[ad.block];
-      const block = ad.done ? '<span class="pill good">달성</span>' : b ? (b.key === "subs" ? `구독자 ${man(b.left)}명` : b.key === "watch" ? `본편 시청 ${man(Math.ceil(b.left))}시간` : `쇼츠 ${man(b.left)}회`) : "-";
+      const block = ad.done ? '<span class="pill good">달성</span>' : b ? (b.key === "subs" ? `구독자 ${man(b.left)}명` : b.key === "watch" ? `본편 시청 ${man(Math.ceil(b.left))}시간` : `쇼츠 유효 ${man(b.left)}회`) : "-";
       return `<tr class="click" data-go="#money/ads/${encodeURIComponent(c.name)}"><td><div class="who">${avatar(c.thumb)}<div><div class="n">${esc(c.name)}</div><div class="h">구독 ${man(c.subs)}</div></div></div></td>
-        <td style="text-align:left"><div class="prog"><i class="${ad.done ? "done" : ""}" style="width:${Math.max(1, ad.overall)}%"></i></div><small>${ad.done ? "조건 달성" : pctf(ad.overall)}</small></td><td>${block}</td></tr>`;
+        <td style="text-align:left"><div class="prog"><i class="${ad.done ? "done" : ""}" style="width:${Math.max(1, ad.overall)}%"></i></div><small>${ad.done ? "조건 달성" : pctf(ad.overall)}${ad.src === "estimate" ? " · 추정" : ""}</small></td><td>${block}</td></tr>`;
     }).join("")}</tbody></table></div></div>
-    <div class="warnbox">⏰ <b>2027년 2월 1일부터</b> 새로 신청하는 채널은 본편 8,000시간 또는 쇼츠 2,000만 회로 두 배가 돼요${m ? ` (D-${m.days_left})` : ""}. 쇼츠 시청 시간은 4,000시간에 안 들어가요.</div>`;
+    <div class="warnbox">⏰ <b>2027년 2월 1일부터</b> 새로 신청하는 채널은 본편 8,000시간 또는 쇼츠 유효 조회수 2,000만 회로 두 배가 돼요${m ? ` (D-${m.days_left})` : ""}. 쇼츠 시청 시간은 4,000시간에 안 들어가요.</div>`;
   }
   const c = sel, ad = adOf(c), by = Object.fromEntries(ad.items.map(i => [i.key, i])), per = { subs: "명", watch: "시간", shorts90: "회" };
   const req = (i, dim) => { const done = i.left === 0, win = i.key === "watch" ? "12개월" : "90일";
@@ -1227,8 +1227,8 @@ function moneyAds(name) {
   return `<a class="back" href="#money/ads">← 전체 채널</a><div class="card"><div class="chead" style="margin-bottom:6px">${avatar(c.thumb)}<div><div class="n" style="font-size:17px">${esc(c.name)}</div></div><span class="pill ${ad.done ? "good" : "blue"}" style="margin-left:auto">${ad.done ? "조건 달성 · 신청하세요" : `광고 수익까지 ${pctf(ad.overall)}`}</span></div>
     <div class="hint" style="margin:8px 0 2px;font-weight:650">① 꼭 필요</div>${req(by.subs)}
     <div class="hint" style="margin:14px 0 2px;font-weight:650">② 둘 중 하나만 (흐린 쪽이 더 먼 길)</div>${req(by.watch, ad.best_path !== "watch")}${req(by.shorts90, ad.best_path !== "shorts90")}
-    ${ad.views_left && by.watch.left ? `<div class="note">👉 본편 조회수로 약 <b>${man(ad.views_left)}회</b> 더 (본편 평균 ${Math.round(ad.avg_long / 60)}분 × ${Math.round(c.money.retention * 100)}% 시청 기준)</div>` : ""}</div>
-  <div class="note">본편 시청 시간은 공개 데이터로 알 수 없어 본편 조회수 × 영상 길이 × ${Math.round(c.money.retention * 100)}%로 추정했어요. 정확한 값은 유튜브 스튜디오 → 수익 창출 탭에 있어요.</div>`;
+    ${ad.views_left && by.watch.left ? `<div class="note">👉 본편 조회수로 약 <b>${man(ad.views_left)}회</b> 더 (본편 1회당 평균 ${ad.per_view_min}분 시청 기준${ad.src === "estimate" ? " · 추정" : ""})</div>` : ""}</div>
+  <div class="note">${ad.src === "estimate" ? `이 채널은 유튜브 분석이 연결 안 돼 공개 숫자로 추정했어요 — 쇼츠는 유효 조회수가 아니라 전체 조회수라 실제보다 크게, 본편 시청 시간은 본편 조회수 × 영상 길이 × ${Math.round(c.money.retention * 100)}%로 잡았어요.` : `유튜브 분석 기준이에요 — 쇼츠는 유효 조회수(유튜브가 수익 조건에 세는 값), 본편은 실제 시청 시간 · ${esc(ad.upto || "")}까지 집계(분석 수치는 2~3일 늦어요). 비공개로 돌리거나 지운 영상 몫이 섞일 수 있어 스튜디오 수치와 조금 다를 수 있어요.`} 정확한 값은 유튜브 스튜디오 → 수익 창출 탭에 있어요.</div>`;
 }
 function moneyRev() {
   const rows = CH.map(c => ({ c, A: aud(c.name) })).filter(x => x.A && x.A.revenue && x.A.revenue.length);

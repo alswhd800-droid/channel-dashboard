@@ -31,9 +31,10 @@ KST = timezone(timedelta(hours=9))
 KEEP_DAYS = 14                                     # 이보다 오래된 기록은 버린다(공개된 건 API 쪽에 다 있다)
 
 # 채널 폴더 → 대시보드 채널 이름(channels.json 의 name)
-FOLDERS = {"거대한비밀": "거대한비밀", "거인의무덤": "스튜디오 이면", "논스킵": "논스킵",   # 11-04 거인의무덤 → 스튜디오 이면(폴더는 그대로)
+FOLDERS = {"거대한비밀": "거대한비밀", "널포인트": "널포인트", "논스킵": "논스킵",   # 거인의무덤 → 스튜디오 이면(11-04) → 널포인트(폴더도 널포인트/)
            "공통/단계엔진/편": "밑바닥부터",   # 11-06 라스트 씬 채널 지움 → 새 채널 밑바닥부터(편 폴더는 단계엔진)
-           "근력과학": "몸리학", "낮달": "새벽서랍", "스튜디오k": "스튜디오K"}   # 11-06 스튜디오K 새 채널(옛 지도 한 장·시나리오K 채널 지움) · 10-22 대시보드 개편 때 추가
+           "근력과학": "몸리학", "낮달": "새벽서랍", "사각지대": "사각지대", "인스타채널/스튜디오k/유튜브_옛자료": "사각지대",   # 스튜디오K → 사각지대 BLINDSPOT(11-12), 옛 유튜브 자료는 11-13 인스타채널/ 로
+           "감춰둔이야기": "감춰둔 이야기"}   # 11-15 새 채널(롱폼 01_~ · 쇼츠/S01_~)
 SKIP_DIRS = {".git", "node_modules", "__pycache__", "보관", "안쓰는파일", "venv", ".venv"}
 NAME_RE = re.compile(r"업로드정보|업로드_?.*결과")
 BAD_NAME = re.compile(r"_before|수정전")
@@ -46,6 +47,9 @@ TIME = r"(?:(오전|오후|낮|밤|저녁|새벽|아침)\s*)?(\d{1,2}):(\d\d)"
 DT_RE = re.compile(DATE + r"\s*" + TIME)
 SPLIT_RE = re.compile(DATE + r"\s*예약\s*" + TIME)           # 2026-09-28 예약 20:00
 EP_RE = re.compile(r"^(\d{3})[-_ .]?(.*)$")
+EP2_RE = re.compile(r"^([A-Z]?\d{2})[-_ .](.*)$")                  # 3자리가 없는 채널: 감춰둔이야기 01_·쇼츠/S05_, 사각지대 01_, 밑바닥부터 E15_
+KDATE_RE = re.compile(r"(20\d\d)년\s*(\d{1,2})월\s*(\d{1,2})일")      # 2026년 11월 29일 18:00 → 2026-11-29 18:00
+MARK_RE = re.compile(r"예약|SCHEDULED|공개")
 LINE_EP_RE = re.compile(r"^\W*(?:\d{1,2}:\d\d\s+)?(\d{3})\s+([^\s:|·—(]+)")
 CANCEL_RE = re.compile(r"예약(을|은)?\s*(풀|취소|해제)|영구\s*삭제(했|함|완료)|삭제(했|함|완료)")
 SEG_RE = re.compile(r"\s/\s")                                    # '… / 006 쇼츠 ID 예약 09-29 11:00 / …' 한 줄에 여러 건
@@ -82,14 +86,22 @@ def when(line, loose):
     cands = list(DT_RE.finditer(line))
     if not cands:
         return None
-    for word in ("예약", "공개"):
+    # 줄 전체에서 낱말에 가장 가까운 시각(같으면 뒤쪽), 스튜디오 표시 SCHEDULED 가 최우선 — 11-15 '11-15 14:08 예약 업로드 — … SCHEDULED 11-16 02:30'
+    # 에서 올린 시각을, '11-14 18:00 예약 공개(11-14 00:32 사용자 지시…)' 에서 지시 시각을 잡던 것 고침(공개된 75건 대조로 확인)
+    best = None
+    for word, bonus in (("SCHEDULED", -20), ("예약", 0), ("공개", 0)):
         for k in re.finditer(word, line):
-            after = [c for c in cands if 0 <= c.start() - k.end() <= 12]
-            if after:
-                return to_dt(*after[0].groups())
-            before = [c for c in cands if 0 <= k.start() - c.end() <= 16]
-            if before:
-                return to_dt(*before[-1].groups())
+            for c in cands:
+                if 0 <= c.start() - k.end() <= 12:
+                    d = c.start() - k.end()
+                elif 0 <= k.start() - c.end() <= 16:
+                    d = k.start() - c.end() + 0.5
+                else:
+                    continue
+                if best is None or d + bonus < best[0]:
+                    best = (d + bonus, c)
+    if best:
+        return to_dt(*best[1].groups())
     if loose and len(cands) == 1:
         return to_dt(*cands[0].groups())
     return None
@@ -121,10 +133,11 @@ def ids_in(line):
 
 
 def episode(path, chdir):
-    for p in path.relative_to(chdir).parents:
-        m = EP_RE.match(p.name)
-        if p.name and m:
-            return m.group(1), (m.group(1) + " " + re.sub(r"[-_]+", " ", m.group(2))).strip()
+    for rx in (EP_RE, EP2_RE):
+        for p in path.relative_to(chdir).parents:
+            m = rx.match(p.name)
+            if p.name and m:
+                return m.group(1), (m.group(1) + " " + re.sub(r"[-_]+", " ", m.group(2))).strip()
     return None, None
 
 
@@ -134,9 +147,9 @@ def scan():
     for folder, ch in FOLDERS.items():
         chdir = BASE / folder
         for dirpath, dirs, names in os.walk(chdir):
-            dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith(".")]
+            dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith((".", "이전판"))]
             for d in dirs:                             # 편 폴더 이름표: 006 → '006 박왕열드론탈옥'
-                m = EP_RE.match(d)
+                m = EP_RE.match(d) or EP2_RE.match(d)
                 if m:
                     labels.setdefault((ch, m.group(1)), (m.group(1) + " " + re.sub(r"[-_]+", " ", m.group(2))).strip())
             for n in names:
@@ -148,7 +161,8 @@ def scan():
     for _, p, ch, chdir in files:
         num, label = episode(p, chdir)
         sub = p.parent.name                            # 편 폴더 안 쇼츠/ · 쇼츠1_등수/ (10-27 몸리학 028 쇼츠 4개가 한 칸으로 겹쳐 1개만 뜸)
-        base_kind = "쇼츠" if "쇼츠" in p.name or sub.startswith("쇼츠") else "본편"
+        up = [q.name for q in p.relative_to(chdir).parents]   # 감춰둔이야기/쇼츠/S05_…/ 처럼 쇼츠 폴더가 편 폴더 위에 있어도(11-15)
+        base_kind = "쇼츠" if "쇼츠" in p.name or any(n.startswith("쇼츠") for n in up) else "본편"
         slot_no = (re.search(r"쇼츠(\d)", p.name) or re.match(r"쇼츠(\d)", sub) or [None, ""])[1]
         loose = "결과" in p.name
         section = base_kind
@@ -157,7 +171,10 @@ def scan():
         except OSError:
             continue
         src = str(p.relative_to(BASE))
+        carry, gap = [], 9                             # 결과 파일: '주소: https://youtu.be/…' 다음 줄 '예약: 2026년 11월 29일 18:00'(11-15 널포인트 065·066)
         for line in text.splitlines():
+            line = KDATE_RE.sub(lambda m: f"{m[1]}-{int(m[2]):02d}-{int(m[3]):02d}", line)
+            gap += 1
             if SHORTS_HEAD.match(line):
                 section = "쇼츠"
             elif MAIN_HEAD.match(line):
@@ -168,15 +185,20 @@ def scan():
                     if len(one) == 1:
                         cancelled.add(one[0][0])
                 t = when(seg, loose)
+                ids = ids_in(seg)
                 if not t:
+                    if ids and loose:
+                        carry, gap = ids, 0
                     continue
+                if not ids and loose and gap <= 2 and MARK_RE.search(seg):
+                    ids = carry
+                carry = []
                 seq += 1
                 n2 = num
                 if not n2:
                     m = LINE_EP_RE.match(seg)
                     n2 = m.group(1) if m else None
                 ep = labels.get((ch, n2)) or label or p.parent.name
-                ids = ids_in(seg)
                 for i, (vid, kind, no) in enumerate(ids):
                     kind = kind or section
                     slot = kind + (no or (slot_no if kind == "쇼츠" else ""))
