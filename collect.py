@@ -631,6 +631,9 @@ def collect_reach(now, info):
     auth = engaged_auth()
     keys = sorted((auth or {}).get("tokens") or {})
     oc = old.get("channels") or {}
+    for o, n in name_alias().items():   # 이름을 바꾼 채널은 옛 이름 기록을 잇는다 — 안 그러면 보고서를 처음부터 다시 받다가 429(11-15 널포인트·사각지대)
+        if o in oc and n not in oc:
+            oc[n] = oc.pop(o)
     # 토큰이 있는데 막혔거나(API 꺼짐 등) 첫 보고서를 기다리는 채널이 있으면 1시간마다, 다 받고 있으면 6시간마다
     wait = any(not (oc.get(c["name"]) or {}).get("ok") or not (oc.get(c["name"]) or {}).get("vd") for c in info if c["id"] in keys)
     if (old.get("at") and now - datetime.fromisoformat(old["at"]) < timedelta(hours=1 if wait else REACH_EVERY_HOURS) and old.get("keys") == keys
