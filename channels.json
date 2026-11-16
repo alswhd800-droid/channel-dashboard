@@ -9,5 +9,6 @@
   {"name": "플레이트미디어", "id": "UCbVskN7P3vwHhL2UNrfzB6A", "handles": ["@플레이트미디어", "@oreum_korea"], "old_names": ["오름"]},
   {"name": "메디스튜디오", "id": "UCCbtZv--gwZNVVGovQl2KBg", "handles": ["@메디스튜디오", "@시술백과"], "old_names": ["시술백과"]},
   {"name": "동네검증단", "id": "UCglHOESio_m6yd-kkKZ9mzg", "handles": ["@동네검증단"], "old_names": ["필요한법"]},
-  {"name": "감춰둔 이야기", "id": "UCX7K9LRMuW6zDIWfmgBN3dw", "handles": ["@감춰둔이야기"]}
+  {"name": "감춰둔 이야기", "id": "UCX7K9LRMuW6zDIWfmgBN3dw", "handles": ["@감춰둔이야기"]},
+  {"name": "지구 이력서", "id": "UCBpKSg8xbUR3Rx0RDMSJ3VQ", "handles": ["@지구이력서"]}
 ]
